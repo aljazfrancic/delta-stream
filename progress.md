@@ -5,7 +5,7 @@ The phase docs under [docs/implementation-plan/](docs/implementation-plan/README
 
 **Legend:** `[ ]` todo · `[~] ` in progress · `[x]` done · `[-]` skipped / N-A · `[!]` blocked
 
-**Current focus:** _Phase 2, Step 1 — stationarity test (Gate 1 PASSED 2026-06-22: H1 cleanly supported)_
+**Current focus:** _Phase 2, Step 2 — effective kernel depth k\* (Step 1 done 2026-06-22: **H2 stationarity FAILS** → Phase 3 Branch B indicated)_
 **Start date:** 2026-06-20
 
 ---
@@ -15,11 +15,11 @@ The phase docs under [docs/implementation-plan/](docs/implementation-plan/README
 | Phase | Doc | Gate | Status |
 |---|---|---|---|
 | 1 · Diagnostic | [phase-1](docs/implementation-plan/phase-1-diagnostic.md) | **Gate 1** — is H1 supported above null? | `[x]` **PASS** |
-| 2 · Characterization | [phase-2](docs/implementation-plan/phase-2-characterization.md) | **Gate 2** — does H2 (stationarity) hold? → picks Phase 3 branch | `[ ]` |
+| 2 · Characterization | [phase-2](docs/implementation-plan/phase-2-characterization.md) | **Gate 2** — does H2 (stationarity) hold? → picks Phase 3 branch | `[~]` Step 1: **H2 NO** |
 | 3 · Decomposition | [phase-3](docs/implementation-plan/phase-3-decomposition.md) | **Gate 3** — reconstruction competitive with baselines? | `[ ]` |
 | 4 · Evaluation | [phase-4](docs/implementation-plan/phase-4-evaluation.md) | — deliverable: paper + code | `[ ]` |
 
-**Phase 3 architecture branch (locked at Gate 2):** _undecided_ — `[ ]` A stationary convolutive · `[ ]` B state-space · `[ ]` C segmented
+**Phase 3 architecture branch (locked at Gate 2):** _leaning **B** after Step 1; locks after Steps 2–5_ — `[ ]` A stationary convolutive · `[~]` B state-space / depth-indexed · `[ ]` C segmented
 
 > A phase that fails its gate **does not silently continue** — it pivots to writing up the negative result. Record the routing in the gate block below.
 
@@ -67,7 +67,9 @@ Outcome: **Proceed to Phase 2 (H1 cleanly supported)** · Date: **2026-06-22** �
 
 > Goal: what *kind* of structure? Stationary? How deep? Generalises across relations / models?
 
-- [ ] **Step 1** — [Stationarity test](docs/implementation-plan/phase-2-characterization.md#step-1--stationarity-test) (early/mid/late band kernels; Frobenius / principal-angle / cross-band R² / bootstrap)
+- [x] **Step 1** — [Stationarity test](docs/implementation-plan/phase-2-characterization.md#step-1--stationarity-test) (`scripts/step1_stationarity.py`, `diagnostics/stationarity.py`) — **H2 (stationarity) FAILS, decisively & rank-robustly.** `k=5` (Granger sig to lag 20 but capped at ⌊L/3⌋−3=5 → **short-horizon only**), `r=256` (Step-3 saturation 128; spot-check promoted 128→256, pooled AR R² 0.467→0.591). Early/mid/late band kernels: within-band R² **0.74 / 0.58 / 0.67** (positive) but **every cross-band R² is negative** (early→mid −1.00, late→mid −1.89, etc.) — kernels don't transfer at all. Holds at every rank 32→256 (worst off-diag −0.32 even at r=32). Between-band ‖ΔW‖ ≈ **1.39–1.42** (≈ √2 orthogonal ceiling), principal angles **57–62°** mean. Bootstrap (n=200/band): between-band distance **80–104 SD** above within-band spread, all 3 pairs separated. No clean phase boundary (3 pair-distances ≈ equal, ratio 1.03) → **not segmented**; depth-dependence is pervasive → **Branch B (state-space / depth-indexed)**, likely *fully* depth-indexed not slowly-varying. Run: `runs/2026-06-22-ph2-step1-410md/`.
+  > **Reconciles with Gate 1, not contradicts it:** Gate 1's high *pooled* AR R² (one compromise kernel + per-depth μ_ℓ) was explicitly only "consistent with" stationarity and deferred the direct test here; a generalist pooled kernel can score well while band-specific kernels fail to transfer. This is the pre-registered **"H2 fails"** outcome (proposal §4.2): H1 still holds, the dynamics are genuinely non-stationary, and CLT-style unconstrained per-(source,target) parameterisation is *validated* — "shared kernel along depth" is the wrong abstraction.
+  > **Caveats carried forward:** (1) k capped → short-horizon only; long-horizon stationarity deferred to Phase 3 Step 4 MA recheck. (2) AR-on-Δ ≠ MA stationarity (proxy). (3) the ±v_ℓ shared term biases *toward* stationarity, so failing is the conservative direction. (4) 3 classes/1555 ex — per-class test is Step 4.
 - [ ] **Step 2** — [Effective kernel depth k\*](docs/implementation-plan/phase-2-characterization.md#step-2--effective-kernel-depth)
 - [ ] **Step 3** — [Token-position invariance](docs/implementation-plan/phase-2-characterization.md#step-3--token-position-invariance) (4×4 / 3×3 cross-position confusion)
 - [ ] **Step 4** — [Generalisation across relation types](docs/implementation-plan/phase-2-characterization.md#step-4--generalisation-across-relation-types)
@@ -166,3 +168,4 @@ Recon R² (avg over layers): _____ · seed stability: _____ · Date: _____ · Me
 | 2026-06-21 | Switched primary to **`pythia-410m-deduped`** (public Tuned Lens exists only for deduped; SAE coverage a wash). Re-ran Steps 1–2 → 1555 ex / 3 classes (floor 300). Step 3 done (`scripts/step3_ridge.py`, `src/layer_dynamics/diagnostics/`): ridge R²=0.602 ≫ mean/zero; **TL gate PASS** (0.602 vs −0.691). 16 tests green. Next: Step 4 CCA, Step 5 AR/Granger. |
 | 2026-06-21 | Step 4 CCA done (`scripts/step4_cca.py`, `diagnostics/cca.py`): shrinkage CCA, held-out canonical corr on the same split as Step 3. Result: held-out top-1 ≈ **0.9997** at every layer, robust to γ→0.99, **scrambled null ≈ 0** (real−null 1.006) → **shared subspace = yes** (Gate-1 Q3). Honest caveat logged: ≈1 is mostly the −v_ℓ ⊂ Δ_ℓ tautology + rogue dims, not structure ridge missed. 20 tests green. Gate-1 status so far: Q1 yes, Q2 yes (TL), Q3 yes. Next: Step 5 AR(k)+Granger (both nulls). |
 | 2026-06-22 | Step 5 done (`diagnostics/autoregress.py`, `scripts/step5_ar.py`, `scripts/step5_context_null.py`; `activations.collect_trajectories_from_ids`). Pooled AR(k) with per-depth intercept μ_ℓ (within-transform), GCV-α, low-rank coef; Granger = Wilks Λ + Rao F nested-F on top-32 PCA. **AR R²=0.65** (k=20) ≫ scrambled null ≈0; **Granger 112/112** Bonferroni-sig (to lag 20) vs **0/112** null. **Null 2 (context perturbation, token-level, alignment 1000/1000):** AR R² unchanged (0.639→0.696), Granger heatmap corr **0.964** → **depth-intrinsic**. Predictors compressed to top-256 Δ PCs (full-D target) to keep the k·D SVD tractable on the dev GPU. 7 new tests; **27 green**. **Gate 1: all six Q yes → PROCEED TO PHASE 2.** Memo + figures/tables in `runs/gate1/`. |
+| 2026-06-22 | **Phase 2 Step 1 — stationarity test** (`scripts/step1_stationarity.py`, `diagnostics/stationarity.py`; extended `autoregress.fit_ar_pooled` with band-restricted depths + returned kernel, `eval_kernel_on_band`). Band-shared AR(k=5) kernels on early/mid/late thirds, shared input PCA basis; Frobenius + principal angles + 3×3 cross-band R² + within-band bootstrap + a rank-robustness sweep. **H2 FAILS decisively:** within-band R² positive (0.74/0.58/0.67), **all cross-band R² negative** at every rank 32→256; between-band ‖ΔW‖≈√2, angles 57–62°, bootstrap 80–104 SD separated, no clean phase boundary → **Branch B (state-space/depth-indexed)**. Pre-registered "H2 fails" route (proposal §4.2); does *not* contradict Gate 1 (pooled R² ≠ stationarity). k capped → short-horizon only. 18 new tests; **44 green**, ruff clean. Run: `runs/2026-06-22-ph2-step1-410md/`. Next: Step 2 (k\* by depth) on the depth-indexed branch. |

@@ -100,7 +100,15 @@ def _gcv_alpha(u: np.ndarray, s: np.ndarray, y: np.ndarray, alphas: np.ndarray) 
 
 @dataclass
 class ARFit:
-    """Result of one pooled AR(k) fit: held-out R² per rank, plus provenance."""
+    """Result of one pooled AR(k) fit: held-out R² per rank, plus provenance.
+
+    ``coef`` is the full fitted kernel ``[k·q, D]`` (predictor-PCA coordinates ->
+    full Δ space); ``coef_svd`` is its economy SVD so any rank-truncated kernel is
+    recoverable via :meth:`coef_at_rank` without refitting. ``depths`` records the
+    target depths the kernel was fit on (the band, in Phase 2 Step 1) and ``basis``
+    the shared input PCA basis — both needed to apply this kernel to *other* depths
+    with :func:`eval_kernel_on_band`.
+    """
 
     k: int
     alpha: float
@@ -109,6 +117,75 @@ class ARFit:
     r2: dict  # {rank: r2, "full": r2}
     best_rank: int
     best_r2: float
+    coef: np.ndarray | None = None
+    coef_svd: tuple | None = None  # (U, s, Vt) of coef
+    depths: tuple[int, ...] = ()
+    basis: tuple | None = None  # (mean, comps) shared input PCA basis
+
+    def coef_at_rank(self, r: int) -> np.ndarray:
+        """SVD-truncate the fitted kernel to rank ``r`` (≤ rank(coef))."""
+        if self.coef_svd is None:
+            raise ValueError("coef_svd not stored on this ARFit")
+        bu, bs, bvt = self.coef_svd
+        rr = min(r, bs.shape[0])
+        return (bu[:, :rr] * bs[:rr]) @ bvt[:rr]
+
+
+def _depth_means(
+    pred_tr: np.ndarray, dlt_train: np.ndarray, depths: list[int], k: int
+) -> dict[int, tuple[np.ndarray, np.ndarray]]:
+    """Per-depth predictor/target train means ``{ℓ: (x̄_ℓ, ȳ_ℓ)}`` (the μ_ℓ carrier)."""
+    means: dict[int, tuple[np.ndarray, np.ndarray]] = {}
+    for ell in depths:
+        x = _lagged_design(pred_tr, ell, k)
+        means[ell] = (x.mean(axis=0), dlt_train[:, ell, :].mean(axis=0))
+    return means
+
+
+def _pooled_r2_from_means(
+    coef: np.ndarray,
+    pred_te: np.ndarray,
+    dlt_test: np.ndarray,
+    means: dict[int, tuple[np.ndarray, np.ndarray]],
+    depths: list[int],
+    k: int,
+) -> float:
+    """Held-out pooled R² of ``coef`` over ``depths``, vs the per-depth mean ȳ_ℓ.
+
+    The per-depth means in ``means`` are the intercept μ_ℓ: prediction at depth ℓ is
+    ``ȳ_ℓ + (x_ℓ − x̄_ℓ) coef``. When ``coef`` was fit on a *different* depth band
+    but ``means`` is recomputed on ``depths`` (see :func:`eval_kernel_on_band`), this
+    isolates the kernel — the offsets are matched, only the transition map differs.
+    """
+    ss_res = ss_tot = 0.0
+    for ell in depths:
+        xbar, ybar = means[ell]
+        yte = dlt_test[:, ell, :]
+        pred = ybar + (_lagged_design(pred_te, ell, k) - xbar) @ coef
+        ss_res += float(np.sum((yte - pred) ** 2))
+        ss_tot += float(np.sum((yte - ybar) ** 2))
+    return 1.0 - ss_res / ss_tot
+
+
+def eval_kernel_on_band(
+    coef: np.ndarray,
+    dlt_train: np.ndarray,
+    dlt_test: np.ndarray,
+    depths: list[int],
+    k: int,
+    basis: tuple[np.ndarray, np.ndarray] | None,
+) -> float:
+    """Apply kernel ``coef`` to target ``depths``, with per-depth means refit there.
+
+    This is the cross-band prediction of Phase 2 Step 1: take a kernel fit on one
+    band and score it on another band's updates. The per-depth intercepts μ_ℓ are
+    recomputed from the *train* split at the evaluation depths, so the reported R²
+    degradation reflects the kernel mismatch alone, not a mean offset between bands.
+    """
+    pred_tr = _project(dlt_train, basis)
+    pred_te = _project(dlt_test, basis)
+    means = _depth_means(pred_tr, dlt_train, depths, k)
+    return _pooled_r2_from_means(coef, pred_te, dlt_test, means, depths, k)
 
 
 def fit_ar_pooled(
@@ -120,18 +197,31 @@ def fit_ar_pooled(
     alphas: np.ndarray = DEFAULT_ALPHAS,
     input_pcs: int | None = 256,
     input_basis: tuple[np.ndarray, np.ndarray] | None = None,
+    depths: list[int] | None = None,
 ) -> ARFit:
     """Fit the shared low-rank AR(k) kernel with a per-depth intercept.
 
     ``dlt_*`` are ``[N, n_delta, D]`` arrays of Δ. The **predictors** (lagged Δ's)
     are compressed to ``input_pcs`` principal components (basis fit on the training
-    Δ unless ``input_basis`` is supplied — pass one to share it across the k sweep);
+    Δ unless ``input_basis`` is supplied — pass one to share it across the k sweep,
+    or across depth bands so the fitted kernels live in a common coordinate system);
     the **target** stays full-D, so R² is still the held-out fraction of full Δ_ℓ
     variance (against the per-depth mean) at each rank and at full predictor rank.
     Set ``input_pcs=None`` to fit in the raw ``k·D`` predictor space (much slower).
+
+    ``depths`` restricts the **target** depths the shared kernel is fit over (Phase 2
+    Step 1 fits one kernel per early/middle/late band); it defaults to every feasible
+    depth ℓ ≥ k (the Phase 1 Step 5 pooled fit). The fitted kernel and its SVD are
+    returned on the :class:`ARFit` so it can be compared and cross-applied.
     """
     n_delta = dlt_train.shape[1]
-    depths = feasible_depths(n_delta, k)
+    if depths is None:
+        depths = feasible_depths(n_delta, k)
+    else:
+        depths = list(depths)
+        bad = [e for e in depths if e < k or e >= n_delta]
+        if bad:
+            raise ValueError(f"depths {bad} infeasible for k={k}, n_delta={n_delta}")
     if not depths:
         raise ValueError(f"k={k} leaves no feasible depths for n_delta={n_delta}")
 
@@ -143,15 +233,12 @@ def fit_ar_pooled(
 
     # Per-depth centering (within transform) absorbs μ_ℓ before the shared fit. The
     # predictor design is in PCA space; the target Δ_ℓ stays full-D.
-    means: dict[int, tuple[np.ndarray, np.ndarray]] = {}
+    means = _depth_means(pred_tr, dlt_train, depths, k)
     xc_blocks, yc_blocks = [], []
     for ell in depths:
-        x = _lagged_design(pred_tr, ell, k)  # [N, kq]
-        y = dlt_train[:, ell, :]  # [N, D]
-        xbar, ybar = x.mean(axis=0), y.mean(axis=0)
-        means[ell] = (xbar, ybar)
-        xc_blocks.append(x - xbar)
-        yc_blocks.append(y - ybar)
+        xbar, ybar = means[ell]
+        xc_blocks.append(_lagged_design(pred_tr, ell, k) - xbar)
+        yc_blocks.append(dlt_train[:, ell, :] - ybar)
     xc = np.concatenate(xc_blocks, axis=0)  # [M, kq]
     yc = np.concatenate(yc_blocks, axis=0)  # [M, D]
 
@@ -164,24 +251,11 @@ def fit_ar_pooled(
     bu, bs, bvt = np.linalg.svd(coef, full_matrices=False)
     max_rank = bs.shape[0]
 
-    # Precompute uncentered test designs once.
-    test_x = {ell: _lagged_design(pred_te, ell, k) for ell in depths}
-
-    def r2_at(coef_r: np.ndarray) -> float:
-        ss_res = ss_tot = 0.0
-        for ell in depths:
-            xbar, ybar = means[ell]
-            yte = dlt_test[:, ell, :]
-            pred = ybar + (test_x[ell] - xbar) @ coef_r
-            ss_res += float(np.sum((yte - pred) ** 2))
-            ss_tot += float(np.sum((yte - ybar) ** 2))
-        return 1.0 - ss_res / ss_tot
-
-    r2: dict = {"full": r2_at(coef)}
+    r2: dict = {"full": _pooled_r2_from_means(coef, pred_te, dlt_test, means, depths, k)}
     for r in ranks:
         rr = min(r, max_rank)
         coef_r = (bu[:, :rr] * bs[:rr]) @ bvt[:rr]
-        r2[r] = r2_at(coef_r)
+        r2[r] = _pooled_r2_from_means(coef_r, pred_te, dlt_test, means, depths, k)
 
     best_rank = max(ranks, key=lambda r: r2[r])
     return ARFit(
@@ -192,6 +266,10 @@ def fit_ar_pooled(
         r2=r2,
         best_rank=best_rank,
         best_r2=r2[best_rank],
+        coef=coef,
+        coef_svd=(bu, bs, bvt),
+        depths=tuple(depths),
+        basis=basis,
     )
 
 

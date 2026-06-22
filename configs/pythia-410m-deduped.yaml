@@ -46,3 +46,9 @@ diagnostics:
   granger_pca: 32                    # response dim for the per-(depth,lag) multivariate
                                      # nested-F (D=1024 ≫ N would make full-D Wilks Λ singular)
   ar_null_seed: 1234                 # scrambled-null permutation seed (Null 1)
+  # Phase 2 Step 1 — across-depth stationarity of the AR(k) kernel. k is selected
+  # from the Step 5 Granger profile under the early-band feasibility cap ⌊L/3⌋−3=5;
+  # r is the Step 3 saturation rank (median across layers). Both are derived at run
+  # time from --granger-csv / --step3-csv, overridable with --k / --rank.
+  stationarity_n_boot: 200           # within-band example-bootstrap refits per band
+  stationarity_boot_seed: 20260622   # bootstrap RNG seed (deterministic per band: +0/+1/+2)

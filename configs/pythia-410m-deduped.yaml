@@ -1,0 +1,48 @@
+# Primary / scientific config — Pythia-410m-deduped (D=1024, L=24).
+# Still "Pythia-410m" per the frozen plan; the deduped variant is chosen because
+# it has a public Tuned Lens (the Step-5 gate baseline) and is the standard
+# interpretability Pythia. Fits the local 3 GB GPU in fp32 (~2 GB peak @ batch 4).
+
+model:
+  name: pythia-410m-deduped
+  device: auto          # cuda if visible, else cpu (layer_dynamics.device.resolve_device)
+  dtype: float32        # fp32 on Pascal — see layer_dynamics/device.py
+
+tuned_lens:
+  resource_id: EleutherAI/pythia-410m-deduped   # public lens (Step 5 gate baseline)
+
+dataset:
+  sources: [counterfact]            # pararel/trex registered but not yet implemented
+  # Threshold tuned 0.3 -> 0.1 per plan Step 1 ("tune downward only if [<5000]"):
+  # 410m+CounterFact yields only ~2000 known facts, so 0.3 left every class below
+  # the floor. At 0.1, organization/geography/language each clear 500.
+  top1_prob_threshold: 0.1          # tuned down from 0.3 (see Gate-1 note; 410m is weak)
+  # Floor lowered 500 -> 300 to keep 3 relation_classes (needed for Phase 2 Step 4):
+  # deduped 410m yields geography 511 / organization 711 / language 333 at prob>0.1.
+  min_examples_per_relation: 300    # floor per relation_class, not per P-code
+  target_size: 5000                 # NOT reached on 410m+CounterFact (see Gate-1 note)
+
+filtering:
+  batch_size: 32                    # logits-only (no cache), fits comfortably
+
+collection:
+  token_position: final_prompt      # last token before the predicted object
+  batch_size: 4                     # ~2 GB peak on a 3 GB card; raise on bigger GPUs
+  hook_points: [resid_pre_0, resid_post]   # v_0 plus v_1..v_L
+
+diagnostics:
+  ranks: [16, 32, 64, 128]          # low-rank ridge sweep (Step 3 / Step 5)
+  test_frac: 0.2                     # held-out fraction for R²
+  cca_components: 10                 # first-k canonical correlations (Step 4)
+  # D=1024 ≈ N_train=1244 makes the within-block covariances ill-conditioned;
+  # shrink each toward (tr/p)·I before whitening so CCA is not degenerate.
+  cca_shrinkage: 0.1                 # γ in (1-γ)·C + γ·(tr C/p)·I
+  cca_null: true                     # scrambled-null control (Δ example-shuffled vs v)
+  # Step 5 — AR(k) on Δ over depth + Granger lag test.
+  ar_lags: [1, 2, 3, 5, 10, 15, 20]  # k sweep (matches Phase 2 Step 2 effective-depth)
+  ar_input_pcs: 256                  # compress AR predictors to top-256 Δ PCs (≥ Step-3
+                                     # saturating rank 128); target stays full D=1024 so
+                                     # R² is in full Δ space. Keeps the k·D SVD tractable.
+  granger_pca: 32                    # response dim for the per-(depth,lag) multivariate
+                                     # nested-F (D=1024 ≫ N would make full-D Wilks Λ singular)
+  ar_null_seed: 1234                 # scrambled-null permutation seed (Null 1)

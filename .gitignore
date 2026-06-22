@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+# uv.lock IS committed — it pins the exact reproducible environment.
+
+# Data and run artefacts (regenerable; never the source of truth).
+# .gitkeep files preserve the directory structure.
+data/*
+!data/.gitkeep
+runs/*
+!runs/.gitkeep
+figures/*
+!figures/.gitkeep
+
+# Activation stores
+*.h5
+*.hdf5
+*.parquet
+*.safetensors
+
+# Notebooks are for exploration only
+.ipynb_checkpoints/

@@ -20,11 +20,13 @@ dependencies = [
     # Held to the 2.5 series on purpose: the local GPU is a GTX 1050 (Pascal,
     # compute capability 6.1), and torch 2.6+ began dropping Pascal/Maxwell from
     # the default CUDA wheels. 2.5.x still ships sm_6x kernels. Routed to the
-    # cu124 wheel index in [tool.uv.sources] below.
+    # cu124 wheel index in [tool.uv.sources] below. This pin also blocks the
+    # torch>=2.6 security advisories — accepted, unused paths; see SECURITY.md.
     "torch~=2.5.0",          # model forward passes via TransformerLens
     "transformer-lens~=2.8", # residual-stream hooks, model loading
     # transformer-lens 2.x uses transformers.TRANSFORMERS_CACHE, removed in
-    # transformers 5.0 — hold transformers on the 4.x line.
+    # transformers 5.0 — hold transformers on the 4.x line. (Also blocks the
+    # transformers>=5 advisories — accepted, unused paths; see SECURITY.md.)
     "transformers>=4.44,<5",
     "datasets~=3.2",         # CounterFact / Pararel / T-REx loading
     "numpy~=2.1",

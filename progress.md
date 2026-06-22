@@ -15,11 +15,11 @@ The phase docs under [docs/implementation-plan/](docs/implementation-plan/README
 | Phase | Doc | Gate | Status |
 |---|---|---|---|
 | 1 · Diagnostic | [phase-1](docs/implementation-plan/phase-1-diagnostic.md) | **Gate 1** — is H1 supported above null? | `[x]` **PASS** |
-| 2 · Characterization | [phase-2](docs/implementation-plan/phase-2-characterization.md) | **Gate 2** — does H2 (stationarity) hold? → picks Phase 3 branch | `[~]` Step 1: **H2 NO** |
+| 2 · Characterization | [phase-2](docs/implementation-plan/phase-2-characterization.md) | **Gate 2** — does H2 (stationarity) hold? → picks Phase 3 branch | `[~]` **H2 NO → Branch B** (S1–2 done; S3–5 open) |
 | 3 · Decomposition | [phase-3](docs/implementation-plan/phase-3-decomposition.md) | **Gate 3** — reconstruction competitive with baselines? | `[ ]` |
 | 4 · Evaluation | [phase-4](docs/implementation-plan/phase-4-evaluation.md) | — deliverable: paper + code | `[ ]` |
 
-**Phase 3 architecture branch (locked at Gate 2):** _leaning **B** after Step 1; locks after Steps 2–5_ — `[ ]` A stationary convolutive · `[~]` B state-space / depth-indexed · `[ ]` C segmented
+**Phase 3 architecture branch (locked at Gate 2):** **B — state-space (fully depth-indexed, first-order)** `[x]` · `[ ]` A stationary convolutive · `[ ]` C segmented — see `runs/gate2/phase3_architecture.md`
 
 > A phase that fails its gate **does not silently continue** — it pivots to writing up the negative result. Record the routing in the gate block below.
 
@@ -75,19 +75,19 @@ Outcome: **Proceed to Phase 2 (H1 cleanly supported)** · Date: **2026-06-22** �
 - [ ] **Step 3** — [Token-position invariance](docs/implementation-plan/phase-2-characterization.md#step-3--token-position-invariance) (4×4 / 3×3 cross-position confusion) — needs re-collecting activations at 3 extra token positions (~4 GB)
 - [!] **Step 4 (blocked)** — [Generalisation across relation types](docs/implementation-plan/phase-2-characterization.md#step-4--generalisation-across-relation-types) — **needs dataset scaled to ≥1000/class first** (currently 3 classes / 1555 ex; see `counterfact-410m-yield`)
 - [ ] **Step 5** — [Cross-model replication](docs/implementation-plan/phase-2-characterization.md#step-5--cross-model-replication) (Gemma-2-2B; needs Phase 1 Steps 3+5 on Gemma first; Llama optional)
-- [ ] **Step 6** — [Gate 2 decision](docs/implementation-plan/phase-2-characterization.md#step-6--gate-2-decision) memo
+- [~] **Step 6** — [Gate 2 decision](docs/implementation-plan/phase-2-characterization.md#step-6--gate-2-decision) memo — **architecture LOCKED (Branch B) from Steps 1–2**; Q3–5 outstanding (`runs/gate2/memo.md`)
 
 ### ◆ Gate 2 — decision record
-Record: k\* = _____ · token-position-invariant? _____ · circuit-general or -specific? _____ · cross-model replicates? _____
+Record: stationary? **NO** (Step 1) · k\* = **≈1** (Step 2; vs Granger reach 20) · token-position-invariant? **outstanding** (Step 3, ~4 GB re-collection) · circuit-general or -specific? **blocked** (Step 4, dataset <1000/class) · cross-model replicates? **deferred** (Step 5, Gemma/Llama don't fit 3 GB)
 
 Architecture decision — **tick one** (copy into `runs/gate2/phase3_architecture.md`):
 - [ ] **Branch A** — stationarity holds → block-Toeplitz convolutive kernel
-- [ ] **Branch B** — stationarity fails smoothly → state-space model
+- [x] **Branch B** — stationarity fails → state-space model (**fully depth-indexed**, not smoothed — drift is pervasive not gradual; **first-order**, k\*≈1)
 - [ ] **Branch C** — clean phase transition → one kernel per segment (boundaries: _____)
 
-Date: _____ · Memo: `runs/gate2/memo.md`
-- [ ] `runs/gate2/figures/` (stationarity comparison, k\* curves, cross-class confusion, cross-model table)
-- [ ] `runs/gate2/phase3_architecture.md` (one-paragraph exact decomposition spec)
+Date: **2026-06-22** · Memo: `runs/gate2/memo.md` (architecture-locking; Q3–5 are scope/generality cross-checks that cannot flip the Step-1 branch)
+- [x] `runs/gate2/figures/` (stationarity cross-band/bootstrap/angles, k\* curves; cross-class & cross-model N/A — Steps 4–5 outstanding)
+- [x] `runs/gate2/phase3_architecture.md` (one-paragraph exact decomposition spec)
 
 ---
 

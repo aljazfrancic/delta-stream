@@ -16,6 +16,15 @@ data/*
 !data/.gitkeep
 runs/*
 !runs/.gitkeep
+# Track gate/run decision records (the written memos + the Phase 3 architecture spec,
+# which Phase 3 Step 1 reads) while keeping the regenerable bulk (figures, tables,
+# logs, config/meta, .h5/.parquet) ignored. Git needs each dir un-ignored before a
+# file inside it can be re-included, so: allow subdirs, re-ignore their contents,
+# then allow only the decision-record files.
+!runs/*/
+runs/*/*
+!runs/*/memo.md
+!runs/*/phase3_architecture.md
 figures/*
 !figures/.gitkeep
 

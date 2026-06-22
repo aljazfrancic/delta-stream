@@ -7,7 +7,7 @@ zero-prediction (R² generally < 0), mean-prediction (R² = 0 by construction),
 and the identity transparency baseline (v̂_{ℓ+1} = v_ℓ, R² ≈ 1). The Tuned-Lens
 gate baseline is added separately (part B).
 
-    python scripts/step3_ridge.py --config configs/pythia-410m.yaml --desc ph1-step3-410m
+    python scripts/step3_ridge.py --config configs/pythia-410m-deduped.yaml --desc ph1-step3-410m
 
 Outputs: tables/ridge_r2.csv, figures/r2_heatmap.png, figures/r2_by_layer.png,
 tables/step3_stats.json (incl. layer-averaged best-rank ridge R² — the quantity
@@ -97,9 +97,10 @@ def main(argv: list[str] | None = None) -> int:
             "tuned_lens_layer_avg_r2": layer_avg_tl,
             "ridge_beats_tuned_lens": layer_avg_best > layer_avg_tl,
         }
+        beats = gate["ridge_beats_tuned_lens"]
         run.log(f"GATE: ridge R²={layer_avg_best:.4f} vs TL R²={layer_avg_tl:.4f} "
-                f"-> ridge {'BEATS' if gate['ridge_beats_tuned_lens'] else 'DOES NOT BEAT'} "
-                f"TL (Step 5 AR test {'proceeds' if gate['ridge_beats_tuned_lens'] else 'skipped'})")
+                f"-> ridge {'BEATS' if beats else 'DOES NOT BEAT'} "
+                f"TL (Step 5 AR test {'proceeds' if beats else 'skipped'})")
 
     df.to_csv(run.path("tables/ridge_r2.csv"), index=False)
     stats = {

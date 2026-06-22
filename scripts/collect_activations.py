@@ -9,7 +9,8 @@ Reads ``filtered_triples.parquet``, runs the primary model, and stores
     relation_class[N]            str
     relation[N]                  str
 
-    python scripts/collect_activations.py --config configs/pythia-410m.yaml --desc ph1-collect-410m
+    python scripts/collect_activations.py --config configs/pythia-410m-deduped.yaml \
+        --desc ph1-collect-410m
 
 Sanity check (Step 2): for 5 random examples, ln_final + unembed of v_L must
 recover the model's top-1 token (matches the parquet's top1_token).

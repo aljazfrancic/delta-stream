@@ -7,7 +7,8 @@ the object's first token AND top-1 probability exceeds the threshold. Survivors
 are stratified by ``relation_class`` (classes below the floor are dropped and
 recorded) and written to ``filtered_triples.parquet``.
 
-    python scripts/build_dataset.py --config configs/pythia-410m.yaml --desc ph1-dataset-410m
+    python scripts/build_dataset.py --config configs/pythia-410m-deduped.yaml \
+        --desc ph1-dataset-410m
 
 Outputs (under the run dir, plus the parquet mirrored into data/<model>/):
     filtered_triples.parquet   subject, relation, object, prompt, top1_token,
@@ -32,7 +33,7 @@ from layer_dynamics.modeling import load_model
 from layer_dynamics.runlog import init_run
 
 
-def score_candidates(run, mcfg, dcfg, fcfg) -> "pd.DataFrame":
+def score_candidates(run, mcfg, dcfg, fcfg) -> pd.DataFrame:
     """Run the model over all candidate prompts and tag top-1 + correctness."""
     candidates = load_sources(list(dcfg["sources"]))
     run.log(f"loaded {len(candidates)} candidate triples from {dcfg['sources']}")
@@ -73,8 +74,12 @@ def main(argv: list[str] | None = None) -> int:
 
     # 1-3. Score candidates, or reuse the cache. Scoring (the model run) is the
     # only expensive step; threshold/floor are applied below, so cached scores
-    # make re-filtering at a new threshold near-instant.
-    scored_path = Path("data") / mcfg["name"] / "scored_candidates.parquet"
+    # make re-filtering at a new threshold near-instant. The cache is keyed on the
+    # source set (encoded in the filename) so changing `dataset.sources` does not
+    # silently reuse scores for a different candidate pool.
+    sources = list(dcfg["sources"])
+    sources_tag = "-".join(sorted(sources))
+    scored_path = Path("data") / mcfg["name"] / f"scored_candidates_{sources_tag}.parquet"
     if scored_path.exists() and not args.rescore:
         candidates = pd.read_parquet(scored_path)
         run.log(f"reusing {len(candidates)} cached scored candidates from {scored_path} "

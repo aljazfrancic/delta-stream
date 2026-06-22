@@ -126,7 +126,7 @@ class RunContext:
 
     def log(self, message: str) -> None:
         """Append a timestamped line to ``run.log`` and echo to stderr."""
-        stamp = _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds")
+        stamp = _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds")
         line = f"{stamp}  {message}"
         with (self.dir / "run.log").open("a", encoding="utf-8") as fh:
             fh.write(line + "\n")
@@ -195,7 +195,7 @@ def init_run(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     meta: dict[str, Any] = {
-        "created_utc": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
+        "created_utc": _dt.datetime.now(_dt.UTC).isoformat(timespec="seconds"),
         "seed": seed,
         "deterministic": deterministic,
         "git": git_info(repo),

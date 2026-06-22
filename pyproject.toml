@@ -63,6 +63,9 @@ src = ["src", "scripts", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+# Compound one-liners (semicolons) are used deliberately in the matplotlib
+# plotting helpers to keep figure code compact; allow them.
+ignore = ["E702"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

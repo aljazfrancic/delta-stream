@@ -102,6 +102,37 @@ def reconstruction_r2(sae: TopKSAE, x: np.ndarray) -> float:
     return 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
 
 
+def build_sources(
+    rs: np.ndarray,
+    repo: str = DEFAULT_SAE_REPO,
+    *,
+    cache_dir: str | Path | None = None,
+    relu: bool = True,
+) -> np.ndarray:
+    """SAE-initialised Branch B inputs ``u[N, L, M]`` from residual states ``rs[N, L+1, D]``.
+
+    Each source state ``v_{ℓ'}`` (``ℓ' = 0 … L-1``) is encoded by its matched SAE
+    (:func:`source_hookpoint`). ``v_0`` has no embedding SAE in the suite, so ``u_0``
+    is left at **zero** (a free LASSO variable downstream) rather than encoded with the
+    garbage proxy. All layers share the suite's width ``M`` (Branch B permits per-layer
+    ``M_ℓ``, but a uniform width is simplest for the debug pass).
+    """
+    n, n_states, _ = rs.shape
+    n_layers = n_states - 1
+    u: np.ndarray | None = None
+    for ellp in range(n_layers):
+        hookpoint, matched = source_hookpoint(ellp, n_layers)
+        if not matched:
+            continue  # v_0: leave zero-initialised
+        sae = load_sae(repo, hookpoint, cache_dir=cache_dir)
+        if u is None:
+            u = np.zeros((n, n_layers, sae.n_latents), dtype=np.float32)
+        u[:, ellp] = encode(sae, rs[:, ellp], relu=relu)
+    if u is None:
+        raise ValueError("no matched SAE found for any source layer")
+    return u
+
+
 def source_hookpoint(source_layer: int, n_layers: int) -> tuple[str, bool]:
     """SAE hookpoint matching source state ``v_{ℓ'}`` → ``(hookpoint, matched)``.
 

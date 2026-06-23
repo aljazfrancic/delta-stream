@@ -123,6 +123,22 @@ class LowRankSSM(nn.Module):
             total = total + (g1 * g2).sum()
         return total
 
+    def operator_norms(self) -> dict[str, float]:
+        """Per-family stacked Frobenius norms ``√(Σ_ℓ ‖·_ℓ‖_F²)`` for ``A,B,C,D``.
+
+        Logging-only (no graph): the Gate-3 collapse check (Phase 3 Step 4 #1) watches
+        these alongside ``‖b‖`` — a large bias paired with vanishing operator norms is
+        the tell for the degenerate "biases absorb the per-layer mean" solution.
+        """
+        out: dict[str, float] = {}
+        with torch.no_grad():
+            for name, (f1, f2) in {"A": (self.A1, self.A2), "B": (self.B1, self.B2),
+                                   "C": (self.C1, self.C2), "D": (self.D1, self.D2)}.items():
+                g1 = f1.transpose(-1, -2) @ f1
+                g2 = f2.transpose(-1, -2) @ f2
+                out[name] = float((g1 * g2).sum().clamp_min(0.0).sqrt())
+        return out
+
 
 def ssm_loss(
     model: LowRankSSM,

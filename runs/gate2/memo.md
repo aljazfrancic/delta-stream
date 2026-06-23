@@ -62,12 +62,34 @@ add a **median +0.018 R² (max +0.05)**. The scrambled null collapses the whole 
   Operationally it means a **first-order** state-space model (Markov in the depth
   latent) is the right order for Phase 3.
 
-**3. Is the AR structure token-position-invariant, or query-specific? — NOT YET
-TESTED.** (Step 3) Requires re-collecting residual-stream trajectories at ~3 extra
-token positions (~4 GB) and refitting the AR(k\*) kernel per position. Outstanding.
-This question gates the *scope* of the claim (depth-intrinsic vs context-aggregated
-factual recall at the query token) — it **cannot flip the architecture choice**,
-which the plan's decision matrix derives from Step 1 alone.
+**3. Is the AR structure token-position-invariant, or query-specific? —
+QUERY-POSITION-SPECIFIC (decisively).** (Step 3, `runs/2026-06-23-ph2-step3-410md/`)
+Residual-stream trajectories were re-collected at four token positions per example —
+first subject token, last subject token, a mid-prompt non-subject token, and the
+Phase 1 final prompt token (final-position activations match the Phase 1 store
+exactly, max|Δ|=0) — and the AR(k\*=1, r=256) kernel was refit at each and compared
+with the Step-1 diagnostics. Dataset splits into **1,523 multi-token-subject** (4×4
+confusion) and **32 single-token-subject** (3×3) examples.
+- **Cross-position prediction:** within-position held-out R² is positive (subj_first
+  0.52 / subj_last 0.28 / mid 0.47 / final 0.55) but **every** off-diagonal is
+  **negative** (mean cross-position R² −0.36; e.g. subj_first→final −1.18) — a kernel
+  fit at one position is worse than the per-depth mean at another. Worst retention
+  −2.9.
+- **Frobenius / angles:** between-position kernel distance ≈ **1.25–1.46** (≈ √2),
+  mean output-subspace angles **57–60°** — the same "no transfer" signature as the
+  Step-1 cross-band test, now across token position.
+- **Scrambled null** collapses the within-position fits to ≈0 (multi −0.001), so the
+  diagonal is real example-specific structure, not the lag-1 ∓v_ℓ tautology — and the
+  tautology, being shared by diagonal and off-diagonal alike, cancels in the retention
+  ratio that drives the verdict. The single-token subset (n=32, small) agrees
+  qualitatively (within 0.23, off-diagonal mostly negative).
+
+**Implication (scope, not architecture).** The Phase 1/2 dynamics are **specific to
+the query position** where context aggregation concentrates; they are *not* a
+position-invariant property of the depth update. This **cannot flip the architecture
+choice** (the plan derives it from Step 1 alone), but it **narrows the paper's
+framing** to *context-aggregated factual recall at the query position* — Phase 3 fits
+the SSM on query-position trajectories and Phase 4 must state this scope explicitly.
 
 **4. Is the structure circuit-general or circuit-specific? — BLOCKED on dataset
 scale.** (Step 4) The per-class cross-relation test needs ≥ 1,000 examples in each of
@@ -115,19 +137,20 @@ CLT in Phase 4 (do not equate a reconstruction win with a parsimony win).
 ## Status, caveats, and what remains
 
 This is an **architecture-locking** Gate 2: Q1–Q2 are answered definitively and fix the
-Phase 3 branch; **Q3 (position), Q4 (cross-class), Q5 (cross-model) are outstanding**
-(feasible-later / blocked-on-data / deferred-to-cloud, respectively). Per the plan,
-those three refine the *scope and generality* of the characterisation and feed the
-paper's claims, but none can overturn the Step-1-driven architecture choice. They
-should be completed (or their absence stated as a limitation) before the Phase 4
-write-up.
+Phase 3 branch; **Q3 (position) is now answered — query-position-specific**, narrowing
+scope; **Q4 (cross-class), Q5 (cross-model) remain outstanding** (blocked-on-data /
+deferred-to-cloud, respectively). Per the plan, Q3–Q5 refine the *scope and generality*
+of the characterisation and feed the paper's claims, but none can overturn the
+Step-1-driven architecture choice. Q4/Q5 should be completed (or their absence stated as
+a limitation) before the Phase 4 write-up.
 
 Carried-forward caveats: (1) k capped → short-horizon stationarity only; the MA-form
 recheck is Phase 3 Step 4. (2) AR-on-Δ stationarity is a proxy, not a logical
 equivalent of H2's MA/generative stationarity. (3) the ±v_ℓ shared term biases the
 kernel comparison *toward* stationarity, so rejecting it is the conservative direction;
-it also dominates the k\*≈1 read. (4) single token position (final prompt token) —
-Step 3 tests this. (5) dataset below the ≥1000/class target — Step 4.
+it also dominates the k\*≈1 read. (4) the dynamics are **query-position-specific**
+(Step 3) — Phase 3/4 scope the claim to context-aggregated recall at the query token.
+(5) dataset below the ≥1000/class target — Step 4.
 
 ## Reproduce
 
@@ -138,6 +161,10 @@ scripts/step1_stationarity.py --config configs/pythia-410m-deduped.yaml --desc p
 scripts/step2_kstar.py        --config configs/pythia-410m-deduped.yaml --desc ph2-step2-410md \
     --step1-stats runs/2026-06-22-ph2-step1-410md/tables/step1_stats.json \
     --granger-csv runs/2026-06-22-ph1-step5-410md/tables/granger_real.csv
+scripts/collect_multipos.py   --config configs/pythia-410m-deduped.yaml --desc ph2-step3-collect-410md
+scripts/step3_tokenpos.py     --config configs/pythia-410m-deduped.yaml --desc ph2-step3-410md \
+    --step1-stats runs/2026-06-22-ph2-step1-410md/tables/step1_stats.json \
+    --step2-stats runs/2026-06-22-ph2-step2-410md/tables/step2_stats.json
 ```
 
 Figures in `figures/`; all numerics in the two run directories' `tables/`.

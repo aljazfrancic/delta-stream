@@ -127,6 +127,61 @@ def collect_trajectories_from_ids(
     return out
 
 
+def collect_trajectories_at_positions(
+    model,
+    prompts: list[str],
+    abs_positions: np.ndarray,
+    *,
+    batch_size: int = 8,
+    progress: bool = True,
+) -> np.ndarray:
+    """Collect ``[N, P, L+1, D]`` residual trajectories at ``P`` token positions each.
+
+    ``abs_positions`` is ``[N, P]`` of **absolute** token indices (BOS at 0, content
+    at 1..n) — the indices the token-position probe (Phase 2 Step 3) resolves. One
+    forward pass per batch reads all ``P`` positions, so adding positions does not
+    multiply compute. Right-padding is safe: every read index is ≤ that row's final
+    real token, which under causal attention depends only on real tokens.
+
+    Out-of-range / placeholder indices (e.g. an invalid ``mid``) should be passed as a
+    valid in-range index (caller clamps); the caller's ``valid`` mask decides which
+    reads to trust downstream.
+    """
+    import torch
+
+    model.tokenizer.padding_side = "right"
+    n_layers = model.cfg.n_layers
+    d_model = model.cfg.d_model
+    names = resid_hook_names(n_layers)
+    nameset = set(names)
+    p = abs_positions.shape[1]
+
+    out = np.empty((len(prompts), p, n_layers + 1, d_model), dtype=np.float32)
+
+    rng = range(0, len(prompts), batch_size)
+    if progress:
+        from tqdm import tqdm
+
+        rng = tqdm(rng, desc="collecting(pos)", unit="batch")
+
+    with torch.no_grad():
+        for start in rng:
+            batch = prompts[start : start + batch_size]
+            pos = torch.as_tensor(
+                abs_positions[start : start + len(batch)], dtype=torch.long
+            )
+            tokens = model.to_tokens(batch, prepend_bos=True)
+            _, cache = model.run_with_cache(
+                tokens, names_filter=lambda n: n in nameset, return_type=None
+            )
+            rows = torch.arange(len(batch))[:, None]  # [b, 1] broadcast over P
+            for li, name in enumerate(names):
+                gathered = cache[name][rows, pos]  # [b, P, D]
+                out[start : start + len(batch), :, li, :] = gathered.float().cpu().numpy()
+
+    return out
+
+
 def recovers_top1(model, v_last: np.ndarray) -> int:
     """ln_final + unembed of a single final residual ``v_L`` -> top-1 token id.
 

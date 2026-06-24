@@ -240,6 +240,8 @@ def test_classify_phase_transition():
 
 
 def test_classify_smooth_drift():
+    # Collinear drift: early→mid→late along a path, so early↔late ≈ the sum of the
+    # adjacent gaps (triangle_ratio ≈ 1.8 ≥ 1.5) → depth-smoothing defensible.
     cross = {
         "early": {"early": 1.0, "middle": 0.8, "late": 0.5},
         "middle": {"early": 0.8, "middle": 1.0, "late": 0.8},
@@ -250,4 +252,25 @@ def test_classify_smooth_drift():
     boot = {p: {"separated": True} for p in fro}
     out = classify_stationarity(cross, fro, angles, boot)
     assert out["verdict"] == "smooth_drift"
-    assert out["phase3_branch"].startswith("B")
+    assert "depth-smoothed" in out["phase3_branch"]
+    assert out["triangle_ratio"] >= 1.5
+
+
+def test_classify_pervasive_drift():
+    # Equilateral / pervasive non-stationarity: all three band distances ≈ equal and
+    # early↔late is NOT larger than the adjacent gaps (triangle_ratio ≈ 1 < 1.5), so
+    # there is no smoothness to interpolate → fully depth-indexed. Mirrors the real
+    # 410m Step-1 geometry (between-band Frobenius all ≈ √2, boundary ratio ≈ 1).
+    cross = {
+        "early": {"early": 0.74, "middle": -1.0, "late": -0.60},
+        "middle": {"early": -0.53, "middle": 0.58, "late": -0.59},
+        "late": {"early": -1.12, "middle": -1.89, "late": 0.67},
+    }
+    fro = {"early-middle": 1.387, "middle-late": 1.423, "early-late": 1.424}
+    angles = {p: _angles(60.0) for p in fro}
+    boot = {p: {"separated": True} for p in fro}
+    out = classify_stationarity(cross, fro, angles, boot)
+    assert out["verdict"] == "pervasive_drift"
+    assert "fully depth-indexed" in out["phase3_branch"]
+    assert out["triangle_ratio"] < 1.5
+    assert out["segment_boundary"] is None

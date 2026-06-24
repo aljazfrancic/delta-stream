@@ -239,22 +239,36 @@ def classify_stationarity(
     *,
     retention_tol: float = 0.10,
     angle_tol_deg: float = 30.0,
+    collinearity_thresh: float = 1.5,
 ) -> dict:
     """Apply the plan's decision matrix to the four diagnostics.
 
-    Returns a verdict in {``stationary``, ``smooth_drift``, ``phase_transition``}
-    with the supporting numbers. The tolerances are **reporting aids for the memo,
-    not pre-registered cutoffs** (mirroring Step 4's regime thresholds): the full
-    architecture branch is locked at Gate 2 after Steps 2–5, with this step the
-    primary determinant.
+    Returns a verdict in {``stationary``, ``smooth_drift``, ``pervasive_drift``,
+    ``phase_transition``} with the supporting numbers. The tolerances are **reporting
+    aids for the memo, not pre-registered cutoffs** (mirroring Step 4's regime
+    thresholds): the full architecture branch is locked at Gate 2 after Steps 2–5,
+    with this step the primary determinant.
 
-    - **stationary** — every off-diagonal cross-band R² keeps ≥ (1−tol) of the
-      within-band fit, the mean output-subspace principal angle is ≤ ``angle_tol``
-      for all pairs, and no between-band distance is bootstrap-separated.
-    - **phase_transition** — bands differ, and the difference is concentrated at one
-      boundary (one adjacent gap dominates the other); the boundary is reported.
-    - **smooth_drift** — bands differ but progress monotonically with depth (the two
-      adjacent gaps are comparable and the early↔late gap is the largest).
+    - **stationary** (→ Branch A) — every off-diagonal cross-band R² keeps ≥ (1−tol)
+      of the within-band fit, the mean output-subspace principal angle is ≤
+      ``angle_tol`` for all pairs, and no between-band distance is bootstrap-separated.
+    - **phase_transition** (→ Branch C) — bands differ, and the difference is
+      concentrated at one boundary (one adjacent gap dominates the other, ratio
+      ≥ 2); the boundary is reported.
+    - **smooth_drift** (→ Branch B, depth-smoothed) — bands differ but drift
+      *collinearly* with depth: the two adjacent gaps are comparable **and** the
+      early↔late gap is roughly their sum (``triangle_ratio`` ≥ ``collinearity_thresh``),
+      i.e. early→middle→late lie along a path. Slowly-varying / interpolated control
+      depths are defensible here.
+    - **pervasive_drift** (→ Branch B, fully depth-indexed) — bands differ
+      *equidistantly*: all three pairwise distances are comparable and the early↔late
+      gap is **not** larger than the adjacent gaps (``triangle_ratio`` <
+      ``collinearity_thresh``), i.e. the band kernels form a near-equilateral triangle.
+      Adjacent bands are about as different as distant ones, so there is no smoothness
+      for interpolation to exploit — free per-layer operators are required. This is the
+      410m Step-1 outcome ("pervasive, not gradual"); it is a *sub-case* of the plan's
+      smoothly-varying Branch B, distinguished here so the verdict matches the
+      architecture lock instead of mislabelling the geometry as smooth.
     """
     pairs = [("early", "middle"), ("middle", "late"), ("early", "late")]
 
@@ -276,11 +290,17 @@ def classify_stationarity(
         and not any_separated
     )
 
-    # Only the two adjacent gaps decide drift-vs-transition; early↔late is reported
-    # in ``between_fro`` for the memo but not needed here.
+    # The two adjacent gaps decide drift-vs-transition (one dominating → a boundary).
     d_em, d_ml = between_fro["early-middle"], between_fro["middle-late"]
     adj_lo, adj_hi = sorted((d_em, d_ml))
     boundary_ratio = adj_hi / adj_lo if adj_lo > 0 else np.inf
+
+    # Within "drift" (no dominant boundary), the early↔late distance separates
+    # *collinear* drift (early→mid→late along a path → early↔late ≈ sum of adjacent
+    # gaps → ratio ≈ 2) from *equidistant* / pervasive non-stationarity (near-
+    # equilateral band triangle → early↔late ≈ the adjacent gaps → ratio ≈ 1).
+    d_el = between_fro["early-late"]
+    triangle_ratio = d_el / adj_hi if adj_hi > 0 else np.inf
 
     if stationary:
         verdict, branch = "stationary", "A (block-Toeplitz convolutive kernel)"
@@ -288,8 +308,11 @@ def classify_stationarity(
     elif boundary_ratio >= 2.0:
         verdict, branch = "phase_transition", "C (one kernel per segment)"
         boundary = "early|middle" if d_em > d_ml else "middle|late"
+    elif triangle_ratio >= collinearity_thresh:
+        verdict, branch = "smooth_drift", "B (state-space / depth-smoothed kernel)"
+        boundary = None
     else:
-        verdict, branch = "smooth_drift", "B (state-space / depth-indexed kernel)"
+        verdict, branch = "pervasive_drift", "B (state-space / fully depth-indexed kernel)"
         boundary = None
 
     return {
@@ -301,6 +324,11 @@ def classify_stationarity(
         "max_output_angle_deg": float(max_angle),
         "any_bootstrap_separated": bool(any_separated),
         "boundary_ratio": float(boundary_ratio),
+        "triangle_ratio": float(triangle_ratio),
         "between_frobenius": between_fro,
-        "tolerances": {"retention_tol": retention_tol, "angle_tol_deg": angle_tol_deg},
+        "tolerances": {
+            "retention_tol": retention_tol,
+            "angle_tol_deg": angle_tol_deg,
+            "collinearity_thresh": collinearity_thresh,
+        },
     }

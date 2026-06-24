@@ -6,8 +6,8 @@ depth bands (same form as Phase 1 Step 5, restricted to the band's target depths
 against a **shared input PCA basis** so the kernels are comparable) and compares the
 three with the plan's four diagnostics — per-lag & stacked Frobenius distance,
 principal angles, the 3×3 cross-band prediction confusion, and a within-band
-bootstrap — then applies the decision matrix (stationary / smooth drift / phase
-transition → Phase 3 Branch A / B / C).
+bootstrap — then applies the decision matrix (stationary → A / smooth-drift →
+depth-smoothed B / pervasive-drift → fully-depth-indexed B / phase-transition → C).
 
 ``k`` is selected from the Phase 1 Step 5 Granger profile under the early-band
 feasibility cap ⌊L/3⌋−3; ``r`` is the Step 3 ridge saturation rank (median across

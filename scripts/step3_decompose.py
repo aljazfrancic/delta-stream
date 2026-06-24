@@ -41,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
     add_common_args(parser)
     parser.add_argument("--sae-repo", type=str, default=DEFAULT_SAE_REPO)
     parser.add_argument("--sae-cache", type=Path, default=None)
+    parser.add_argument("--sources-npz", type=Path, default=None,
+                        help="Load cached compressed sources (410m mlsae) instead of "
+                             "building from --sae-repo (see scripts/build_410m_sources.py).")
     parser.add_argument("--device", type=str, default=None,
                         help="Override the config device (cpu | cuda | auto).")
     parser.add_argument("--rank", type=int, default=32, help="Low-rank r for A/B/C/D.")
@@ -69,8 +72,14 @@ def main(argv: list[str] | None = None) -> int:
     delta = deltas(rs)  # [N, L, D]
     n, n_layers, d_model = delta.shape
     run.log(f"loaded {h5}: residual_stream {rs.shape} -> Δ {delta.shape}")
-    run.log(f"building SAE sources from {args.sae_repo} ...")
-    u = build_sources(rs, args.sae_repo, cache_dir=args.sae_cache)  # [N, L, M]
+    if args.sources_npz:
+        from layer_dynamics.saes_mlsae import load_cached_u
+
+        u = load_cached_u(args.sources_npz)  # [N, L, M*] compressed mlsae sources
+        run.log(f"loaded cached compressed sources {u.shape} from {args.sources_npz}")
+    else:
+        run.log(f"building SAE sources from {args.sae_repo} ...")
+        u = build_sources(rs, args.sae_repo, cache_dir=args.sae_cache)  # [N, L, M]
     d_input = u.shape[2]
     sae_l0 = float((u != 0).mean())
     run.log(f"sources u {u.shape}  M={d_input}  init L0={sae_l0:.4f} "

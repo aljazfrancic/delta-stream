@@ -5,7 +5,7 @@ The phase docs under [docs/implementation-plan/](docs/implementation-plan/README
 
 **Legend:** `[ ]` todo · `[~] ` in progress · `[x]` done · `[-]` skipped / N-A · `[!]` blocked
 
-**Current focus:** _Phase 3 — Branch B SSM. Milestones 1–4 done (SAE sources verified; low-rank SSM model + loss; alternating optimiser debugged on 70m R²=0.858; **Step-4 sanity checks all pass on 70m: no collapse, eyeball R²≈1.0, feature purity 0.93, seed stability 0.99 ≫ 0.7 gate, dataset Jaccard 0.89**). Next: Gate-3 Pareto vs per-layer SAE baseline (and the 410m-source decision)._
+**Current focus:** _Phase 3 — Branch B SSM. Milestones 1–4 done + **Gate-3 Pareto run (70m debug lane): GO**. SSM held-out reconstruction sits on/above the matched per-layer baseline at every sparsity (R² gap +0.008→+0.018), seed stability 0.99 ≫ 0.7 → go criterion MET. **Caveat: small margin** (|C|≈14 vs |D|≈170 — the cross-layer state is a minor term on 6 layers), so this is a **method-validating Go on the debug model**. Next (the real test): **410m primary lane, blocked on the SAE-source decision** (train per-layer residual SAEs on 410m-deduped vs cheaper sparse-init)._
 **Start date:** 2026-06-20
 
 ---
@@ -16,7 +16,7 @@ The phase docs under [docs/implementation-plan/](docs/implementation-plan/README
 |---|---|---|---|
 | 1 · Diagnostic | [phase-1](docs/implementation-plan/phase-1-diagnostic.md) | **Gate 1** — is H1 supported above null? | `[x]` **PASS** |
 | 2 · Characterization | [phase-2](docs/implementation-plan/phase-2-characterization.md) | **Gate 2** — does H2 (stationarity) hold? → picks Phase 3 branch | `[~]` **H2 NO → Branch B** (S1–3 done; S4–5 blocked/deferred) |
-| 3 · Decomposition | [phase-3](docs/implementation-plan/phase-3-decomposition.md) | **Gate 3** — reconstruction competitive with baselines? | `[ ]` |
+| 3 · Decomposition | [phase-3](docs/implementation-plan/phase-3-decomposition.md) | **Gate 3** — reconstruction competitive with baselines? | `[~]` **GO (70m debug)** — SSM on/above per-layer baseline Pareto + seed-stable 0.99; 410m primary pending SAE sources |
 | 4 · Evaluation | [phase-4](docs/implementation-plan/phase-4-evaluation.md) | — deliverable: paper + code | `[ ]` |
 
 **Phase 3 architecture branch (locked at Gate 2):** **B — state-space (fully depth-indexed, first-order)** `[x]` · `[ ]` A stationary convolutive · `[ ]` C segmented — see `runs/gate2/phase3_architecture.md`
@@ -109,20 +109,22 @@ Date: **2026-06-22** · Memo: `runs/gate2/memo.md` (architecture-locking; Q3–5
   - [x] 4 · seed stability (3 seeds) — **match-rate@0.7 = 0.99** (mean cos 0.92; all 3 seeds → train R²≈0.876) **≫ 0.7 Gate-3 threshold**. *Metric note:* dictionary is the **fixed pretrained SAE**, so features are the same atoms across re-fits → identity-matched decoder-direction (`D_ℓ[:,j]`) cosine, the fixed-dictionary specialisation of the plan's "max cosine" (no permutation to search; a 32k-direction max-cosine search in 512-d would match spuriously).
   - [x] 5 · dataset stability (disjoint halves) — **top-100 Jaccard 0.89** (94/100 shared), shared-dir match@0.7 0.84 (mean cos 0.83)
   - [-] 6 · MA-stationarity recheck — **N/A (Branch A only)**
-- [ ] **Step 5** — [Gate 3 decision](docs/implementation-plan/phase-3-decomposition.md#step-5--gate-3-decision) memo
+- [x] **Step 5** — [Gate 3 decision](docs/implementation-plan/phase-3-decomposition.md#step-5--gate-3-decision) memo (`runs/gate3/memo.md`) — **GO on the 70m debug lane** (method-validating; 410m primary pending SAE sources). Pareto: `scripts/gate3_pareto.py`, run `runs/2026-06-24-ph3-gate3-70md/`.
 
 ### ◆ Gate 3 — decision record
 **Go criterion:** reconstruction on/above per-layer SAE Pareto at comparable sparsity **and** seed stability ≥ 0.7 (top-100 feature match).
 
 Tick one:
-- [ ] **Go → Phase 4**
+- [x] **Go → Phase 4** — **(70m debug lane)** SSM held-out R² on/above the matched per-layer baseline at every L0 (gap +0.008→+0.018), seed stability 0.99 ≫ 0.7. **Caveat:** small margin (cross-layer state |C|≈14 vs feedthrough |D|≈170 on 6 layers) → Go certifies the **method**; the scientific test is the 24-layer **410m primary**, blocked on the SAE-source decision.
 - [ ] **No-go — under-expressive** → one round of retune (rank↑ / longer kernel / Branch C), then re-decide
 - [ ] **No-go — unstable** → stronger regularisation / dictionary-alignment, record as limitation
 - [ ] **No-go — both fail** → pivot: write up Phase 1+2 characterisation, decomposition becomes future-work
 
-Recon R² (avg over layers): _____ · seed stability: _____ · Date: _____ · Memo: `runs/gate3/memo.md`
-- [ ] `runs/gate3/figures/` (Pareto vs baselines, reconstruction plots, seed-stability matrices)
-- [ ] `runs/gate3/checkpoints/` (trained decomposition, ready for Phase 4 ablation)
+Recon R² (avg over layers): **test R² 0.82–0.86** across λ_L1∈{10…0.1} (knee λ≈0.3–1 → R²≈0.86 @ L0≈0.002–0.005) · seed stability: **match-rate@0.7 = 0.99** · Date: **2026-06-25** · Memo: `runs/gate3/memo.md`
+- [x] `runs/gate3/figures/` (Pareto vs per-layer baseline `pareto.png`; reconstruction eyeball `reconstruction.png`)
+- [-] `runs/gate3/checkpoints/` — debug fits cheap to regenerate (~5 min/fit); populated by the 410m primary fit
+
+> **Gate-3 scope.** This is a **debug-lane** Go: it validates the Branch-B decomposition method end-to-end on 70m. It does **not** yet establish that cross-layer propagation beats per-layer SAEs *materially* — the +0.008…+0.018 R² gap is small on 6 layers. The 410m primary run (24 layers, where the state has room to matter) + the full Phase-4 baseline suite (crosscoder/CLT) is where the scientific claim is decided. **Remaining blocker: 410m has no public per-layer residual SAE → train minimal per-layer SAEs (plan-sanctioned) or sparse-init substitute.**
 
 ---
 
@@ -165,6 +167,7 @@ Recon R² (avg over layers): _____ · seed stability: _____ · Date: _____ · Me
 
 | Date | Note |
 |---|---|
+| 2026-06-25 | **Phase 3 Step 5 — Gate-3 reconstruction-vs-sparsity Pareto** (`scripts/gate3_pareto.py`; `LowRankSSM.use_state` flag added for the no-state baseline). λ_L1 sweep {0.1,0.3,1,3,10} on 70m-deduped (r=32, 10 outer), each point a full fit + held-out inference (operators frozen), GPU freed between fits. **Baseline = the matched per-layer sparse dictionary** (same model with the cross-layer state ablated: `Δ_ℓ≈b_ℓ+D_ℓu_ℓ`), so the SSM−baseline gap isolates exactly the value of cross-layer propagation (`C_ℓz_ℓ`). **Result: SSM on/above baseline at every L0** (held-out R² gap **+0.008→+0.018**, widening toward higher sparsity); knee λ≈0.3–1 → test R²≈0.86 @ L0≈0.002–0.005. Combined with Step-4 **seed stability 0.99** → **Gate-3 go criterion MET → GO (70m debug lane)**. **Honest caveat: small margin** (|C|≈14 vs |D|≈170 — state is a minor term on 6 layers, consistent with k\*≈1 + ±v_ℓ tautology) → Go validates the **method**; the scientific test is the 24-layer **410m primary**, blocked on the SAE-source decision (no public 410m residual SAE → train minimal per-layer SAEs or sparse-init substitute). 1 new test (`use_state` forward); ruff clean. Memo `runs/gate3/memo.md`; run `runs/2026-06-24-ph3-gate3-70md/`. |
 | 2026-06-20 | Tracker created. |
 | 2026-06-20 | Phase 1 Step 0 done — `pyproject.toml` (pinned), `src/layer_dynamics/` skeleton, run-logging backbone (config + git commit + seed → `runs/<date>-<desc>/`). Smoke run + 6 unit tests green on a bare env. |
 | 2026-06-20 | Retargeted to dev box (GTX 1050 / 3 GB / Pascal sm_61). uv + Python 3.12 venv; torch 2.5.1+cu124 (GPU verified), transformers `<5`. **Pythia-410m stays primary** (fits in fp32, peak ~2 GB @ batch 4); **Pythia-70m** added as fast dev lane; collection path + Step 2 sanity check (ln_final+unembed of v_L) verified on both. Gemma/Llama cross-model (Ph2 S5, Ph4) deferred to cloud. |

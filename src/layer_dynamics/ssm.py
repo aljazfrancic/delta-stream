@@ -61,9 +61,15 @@ class LowRankSSM(nn.Module):
     """
 
     def __init__(self, dims: SSMDims, *, learn_z0: bool = True, init_scale: float = 0.02,
-                 seed: int = 0):
+                 seed: int = 0, use_state: bool = True):
         super().__init__()
         self.dims = dims
+        # use_state=False ablates the cross-layer state chain (A,B,C drop out of the
+        # forward), leaving Δ_ℓ ≈ b_ℓ + D_ℓ u_ℓ — the per-layer sparse-dictionary
+        # baseline for the Gate-3 Pareto (a per-layer SAE on Δ_ℓ, same optimiser/L1
+        # sweep). A,B,C remain as (inert) parameters; they never enter the graph so the
+        # recon gradient on them is zero and only the λ_reg floor touches them.
+        self.use_state = use_state
         L, D, M, dz, r = (dims.n_layers, dims.d_model, dims.d_input, dims.d_state, dims.rank)
         g = torch.Generator().manual_seed(seed)
         s = init_scale
@@ -93,6 +99,12 @@ class LowRankSSM(nn.Module):
         through the rank-``r`` factors, so no ``D×M`` matrix is formed.
         """
         L = self.dims.n_layers
+        if not self.use_state:
+            # No-state baseline: Δ_ℓ = b_ℓ + (u D2)D1ᵀ per layer, no state chain.
+            return torch.stack(
+                [self.b[ell] + (u[:, ell] @ self.D2[ell]) @ self.D1[ell].T for ell in range(L)],
+                dim=1,
+            )
         z = self._z0(u.shape[0])  # z_0  [batch, dz]
         out = []
         for ell in range(L):

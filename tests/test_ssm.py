@@ -55,6 +55,25 @@ def test_zero_operators_predict_bias_only():
     assert torch.allclose(pred, expected)
 
 
+def test_no_state_forward_drops_cross_layer_term():
+    """use_state=False → Δ_ℓ = b_ℓ + D_ℓ u_ℓ (the Gate-3 per-layer baseline), independent
+    of z₀ and of A,B,C; it must equal the full forward with C zeroed out."""
+    d = _dims()
+    m = LowRankSSM(d, seed=4, init_scale=0.4, use_state=False)
+    u = torch.randn(7, d.n_layers, d.d_input)
+    expected = torch.stack(
+        [m.b[ell] + u[:, ell] @ (m.D1[ell] @ m.D2[ell].T).T for ell in range(d.n_layers)],
+        dim=1,
+    )
+    assert torch.allclose(m(u), expected, atol=1e-5)
+    # each layer's prediction depends only on that layer's input (no depth coupling)
+    u2 = u.clone()
+    u2[:, 0] += 5.0
+    out, out2 = m(u), m(u2)
+    assert torch.allclose(out[:, 1:], out2[:, 1:], atol=1e-5)
+    assert not torch.allclose(out[:, 0], out2[:, 0])
+
+
 def test_operator_fro2_matches_materialised():
     d = _dims()
     m = LowRankSSM(d, seed=3, init_scale=0.3)

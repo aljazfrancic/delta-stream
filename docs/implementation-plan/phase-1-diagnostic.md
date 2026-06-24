@@ -136,4 +136,3 @@ Route based on the answers:
 - `runs/gate1/memo.md`
 - `runs/gate1/figures/` — the $`R^2`$ heatmaps, CCA heatmaps, Granger profiles, null comparisons.
 - `runs/gate1/tables/` — CSV of all numerical results.
-- Share with mentors before committing to the Phase 2 plan.

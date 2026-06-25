@@ -125,6 +125,57 @@ Recon R²: **SSM test 0.70–0.87** vs baseline 0.65–0.82 across λ_L1∈{0.3�
 
 > **Gate-3 outcome.** The **24-layer 410m primary** establishes the scientific claim the 70m debug lane could not: structured cross-layer propagation reconstructs Δ **materially** better than independent per-layer SAEs (gap 3–6× the shallow-model gap, seed-robust). The wrinkle that only appears at depth is a **structural seed-instability of the learned decoder directions** (state/feedthrough trade-off; unfixed by stronger reg) — recorded as a limitation per the plan, scoped out of the headline claim, and handled in Phase 4 by filtering causal candidates to the seed-stable subset. Branch B is larger than a stationary kernel by design (H2 failed) → a reconstruction-at-matched-sparsity win, **not** a parsimony win (report param counts vs CLT in Phase 4).
 
+### ◆ Gate-3 limitation — seed-stability remediation (candidate fixes, to try one-by-one)
+
+The recorded limitation (decoder-direction match@0.7 = **0.45 < 0.7**, unmoved by 100× λ_reg) is a
+gauge/equivalent-minima degeneracy: many distinct operator sets give the **same** reconstruction
+(R²=0.880 every seed), so different seeds land at different decoder directions. Reconstruction is
+gauge-invariant; the raw decoder vectors are not. It has **two distinct sources**, and each fix below
+targets one — so they are tried in order of principle, cheapest-decisive first.
+
+- **Symmetry A — similarity-transform (gauge) freedom.** `(A,B,C) → (T A T⁻¹, T B, C T⁻¹)` for any
+  invertible `T` leaves the input→output map identical and rotates `C`'s columns — but **`D` is
+  invariant under `T`**. So Symmetry A does **not** affect the *currently measured* stability metric
+  (`decoder_directions` reads `D_ℓ[:,j]`, the feedthrough — `decompose_sanity.py`); it only
+  destabilises `C`, which we do not yet score.
+- **Symmetry B — state↔feedthrough trade-off.** Part of Δ_ℓ is explainable by either `C_ℓ z_ℓ`
+  (propagated state) or `D_ℓ u_ℓ` (local feedthrough); mass shifts between them, moving `D`. **This is
+  the source of the reported 0.45** (the metric is on `D`). *It is also why the 100× λ_reg retune did
+  nothing: an isotropic penalty scales **along** the orbit, so it never breaks the symmetry — the fix
+  must be **transverse**.*
+
+**Execution order (corrected 2026-06-25):** the metric is on `D`, so lead with the **Symmetry-B**
+levers (Fix 3 → Fix 2); Fix 1 (Symmetry A) only matters if we **also** add a `C`-stability metric (the
+cross-layer-propagation operator is the scientific object, so this is worth doing alongside Fix 1).
+
+Tries (tick when run; record R²-impact + new match@0.7 next to each):
+- [ ] **Fix 3 — shrink `d_z` (capacity sweep).** *Try first — zero-code (`--d-state` already exists,
+  defaults to `--rank`).* Fewer state modes ⇒ less capacity for `D` to trade against ⇒ smaller
+  equivalent-minima valley on the feedthrough. Sweep `d_z` below 32 (`--d-state {16,8,4}`); find the
+  knee where match@0.7 climbs **before** R² drops. Risk: costs the headline reconstruction margin
+  (state is the win). Result: ____
+- [ ] **Fix 2 — transverse / asymmetric regulariser.** Replace the isotropic `λ_reg·‖ops‖_F²` with a
+  penalty whose level sets cut across the trade-off — e.g. ridge on **`C`/state only** (selects the
+  unique minimum-state-energy split, forcing `D` to take the residual deterministically) or a
+  nuclear-norm allocation preference. Kills **Symmetry B**; the correct version of the failed retune.
+  Cheap (small `ssm_loss` change). Result: ____
+- [ ] **Fix 1 — diagonalize/canonicalize the state (modal SSM form).** Constrain `A_ℓ` to diagonal
+  (S4D/S5/Mamba style), removing the continuous `T` freedom; leftover perm+scale is discrete (sort
+  eigenvalues, normalize `B` rows). Kills **Symmetry A** → stabilises `C` (not `D`). *Pair with a new
+  `C`-direction stability metric, else it won't move the reported number.* Cost: complex-eigenvalue
+  handling in the unroll. Result: ____
+- [ ] **Fix 4 — tie `C` to the fixed SAE dictionary.** Constrain decoder directions to the fixed,
+  already-stable atoms (Jaccard 0.89) — or sparse combinations of them — so the readout can't drift.
+  Kills A and B; most on-theme (uses the one stable object to pin the unstable one). Cost: constrains
+  expressivity. Result: ____
+- [ ] **Fix 5 — report gauge invariants instead (reframing, not a method fix).** Measure stability of
+  gauge-*invariant* quantities — top-k decoder **subspace**, eigenvalues of `A`, or each feature's
+  data-averaged Δ-contribution — rather than the raw vectors. May show the instability is cosmetic.
+  Result: ____
+- [ ] ~~Deterministic data-driven init alone~~ — **excluded as a standalone fix**: pins the basin so
+  every seed *looks* stable but the equal-loss valley is still there (hides, doesn't remove). Only
+  valid as a complement to Fix 1/2/4.
+
 ---
 
 ## Phase 4 — Evaluation and write-up
@@ -180,4 +231,5 @@ Recon R²: **SSM test 0.70–0.87** vs baseline 0.65–0.82 across λ_L1∈{0.3�
 | 2026-06-24 | **Phase 3 Step 3 Milestone 3 — alternating optimiser** (`src/layer_dynamics/decompose.py`, `scripts/step3_decompose.py`; `ssm.operator_norms()`). Branch B fit by alternating **full-batch Adam over operators** (inputs fixed; reg added once) with a **FISTA-with-backtracking input update** (proximal-gradient LASSO over the stacked per-example inputs, operators fixed) — proximal grad keeps the L1's *exact zeros*, which a plain Adam+L1 would not. ∇_u recon via autodiff through the SSM unroll (depth coupling handled exactly); step size by Beck–Teboulle backtracking on a shared (warm-started) Lipschitz estimate. Held-out `infer_inputs` re-infers `u` with operators frozen = honest generalisation. **Debug pass on 70m-deduped** (r=d_z=32, λ_L1=1.0, λ_reg=1e-4, 10 outer, GPU): **train R²=0.876 / test R²=0.858** (gap +0.019), **L0≈0.001** (SAE-init 0.0004), loss 6.84e6→1.24e5, **no collapse** (|D|=172 ≫ |b|=4.7). FISTA correctness unit-tested vs `sklearn.Lasso` + closed-form LS; sparsity (exact zeros) and operator-freeze tested. 10 new tests; **85 green**, ruff clean. Run: `runs/2026-06-24-ph3-decomp-70md/`. Next: Milestone 4 sanity checks (collapse/eyeball/feature-structure/seed/dataset), then Gate-3 Pareto vs per-layer SAE. |
 | 2026-06-24 | **Phase 3 Step 3 Milestone 4 — Step-4 sanity checks** (`src/layer_dynamics/diagnostics/decompose_sanity.py`, `scripts/step4_sanity.py`). All five Branch-B-applicable checks (#6 is Branch A only) run on 70m-deduped over the M3 fit (r=32, λ_L1=1.0, 10 outer; 5 fits = main + 2 seeds + 2 halves): **(1)** no collapse (‖ops‖=173 ≫ ‖b‖=4.7, L0≈0.001≠0); **(2)** reconstruction eyeball median per-example R²=1.00; **(3)** top-20 feature relation-class **purity 0.93** with clean interpretable themes (religion / language-French / geography); **(4) seed stability match-rate@0.7 = 0.99** (3 seeds, mean cos 0.92) — **clears the ≥0.7 Gate-3 bar**; **(5)** dataset stability top-100 Jaccard 0.89 (shared-dir match 0.84). **Metric note:** the fixed pretrained SAE dictionary makes features identical atoms across re-fits, so seed/dataset stability uses identity-matched decoder-direction (`D_ℓ[:,j]`) cosine — the fixed-dictionary specialisation of the plan's "max cosine of decoder directions" (no permutation to search). **Compute note:** 5 sequential fits OOM the 3 GB GTX 1050 unless GPU is freed between fits (`_free_cuda` empty_cache + `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`). 14 new tests; **99 green**, ruff clean. Run: `runs/2026-06-24-ph3-step4-70md/`. Next: Gate-3 Pareto vs per-layer SAE (+ 410m source decision). |
 | 2026-06-25 | **Phase 3 Step 5 — Gate-3 reconstruction-vs-sparsity Pareto** (`scripts/gate3_pareto.py`; `LowRankSSM.use_state` flag added for the no-state baseline). λ_L1 sweep {0.1,0.3,1,3,10} on 70m-deduped (r=32, 10 outer), each point a full fit + held-out inference (operators frozen), GPU freed between fits. **Baseline = the matched per-layer sparse dictionary** (same model with the cross-layer state ablated: `Δ_ℓ≈b_ℓ+D_ℓu_ℓ`), so the SSM−baseline gap isolates exactly the value of cross-layer propagation (`C_ℓz_ℓ`). **Result: SSM on/above baseline at every L0** (held-out R² gap **+0.008→+0.018**, widening toward higher sparsity); knee λ≈0.3–1 → test R²≈0.86 @ L0≈0.002–0.005. Combined with Step-4 **seed stability 0.99** → **Gate-3 go criterion MET → GO (70m debug lane)**. **Honest caveat: small margin** (|C|≈14 vs |D|≈170 — state is a minor term on 6 layers, consistent with k\*≈1 + ±v_ℓ tautology) → Go validates the **method**; the scientific test is the 24-layer **410m primary**, blocked on the SAE-source decision (no public 410m residual SAE → train minimal per-layer SAEs or sparse-init substitute). 1 new test (`use_state` forward); ruff clean. Memo `runs/gate3/memo.md`; run `runs/2026-06-24-ph3-gate3-70md/`. |
+| 2026-06-25 | **Seed-stability remediation plan added** (Gate-3 limitation §). Diagnosed the degeneracy as two symmetries — **A** the SSM similarity-transform gauge `(A,B,C)→(TAT⁻¹,TB,CT⁻¹)` (rotates decoder dirs), **B** the state↔feedthrough trade-off (why isotropic 100× λ_reg did nothing — must be transverse). **Key correction:** the reported match@0.7 is measured on the **feedthrough** `D_ℓ[:,j]` (`decompose_sanity.decoder_directions`), and Symmetry A leaves `D` invariant — so the diagonalize-A fix can't move the current number; the 0.45 is a **Symmetry-B** (state/feedthrough) effect. Corrected try-order: **Fix 3 first** (shrink d_z — zero-code, `--d-state` already wired), then Fix 2 (transverse/asymmetric reg, e.g. ridge-on-state-only), then Fix 1 (diagonalize A — only with a new `C`-stability metric), Fix 4 (tie C to fixed SAE dict), Fix 5 (report gauge invariants). Deterministic init excluded as standalone (hides not removes). **Next: run Fix 3 (d_z sweep).** |
 | 2026-06-25 | **Phase 3 — 410m PRIMARY lane: SAE-source blocker resolved + Gate-3 decided (GO w/ recorded limitation).** Re-audit overturned the "no 410m residual SAE" finding: a complete public per-layer **residual** suite exists from MLSAE (`tim-lawson/sae-pythia-410m-deduped-x64-k32-layers-{0..23}`, Lawson et al. 2024 — cited in the proposal; M=65536, k=32). New `src/layer_dynamics/saes_mlsae.py` (minimal loader for the mlsae convention — per-token standardize / tied bias / ReLU-after-TopK, verified vs library source; `layers-N`=v_{N+1}) + `scripts/build_410m_sources.py`. Dense `u` is ~10 GB → per-layer **alive-compression** (only 497–4433 of 65536 latents fire per layer in the narrow query-position distribution; Branch B permits per-layer M_ℓ) → M\*=4433, `u[1555,24,4433]`=662 MB cached; matched recon R² 0.598. Fit scripts take `--sources-npz` (70m path byte-identical). 8 new tests; **109 green**, ruff clean. Infra commit `b083d8a`. **Gate-3 Pareto (r=32, d_z=32, λ_L1∈{0.3…30}):** SSM held-out R² **above** the matched per-layer baseline (use_state=False) at every L0, matched-L0 gap **+0.037→+0.066** (3–6× the 70m's +0.008→+0.018), seed-**robust** (every seed → R²=0.880, identical gap; |C| grows 28→50 under sparsity) → reconstruction clause **MET with margin**; the §4.2 "cross-layer propagation is load-bearing at depth" claim holds. **Step-4 sanity:** no collapse, eyeball median R² 0.98, purity 0.83, dataset Jaccard 0.89 — **but seed-stability of decoder directions 0.45 < 0.7**. Diagnosed as **structural** (all seeds same R², different decoder directions = equivalent minima from the SSM's state/feedthrough trade-off) and **unmoved by 100× λ_reg** (1e-4→1e-2 retune, `…-step4-410md-reg2`). Plan's stronger-reg remedy exhausted; dictionary-alignment N/A (fixed SAE dictionary). **Decision (user-confirmed): GO with the seed-stability degeneracy recorded as a Branch-B limitation** — reconstruction (the central claim) is solid + seed-robust; the instability is confined to decoder-direction identifiability, not the dataset-stable feature set, so Phase 4 filters causal candidates to the seed-stable ~45% subset. Runs: `runs/2026-06-25-ph3-{gate3,step4,decomp,sources}-410md*/`. Memo `runs/gate3/memo.md`. **Next: Phase 4.** |

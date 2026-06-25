@@ -1,0 +1,46 @@
+# Cross-FAMILY replication — GPT-2-small (D=768, L=12).
+# The real generality test Gemma-2-2B / Llama-3.1-8B could not deliver on a 3 GB
+# card: a different architecture (learned positional embeddings), training data,
+# and tokenizer than Pythia. Public per-layer residual SAEs exist (Joseph Bloom's
+# res-jb suite, jbloom/GPT2-Small-SAEs-Reformatted, resid_pre, d_sae=24576) — used
+# via layer_dynamics.saes_resjb (--suite resjb). Fits fp32 easily (~0.5 GB params).
+#
+# tuned_lens omitted on purpose (Phase-1 gate baseline only; confirmatory for a
+# replication, and keeping it out keeps an unattended run robust).
+#
+# NOTE: res-jb encodes resid_pre, so v_0 (= blocks.0.hook_resid_pre) HAS an SAE —
+# unlike the mlsae lanes there is no zero-init source layer.
+
+model:
+  name: gpt2                        # transformer-lens id for GPT-2-small (124M)
+  device: auto
+  dtype: float32
+
+dataset:
+  sources: [counterfact]
+  # GPT-2-small factual-recall yield is comparable to small Pythia; keep the
+  # threshold low and the floor small so classes survive (yield reported at build).
+  top1_prob_threshold: 0.1
+  min_examples_per_relation: 150
+  target_size: 5000
+
+filtering:
+  batch_size: 64
+
+collection:
+  token_position: final_prompt
+  batch_size: 16
+  hook_points: [resid_pre_0, resid_post]   # v_0 plus v_1..v_L
+
+diagnostics:
+  ranks: [16, 32, 64, 128]
+  test_frac: 0.2
+  cca_components: 10
+  cca_shrinkage: 0.1
+  cca_null: true
+  ar_lags: [1, 2, 3, 5, 10, 15, 20]
+  ar_input_pcs: 256
+  granger_pca: 32
+  ar_null_seed: 1234
+  stationarity_n_boot: 200
+  stationarity_boot_seed: 20260622

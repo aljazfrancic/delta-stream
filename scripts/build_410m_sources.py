@@ -30,17 +30,24 @@ from layer_dynamics.cli import add_common_args, resolve_out
 from layer_dynamics.diagnostics.dataset import load_residual_stream
 from layer_dynamics.runlog import init_run
 from layer_dynamics.saes_mlsae import REPO_TEMPLATE, build_compressed_sources
+from layer_dynamics.saes_resjb import REPO as RESJB_REPO
+from layer_dynamics.saes_resjb import build_compressed_sources_resjb
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     add_common_args(parser)
+    parser.add_argument("--suite", choices=["mlsae", "resjb"], default="mlsae",
+                        help="SAE suite: 'mlsae' (Pythia TopK resid_post) or "
+                             "'resjb' (GPT-2-small L1 resid_pre).")
     parser.add_argument("--sae-template", type=str, default=REPO_TEMPLATE,
-                        help="HF repo template; '{layer}' is the block index.")
+                        help="mlsae HF repo template; '{layer}' is the block index.")
+    parser.add_argument("--sae-repo", type=str, default=RESJB_REPO,
+                        help="resjb HF repo id.")
     parser.add_argument("--sae-cache", type=Path, default=None)
     parser.add_argument("--out-npz", type=Path, default=None,
-                        help="Where to cache sources (default: data/<model>/sources_mlsae.npz).")
+                        help="Where to cache sources (default: data/<model>/sources_<suite>.npz).")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -50,10 +57,15 @@ def main(argv: list[str] | None = None) -> int:
     rs, _, _ = load_residual_stream(h5)  # [N, L+1, D]
     n, n_states, d = rs.shape
     run.log(f"loaded {h5}: residual_stream {rs.shape}; sources v_0..v_{n_states - 2}")
-    run.log(f"SAE suite: {args.sae_template}")
+    sae_source = args.sae_repo if args.suite == "resjb" else args.sae_template
+    run.log(f"SAE suite: {args.suite} ({sae_source})")
 
-    cs = build_compressed_sources(rs, template=args.sae_template,
-                                  cache_dir=args.sae_cache, log=run.log)
+    if args.suite == "resjb":
+        cs = build_compressed_sources_resjb(rs, repo=args.sae_repo,
+                                            cache_dir=args.sae_cache, log=run.log)
+    else:
+        cs = build_compressed_sources(rs, template=args.sae_template,
+                                      cache_dir=args.sae_cache, log=run.log)
     m_star = cs.u.shape[2]
     init_l0 = float((cs.u != 0).mean())
     matched = ~np.isnan(cs.recon_r2)
@@ -64,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
     run.log(f"matched recon R²: mean={np.nanmean(cs.recon_r2):+.3f} "
             f"min={np.nanmin(cs.recon_r2):+.3f} max={np.nanmax(cs.recon_r2):+.3f}")
 
-    out_npz = args.out_npz or (Path("data") / mcfg["name"] / "sources_mlsae.npz")
+    out_npz = args.out_npz or (Path("data") / mcfg["name"] / f"sources_{args.suite}.npz")
     out_npz.parent.mkdir(parents=True, exist_ok=True)
     np.savez(
         out_npz,
@@ -73,12 +85,12 @@ def main(argv: list[str] | None = None) -> int:
         alive_count=cs.alive_count,
         recon_r2=cs.recon_r2,
         n_latents_full=cs.n_latents_full,
-        sae_template=args.sae_template,
+        sae_template=sae_source,
     )
     run.log(f"cached sources -> {out_npz}")
 
     stats = {
-        "model": mcfg["name"], "sae_template": args.sae_template,
+        "model": mcfg["name"], "suite": args.suite, "sae_template": sae_source,
         "n_examples": int(n), "n_source_layers": int(n_states - 1), "d_model": int(d),
         "M_star": int(m_star), "n_latents_full": int(cs.n_latents_full),
         "init_l0": init_l0, "out_npz": str(out_npz),

@@ -135,6 +135,24 @@ class LowRankSSM(nn.Module):
             total = total + (g1 * g2).sum()
         return total
 
+    def operator_fro2_split(self) -> tuple[Tensor, Tensor]:
+        """``(state_fro2, feed_fro2)`` = (‖A‖²+‖B‖²+‖C‖², ‖D‖²) of the *products*.
+
+        Splits the operator Frobenius penalty into the **state path** (``A,B,C`` — the
+        cross-layer propagation) and the **feedthrough** (``D`` — the local write). An
+        *asymmetric* penalty (different coefficients on the two) is **transverse** to the
+        state↔feedthrough trade-off that an isotropic penalty cannot break (Gate-3
+        seed-stability Fix 2): weighting the state path more selects a unique
+        minimum-state-energy split, so the feedthrough decoder directions ``D_ℓ[:,j]``
+        become seed-stable. Computed in the ``r×r`` space like :meth:`operator_fro2`.
+        """
+        def fro2(f1: Tensor, f2: Tensor) -> Tensor:
+            return ((f1.transpose(-1, -2) @ f1) * (f2.transpose(-1, -2) @ f2)).sum()
+
+        state = fro2(self.A1, self.A2) + fro2(self.B1, self.B2) + fro2(self.C1, self.C2)
+        feed = fro2(self.D1, self.D2)
+        return state, feed
+
     def operator_norms(self) -> dict[str, float]:
         """Per-family stacked Frobenius norms ``√(Σ_ℓ ‖·_ℓ‖_F²)`` for ``A,B,C,D``.
 

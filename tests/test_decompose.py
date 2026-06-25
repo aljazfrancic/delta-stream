@@ -33,6 +33,40 @@ def _feedthrough_model(D: int, M: int, r: int, seed: int) -> tuple[LowRankSSM, t
 # --- soft-thresholding (the L1 prox) ---
 
 
+def test_lambda_reg_state_none_is_isotropic_backcompat():
+    """lambda_reg_state=None must reproduce the isotropic λ_reg·operator_fro2 gradient exactly."""
+    d = _dims()
+    g = torch.Generator().manual_seed(7)
+    u = torch.randn(12, d.n_layers, d.d_input, generator=g)
+    delta = torch.randn(12, d.n_layers, d.d_model, generator=g)
+    runs = []
+    for lrs in (None, 1e-4):  # None falls back to lambda_reg=1e-4 → identical fit
+        cfg = AltMinConfig(lambda_l1=0.05, lambda_reg=1e-4, lambda_reg_state=lrs,
+                           outer_iters=2, operator_steps=5, input_steps=5)
+        m = LowRankSSM(d, seed=0, init_scale=0.3)
+        res = alternating_minimize(m, u, delta, cfg)
+        runs.append(res.history[-1]["r2"])
+    assert abs(runs[0] - runs[1]) < 1e-9
+
+
+def test_lambda_reg_state_tilts_split_toward_feedthrough():
+    """A large state-path penalty shrinks ‖A,B,C‖ relative to the isotropic baseline."""
+    d = _dims(L=3, D=4, M=6, dz=3, r=2)
+    g = torch.Generator().manual_seed(11)
+    u = torch.randn(16, d.n_layers, d.d_input, generator=g)
+    delta = torch.randn(16, d.n_layers, d.d_model, generator=g)
+
+    def _state_norm(lrs):
+        cfg = AltMinConfig(lambda_l1=0.01, lambda_reg=1e-3, lambda_reg_state=lrs,
+                           outer_iters=4, operator_steps=15, input_steps=8)
+        m = LowRankSSM(d, seed=0, init_scale=0.3)
+        alternating_minimize(m, u, delta, cfg)
+        n = m.operator_norms()
+        return (n["A"] ** 2 + n["B"] ** 2 + n["C"] ** 2) ** 0.5
+
+    assert _state_norm(1.0) < _state_norm(None)  # strong state reg ⇒ smaller state path
+
+
 def test_soft_threshold_values():
     x = torch.tensor([3.0, -3.0, 0.5, -0.5, 0.0])
     out = soft_threshold(x, 1.0)

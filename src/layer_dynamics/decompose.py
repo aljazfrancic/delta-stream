@@ -54,6 +54,7 @@ class AltMinConfig:
 
     lambda_l1: float
     lambda_reg: float = 1e-4
+    lambda_reg_state: float | None = None  # coeff on the state path (A,B,C); None → lambda_reg
     outer_iters: int = 15
     operator_steps: int = 40  # Adam steps per outer iteration (inputs fixed)
     operator_lr: float = 1e-2
@@ -241,7 +242,11 @@ def alternating_minimize(
             opt.zero_grad(set_to_none=True)
             for sl in _batches(n, cfg.batch_size):
                 ((delta[sl] - model(u[sl])) ** 2).sum().backward()
-            (cfg.lambda_reg * model.operator_fro2()).backward()  # reg added once
+            # reg added once; asymmetric (state vs feedthrough) when lambda_reg_state is set —
+            # transverse to the state↔feedthrough trade-off (Gate-3 seed-stability Fix 2).
+            state_fro2, feed_fro2 = model.operator_fro2_split()
+            lam_state = cfg.lambda_reg if cfg.lambda_reg_state is None else cfg.lambda_reg_state
+            (lam_state * state_fro2 + cfg.lambda_reg * feed_fro2).backward()
             opt.step()
 
         # --- input update: FISTA on {u_ℓ}, operators fixed ---

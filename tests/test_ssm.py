@@ -84,6 +84,24 @@ def test_operator_fro2_matches_materialised():
     assert abs(m.operator_fro2().item() - manual) < 1e-3
 
 
+def test_operator_fro2_split_partitions_state_and_feedthrough():
+    """state = ‖A‖²+‖B‖²+‖C‖², feed = ‖D‖², and the two sum to operator_fro2 (back-compat)."""
+    d = _dims()
+    m = LowRankSSM(d, seed=5, init_scale=0.3)
+    state, feed = m.operator_fro2_split()
+    manual_state = sum(
+        (f1[ell] @ f2[ell].T).pow(2).sum().item()
+        for f1, f2 in ((m.A1, m.A2), (m.B1, m.B2), (m.C1, m.C2))
+        for ell in range(f1.shape[0])
+    )
+    manual_feed = sum(
+        (m.D1[ell] @ m.D2[ell].T).pow(2).sum().item() for ell in range(m.D1.shape[0])
+    )
+    assert abs(state.item() - manual_state) < 1e-3
+    assert abs(feed.item() - manual_feed) < 1e-3
+    assert abs((state + feed).item() - m.operator_fro2().item()) < 1e-3
+
+
 def test_loss_components_and_backward():
     d = _dims()
     m = LowRankSSM(d, seed=4)

@@ -81,6 +81,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--d-state", type=int, default=None)
     parser.add_argument("--lambda-l1", type=float, default=1.0)
     parser.add_argument("--lambda-reg", type=float, default=1e-4)
+    parser.add_argument("--lambda-reg-state", type=float, default=None,
+                        help="Asymmetric reg coeff on the state path (A,B,C); None → lambda_reg. "
+                             "Fix 2 for the Gate-3 seed-stability degeneracy.")
     parser.add_argument("--outer-iters", type=int, default=10)
     parser.add_argument("--operator-steps", type=int, default=40)
     parser.add_argument("--operator-lr", type=float, default=1e-2)
@@ -129,12 +132,16 @@ def main(argv: list[str] | None = None) -> int:
     dims = SSMDims(n_layers=n_layers, d_model=d_model, d_input=d_input,
                   d_state=d_state, rank=args.rank)
     cfg = AltMinConfig(
-        lambda_l1=args.lambda_l1, lambda_reg=args.lambda_reg, outer_iters=args.outer_iters,
+        lambda_l1=args.lambda_l1, lambda_reg=args.lambda_reg,
+        lambda_reg_state=args.lambda_reg_state, outer_iters=args.outer_iters,
         operator_steps=args.operator_steps, operator_lr=args.operator_lr,
         input_steps=args.input_steps, batch_size=args.batch_size,
     )
-    run.log(f"alt-min: λ_L1={cfg.lambda_l1:g} λ_reg={cfg.lambda_reg:g} outer={cfg.outer_iters} "
-            f"r={args.rank} d_z={d_state}")
+    lam_state_str = (
+        f" λ_reg_state={cfg.lambda_reg_state:g}" if cfg.lambda_reg_state is not None else ""
+    )
+    run.log(f"alt-min: λ_L1={cfg.lambda_l1:g} λ_reg={cfg.lambda_reg:g}{lam_state_str} "
+            f"outer={cfg.outer_iters} r={args.rank} d_z={d_state}")
 
     # --- main fit (seed = args.seed) for checks 1-3 ---
     run.log(f"=== main fit (seed {args.seed}) ===")

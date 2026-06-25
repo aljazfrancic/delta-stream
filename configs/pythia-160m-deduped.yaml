@@ -37,7 +37,7 @@ diagnostics:
   cca_components: 10
   cca_shrinkage: 0.1
   cca_null: true
-  ar_lags: [1, 2, 3, 5, 10, 15, 20]
+  ar_lags: [1, 2, 3, 5, 8, 10]      # capped < n_delta = L = 12 (lags 15/20 infeasible here)
   ar_input_pcs: 256
   granger_pca: 32
   ar_null_seed: 1234

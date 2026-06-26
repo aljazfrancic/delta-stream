@@ -138,14 +138,25 @@ def encode(sae: MLSAE, x: np.ndarray) -> np.ndarray:
     return z
 
 
-def reconstruction_r2(sae: MLSAE, x: np.ndarray) -> float:
-    """Held-in reconstruction R² of ``x[N, D]`` (loader sanity; un-standardizes)."""
+def reconstruct(sae: MLSAE, x: np.ndarray) -> np.ndarray:
+    """TopK encode then decode ``x[N, D]`` → ``x̂[N, D]`` (un-standardized).
+
+    The SAE's own reconstruction of the residual state. Used by the loader sanity check
+    (:func:`reconstruction_r2`) and by the Phase 4 Baseline B implied-Δ comparison, which
+    differences two reconstructions ``v̂_{ℓ+1} − v̂_ℓ`` to predict ``Δ_ℓ``.
+    """
     idx, vals, mu, std = encode_sparse(sae, x)
     # decode: gather the k decoder columns per row → [N, D], add tied bias, un-standardize
     cols = sae.W_dec[:, idx]                          # [D, N, k]
     rec = np.einsum("dnk,nk->nd", cols, vals) + sae.pre_bias
     if sae.standardize:
         rec = rec * std + mu
+    return rec
+
+
+def reconstruction_r2(sae: MLSAE, x: np.ndarray) -> float:
+    """Held-in reconstruction R² of ``x[N, D]`` (loader sanity; un-standardizes)."""
+    rec = reconstruct(sae, x)
     ss_res = float(np.sum((x - rec) ** 2))
     ss_tot = float(np.sum((x - x.mean(axis=0)) ** 2))
     return 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0

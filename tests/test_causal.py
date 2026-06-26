@@ -7,6 +7,7 @@ import torch
 
 from layer_dynamics.causal import (
     feature_delta_contribution,
+    group_delta_contribution,
     magnitude_matched_features,
     top_and_control_examples,
 )
@@ -95,6 +96,18 @@ def test_magnitude_matched_features_respects_tolerance():
         assert (ell, m) != (cand_l, cand_m)         # candidate excluded
         mm = np.abs(u[top_idx, ell, m]).mean()
         assert target * 0.8 <= mm <= target * 1.2   # within ±20%
+
+
+def test_group_contribution_grows_with_k_and_matches_full_at_capacity():
+    model = _toy(seed=3)
+    u = torch.randn(6, 5, 6)
+    d1 = group_delta_contribution(model, u, 1)
+    d_all = group_delta_contribution(model, u, u[0].numel())  # zero every coord
+    # zeroing all coords == removing the full feedthrough+state contribution (down to bias)
+    full = model(u) - model(torch.zeros_like(u))
+    torch.testing.assert_close(d_all, full, atol=1e-5, rtol=1e-4)
+    # more coords ablated → at least as much total contribution removed
+    assert d_all.abs().sum() >= d1.abs().sum()
 
 
 def test_contribution_is_linear_in_activation():

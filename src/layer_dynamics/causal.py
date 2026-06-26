@@ -67,6 +67,33 @@ def feature_delta_contribution(
     return out
 
 
+def group_delta_contribution(
+    model: LowRankSSM, u: Tensor, k: int, *, batch_size: int = 256
+) -> Tensor:
+    """δ[N, L, D] from zeroing each example's **top-k** |u| coordinates (distributed-code probe).
+
+    Where :func:`feature_delta_contribution` removes one fixed feature, this removes each
+    example's own k strongest-firing inputs (across all layers/coordinates) — the k features
+    the decomposition says most explain *that* example's updates. Sweeping k traces how the
+    behavioural effect grows as more of the distributed code is ablated together.
+    """
+    device = next(model.parameters()).device
+    n = u.shape[0]
+    out = torch.empty(n, model.dims.n_layers, model.dims.d_model, device=device)
+    was_training = model.training
+    model.eval()
+    with torch.no_grad():
+        for start in range(0, n, batch_size):
+            ub = u[start : start + batch_size].to(device)
+            flat = ub.reshape(ub.shape[0], -1)
+            idx = flat.abs().topk(min(k, flat.shape[1]), dim=1).indices
+            uz = flat.scatter(1, idx, 0.0).reshape(ub.shape)
+            out[start : start + batch_size] = model(ub) - model(uz)
+    if was_training:
+        model.train()
+    return out
+
+
 def _content_len(model, prompt: str) -> int:
     """Content-token count (excludes the prepended BOS); query position = this index."""
     return len(model.tokenizer(prompt, add_special_tokens=False)["input_ids"])
@@ -135,6 +162,32 @@ def answer_probs(logits: Tensor, answer_ids: np.ndarray) -> np.ndarray:
     """Softmax prob of each row's ``answer_ids`` token from final-token ``logits[N, vocab]``."""
     probs = torch.softmax(logits, dim=-1)
     return probs[torch.arange(len(answer_ids)), torch.as_tensor(answer_ids)].numpy()
+
+
+def max_token_logprob(logits: Tensor, token_ids: list[int]) -> np.ndarray:
+    """Per-row max log-probability over ``token_ids`` from final-token ``logits[N, vocab]``.
+
+    The Step-3 item-6 activation metric: log-prob of the semantic token *set* (e.g. capital
+    names), maxed over the set, so a near-miss that doesn't cross top-1 still registers.
+    """
+    logp = torch.log_softmax(logits, dim=-1)
+    return logp[:, torch.as_tensor(token_ids)].max(dim=-1).values.numpy()
+
+
+def single_token_ids(model, words: list[str]) -> tuple[list[int], list[str]]:
+    """Token ids for ``words`` that are **single** tokens with a leading space; rest dropped.
+
+    Per the item-6 tokenisation pre-registration: restrict the semantic set to single-token,
+    leading-space realisations (the natural-language "The capital is …" position). Returns the
+    kept ids and the kept word strings (so the caller can log/abort if too few survive).
+    """
+    ids, kept = [], []
+    for w in words:
+        toks = model.tokenizer(" " + w.strip(), add_special_tokens=False)["input_ids"]
+        if len(toks) == 1:
+            ids.append(int(toks[0]))
+            kept.append(w.strip())
+    return ids, kept
 
 
 def top_and_control_examples(

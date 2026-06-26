@@ -24,11 +24,15 @@ stability is identity-matched on the fixed SAE dictionary (same convention as St
 feature ``j`` with home layer ``ℓ*`` (from full-dataset mass) is scored by the cosine of its
 feedthrough column ``D_{ℓ*}[:, j]`` across the seed-0/1/2 refits.
 
-    python scripts/phase4_checkpoint.py --config configs/pythia-410m-deduped.yaml \
-        --desc ph4-checkpoint-410md --sources-npz data/pythia-410m-deduped/sources_mlsae.npz \
+    PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python scripts/phase4_checkpoint.py \
+        --config configs/pythia-410m-deduped.yaml --desc ph4-checkpoint-410md \
+        --sources-npz data/pythia-410m-deduped/sources_mlsae.npz \
         --rank 32 --lambda-l1 1.0 --outer-iters 10 --device cuda
 
-Three full 410m fits (canonical + 2 stability seeds), GPU freed between them (3 GB GTX 1050).
+Three full 410m fits (canonical + 2 stability seeds), GPU freed between them. The 3 GB GTX
+1050 fragments across sequential fits, so the **expandable_segments** allocator config is
+required (without it the third fit OOMs); ``--resume`` recovers from a crash by reusing the
+already-saved canonical checkpoint and recomputing only the seed-stability pool.
 """
 
 from __future__ import annotations
@@ -39,7 +43,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from layer_dynamics.checkpoint import save_ssm
+from layer_dynamics.checkpoint import load_ssm, save_ssm
 from layer_dynamics.cli import add_common_args, resolve_out
 from layer_dynamics.decompose import AltMinConfig, alternating_minimize, evaluate, infer_inputs
 from layer_dynamics.device import describe, resolve_device
@@ -90,6 +94,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--top-n", type=int, default=200,
                         help="Top features (by full-dataset |u| mass) in the candidate pool.")
     parser.add_argument("--no-learn-z0", action="store_true")
+    parser.add_argument("--resume", action="store_true",
+                        help="Reuse a saved canonical fit in --out's checkpoints/ (skip the "
+                             "seed-0 fit + frozen inference); only rebuild the seed-stability "
+                             "pool. For recovering from an OOM mid-stability-refit.")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -127,39 +135,57 @@ def main(argv: list[str] | None = None) -> int:
     run.log(f"alt-min: λ_L1={cfg.lambda_l1:g} λ_reg={cfg.lambda_reg:g} outer={cfg.outer_iters} "
             f"r={args.rank} d_z={d_state}")
 
-    # --- canonical fit (seed 0) ---
-    run.log(f"=== canonical fit (seed {args.seed}) ===")
-    model0, result0 = _fit_train(u_tr, d_tr, dims, cfg, seed=args.seed, device=device,
-                                 learn_z0=learn_z0, log=run.log)
-    train_ev = evaluate(model0, result0.u, d_tr, lambda_l1=cfg.lambda_l1,
-                        lambda_reg=cfg.lambda_reg, batch_size=cfg.batch_size)
-    run.log(f"canonical train R²={train_ev['r2']:+.3f} L0={train_ev['l0']:.4f} "
-            f"|D|={train_ev['op_D']:.1f} |C|={train_ev['op_C']:.1f}")
-
     ckpt_dir = Path(run.path("checkpoints"))
     ckpt_dir.mkdir(parents=True, exist_ok=True)
-    save_ssm(model0, ckpt_dir / "ssm_seed0.pt",
-             meta={"model": mcfg.get("name"), "seed": args.seed, "lambda_l1": args.lambda_l1,
-                   "rank": args.rank, "d_state": d_state, "train_r2": train_ev["r2"]})
-    u_tr_fit = result0.u.detach().cpu().numpy().astype(np.float32)
-    np.save(ckpt_dir / "u_train_fit.npy", u_tr_fit)
-    np.savez(ckpt_dir / "split.npz", train_idx=train_idx, test_idx=test_idx)
-    run.log(f"saved checkpoint + u_train_fit {u_tr_fit.shape} + split")
 
-    # --- operators-frozen LASSO inputs for ALL examples (Step-3 operative encoder) ---
-    run.log("=== frozen-inference over full dataset (operators fixed) ===")
-    u_full_init = torch.from_numpy(u_all)
-    d_full = torch.from_numpy(delta_all)
-    u_full = infer_inputs(model0, u_full_init, d_full, lambda_l1=cfg.lambda_l1,
-                          n_steps=max(cfg.input_steps * 4, 80), lipschitz=result0.lipschitz,
-                          batch_size=cfg.batch_size)
-    u_full_np = u_full.detach().cpu().numpy().astype(np.float32)
-    np.save(ckpt_dir / "u_infer_full.npy", u_full_np)
-    test_ev = evaluate(model0, u_full[test_idx], d_te, lambda_l1=cfg.lambda_l1,
-                       lambda_reg=cfg.lambda_reg, batch_size=cfg.batch_size)
-    run.log(f"frozen full inference u {u_full_np.shape}; held-out test R²={test_ev['r2']:+.3f} "
-            f"L0={test_ev['l0']:.4f}")
-    _free_cuda(u_full, u_full_init, d_full)
+    if args.resume:
+        # Reuse a saved canonical fit (e.g. after an OOM mid-stability-refit) — only the
+        # seed-stability pool below is recomputed. Operators + frozen inputs are byte-identical
+        # to a fresh run (seed 0, deterministic), so this is exact, not an approximation.
+        model0 = load_ssm(ckpt_dir / "ssm_seed0.pt", device=device)
+        result0 = None
+        u_full_np = np.load(ckpt_dir / "u_infer_full.npy")
+        u_tr_fit = np.load(ckpt_dir / "u_train_fit.npy")
+        train_ev = evaluate(model0, torch.from_numpy(u_tr_fit), d_tr, lambda_l1=cfg.lambda_l1,
+                            lambda_reg=cfg.lambda_reg, batch_size=cfg.batch_size)
+        _free_cuda()
+        test_ev = evaluate(model0, torch.from_numpy(u_full_np[test_idx]), d_te,
+                           lambda_l1=cfg.lambda_l1, lambda_reg=cfg.lambda_reg,
+                           batch_size=cfg.batch_size)
+        run.log(f"RESUMED canonical checkpoint: train R²={train_ev['r2']:+.3f} "
+                f"test R²={test_ev['r2']:+.3f} L0={test_ev['l0']:.4f}")
+    else:
+        # --- canonical fit (seed 0) ---
+        run.log(f"=== canonical fit (seed {args.seed}) ===")
+        model0, result0 = _fit_train(u_tr, d_tr, dims, cfg, seed=args.seed, device=device,
+                                     learn_z0=learn_z0, log=run.log)
+        train_ev = evaluate(model0, result0.u, d_tr, lambda_l1=cfg.lambda_l1,
+                            lambda_reg=cfg.lambda_reg, batch_size=cfg.batch_size)
+        run.log(f"canonical train R²={train_ev['r2']:+.3f} L0={train_ev['l0']:.4f} "
+                f"|D|={train_ev['op_D']:.1f} |C|={train_ev['op_C']:.1f}")
+
+        save_ssm(model0, ckpt_dir / "ssm_seed0.pt",
+                 meta={"model": mcfg.get("name"), "seed": args.seed, "lambda_l1": args.lambda_l1,
+                       "rank": args.rank, "d_state": d_state, "train_r2": train_ev["r2"]})
+        u_tr_fit = result0.u.detach().cpu().numpy().astype(np.float32)
+        np.save(ckpt_dir / "u_train_fit.npy", u_tr_fit)
+        np.savez(ckpt_dir / "split.npz", train_idx=train_idx, test_idx=test_idx)
+        run.log(f"saved checkpoint + u_train_fit {u_tr_fit.shape} + split")
+
+        # --- operators-frozen LASSO inputs for ALL examples (Step-3 operative encoder) ---
+        run.log("=== frozen-inference over full dataset (operators fixed) ===")
+        u_full_init = torch.from_numpy(u_all)
+        d_full = torch.from_numpy(delta_all)
+        u_full = infer_inputs(model0, u_full_init, d_full, lambda_l1=cfg.lambda_l1,
+                              n_steps=max(cfg.input_steps * 4, 80), lipschitz=result0.lipschitz,
+                              batch_size=cfg.batch_size)
+        u_full_np = u_full.detach().cpu().numpy().astype(np.float32)
+        np.save(ckpt_dir / "u_infer_full.npy", u_full_np)
+        test_ev = evaluate(model0, u_full[test_idx], d_te, lambda_l1=cfg.lambda_l1,
+                           lambda_reg=cfg.lambda_reg, batch_size=cfg.batch_size)
+        run.log(f"frozen full inference u {u_full_np.shape}; held-out test R²={test_ev['r2']:+.3f} "
+                f"L0={test_ev['l0']:.4f}")
+        _free_cuda(u_full, u_full_init, d_full)
 
     # --- candidate pool: rank top-N by full-dataset |u| mass, score seed stability ---
     u_full_t = torch.from_numpy(u_full_np)

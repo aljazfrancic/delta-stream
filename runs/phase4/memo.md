@@ -34,7 +34,12 @@ Held-out Δ reconstruction R² (vs the per-depth mean), assembled by
 | **Branch B SSM (my method)** | 0.0091 | **+0.867** |
 | Baseline A — per-layer dict on Δ (`use_state=False`) | 0.0088 | +0.816 |
 | Baseline B — MLSAE implied Δ (`v̂_{ℓ+1}−v̂_ℓ`) | 0.0069 | **−0.223** |
+| Baseline C — Tuned Lens implied Δ (`r̂_{ℓ+1}−r̂_ℓ`) | — | **−0.309** |
 | Baseline D — CLT | — | compute limitation |
+
+The two **Δ-targeted** methods (SSM, per-layer dict) are strongly positive; both **indirect**
+baselines (B pretrained-SAE differencing, C Tuned Lens) are **negative** — neither was built to
+predict the update, and the differencing dominates. This is the headline Step-1 separation.
 
 - **A (per-layer dictionary on Δ)** is the strict, matched per-layer baseline (same optimiser,
   sources, L1 sweep, cross-layer state ablated). SSM − A gap **+0.037…+0.066** at matched L0 —
@@ -46,7 +51,10 @@ Held-out Δ reconstruction R² (vs the per-depth mean), assembled by
   the SAE", dramatic at 24 layers, and it is *why* a Δ-targeted method is needed. With no public
   Pythia-410m CLT (and scoped CLT training exceeding the 3 GB dev GPU), B is the closest feasible
   CLT proxy and **D is recorded as a compute limitation**.
-- **C (Tuned Lens)** — implied-Δ + KL-vs-depth, pending (Gate 1 already established TL ≪ ridge on Δ).
+- **C (Tuned Lens)** — implied-Δ R² **−0.309** (`scripts/phase4_baseline_lens.py`): the lens
+  translators, differenced into Δ̂, are also a poor update predictor (same differencing penalty as
+  B; consistent with the Gate-1 TL ≪ ridge finding). A settles-with-depth reference, not a feature
+  baseline.
 
 ## Step 2 — Stability and robustness
 

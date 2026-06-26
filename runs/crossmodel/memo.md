@@ -85,10 +85,24 @@ residual geometry**, not the depth-indexed SSM — a lever none of Fixes 1–4 t
 **→ Fix 6 (most promising):** re-source 410m from an L1/denser dictionary, SSM held fixed,
 and re-measure seed match@0.7.
 
-**Confound (must control before concluding):** dataset sizes differ — 160m train N=613 is the
-smallest (GPT-2 1086, 410m 1244). 160m's 0.38 is partly N-aggravated. A **size-matched**
-comparison (subsample GPT-2 to N=613, and/or fit 410m on a res-jb-style source) is the
-first step of Fix 6, before attributing the split to SAE type.
+**Confound — RESOLVED (2026-06-26): N is ruled out.** Dataset sizes differed (160m train
+N=613 vs GPT-2 1086, 410m 1244), so 160m's 0.38 could have been N-aggravated. Size-matched
+control: GPT-2 subsampled to N=767 (train 614, matched to 160m) gives seed match@0.7 = **0.95**
+(mean cos 0.88) — **identical to full-N GPT-2**. So at *equal depth (12L) and equal dataset
+size*, res-jb is stable and mlsae is not → the split is the **SAE source dictionary**, not N
+and not depth. Run: `runs/2026-06-26-xm-gpt2-step4-n767/` (`step4_sanity --max-n 767`).
+
+**Residual confound + the 410m drop-in problem.** SAE-type and model-family are still entangled
+(res-jb is GPT-2-only, mlsae is Pythia-only) — but within the Pythia-mlsae lane the instability
+is specific to 12L/24L, and *swapping the source removes it*. Acting on this for 410m is blocked
+by availability: the **only** public per-layer residual SAEs for pythia-410m-deduped are mlsae
+x64-k32 (verified on HF — no L1, no denser k256, no other expansion; the `tfm-` repos are the
+same weights bundled with the transformer). So **re-sourcing 410m requires training an L1
+residual SAE suite ourselves** (future GPU work). **Fix 6 is therefore confirmed *in principle*
+(the degeneracy is source-dependent, demonstrated cross-model with N controlled) but is not yet
+a 410m drop-in.** This already sharpens the Gate-3 limitation: it is **not** intrinsic to the
+depth-indexed SSM — it is a property of the mlsae TopK source under the deep-Pythia residual
+geometry, and a different dictionary (res-jb L1) is stable at the same depth.
 
 ## Caveats
 1. **160m small dataset** (767 / 613 train) — fine for H1/H2 (held at n=1555 on 410m) but

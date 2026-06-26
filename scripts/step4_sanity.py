@@ -94,6 +94,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--top-n", type=int, default=100, help="Top features for stability.")
     parser.add_argument("--top-interp", type=int, default=20, help="Top features to theme.")
     parser.add_argument("--no-learn-z0", action="store_true")
+    parser.add_argument("--max-n", type=int, default=None,
+                        help="Subsample to N examples before the split (size-matched control "
+                             "for the Fix-6 seed-stability comparison); deterministic via --seed.")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -122,6 +125,13 @@ def main(argv: list[str] | None = None) -> int:
     # subject/relation metadata for the feature-theme read (aligned by position to the h5)
     meta_df = _load_meta(mcfg["name"], rel_class)
     run.log(f"metadata rows: {len(meta_df)} (aligned to residual store)")
+
+    if args.max_n is not None and args.max_n < n:
+        keep = np.sort(np.random.default_rng(args.seed).choice(n, size=args.max_n, replace=False))
+        delta_all, u_all = delta_all[keep], u_all[keep]
+        meta_df = meta_df.iloc[keep].reset_index(drop=True)
+        n = int(args.max_n)
+        run.log(f"subsampled to N={n} (size-matched control, seed {args.seed})")
 
     train_idx, _ = train_test_split_idx(n, test_frac=args.test_frac, seed=args.seed)
     u_tr = torch.from_numpy(u_all[train_idx])

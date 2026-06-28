@@ -1,0 +1,49 @@
+# Cross-family THIRD lane — Qwen2-0.5B (D=896, L=24).
+# A genuinely different family (RoPE / GQA / SwiGLU, different tokenizer + training
+# data) than both Pythia and GPT-2, at the same depth as the 410m primary (24L) so
+# the Phase-3 SSM-vs-baseline gap is comparable at equal depth. Public per-layer
+# residual SAEs exist (chanind/sae-qwen2-0.5b-res: classic L1/ReLU, d_sae=7168) ->
+# used via layer_dynamics.saes_qwen (--suite qwen). The L1 SAE on a third family also
+# disentangles the Fix-6 seed-stability confound (L1-vs-TopK was GPT-2-vs-Pythia).
+#
+# Fits the 3 GB GPU in fp32 (~1 GB params). tuned_lens omitted (confirmatory).
+#
+# NOTE: chanind SAEs hook resid_post -> v_{N+1} indexing (like the mlsae lane): v_0
+# (embedding) has no SAE and is zero-initialised; blocks.{L-1} (v_L) is the spare.
+
+model:
+  name: Qwen/Qwen2-0.5B             # transformer-lens supported
+  device: auto
+  # fp16, NOT fp32: Qwen2's 152k-token vocab makes the embed/unembed huge — in fp32 the
+  # model alone eats ~2.6 GB of the 3 GB card (403 MiB free after load) and the
+  # [batch, seq, 152k] logits OOM during filtering. fp16 halves it to ~1.3 GB (Pascal
+  # fp16 compute is slow but correct; residual stream is still stored fp32, and the SAE
+  # recon is robust to fp16 rounding). load_model routes dtype into from_pretrained.
+  dtype: float16
+
+dataset:
+  sources: [counterfact]
+  top1_prob_threshold: 0.1
+  min_examples_per_relation: 150
+  target_size: 5000
+
+filtering:
+  batch_size: 8                     # small: [batch, seq, 152k-vocab] logits are large
+
+collection:
+  token_position: final_prompt
+  batch_size: 8
+  hook_points: [resid_pre_0, resid_post]   # v_0 plus v_1..v_L
+
+diagnostics:
+  ranks: [16, 32, 64, 128]
+  test_frac: 0.2
+  cca_components: 10
+  cca_shrinkage: 0.1
+  cca_null: true
+  ar_lags: [1, 2, 3, 5, 10, 15, 20]   # L=24 admits the full lag sweep
+  ar_input_pcs: 256
+  granger_pca: 32
+  ar_null_seed: 1234
+  stationarity_n_boot: 200
+  stationarity_boot_seed: 20260622

@@ -30,6 +30,8 @@ from layer_dynamics.cli import add_common_args, resolve_out
 from layer_dynamics.diagnostics.dataset import load_residual_stream
 from layer_dynamics.runlog import init_run
 from layer_dynamics.saes_mlsae import REPO_TEMPLATE, build_compressed_sources
+from layer_dynamics.saes_qwen import REPO as QWEN_REPO
+from layer_dynamics.saes_qwen import build_compressed_sources_qwen
 from layer_dynamics.saes_resjb import REPO as RESJB_REPO
 from layer_dynamics.saes_resjb import build_compressed_sources_resjb
 
@@ -38,14 +40,19 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     add_common_args(parser)
-    parser.add_argument("--suite", choices=["mlsae", "resjb"], default="mlsae",
-                        help="SAE suite: 'mlsae' (Pythia TopK resid_post) or "
-                             "'resjb' (GPT-2-small L1 resid_pre).")
+    parser.add_argument("--suite", choices=["mlsae", "resjb", "qwen"], default="mlsae",
+                        help="SAE suite: 'mlsae' (Pythia TopK resid_post), "
+                             "'resjb' (GPT-2-small L1 resid_pre), or "
+                             "'qwen' (Qwen2-0.5B L1 resid_post).")
     parser.add_argument("--sae-template", type=str, default=REPO_TEMPLATE,
                         help="mlsae HF repo template; '{layer}' is the block index.")
-    parser.add_argument("--sae-repo", type=str, default=RESJB_REPO,
-                        help="resjb HF repo id.")
+    parser.add_argument("--sae-repo", type=str, default=None,
+                        help="resjb/qwen HF repo id (default: suite's canonical repo).")
     parser.add_argument("--sae-cache", type=Path, default=None)
+    parser.add_argument("--max-layers", type=int, default=None,
+                        help="Build sources for only the first K source layers (v_0..v_{K-1}); "
+                             "use for partial-coverage suites (e.g. Qwen chanind covers blocks "
+                             "0..11 of 24). The fit scripts auto-truncate Δ to match.")
     parser.add_argument("--out-npz", type=Path, default=None,
                         help="Where to cache sources (default: data/<model>/sources_<suite>.npz).")
     args = parser.parse_args(argv)
@@ -55,14 +62,22 @@ def main(argv: list[str] | None = None) -> int:
 
     h5 = Path("data") / mcfg["name"] / "residual_stream.h5"
     rs, _, _ = load_residual_stream(h5)  # [N, L+1, D]
+    if args.max_layers is not None and args.max_layers + 1 < rs.shape[1]:
+        rs = rs[:, : args.max_layers + 1]  # keep v_0..v_{K} → K source layers
+        run.log(f"--max-layers {args.max_layers}: truncated residual stream to {rs.shape}")
     n, n_states, d = rs.shape
     run.log(f"loaded {h5}: residual_stream {rs.shape}; sources v_0..v_{n_states - 2}")
-    sae_source = args.sae_repo if args.suite == "resjb" else args.sae_template
+    default_repo = {"resjb": RESJB_REPO, "qwen": QWEN_REPO}.get(args.suite)
+    repo = args.sae_repo or default_repo
+    sae_source = repo if args.suite in ("resjb", "qwen") else args.sae_template
     run.log(f"SAE suite: {args.suite} ({sae_source})")
 
     if args.suite == "resjb":
-        cs = build_compressed_sources_resjb(rs, repo=args.sae_repo,
+        cs = build_compressed_sources_resjb(rs, repo=repo,
                                             cache_dir=args.sae_cache, log=run.log)
+    elif args.suite == "qwen":
+        cs = build_compressed_sources_qwen(rs, repo=repo,
+                                           cache_dir=args.sae_cache, log=run.log)
     else:
         cs = build_compressed_sources(rs, template=args.sae_template,
                                       cache_dir=args.sae_cache, log=run.log)

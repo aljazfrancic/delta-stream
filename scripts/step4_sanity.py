@@ -118,6 +118,10 @@ def main(argv: list[str] | None = None) -> int:
         run.log(f"loaded cached compressed sources {u_all.shape} from {args.sources_npz}")
     else:
         u_all = build_sources(rs, args.sae_repo, cache_dir=args.sae_cache)
+    if u_all.shape[1] < n_layers:  # partial-coverage SAE suite (e.g. Qwen blocks 0..11 of 24)
+        n_layers = u_all.shape[1]
+        delta_all = delta_all[:, :n_layers]
+        run.log(f"partial SAE coverage -> first {n_layers} layers (Δ {delta_all.shape})")
     d_input = u_all.shape[2]
     sae_l0 = float((u_all != 0).mean())
     run.log(f"sources u {u_all.shape} M={d_input} init L0={sae_l0:.4f}")

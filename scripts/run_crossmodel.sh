@@ -71,9 +71,16 @@ run_model() {
   fi
 
   # --- Phase 3: SSM-vs-baseline gap (gated on source recon sanity) ---
+  if [ "$suite" = "none" ]; then
+    say "$tag: suite=none (no public per-layer residual SAEs) -> H1/H2 only, SKIP Phase-3"
+    say "================  MODEL $tag DONE  ================"
+    return 0
+  fi
   local npz="data/$model/sources_${suite}.npz"
   local src_args=(scripts/build_410m_sources.py --config "$cfg" --desc "$tag-sources" --suite "$suite")
   [ "$suite" = "mlsae" ] && [ -n "$template" ] && src_args+=(--sae-template "$template")
+  # Qwen chanind suite covers only blocks 0..11 of 24 -> build/fit the 12-layer prefix.
+  [ "$suite" = "qwen" ] && src_args+=(--max-layers 12)
   if step "$tag sources" "${src_args[@]}"; then
     step "$tag gate3" scripts/gate3_pareto.py --config "$cfg" --desc "$tag-gate3" \
       --sources-npz "$npz" --rank "$RANK" --lambdas "$LAMBDAS" --outer-iters "$OUTER" --device cuda \
@@ -95,5 +102,15 @@ fi
 if [ "$WHICH" = "p160" ] || [ "$WHICH" = "both" ]; then
   run_model configs/pythia-160m-deduped.yaml xm-p160 mlsae pythia-160m-deduped \
     "tim-lawson/sae-pythia-160m-deduped-x64-k32-layers-{layer}"
+fi
+# --- second-wave cross-model: Qwen 3rd family (full, new code first) + GPT-2 depth series (H1/H2) ---
+if [ "$WHICH" = "qwen" ] || [ "$WHICH" = "wave2" ]; then
+  run_model configs/qwen2-0.5b.yaml xm-qwen qwen "Qwen/Qwen2-0.5B"
+fi
+if [ "$WHICH" = "gpt2med" ] || [ "$WHICH" = "wave2" ]; then
+  run_model configs/gpt2-medium.yaml xm-gpt2med none gpt2-medium
+fi
+if [ "$WHICH" = "gpt2large" ] || [ "$WHICH" = "wave2" ]; then
+  run_model configs/gpt2-large.yaml xm-gpt2large none gpt2-large
 fi
 say "##### cross-model overnight run COMPLETE #####"

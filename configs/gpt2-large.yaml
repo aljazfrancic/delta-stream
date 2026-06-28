@@ -1,0 +1,42 @@
+# Cross-FAMILY depth-scaling — GPT-2-large (D=1280, L=36).
+# Top of the GPT-2 depth series (small 12L -> medium 24L -> large 36L) for the H1/H2
+# diagnostic claims. 36 layers is the deepest cross-family point in the study.
+#
+# NO public per-layer residual SAEs for gpt2-large -> H1/H2 pipeline only (no Phase-3).
+#
+# MEMORY: gpt2-large fp32 weights are ~3.1 GB and OOM the 3 GB card during load, so
+# this lane loads in float16 (load_model routes dtype into from_pretrained, ~1.5 GB).
+# Pascal fp16 *compute* is slow but correct; the dataset/collection forwards are the
+# only model passes and run fine overnight. Activations are still stored fp32.
+
+model:
+  name: gpt2-large                  # transformer-lens id for GPT-2-large (774M)
+  device: auto
+  dtype: float16                    # fp32 OOMs the 3 GB card on load (see header)
+
+dataset:
+  sources: [counterfact]
+  top1_prob_threshold: 0.1
+  min_examples_per_relation: 150
+  target_size: 5000
+
+filtering:
+  batch_size: 16
+
+collection:
+  token_position: final_prompt
+  batch_size: 4
+  hook_points: [resid_pre_0, resid_post]   # v_0 plus v_1..v_L
+
+diagnostics:
+  ranks: [16, 32, 64, 128]
+  test_frac: 0.2
+  cca_components: 10
+  cca_shrinkage: 0.1
+  cca_null: true
+  ar_lags: [1, 2, 3, 5, 10, 15, 20]   # L=36 admits the full lag sweep
+  ar_input_pcs: 256
+  granger_pca: 32
+  ar_null_seed: 1234
+  stationarity_n_boot: 200
+  stationarity_boot_seed: 20260622

@@ -1,0 +1,43 @@
+# Cross-FAMILY depth-scaling — GPT-2-medium (D=1024, L=24).
+# Extends the GPT-2 family from small (12L) to medium (24L): a within-GPT-2 depth
+# curve for the H1/H2 diagnostic claims (mirrors the in-family Pythia 6->12->24L
+# curve, now in a different family). 24 layers also matches the 410m primary depth.
+#
+# NO public per-layer residual SAEs exist for gpt2-medium (only gpt2-small has them:
+# res-jb / OAI-v5), so this lane runs the H1/H2 pipeline only (ridge -> AR/Granger
+# -> stationarity -> k*); Phase-3 (SSM-vs-baseline gap) is GPT-2-small + Pythia +
+# Qwen. tuned_lens omitted (Phase-1 gate baseline only; confirmatory).
+#
+# Fits the 3 GB GPU in fp32 (~1.4 GB params).
+
+model:
+  name: gpt2-medium                 # transformer-lens id for GPT-2-medium (355M)
+  device: auto
+  dtype: float32
+
+dataset:
+  sources: [counterfact]
+  top1_prob_threshold: 0.1
+  min_examples_per_relation: 150
+  target_size: 5000
+
+filtering:
+  batch_size: 32
+
+collection:
+  token_position: final_prompt
+  batch_size: 8
+  hook_points: [resid_pre_0, resid_post]   # v_0 plus v_1..v_L
+
+diagnostics:
+  ranks: [16, 32, 64, 128]
+  test_frac: 0.2
+  cca_components: 10
+  cca_shrinkage: 0.1
+  cca_null: true
+  ar_lags: [1, 2, 3, 5, 10, 15, 20]   # L=24 admits the full 410m-style lag sweep
+  ar_input_pcs: 256
+  granger_pca: 32
+  ar_null_seed: 1234
+  stationarity_n_boot: 200
+  stationarity_boot_seed: 20260622

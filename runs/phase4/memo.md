@@ -19,8 +19,10 @@ CounterFact prompts (organization 711 / geography 511 / language 333), Δ at the
 > contribution scales monotonically to **full** answer removal (×10 → −0.36, ×30 → saturates at
 > the clean prob), so the feature direction is causally correct and only its magnitude is small;
 > ablating each example's **top-≈100** co-firing features together crosses the 0.20 bar, and the
-> top-300 reproduce full removal. Recall is spread across ~100 small features — the decomposition
-> is causally faithful *in aggregate*, but no single feature is a bottleneck.
+> top-300 reproduce full removal. **Controlled (S3):** a count-matched *random* group does not
+> cross 0.20 (rules out "any ~100 directions"), but a mass-matched random group reproduces the
+> effect — so recall is a genuinely distributed, **mass-driven** code, causally faithful *in
+> aggregate* with no privileged subset and no single-feature bottleneck.
 
 ---
 
@@ -111,6 +113,17 @@ clean. **→ The single-feature existence proof fails; this is the pre-registere
 - **Group ablation.** Ablating each example's top-k co-firing features together (426@L22's →Europe
   set): k=1 **+0.010**, k=30 **+0.084**, **k=100 +0.301** (crosses 0.20), k=300 **+0.385** (full).
   Recall is distributed across ~100 small features.
+- **Matched-random-group control (2026-06-28, S3 — pooled over 8 seed-stable candidates × 100
+  examples; `tables/distributed_control.json`, `figures/distributed_control.png`).** The group
+  ablation is now controlled, turning the anecdote into a measured result. At matched group size,
+  ablating each example's **top-k co-firing** features crosses 0.20 at **k=100 (+0.237 ± 0.035)**
+  while a **count-matched random** group of the same example's *active* features does **not**
+  (k=100 **+0.034 ± 0.028**; never crosses over k≤300) — this **rules out the vacuous reading**
+  that "any ~100 directions span the answer." But a **mass-matched random** group (random active
+  features summing to the same |u| mass as the top-100, ≈423 features) **reproduces** it
+  (**+0.244 ≈ top-100 +0.237**). **So recall is a genuinely distributed, _mass-driven_ code: the
+  causal effect tracks the total feature-mass ablated, not the identity of any privileged subset —
+  no small set of co-firing features is a bottleneck (consistent with the single-feature null).**
 
 **Verdict.** The decomposition recovers seed-stable, interpretable, reconstruction-positive
 features that **collectively and causally** explain factual recall (top-100 ablation removes the
@@ -124,8 +137,11 @@ every baseline (Step 1), and (iii) the existence-proof null with the distributed
    features are not "novel" by activation-identity *by construction*; the method's contribution is
    the cross-layer *propagation structure* (reconstruction), not new atoms. The novelty test
    reduces to this structural fact and is reported as such.
-2. **Distributed-code diagnostics are exploratory** (not the pre-registered test) — they explain
-   the null, they do not overturn it. No threshold was retuned to chase a positive.
+2. **Distributed-code diagnostics now carry a control (S3, 2026-06-28).** The count-matched random
+   group rules out the vacuous "any ~k directions" reading; the mass-matched random group shows the
+   effect is _mass-driven_ (no privileged feature subset). They remain a *diagnosis* of the
+   pre-registered single-feature null (which stands), not an overturn of it; no threshold was
+   retuned to chase a positive.
 3. **Seed-stability degeneracy** (carried from Gate 3) narrows the candidate pool to ~26% of the
    top-200; the strongest features survive, so the null is not an artefact of a thin pool.
 

@@ -8,6 +8,7 @@ import torch
 from layer_dynamics.causal import (
     feature_delta_contribution,
     group_delta_contribution,
+    group_random_delta_contribution,
     magnitude_matched_features,
     top_and_control_examples,
 )
@@ -108,6 +109,57 @@ def test_group_contribution_grows_with_k_and_matches_full_at_capacity():
     torch.testing.assert_close(d_all, full, atol=1e-5, rtol=1e-4)
     # more coords ablated → at least as much total contribution removed
     assert d_all.abs().sum() >= d1.abs().sum()
+
+
+def test_group_random_count_matches_k_and_skips_inactive():
+    # count-match removes exactly min(k, n_active) coords, all from the active set.
+    model = _toy(seed=4)
+    u = torch.zeros(5, 5, 6)
+    u.reshape(5, -1)[:, [0, 7, 13, 20]] = torch.tensor([1.0, -2.0, 3.0, 0.5])  # 4 active/example
+    _, n_abl, _ = group_random_delta_contribution(model, u, 2, seed=0, match="count")
+    assert torch.all(n_abl == 2)  # exactly k, never an inactive (zero) coordinate
+
+
+def test_group_random_count_caps_at_active_set_and_equals_full():
+    # k beyond the active set → all (and only) active coords ablated == the full contribution.
+    model = _toy(seed=5)
+    u = torch.zeros(3, 5, 6)
+    u.reshape(3, -1)[:, [2, 9]] = torch.tensor([1.0, 4.0])  # 2 active/example
+    d, n_abl, _ = group_random_delta_contribution(model, u, k=10, seed=1, match="count")
+    assert torch.all(n_abl == 2)  # capped at the active set, never selects a zero coord
+    full = model(u) - model(torch.zeros_like(u))
+    torch.testing.assert_close(d, full, atol=1e-5, rtol=1e-4)
+
+
+def test_group_random_mass_match_reaches_topk_mass():
+    # mass-match removes random active coords until their |u| sum reaches the top-k mass.
+    model = _toy(seed=6)
+    u = torch.zeros(4, 5, 6)
+    u.reshape(4, -1)[:, [0, 7, 13, 20]] = torch.tensor([1.0, -2.0, 3.0, 0.5])
+    target = 3.0 + 2.0  # top-2 |u|
+    _, n_abl, mass = group_random_delta_contribution(model, u, 2, seed=0, match="mass")
+    assert torch.all(mass >= target - 1e-5)  # matched (or just over) the top-k mass
+    assert torch.all(n_abl >= 2)             # needs at least the 2 largest-equivalent mass
+
+
+def test_group_random_is_seed_deterministic():
+    model = _toy(seed=7)
+    u = torch.randn(6, 5, 6)  # dense (all active) → selection is a free random choice
+    a, _, _ = group_random_delta_contribution(model, u, 3, seed=0)
+    b, _, _ = group_random_delta_contribution(model, u, 3, seed=0)
+    c, _, _ = group_random_delta_contribution(model, u, 3, seed=1)
+    torch.testing.assert_close(a, b)            # same seed → identical selection
+    assert (a - c).abs().max() > 0              # different seed → different selection
+
+
+def test_group_random_matches_unbatched():
+    model = _toy(seed=8)
+    u = torch.randn(10, 5, 6)
+    a, na, ma = group_random_delta_contribution(model, u, 4, seed=2, batch_size=3)
+    b, nb, mb = group_random_delta_contribution(model, u, 4, seed=2, batch_size=10)
+    torch.testing.assert_close(a, b)            # batch-size-independent
+    torch.testing.assert_close(na, nb)
+    torch.testing.assert_close(ma, mb)
 
 
 def test_contribution_is_linear_in_activation():

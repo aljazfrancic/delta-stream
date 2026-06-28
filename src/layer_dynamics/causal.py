@@ -94,6 +94,76 @@ def group_delta_contribution(
     return out
 
 
+def group_random_delta_contribution(
+    model: LowRankSSM,
+    u: Tensor,
+    k: int,
+    *,
+    seed: int = 0,
+    match: str = "count",
+    batch_size: int = 256,
+) -> tuple[Tensor, Tensor, Tensor]:
+    """δ[N, L, D] from a **random** group ablation — control for :func:`group_delta_contribution`.
+
+    Where :func:`group_delta_contribution` removes each example's **top-k** |u| coordinates (its
+    strongest co-firing features), this removes a *random* subset of the **same example's active
+    (non-zero) coordinates** — the matched-random-group control. Two matching modes:
+
+    * ``match="count"`` — remove ``min(k, n_active)`` randomly-chosen active coordinates: the same
+      *number* of real features as top-k, randomly selected (shares the top-k's ``k`` axis).
+    * ``match="mass"`` — remove randomly-chosen active coordinates until their summed |u| first
+      reaches the top-k coordinates' summed |u|: the same total contribution *mass* removed,
+      randomly selected (kills the "you just removed more residual-stream mass" confound).
+
+    If the top-k ablation drops the answer while the matched-random one does not, the behavioural
+    effect is carried specifically by the high-magnitude co-firing features, not by the count or
+    sheer mass of residual-stream content removed — i.e. the distributed code is *structured*, not
+    "any ~k directions span the answer". Inactive (zero) coordinates are never selected (ablating
+    one is a no-op). Selection is deterministic in ``seed`` and independent of ``batch_size``.
+    Returns ``(δ, n_ablated[N], mass_ablated[N])`` so the caller can report the matched count/mass.
+    """
+    if match not in ("count", "mass"):
+        raise ValueError(f"match must be 'count' or 'mass', got {match!r}")
+    device = next(model.parameters()).device
+    n = u.shape[0]
+    flat = u.reshape(n, -1).cpu()  # selection runs on CPU (batch-size- and device-independent)
+    absu = flat.abs()
+    p = absu.shape[1]
+    kk = min(int(k), p)
+    active = absu > 0
+    # random order over coordinates with inactive ones pushed to the end (rand∈[0,1) > -1)
+    g = torch.Generator().manual_seed(int(seed))
+    keys = torch.where(active, torch.rand(n, p, generator=g), torch.full((n, p), -1.0))
+    order = keys.argsort(dim=1, descending=True)  # active coords first, in random order
+    active_ord = active.gather(1, order)
+    if match == "count":
+        rank = torch.arange(p).expand(n, p)
+        take_ord = (rank < kk) & active_ord
+    else:  # "mass": prefix whose cumulative |u| first reaches the top-k mass
+        target = absu.topk(kk, dim=1).values.sum(dim=1, keepdim=True)
+        absu_ord = absu.gather(1, order)
+        cum_before = absu_ord.cumsum(dim=1) - absu_ord  # mass strictly before each position
+        take_ord = (cum_before < target) & active_ord
+    sel_mask = torch.zeros_like(take_ord).scatter(1, order, take_ord)  # back to coord positions
+    n_ablated = sel_mask.sum(dim=1)
+    mass_ablated = (absu * sel_mask).sum(dim=1)
+
+    out = torch.empty(n, model.dims.n_layers, model.dims.d_model, device=device)
+    was_training = model.training
+    model.eval()
+    with torch.no_grad():
+        for start in range(0, n, batch_size):
+            sl = slice(start, start + batch_size)
+            ub = u[sl].to(device)
+            fb = ub.reshape(ub.shape[0], -1)
+            mb = sel_mask[sl].to(device)
+            uz = fb.masked_fill(mb, 0.0).reshape(ub.shape)
+            out[sl] = model(ub) - model(uz)
+    if was_training:
+        model.train()
+    return out, n_ablated, mass_ablated
+
+
 def _content_len(model, prompt: str) -> int:
     """Content-token count (excludes the prepended BOS); query position = this index."""
     return len(model.tokenizer(prompt, add_special_tokens=False)["input_ids"])

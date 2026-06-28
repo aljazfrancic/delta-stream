@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Depth-scaling + seed-stability summary figure across models (Phase 2 Step 5 / paper).
 
-Reads the four models' Gate-3 Pareto + Step-4 sanity tables and plots two panels:
+Reads each model's Gate-3 Pareto + Step-4 sanity tables and plots two panels:
 
   (left)  max SSM-vs-per-layer-baseline reconstruction gap vs depth L — the
           headline depth-scaling result (monotone in the Pythia/mlsae family);
-  (right) seed-stability match@0.7 vs depth, marked by SAE source type — the
-          cross-model surprise (res-jb L1 stays stable where mlsae TopK does not).
+  (right) seed-stability match@0.7 vs depth, grouped by SAE *type* — the
+          cross-model result (L1 SAEs stay stable where mlsae TopK does not,
+          confirmed on two families each: GPT-2/Qwen L1 vs Pythia TopK).
 
 All numbers are pulled from the run JSONs (no hand-entered values) so the figure
 regenerates from saved intermediates. Run dirs are resolved by newest glob for the
@@ -26,14 +27,17 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-# (label, gate3 dir, step4 dir, SAE suite, family) — cross-model dirs resolved by glob.
+# (label, gate3 dir, step4 dir, SAE suite, family, SAE type) — cross-model dirs by glob.
+# Qwen2-0.5B's Phase-3 is on its 12-layer SAE-coverage prefix (chanind covers blocks 0..11).
+# GPT-2-medium/large have no public residual SAEs (H1/H2-only lanes) so they are not here.
 MODELS = [
     ("Pythia-70m", "runs/2026-06-24-ph3-gate3-70md", "runs/2026-06-24-ph3-step4-70md",
-     "mlsae", "Pythia"),
-    ("GPT-2-small", "runs/*-xm-gpt2-gate3", "runs/*-xm-gpt2-step4", "res-jb", "GPT-2"),
-    ("Pythia-160m", "runs/*-xm-p160-gate3", "runs/*-xm-p160-step4", "mlsae", "Pythia"),
+     "mlsae", "Pythia", "TopK"),
+    ("GPT-2-small", "runs/*-xm-gpt2-gate3", "runs/*-xm-gpt2-step4", "res-jb", "GPT-2", "L1"),
+    ("Pythia-160m", "runs/*-xm-p160-gate3", "runs/*-xm-p160-step4", "mlsae", "Pythia", "TopK"),
+    ("Qwen2-0.5B", "runs/*-xm-qwen-gate3", "runs/*-xm-qwen-step4", "chanind", "Qwen", "L1"),
     ("Pythia-410m", "runs/2026-06-25-ph3-gate3-410md", "runs/2026-06-25-ph3-step4-410md",
-     "mlsae", "Pythia"),
+     "mlsae", "Pythia", "TopK"),
 ]
 
 
@@ -46,12 +50,12 @@ def _newest(pattern: str) -> str:
 
 def collect() -> list[dict]:
     rows = []
-    for label, gpat, spat, suite, family in MODELS:
+    for label, gpat, spat, suite, family, sae_type in MODELS:
         g = json.loads((Path(_newest(gpat)) / "tables" / "gate3_pareto.json").read_text())
         s = json.loads((Path(_newest(spat)) / "tables" / "sanity_stats.json").read_text())
         gaps = [x["gap"] for x in g["matched_l0_gaps"]]
         rows.append({
-            "label": label, "suite": suite, "family": family,
+            "label": label, "suite": suite, "family": family, "sae_type": sae_type,
             "L": int(g["dims"]["n_layers"]),
             "gap_max": max(gaps), "gap_min": min(gaps),
             "seed": float(s["seed_stability"]["mean_match_rate_0.7"]),
@@ -70,9 +74,11 @@ def main() -> int:
     pyth = [r for r in rows if r["family"] == "Pythia"]
     axL.plot([r["L"] for r in pyth], [r["gap_max"] for r in pyth], "-o", color="tab:blue",
              label="Pythia / mlsae (in-family)", zorder=3)
+    xfam_color = {"GPT-2": "tab:orange", "Qwen": "tab:green"}
     for r in rows:
         if r["family"] != "Pythia":
-            axL.scatter([r["L"]], [r["gap_max"]], marker="D", s=70, color="tab:orange",
+            axL.scatter([r["L"]], [r["gap_max"]], marker="D", s=70,
+                        color=xfam_color.get(r["family"], "tab:orange"),
                         zorder=4, label=f"{r['family']} / {r['suite']} (cross-family)")
     for r in rows:
         axL.annotate(f"{r['label']}\n+{r['gap_max']:.3f}", (r["L"], r["gap_max"]),
@@ -84,11 +90,11 @@ def main() -> int:
     axL.legend(fontsize=8, loc="upper left")
     axL.grid(alpha=0.3)
 
-    # --- right: seed-stability vs depth, marked by SAE source type ---
-    for suite, color in (("mlsae", "tab:blue"), ("res-jb", "tab:orange")):
-        pts = [r for r in rows if r["suite"] == suite]
+    # --- right: seed-stability vs depth, grouped by SAE *type* (the actual lever) ---
+    for sae_type, color in (("TopK", "tab:blue"), ("L1", "tab:orange")):
+        pts = [r for r in rows if r["sae_type"] == sae_type]
         axR.scatter([r["L"] for r in pts], [r["seed"] for r in pts], s=70, color=color,
-                    label=f"{suite} SAEs")
+                    label=f"{sae_type} SAEs")
     for r in rows:
         axR.annotate(f"{r['label']}\n{r['seed']:.2f}", (r["L"], r["seed"]),
                      textcoords="offset points", xytext=(6, -4), fontsize=8)

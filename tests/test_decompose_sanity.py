@@ -9,11 +9,14 @@ from layer_dynamics.diagnostics.decompose_sanity import (
     collapse_flags,
     decoder_directions,
     direction_cosines,
+    feature_impulse_responses,
     feature_mass,
     feature_overlap,
     feature_top_examples,
     match_rate,
     reconstruction_pairs,
+    state_eigenvalue_moduli,
+    subspace_overlap,
     top_features,
 )
 from layer_dynamics.ssm import LowRankSSM, SSMDims
@@ -100,6 +103,84 @@ def test_match_rate_threshold():
     cos = np.array([0.9, 0.8, 0.6, 0.71, 0.69])
     assert match_rate(cos, 0.7) == 0.6  # 0.9, 0.8, 0.71
     assert match_rate(np.array([]), 0.7) == 0.0
+
+
+# --- gauge-invariant stability (Fix 5 / S1) ---
+
+
+def test_impulse_response_home_layer_equals_decoder_column():
+    """g_j[ℓ*] (the home-layer slice of the impulse response) == the raw decoder column."""
+    m = LowRankSSM(_dims(L=4, D=5, M=7, dz=3, r=2), seed=2, init_scale=0.4)
+    feats, layers = [3, 1, 6], [0, 2, 1]
+    g = feature_impulse_responses(m, feats, layers)  # [k, L, D]
+    assert g.shape == (3, 4, 5)
+    raw = decoder_directions(m, feats, layers)  # [k, D]
+    for t, ell in enumerate(layers):
+        assert np.allclose(g[t, ell], raw[t], atol=1e-5)
+
+
+def test_impulse_response_zero_before_home_layer():
+    """An input at home layer ℓ* cannot affect Δ at layers ℓ < ℓ* (causal in depth)."""
+    m = LowRankSSM(_dims(L=4, D=5, M=7, dz=3, r=2), seed=1, init_scale=0.4)
+    g = feature_impulse_responses(m, [2], [2])  # home layer 2
+    assert np.allclose(g[0, 0], 0.0, atol=1e-6)
+    assert np.allclose(g[0, 1], 0.0, atol=1e-6)
+    assert not np.allclose(g[0, 2], 0.0, atol=1e-6)  # writes at the home layer
+
+
+def test_impulse_response_carries_downstream_state():
+    """g_j has nonzero mass at layers after the home layer via the state chain (B→z→C)."""
+    m = LowRankSSM(_dims(L=4, D=5, M=7, dz=3, r=2), seed=3, init_scale=0.6)
+    g = feature_impulse_responses(m, [4], [0])  # home layer 0 → can reach all later layers
+    downstream = np.abs(g[0, 1:]).sum()
+    assert downstream > 0.0  # cross-layer propagation present
+
+
+def test_impulse_response_length_mismatch_raises():
+    m = LowRankSSM(_dims(), seed=0)
+    try:
+        feature_impulse_responses(m, [0, 1], [0])
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError on mismatched lengths")
+
+
+def test_subspace_overlap_identical_and_orthogonal():
+    rng = np.random.default_rng(0)
+    a = rng.standard_normal((3, 6))
+    assert abs(subspace_overlap(a, a) - 1.0) < 1e-6  # same span
+    # disjoint coordinate subspaces → orthogonal
+    e1 = np.eye(6)[:2]
+    e2 = np.eye(6)[3:5]
+    assert abs(subspace_overlap(e1, e2)) < 1e-8
+
+
+def test_subspace_overlap_invariant_to_within_span_rotation():
+    """Overlap is 1 even when individual directions are shuffled within the same span."""
+    rng = np.random.default_rng(1)
+    basis = rng.standard_normal((4, 8))
+    # b = random linear recombinations of a's rows → identical span, different rows
+    mix = rng.standard_normal((4, 4))
+    b = mix @ basis
+    assert abs(subspace_overlap(basis, b) - 1.0) < 1e-6
+    # per-direction cosine would NOT see this stability
+    assert np.mean(direction_cosines(basis, b)) < 0.99
+
+
+def test_state_eigenvalue_moduli_shape_and_similarity_invariance():
+    m = LowRankSSM(_dims(L=4, D=5, M=7, dz=3, r=3), seed=5, init_scale=0.5)
+    mods = state_eigenvalue_moduli(m)
+    assert mods.shape == (3, 3)  # L-1 transitions, d_z moduli each
+    assert np.all(np.diff(mods, axis=1) <= 1e-6)  # descending per layer
+    # eigenvalue moduli are invariant to a similarity transform of A_0
+    with torch.no_grad():
+        A0 = m.A1[0] @ m.A2[0].T
+        T = torch.eye(3) + 0.3 * torch.randn(3, 3, generator=torch.Generator().manual_seed(0))
+        A0t = T @ A0 @ torch.linalg.inv(T)
+        m.A1.data[0] = A0t
+        m.A2.data[0] = torch.eye(3)
+    mods2 = state_eigenvalue_moduli(m)
+    assert np.allclose(np.sort(mods[0]), np.sort(mods2[0]), atol=1e-4)
 
 
 # --- dataset overlap ---

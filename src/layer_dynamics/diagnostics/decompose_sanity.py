@@ -105,6 +105,89 @@ def match_rate(cosines: np.ndarray, threshold: float = 0.7) -> float:
     return float((np.asarray(cosines) >= threshold).mean()) if len(cosines) else 0.0
 
 
+def feature_impulse_responses(
+    model: LowRankSSM, features: list[int], layers: list[int], *, batch_size: int = 64
+) -> np.ndarray:
+    """Gauge-invariant per-feature Δ-contribution: the SSM impulse response ``g_j ∈ R^{L×D}``.
+
+    The Branch B SSM is **linear** in the inputs ``u``, so the data-averaged contribution of
+    feature ``(home layer ℓ*, coordinate j)`` to ``Δ`` is — up to the (cosine-irrelevant)
+    scalar mean activation — its *impulse response*: feed a unit activation at ``(ℓ*, j)`` and
+    read the resulting ``Δ̂`` at every layer, with the input-free baseline (``b`` + the
+    ``z₀``-driven ``Cz`` term) differenced out. Unlike the raw decoder column ``D_{ℓ*}[:, j]``
+    (:func:`decoder_directions`) — only the *home-layer* feedthrough write, which shifts under
+    the SSM's state↔feedthrough gauge freedom — the full ``g_j`` (feedthrough at ``ℓ*`` **plus**
+    the downstream state propagation ``C_ℓ A…A B_{ℓ*}`` at ``ℓ > ℓ*``) is a property of the
+    input→output map and so is gauge-invariant. Its home-layer slice ``g_j[ℓ*]`` equals
+    ``D_{ℓ*}[:, j]`` exactly (a consistency check).
+
+    Returns ``[k, L, D]`` (k = len(features)); flatten over (L, D) for a direction cosine.
+    """
+    if len(features) != len(layers):
+        raise ValueError("features and layers must be the same length")
+    k = len(features)
+    L, D, M = model.dims.n_layers, model.dims.d_model, model.dims.d_input
+    device = next(model.parameters()).device
+    out = np.zeros((k, L, D), dtype=np.float32)
+    if k == 0:
+        return out
+    was_training = model.training
+    model.eval()
+    with torch.no_grad():
+        base = model(torch.zeros(1, L, M, device=device))  # [1, L, D] input-free baseline
+        for start in range(0, k, batch_size):
+            sel = list(range(start, min(start + batch_size, k)))
+            u = torch.zeros(len(sel), L, M, device=device)
+            for row, t in enumerate(sel):
+                u[row, layers[t], features[t]] = 1.0
+            out[start : start + len(sel)] = (model(u) - base).cpu().numpy()
+    if was_training:
+        model.train()
+    return out
+
+
+def _orthonormal_basis(a: np.ndarray, rtol: float = 1e-8) -> np.ndarray:
+    """Orthonormal basis ``[D, rank]`` for the span of the rows of ``a`` (a ``[k, D]`` stack)."""
+    if a.size == 0:
+        return np.zeros((a.shape[1] if a.ndim == 2 else 0, 0))
+    u, s, _ = np.linalg.svd(a.T, full_matrices=False)  # a.T is [D, k]; left vectors span the rows
+    tol = s.max() * rtol if len(s) else 0.0
+    return u[:, s > tol]
+
+
+def subspace_overlap(a: np.ndarray, b: np.ndarray) -> float:
+    """Grassmann overlap of the subspaces spanned by the rows of two ``[k, D]`` stacks.
+
+    Orthonormalises each row set and returns the **mean cosine of the principal angles** (mean
+    singular value of ``Qaᵀ Qb``) ∈ [0, 1]: 1 = identical span, 0 = orthogonal. Unlike the
+    per-direction cosine (:func:`direction_cosines`), this is invariant to how the directions
+    are rotated *within* their joint span, so it scores whether two seeds find the same feature
+    *subspace* even when individual directions are gauge-shuffled across that subspace.
+    """
+    qa = _orthonormal_basis(a)
+    qb = _orthonormal_basis(b)
+    if qa.shape[1] == 0 or qb.shape[1] == 0:
+        return 0.0
+    s = np.linalg.svd(qa.T @ qb, compute_uv=False)
+    return float(np.clip(s, 0.0, 1.0).mean())
+
+
+def state_eigenvalue_moduli(model: LowRankSSM) -> np.ndarray:
+    """Descending moduli of the eigenvalues of each transition ``A_ℓ`` → ``[L-1, d_z]``.
+
+    ``A_ℓ = A1_ℓ A2_ℓᵀ``. Eigenvalues are invariant under the SSM's state similarity gauge
+    ``A → T A T⁻¹`` (Symmetry A), so the modulus spectrum is a gauge-invariant summary of the
+    cross-layer state dynamics. Per-layer moduli are sorted descending for cross-seed matching
+    (compare two seeds' spectra row-wise with :func:`direction_cosines`).
+    """
+    with torch.no_grad():
+        out = []
+        for ell in range(model.dims.n_layers - 1):
+            mat = (model.A1[ell] @ model.A2[ell].transpose(-1, -2)).cpu().numpy()
+            out.append(np.sort(np.abs(np.linalg.eigvals(mat)))[::-1])
+    return np.stack(out, axis=0) if out else np.zeros((0, model.dims.d_state))
+
+
 def feature_overlap(features_a: list[int], features_b: list[int]) -> dict[str, float]:
     """Jaccard + intersection size of two top-feature index sets (dataset stability)."""
     sa, sb = set(features_a), set(features_b)

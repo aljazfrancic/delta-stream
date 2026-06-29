@@ -15,9 +15,16 @@ MLSAE TopK; **Qwen = chanind L1** (`chanind/sae-qwen2-0.5b-res`, resid_post, via
 > above the scrambled null and the AR kernel is **non-stationary** (every cross-band off-diagonal
 > R² negative), with **k\*=1** (first-order) everywhere — the exact Gate-1/Gate-2 signatures, now in
 > GPT-2 (12/24/36L) and a genuinely different family (Qwen2-0.5B).
-> **(2) The cross-layer-propagation gain grows with depth.** Max SSM-vs-per-layer-baseline R² gap
-> **+0.018 (6L) → +0.037 (12L) → +0.066 (24L)** in the Pythia family; the cross-family points clear
-> their baselines too (GPT-2-small **+0.018**, Qwen2-0.5B **+0.043**, both 12L).
+> **(2) The cross-layer-propagation gain is robustly larger at depth — but it is an endpoint
+> contrast, not a clean monotone line (revised with 3-seed error bars, S2 2026-06-29).** Max
+> SSM-vs-per-layer-baseline R² gap (Pythia, mean±sd over seeds 0/1/2): **+0.017±0.002 (6L) →
+> +0.020±0.015 (12L) → +0.064±0.003 (24L)**. The **24L gap is ~3× the shallow models', with
+> non-overlapping error bars** → the §4.2 "load-bearing at depth" prediction holds at the endpoints.
+> **But the clean monotone 3-point trend does NOT survive:** the original single-seed 12L value
+> (+0.037) was a high outlier that did not replicate (seeds 1–2 ≈ +0.011), so 6L and 12L are
+> statistically indistinguishable (~+0.02). Most likely 160m's small dataset (N=767, smallest) +
+> gap_max being a max-over-λ order statistic. Cross-family points (single-seed) clear their baselines
+> too (GPT-2-small **+0.018**, Qwen2-0.5B **+0.043**, both 12L).
 > **(3) The seed-stability degeneracy tracks the SAE source TYPE (L1 vs TopK), not depth or family —
 > CONFOUND NOW BROKEN.** L1 sources are seed-stable on two families (GPT-2 **0.95**, Qwen **0.81**);
 > TopK sources are not on two Pythia models (160m **0.38**, 410m **0.45**). The wave-1 caveat that
@@ -67,21 +74,26 @@ first-order read), so **Branch B (fully depth-indexed) is the right architecture
 
 Max held-out SSM-vs-per-layer-baseline R² gap (baseline = same SSM, state ablated):
 
-| Model | L | SAE (type) | gap (max) | seed match@0.7 |
+| Model | L | SAE (type) | gap (max, mean±sd) | seed match@0.7 |
 |---|---|---|---|---|
-| Pythia-70m | 6 | mlsae (TopK) | **+0.018** | 0.99 |
-| GPT-2-small | 12 | res-jb (L1) | **+0.018** | **0.95** |
-| Pythia-160m | 12 | mlsae (TopK) | **+0.037** | **0.38** |
-| **Qwen2-0.5B** | 12* | **chanind (L1)** | **+0.043** | **0.81** |
-| Pythia-410m | 24 | mlsae (TopK) | **+0.066** | 0.45 |
+| Pythia-70m | 6 | mlsae (TopK) | **+0.017 ± 0.002** (n=3) | 0.99 |
+| GPT-2-small | 12 | res-jb (L1) | **+0.018** (n=1) | **0.95** |
+| Pythia-160m | 12 | mlsae (TopK) | **+0.020 ± 0.015** (n=3; seed-0 was +0.037) | **0.38** |
+| **Qwen2-0.5B** | 12* | **chanind (L1)** | **+0.043** (n=1) | **0.81** |
+| Pythia-410m | 24 | mlsae (TopK) | **+0.064 ± 0.003** (n=3) | 0.45 |
 
-<sub>*Qwen Phase-3 is on its 12-layer SAE-coverage prefix (chanind covers blocks 0..11 of 24); recon R² mean +0.659 clears the gate.</sub>
+<sub>*Qwen Phase-3 is on its 12-layer SAE-coverage prefix (chanind covers blocks 0..11 of 24); recon R² mean +0.659 clears the gate. Pythia gaps are mean±sd over seeds 0/1/2 (S2, `scripts/run_s2_seeds.sh`); per-seed: 70m [0.018, 0.015, 0.019], 160m [0.037, 0.012, 0.011], 410m [0.066, 0.066, 0.061]. Cross-family rows are seed-0 only.</sub>
 
-**In-family depth-scaling is monotone** (0.018 → 0.037 → 0.066 for 6 → 12 → 24L): structured
-cross-layer propagation explains progressively more of the residual updates as depth grows,
-exactly the §4.2 prediction. The SSM is on/above the per-layer baseline at the knee for **every**
-model (no collapse; sanity OK). GPT-2 **and Qwen** confirm the **sign** of the effect in different
-architectures *and* different SAE families — Qwen's +0.043 at 12L is the strongest cross-family gap.
+**Depth-scaling, with 3-seed error bars (S2):** the gap is **robustly ~3× larger at 24L
+(+0.064±0.003) than at 6L (+0.017±0.002)** — non-overlapping, so structured cross-layer propagation
+explains materially more of the residual updates at depth, the §4.2 prediction. **However, it is an
+endpoint contrast, not a clean monotone 6→12→24 line:** the 12L (160m) midpoint is **seed-unstable**
+(seed-0 +0.037 did not replicate; seeds 1–2 ≈ +0.011 → mean +0.020±0.015), so 6L and 12L overlap and
+are statistically indistinguishable. The original "monotone 0.018→0.037→0.066" was partly a seed-0
+artefact at the noisy 12L point (small N=767 + max-over-λ order statistic). The SSM is on/above the
+per-layer baseline at the knee for **every** model (no collapse; sanity OK), and GPT-2 **and** Qwen
+confirm the effect's **sign** in different architectures and SAE families — Qwen's +0.043 at 12L is
+the strongest cross-family 12L gap.
 
 ## The seed-stability surprise (new lead for the 410m limitation)
 
@@ -118,8 +130,10 @@ property of the **mlsae TopK source**, and L1 dictionaries are stable at the sam
 independent families.
 
 ## Caveats
-1. **160m small dataset** (767 / 613 train) — fine for H1/H2 (held at n=1555 on 410m) but
-   confounds the seed-stability comparison (above).
+1. **160m small dataset** (767 / 613 train, 153 test) — fine for H1/H2 (held at n=1555 on 410m) but
+   confounds the seed-stability comparison (above) **and makes its depth-scaling gap seed-noisy**
+   (3-seed +0.020±0.015, vs the tight ±0.002–0.003 at 70m/410m) — the reason the once-"monotone"
+   12L midpoint did not replicate (S2). The robust depth claim is the 6L-vs-24L endpoint contrast.
 2. **GPT-2 low-rank ridge anomaly** (0.146 vs full-rank 0.91) — residual geometry differs;
    AR/H1 verdict unaffected.
 3. ~~res-jb vs mlsae conflate SAE type with model family~~ — **RESOLVED in wave 2**: Qwen2-0.5B

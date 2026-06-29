@@ -15,14 +15,16 @@ CounterFact prompts (organization 711 / geography 511 / language 333), Δ at the
 > natural-magnitude ablation moves top-1 probability by the pre-registered 0.20 (max effect
 > **+0.024**); the symmetric injection test is likewise null (**−0.02** nat vs the 1.0-nat bar).
 > Controls and the magnitude-matched random null pass cleanly (no implementation bug).
-> **(3) The null is a *distributed code*, not a dead method.** Amplifying a single feature's
-> contribution scales monotonically to **full** answer removal (×10 → −0.36, ×30 → saturates at
-> the clean prob), so the feature direction is causally correct and only its magnitude is small;
-> ablating each example's **top-≈100** co-firing features together crosses the 0.20 bar, and the
-> top-300 reproduce full removal. **Controlled (S3):** a count-matched *random* group does not
-> cross 0.20 (rules out "any ~100 directions"), but a mass-matched random group reproduces the
-> effect — so recall is a genuinely distributed, **mass-driven** code, causally faithful *in
-> aggregate* with no privileged subset and no single-feature bottleneck.
+> **(3) The "distributed code" rescue does NOT survive a direction control (E1, 2026-06-29).**
+> Ablating each example's **top-≈100** co-firing features crosses the 0.20 bar and a count-matched
+> *random* group does not — but that gap is a **mass** effect, not a direction one. A **mass-matched**
+> random group **and** a **norm-matched random *direction*** (even isotropic R^D) both reproduce the
+> top-100 drop (k=100: top **+0.237**, isotropic **+0.224**, shaped **+0.204**; all cross 0.20 at the
+> same k). So the group-ablation effect is the residual **magnitude** removed, *not* the
+> decomposition's feature directions — it is **not** evidence of a causally privileged code.
+> Off-target specificity is weak/class-dependent (on **+2.89** vs off **+2.45** nat). **The
+> single-feature null is the causal result; the decomposition's demonstrated value is reconstruction
+> (1), not causal feature discovery.** (E1 memo: `runs/2026-06-29-ph4-e1-distributed-410md/memo.md`.)
 
 ---
 
@@ -121,27 +123,42 @@ clean. **→ The single-feature existence proof fails; this is the pre-registere
   (k=100 **+0.034 ± 0.028**; never crosses over k≤300) — this **rules out the vacuous reading**
   that "any ~100 directions span the answer." But a **mass-matched random** group (random active
   features summing to the same |u| mass as the top-100, ≈423 features) **reproduces** it
-  (**+0.244 ≈ top-100 +0.237**). **So recall is a genuinely distributed, _mass-driven_ code: the
-  causal effect tracks the total feature-mass ablated, not the identity of any privileged subset —
-  no small set of co-firing features is a bottleneck (consistent with the single-feature null).**
+  (**+0.244 ≈ top-100 +0.237**) → the effect tracks total feature-**mass** ablated, not the identity
+  of any privileged subset, and no small set is a bottleneck (consistent with the single-feature null).
+- **Norm-matched random-direction control + off-target (2026-06-29, E1 —
+  `runs/2026-06-29-ph4-e1-distributed-410md/memo.md`).** The S3 mass control still left "magnitude
+  vs direction" open: mass-matched random *features* stay in the decoder subspace. E1 closes it. A
+  random direction of the **same per-(example, layer) norm** as the top-k δ **reproduces** the drop
+  at every k — **isotropic +0.224 / shaped +0.204 vs top +0.237** at k=100, all crossing 0.20 at the
+  same k. So the group-ablation effect is **magnitude-driven**: it does **not** demonstrate that the
+  decomposition's feature *directions* are causally privileged. Off-target Δlogprob is weak and
+  class-dependent (pooled on **+2.89** vs off **+2.45** nat; geography features answer-specific,
+  organization not). **This removes the "causally faithful in aggregate" reading — the distributed
+  diagnostics remain a correct diagnosis of *why the single-feature proof is null* (recall is not a
+  single-feature bottleneck), but are not themselves a positive causal result.**
 
-**Verdict.** The decomposition recovers seed-stable, interpretable, reconstruction-positive
-features that **collectively and causally** explain factual recall (top-100 ablation removes the
-answer), but **no single feature is a causal bottleneck** — the pre-registered single-feature
-existence proof returns null. This is the plan's explicit "honest landing place": the paper reports
-(i) the Phase 1–2 characterisation, (ii) the decomposition as a reconstruction/compression win over
-every baseline (Step 1), and (iii) the existence-proof null with the distributed-code diagnosis.
+**Verdict.** The decomposition recovers seed-stable, interpretable, reconstruction-positive features
+that **reconstruct** factual-recall updates, but it does **not** yield a causal handle beyond
+reconstruction: the pre-registered single-feature existence proof is null, and the top-100
+group-ablation effect is **magnitude-driven, not feature-direction-specific** (E1 — a norm-matched
+random direction reproduces it). This is the plan's explicit "honest landing place": the paper
+reports (i) the Phase 1–2 characterisation, (ii) the decomposition as a reconstruction/compression
+win over every baseline (Step 1), and (iii) the existence-proof null, with the distributed-code
+diagnostics framed as a *diagnosis of the null* (no single-feature bottleneck) rather than a positive
+causal result.
 
 ## Caveats
 1. **Shared dictionary.** The SSM sources from the same MLSAE atoms as Baselines A/B, so the
    features are not "novel" by activation-identity *by construction*; the method's contribution is
    the cross-layer *propagation structure* (reconstruction), not new atoms. The novelty test
    reduces to this structural fact and is reported as such.
-2. **Distributed-code diagnostics now carry a control (S3, 2026-06-28).** The count-matched random
-   group rules out the vacuous "any ~k directions" reading; the mass-matched random group shows the
-   effect is _mass-driven_ (no privileged feature subset). They remain a *diagnosis* of the
-   pre-registered single-feature null (which stands), not an overturn of it; no threshold was
-   retuned to chase a positive.
+2. **Distributed-code diagnostics are a diagnosis of the null, not a positive result (S3 2026-06-28
+   + E1 2026-06-29).** The count-matched random group rules out "any ~k directions"; the mass-matched
+   random group and — decisively — a **norm-matched random *direction*** (E1) both reproduce the
+   top-100 drop, so the effect is **magnitude-driven**, not carried by the decomposition's feature
+   directions. They remain a *diagnosis* of the pre-registered single-feature null (which stands) —
+   recall is not a single-feature bottleneck — but are **not** evidence of a causally privileged
+   code; no threshold was retuned to chase a positive.
 3. **Seed-stability degeneracy** (carried from Gate 3) narrows the candidate pool to ~26% of the
    top-200; the strongest features survive, so the null is not an artefact of a thin pool.
 

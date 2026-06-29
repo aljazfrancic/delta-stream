@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 import torch
 
 from layer_dynamics.causal import (
@@ -10,6 +11,8 @@ from layer_dynamics.causal import (
     group_delta_contribution,
     group_random_delta_contribution,
     magnitude_matched_features,
+    norm_matched_random_delta,
+    token_logprobs,
     top_and_control_examples,
 )
 from layer_dynamics.diagnostics.decompose_sanity import decoder_directions
@@ -173,3 +176,72 @@ def test_contribution_is_linear_in_activation():
     d2 = feature_delta_contribution(model, u2, m, ell_star)
     torch.testing.assert_close(d2, 2.0 * d1, atol=1e-5, rtol=1e-4)
     assert np.isfinite(d1.numpy()).all()
+
+
+@pytest.mark.parametrize("dist", ["isotropic", "shaped"])
+def test_norm_matched_preserves_per_layer_norm(dist):
+    # the control's whole point: identical per-(example, layer) magnitude profile, new direction.
+    delta = torch.randn(30, 5, 16, dtype=torch.float32)
+    r = norm_matched_random_delta(delta, seed=1, dist=dist)
+    torch.testing.assert_close(r.norm(dim=-1), delta.norm(dim=-1), atol=1e-4, rtol=1e-4)
+    assert r.shape == delta.shape
+
+
+@pytest.mark.parametrize("dist", ["isotropic", "shaped"])
+def test_norm_matched_zero_rows_stay_zero(dist):
+    # a silent feature / a layer before the home layer (δ = 0) must not be perturbed.
+    delta = torch.randn(20, 4, 16)
+    delta[:, 0, :] = 0.0          # whole layer silent
+    delta[3, 2, :] = 0.0          # one example silent at one layer
+    r = norm_matched_random_delta(delta, seed=2, dist=dist)
+    assert torch.allclose(r[:, 0, :], torch.zeros_like(r[:, 0, :]), atol=1e-10)
+    assert torch.allclose(r[3, 2, :], torch.zeros_like(r[3, 2, :]), atol=1e-10)
+
+
+def test_norm_matched_changes_direction():
+    # isotropic in moderate D: the control is a genuinely different direction, not a rescale of δ.
+    delta = torch.randn(200, 3, 16)
+    r = norm_matched_random_delta(delta, seed=0, dist="isotropic")
+    cos = torch.cosine_similarity(r.reshape(-1, 16), delta.reshape(-1, 16), dim=-1)
+    assert cos.abs().mean() < 0.5            # nowhere near parallel on average
+    assert (r - delta).abs().max() > 1e-3
+
+
+def test_norm_matched_shaped_stays_in_contribution_subspace():
+    # if every example's contribution at a layer is a scalar multiple of one direction, the
+    # shaped random draw (combinations of the others) must land on that same 1-D subspace.
+    torch.manual_seed(0)
+    vec = torch.randn(16)
+    vec = vec / vec.norm()
+    a = torch.randn(40, 1)                   # per-example scalar
+    delta = (a * vec).reshape(40, 1, 16)     # [N, 1, D], rank-1 across examples
+    r = norm_matched_random_delta(delta, seed=3, dist="shaped")
+    cos = torch.cosine_similarity(r[:, 0], vec.expand(40, 16), dim=-1)
+    assert cos.abs().min() > 0.999           # parallel to vec (up to sign)
+
+
+def test_norm_matched_is_seed_deterministic_and_device_dtype_preserved():
+    delta = torch.randn(12, 4, 16, dtype=torch.float32)
+    a = norm_matched_random_delta(delta, seed=5, dist="shaped")
+    b = norm_matched_random_delta(delta, seed=5, dist="shaped")
+    c = norm_matched_random_delta(delta, seed=6, dist="shaped")
+    torch.testing.assert_close(a, b)         # same seed → identical
+    assert (a - c).abs().max() > 0           # different seed → different
+    assert a.dtype == delta.dtype and a.device == delta.device
+    before = delta.clone()
+    norm_matched_random_delta(delta, seed=5)
+    torch.testing.assert_close(delta, before)  # input not mutated
+
+
+def test_norm_matched_rejects_bad_dist():
+    with pytest.raises(ValueError, match="dist must be"):
+        norm_matched_random_delta(torch.randn(2, 3, 4), dist="gaussian")
+
+
+def test_token_logprobs_matches_manual_log_softmax():
+    logits = torch.randn(5, 11)
+    ids = [2, 7, 10]
+    got = token_logprobs(logits, ids)
+    want = torch.log_softmax(logits, dim=-1)[:, ids].numpy()
+    np.testing.assert_allclose(got, want, rtol=1e-5, atol=1e-6)
+    assert got.shape == (5, 3)

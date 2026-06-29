@@ -164,6 +164,54 @@ def group_random_delta_contribution(
     return out, n_ablated, mass_ablated
 
 
+def norm_matched_random_delta(
+    delta: Tensor,
+    *,
+    seed: int = 0,
+    dist: str = "isotropic",
+) -> Tensor:
+    """Random-*direction* control matched to ``delta``'s per-(example, layer) residual norm.
+
+    The mass-matched random *feature* group (:func:`group_random_delta_contribution`,
+    ``match="mass"``) stays inside the decoder subspace, so it cannot separate "removing a
+    feature-shaped vector of this size breaks recall" from "removing *any* vector of this size
+    breaks recall". This supplies that control. Given a real per-layer contribution
+    ``delta[N, L, D]`` (e.g. a top-k group δ), return ``r[N, L, D]`` with the **same
+    per-(example, layer) norm** ``‖r[i, ℓ]‖ = ‖delta[i, ℓ]‖`` but a **random direction** in
+    residual space. Splice ``r`` out instead of ``delta`` and compare the behavioural drop: if
+    the random direction is far less damaging, the effect is carried by the *direction* of the
+    feature contribution, not its sheer magnitude.
+
+    * ``dist="isotropic"`` — direction uniform on the sphere in ``R^D`` (a random direction in the
+      full residual space; the textbook matched-magnitude null).
+    * ``dist="shaped"`` — direction drawn from the empirical covariance of ``delta[:, ℓ]`` across
+      examples, as random zero-diagonal combinations of the mean-centred observed contributions (a
+      random direction *within the contribution subspace*, built from the other examples). The
+      stronger control: a contribution-shaped vector of matched norm whose only difference from the
+      real one is its per-example identity.
+
+    Zero-norm rows stay zero (a silent feature, or layers before the home layer). Deterministic in
+    ``seed`` and independent of device/batch (drawn on CPU in float64). ``delta`` is not modified.
+    """
+    if dist not in ("isotropic", "shaped"):
+        raise ValueError(f"dist must be 'isotropic' or 'shaped', got {dist!r}")
+    d = delta.detach().to("cpu", torch.float64)
+    n, n_layers, d_model = d.shape
+    norms = d.norm(dim=-1, keepdim=True)  # [N, L, 1] — the magnitude profile to preserve
+    g = torch.Generator().manual_seed(int(seed))
+    if dist == "isotropic":
+        raw = torch.randn(n, n_layers, d_model, generator=g, dtype=torch.float64)
+    else:  # "shaped": random combinations of the other examples' centred contributions
+        xc = d.transpose(0, 1)  # [L, N, D]
+        xc = xc - xc.mean(dim=1, keepdim=True)
+        w = torch.randn(n_layers, n, n, generator=g, dtype=torch.float64)
+        w.diagonal(dim1=1, dim2=2).zero_()  # exclude each example's own contribution
+        raw = torch.bmm(w, xc).transpose(0, 1)  # [N, L, D]
+    unit = raw / raw.norm(dim=-1, keepdim=True).clamp_min(1e-12)
+    r = unit * norms  # zero-norm rows → zero regardless of direction
+    return r.to(dtype=delta.dtype, device=delta.device)
+
+
 def _content_len(model, prompt: str) -> int:
     """Content-token count (excludes the prepended BOS); query position = this index."""
     return len(model.tokenizer(prompt, add_special_tokens=False)["input_ids"])
@@ -242,6 +290,17 @@ def max_token_logprob(logits: Tensor, token_ids: list[int]) -> np.ndarray:
     """
     logp = torch.log_softmax(logits, dim=-1)
     return logp[:, torch.as_tensor(token_ids)].max(dim=-1).values.numpy()
+
+
+def token_logprobs(logits: Tensor, token_ids: list[int] | np.ndarray) -> np.ndarray:
+    """Per-row log-probs of ``token_ids`` from final-token ``logits[N, vocab]`` → ``[N, T]``.
+
+    Unlike :func:`max_token_logprob` (which maxes over the set) this keeps every token, so the
+    off-target specificity readout can compare the drop on the gold answer against the drop on a
+    basket of other-class answer tokens in the same forward pass.
+    """
+    logp = torch.log_softmax(logits, dim=-1)
+    return logp[:, torch.as_tensor(token_ids)].numpy()
 
 
 def single_token_ids(model, words: list[str]) -> tuple[list[int], list[str]]:

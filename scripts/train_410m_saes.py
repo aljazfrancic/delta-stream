@@ -54,6 +54,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="train only the first K source layers (smoke test).")
     parser.add_argument("--out-npz", type=Path, default=None,
                         help="default: data/<model>/sources_trained_<mode>.npz")
+    parser.add_argument("--h5", type=Path, default=None,
+                        help="Override residual-stream HDF5 (e.g. the untrained-model "
+                             "store for the T4 reconstruction control).")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -62,7 +65,7 @@ def main(argv: list[str] | None = None) -> int:
     run.log(f"device={device}  mode={args.mode}  M={args.n_latents}  "
             f"k={args.k}  l1={args.l1_coeff}  standardize={not args.no_standardize}")
 
-    h5 = Path("data") / mcfg["name"] / "residual_stream.h5"
+    h5 = args.h5 if args.h5 is not None else Path("data") / mcfg["name"] / "residual_stream.h5"
     rs, _, _ = load_residual_stream(h5)  # [N, L+1, D]
     if args.max_layers is not None and args.max_layers + 1 < rs.shape[1]:
         rs = rs[:, : args.max_layers + 1]

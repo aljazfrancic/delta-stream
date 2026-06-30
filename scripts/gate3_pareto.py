@@ -79,6 +79,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--test-frac", type=float, default=0.2)
     parser.add_argument("--no-learn-z0", action="store_true")
+    parser.add_argument("--h5", type=Path, default=None,
+                        help="Override residual-stream HDF5 (e.g. the untrained-model "
+                             "store for the T4 reconstruction control; pair with the "
+                             "matching --sources-npz).")
     args = parser.parse_args(argv)
 
     lambdas = [float(x) for x in args.lambdas.split(",") if x.strip()]
@@ -90,7 +94,7 @@ def main(argv: list[str] | None = None) -> int:
     learn_z0 = not args.no_learn_z0
 
     # --- data ---
-    h5 = Path("data") / mcfg["name"] / "residual_stream.h5"
+    h5 = args.h5 if args.h5 is not None else Path("data") / mcfg["name"] / "residual_stream.h5"
     rs, _, _ = load_residual_stream(h5)
     delta = deltas(rs)
     n, n_layers, d_model = delta.shape

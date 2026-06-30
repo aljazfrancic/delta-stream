@@ -65,6 +65,10 @@ def main(argv: list[str] | None = None) -> int:
     add_common_args(parser)
     parser.add_argument("--step3-csv", type=Path, default=None,
                         help="Step 3 ridge_r2.csv to report the v_ℓ-alone comparison.")
+    parser.add_argument("--h5", type=Path, default=None,
+                        help="Override the residual-stream HDF5 (default: "
+                             "data/<model>/residual_stream.h5). Used by the E4 "
+                             "generic-text generality control.")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -78,7 +82,7 @@ def main(argv: list[str] | None = None) -> int:
     input_pcs = int(dgcfg.get("ar_input_pcs", 256))
     null_seed = int(dgcfg.get("ar_null_seed", 1234))
 
-    h5 = Path("data") / mcfg["name"] / "residual_stream.h5"
+    h5 = args.h5 if args.h5 is not None else Path("data") / mcfg["name"] / "residual_stream.h5"
     rs, _, _ = load_residual_stream(h5)
     n, n_states, d = rs.shape
     dlt = deltas(rs)  # [N, L, D]
@@ -130,6 +134,7 @@ def main(argv: list[str] | None = None) -> int:
     nonstationary_flag = bool(ar_best[2] < 0.2 and frac_real_sig > 0.5)
 
     stats = {
+        "h5": str(h5),
         "n_train": len(tr), "n_test": len(te), "n_layers": int(n_states - 1), "d_model": d,
         "lags": list(lags), "ranks": list(ranks), "granger_q_pca": q_pca,
         "ar_input_pcs": input_pcs,

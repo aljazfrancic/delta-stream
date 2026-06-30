@@ -15,8 +15,10 @@ from layer_dynamics.diagnostics.autoregress import (
     remove_state_dirs,
     scramble_per_depth,
     state_pca_basis,
+    tautology_floor_decomposition,
     wilks_rao_f,
 )
+from layer_dynamics.diagnostics.dataset import train_test_split_idx
 
 
 def _make_ar1(n=400, n_delta=8, d=6, seed=0):
@@ -162,6 +164,46 @@ def test_random_walk_surrogate_matches_marginals_and_kills_ar():
         assert np.linalg.norm(c_real - c_surr) / np.linalg.norm(c_real) < 0.25
     fit = fit_ar_pooled(surr[:640], surr[640:], k=1, ranks=(2, 4, 6))
     assert fit.best_r2 < 0.1  # independent steps -> no AR predictability
+
+
+def test_tautology_floor_decomposition_is_exactly_additive():
+    # The headline R² splits EXACTLY into frac_par + frac_perp for any data (an
+    # orthogonal Pythagorean split of the held-out explained variance).
+    rng = np.random.default_rng(0)
+    n, n_states, d = 300, 9, 8
+    rs = np.cumsum(rng.standard_normal((n, n_states, d)), axis=1)  # running-sum states
+    dlt = rs[:, 1:, :] - rs[:, :-1, :]
+    tr, te = train_test_split_idx(n, test_frac=0.3, seed=0)
+    res = tautology_floor_decomposition(rs, dlt, tr, te, k=1, m_sweep=(1, 3, 5),
+                                        ranks=(2, 4, 8), input_pcs=None)
+    assert {r["m"] for r in res["by_m"]} == {1, 3, 5}
+    for r in res["by_m"]:
+        assert np.isclose(r["frac_par"] + r["frac_perp"], res["r2_full"], atol=1e-9)
+        assert 0.0 <= r["par_var_frac"] <= 1.0
+    # A larger subspace can only capture (weakly) more of the *target* variance.
+    pv = [r["par_var_frac"] for r in res["by_m"]]
+    assert pv[0] <= pv[1] + 1e-9 <= pv[2] + 1e-9
+
+
+def test_tautology_floor_isolates_persistent_drift():
+    # A store whose only cross-depth predictability is a smooth drift along one
+    # high-variance direction (the tautology); the complement is depth-independent.
+    rng = np.random.default_rng(1)
+    n, ndelta, d = 600, 8, 6
+    rs = np.zeros((n, ndelta + 1, d))
+    rs[:, 0, 0] = 80.0 * rng.standard_normal(n)              # large persistent state variance
+    step = 3.0 * rng.standard_normal(n)                      # per-example step, CONSTANT over depth
+    for ell in range(1, ndelta + 1):
+        rs[:, ell, 0] = rs[:, ell - 1, 0] + step             # Δ_0 = step -> identity-predictable
+    rs[:, :, 1:] = 0.5 * rng.standard_normal((n, ndelta + 1, d - 1))  # small, no cross-depth law
+    dlt = rs[:, 1:, :] - rs[:, :-1, :]
+    tr, te = train_test_split_idx(n, test_frac=0.3, seed=0)
+    res = tautology_floor_decomposition(rs, dlt, tr, te, k=1, m_sweep=(1,),
+                                        ranks=(2, 4), input_pcs=None)
+    r = res["by_m"][0]
+    assert r["r2_par"] > 0.8                  # the drift direction is ~perfectly predictable
+    assert r["frac_par"] >= r["frac_perp"]    # the predictability is the tautological drift
+    assert np.isclose(r["frac_par"] + r["frac_perp"], res["r2_full"], atol=1e-9)
 
 
 def test_granger_significant_by_lag_splits_lag1_and_higher():

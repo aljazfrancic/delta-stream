@@ -32,3 +32,41 @@ def load_model(name: str, *, device: str = "auto", dtype: str = "float32") -> An
     model = HookedTransformer.from_pretrained(name, device=dev, dtype=torch_dtype)
     model.eval()
     return model
+
+
+def load_untrained_model(
+    name: str, *, device: str = "auto", dtype: str = "float32", seed: int = 0
+) -> Any:
+    """Load a HookedTransformer with the pretrained *architecture* but **random weights**.
+
+    The T4 untrained-model control (Phase 4 H1-validity). Same config as
+    ``load_model(name)`` — identical ``n_layers`` / ``d_model`` / tokenizer — but the
+    weights are freshly initialised (TransformerLens default init) from ``seed``
+    instead of the trained checkpoint. A forward pass still produces a running-sum
+    residual stream, so this is the control that separates H1's depth structure from
+    residual-stream *plumbing*: any AR-on-Δ predictability an untrained net shows —
+    especially after T1's persistence strip — is a property of the architecture, not
+    of learning.
+
+    Reproducible on CUDA (the primary device): TransformerLens weight init draws from
+    the Python, NumPy *and* torch RNGs, so ``set_seed`` is called immediately before
+    construction (seeding only torch is insufficient — verified). CPU init is not
+    bit-reproducible in TransformerLens, but the scientific conclusion is robust to
+    the particular random draw.
+    """
+    import torch
+    from transformer_lens import HookedTransformer
+    from transformer_lens.loading_from_pretrained import get_pretrained_model_config
+
+    from layer_dynamics.seeding import set_seed
+
+    dev = resolve_device(device)
+    torch_dtype = getattr(torch, _DTYPES.get(dtype, "float32"))
+    cfg = get_pretrained_model_config(name, device=dev, dtype=torch_dtype)
+    cfg.init_weights = True  # the config defaults this off (pretrained loads weights);
+    #                          without it HookedTransformer leaves params uninitialised
+    #                          (zero on a fresh CUDA alloc) → a degenerate all-zero stream.
+    set_seed(seed)  # TL init draws from random+numpy+torch; seed all three
+    model = HookedTransformer(cfg)  # random weights from the current seed
+    model.eval()
+    return model

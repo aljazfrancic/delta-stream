@@ -433,6 +433,85 @@ def remove_state_dirs(dlt: np.ndarray, dirs: np.ndarray) -> np.ndarray:
     return (flat - comp).reshape(n, n_delta, d).astype(dlt.dtype)
 
 
+def tautology_floor_decomposition(
+    rs: np.ndarray,
+    dlt: np.ndarray,
+    train_idx: np.ndarray,
+    test_idx: np.ndarray,
+    k: int,
+    *,
+    m_sweep: tuple[int, ...] = (1, 5, 20, 50),
+    ranks: tuple[int, ...] = (16, 32, 64, 128),
+    input_pcs: int | None = 256,
+    alphas: np.ndarray = DEFAULT_ALPHAS,
+) -> dict:
+    """T5: closed-form split of the headline AR-on-Δ R² into a tautology floor and a
+    genuine remainder, by an orthogonal (Pythagorean) decomposition of the held-out
+    explained variance over the persistent **state** subspace.
+
+    The ±v_ℓ tautology lives in the high-variance persistent state directions (the
+    running-sum drift along the rogue dims is smooth, so consecutive Δ's agree there
+    almost for free — *not* because Δ_ℓ ≈ −v_ℓ, which is false: ‖v_ℓ‖ ≫ ‖Δ_ℓ‖, so the
+    naive −v̂_ℓ predictor is wildly mis-scaled). For the *single* fitted pooled AR(k)
+    kernel, the held-out explained variance ``ss_tot − ss_res`` splits **exactly**
+    across the top-m state subspace (``par``) and its complement (``perp``), because
+    both the centred target ``Δ_ℓ − ȳ_ℓ`` and the residual ``Δ_ℓ − Δ̂_ℓ`` decompose
+    orthogonally under the orthonormal projector:
+
+        R²_full = frac_par + frac_perp        (exact; fractions of total Δ variance)
+
+    ``frac_par`` is the analytic **tautology floor** — the share of the headline R²
+    carried by predictability *inside* the persistent directions — and ``frac_perp``
+    the genuine remainder. Unlike T1 (which *refits* the AR on persistence-removed Δ,
+    so its complement number is a re-optimised lower bound), this attributes the one
+    headline fit, so the two pieces add back to R²_full exactly: the explicit
+    subtracted baseline to report beside the headline number. Returns per-m
+    ``frac_par``/``frac_perp`` (additive) and ``r2_par``/``r2_perp`` (each subspace's
+    own predictability), plus ``r2_full``.
+    """
+    fit = fit_ar_pooled(dlt[train_idx], dlt[test_idx], k, ranks=ranks,
+                        input_pcs=input_pcs, alphas=alphas)
+    coef = fit.coef_at_rank(fit.best_rank)
+    depths = list(fit.depths)
+    basis = fit.basis
+
+    pred_tr = _project(dlt[train_idx], basis)
+    pred_te = _project(dlt[test_idx], basis)
+    means = _depth_means(pred_tr, dlt[train_idx], depths, k)
+    tgt_blocks, res_blocks = [], []
+    for ell in depths:
+        xbar, ybar = means[ell]
+        yte = dlt[test_idx][:, ell, :]
+        pred = ybar + (_lagged_design(pred_te, ell, k) - xbar) @ coef
+        tgt_blocks.append(yte - ybar)  # Δ_ℓ − ȳ_ℓ  (centred target)
+        res_blocks.append(yte - pred)  # Δ_ℓ − Δ̂_ℓ  (held-out residual)
+    tgt = np.concatenate(tgt_blocks, axis=0)
+    res = np.concatenate(res_blocks, axis=0)
+    ss_tot = float(np.sum(tgt**2))
+    ss_res = float(np.sum(res**2))
+    r2_full = 1.0 - ss_res / ss_tot
+
+    rows = []
+    for m in m_sweep:
+        _, dirs = state_pca_basis(rs, m)  # top-m persistent state directions (as T1)
+        if dirs.shape[0] == 0:
+            continue
+        # Energy inside the subspace (orthonormal projector → Pythagorean split).
+        sst_par = float(np.sum((tgt @ dirs.T) ** 2))
+        ssr_par = float(np.sum((res @ dirs.T) ** 2))
+        sst_perp, ssr_perp = ss_tot - sst_par, ss_res - ssr_par
+        rows.append({
+            "m": m,
+            "frac_par": (sst_par - ssr_par) / ss_tot,    # tautology floor (additive)
+            "frac_perp": (sst_perp - ssr_perp) / ss_tot,  # genuine remainder (additive)
+            "r2_par": 1.0 - ssr_par / sst_par if sst_par > 0 else float("nan"),
+            "r2_perp": 1.0 - ssr_perp / sst_perp if sst_perp > 0 else float("nan"),
+            "par_var_frac": sst_par / ss_tot,  # share of Δ variance in the subspace
+        })
+    return {"r2_full": r2_full, "k": int(k), "best_rank": int(fit.best_rank),
+            "n_test": int(len(test_idx)), "by_m": rows}
+
+
 def random_walk_surrogate(dlt: np.ndarray, seed: int, *, rank: int = 256) -> np.ndarray:
     """Null T2: per-layer marginal-matched **independent-step** surrogate.
 

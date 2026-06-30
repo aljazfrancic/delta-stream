@@ -124,6 +124,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"cap {ksel['feasibility_cap']} -> k={k}"
                 + (" (CAPPED: short-horizon only)" if ksel["capped"] else ""))
     else:
+        ksel = None
         if args.k is None:
             parser.error("pass --granger-csv or --k to set the AR order")
         k = args.k
@@ -248,7 +249,8 @@ def main(argv: list[str] | None = None) -> int:
             "itself was confirmed real by the Step 5 scrambled null. "
             + ("k is CAPPED at the feasibility limit: this tests SHORT-horizon "
                "stationarity only; long-horizon (lags up to the Granger reach) is "
-               "deferred to the Phase 3 Step 4 MA recheck. " if ksel["capped"] else "")
+               "deferred to the Phase 3 Step 4 MA recheck. "
+               if (ksel is not None and ksel["capped"]) else "")
             + "Dataset is 3 classes / 1555 ex (below the ≥1000/class target); the "
             "per-class cross-relation test is Step 4."
         ),

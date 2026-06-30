@@ -74,6 +74,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--lr", type=float, default=3e-3)
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--lambda-reg", type=float, default=1e-4)
+    parser.add_argument("--cutoffs", type=int, nargs="+", default=[0, 3, 7, 11, 15, 19, 23],
+                        help="Source-prefix cutoffs ℓ_max: keep sources for ℓ≤ℓ_max, zero the "
+                             "rest. ℓ_max=0 is the embedding-only lower bound; ℓ_max=L-1 is full.")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -90,78 +93,86 @@ def main(argv: list[str] | None = None) -> int:
     tr, te = train_test_split_idx(N, test_frac=0.2, seed=args.seed)
     run.log(f"sources {tuple(u.shape)}, delta {tuple(delta.shape)}, rank={r}, device={device}")
 
-    # Embedding-only sources: zero every layer past ℓ0 (the lower-bound variant).
-    u_embed = u.clone()
-    u_embed[:, 1:, :] = 0.0
-
+    # Source-prefix sweep: for each cutoff ℓ_max, keep sources for ℓ≤ℓ_max and zero the
+    # rest, then fit the SSM (which may still propagate the kept sources forward through
+    # the state chain). ℓ_max=0 is the pre-registered embedding-only lower bound; ℓ_max=L-1
+    # is the full model. The buildup curve shows whether late-layer sources are load-bearing.
     fit_kw = dict(lambda_reg=args.lambda_reg, epochs=args.epochs, lr=args.lr,
                   bs=args.batch_size, device=device)
-    out = {}
-    for name, src in (("full", u), ("embed_only", u_embed)):
+    cutoffs = sorted({min(c, L - 1) for c in args.cutoffs})
+    rows, per_layer = [], {}
+    for c in cutoffs:
+        src = u.clone()
+        if c + 1 < L:
+            src[:, c + 1 :, :] = 0.0
         model = LowRankSSM(SSMDims(L, D, M, r, r), use_state=True, seed=args.seed).to(device)
         _fit(model, src[tr], delta[tr], **fit_kw)
         tr_r2, _ = _r2_overall_and_per_layer(model, src[tr], delta[tr],
                                              bs=args.batch_size, device=device)
         te_r2, te_per = _r2_overall_and_per_layer(model, src[te], delta[te],
                                                   bs=args.batch_size, device=device)
-        out[name] = {"train_r2": tr_r2, "test_r2": te_r2, "test_per_layer_r2": te_per.tolist()}
-        run.log(f"  [{name:10s}] train R²={tr_r2:+.4f} test R²={te_r2:+.4f}")
+        rows.append({"cutoff": c, "n_source_layers": c + 1, "train_r2": tr_r2, "test_r2": te_r2})
+        per_layer[c] = te_per.tolist()
+        run.log(f"  [ℓ_max={c:2d}] sources ℓ≤{c}: train R²={tr_r2:+.4f} test R²={te_r2:+.4f}")
         del model
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-    full_pl = np.array(out["full"]["test_per_layer_r2"])
-    embed_pl = np.array(out["embed_only"]["test_per_layer_r2"])
-    early = slice(0, L // 3)
-    late = slice(2 * L // 3, L)
+    full = max(rows, key=lambda x: x["cutoff"])
+    embed = min(rows, key=lambda x: x["cutoff"])
     summary = {
-        "rank": r, "n_layers": L, "sources": args.sources_npz.name,
-        "full_test_r2": out["full"]["test_r2"], "embed_only_test_r2": out["embed_only"]["test_r2"],
-        "drop": round(out["full"]["test_r2"] - out["embed_only"]["test_r2"], 4),
-        "full_per_layer_r2": out["full"]["test_per_layer_r2"],
-        "embed_only_per_layer_r2": out["embed_only"]["test_per_layer_r2"],
-        "embed_only_early_mean_r2": float(embed_pl[early].mean()),
-        "embed_only_late_mean_r2": float(embed_pl[late].mean()),
-        "full_early_mean_r2": float(full_pl[early].mean()),
-        "full_late_mean_r2": float(full_pl[late].mean()),
+        "rank": r, "n_layers": L, "sources": args.sources_npz.name, "cutoffs": cutoffs,
+        "rows": rows, "test_per_layer_r2_by_cutoff": per_layer,
+        "full_test_r2": full["test_r2"], "embed_only_test_r2": embed["test_r2"],
+        "drop_full_minus_embed": round(full["test_r2"] - embed["test_r2"], 4),
         "interpretation": (
-            "Embedding-only sources (s_0 only, propagated through the state chain) are a "
-            "lower bound: if per-layer sources are load-bearing, removing them collapses "
-            "reconstruction, most at LATE layers where Geva et al.'s built-up features "
-            "live. The complement of the use_state=False ablation (which keeps sources, "
-            "kills propagation)."
+            "Source-prefix sweep: reconstruction R² as a function of how many layers' "
+            "sources are available (ℓ≤ℓ_max), with the SSM free to propagate them forward. "
+            "ℓ_max=0 is the pre-registered embedding-only lower bound — and since v_0 has no "
+            "SAE (u_0=0 in every available dictionary), it is the example-independent floor: "
+            "with no source to inject, the input-free state trajectory is the same for every "
+            "example. The curve's rise with ℓ_max measures how much each band of per-layer "
+            "sources is load-bearing; if it only saturates near ℓ_max=L-1, late-layer sources "
+            "(Geva et al.'s built-up features) carry real, non-propagable reconstruction value. "
+            "Complement of the use_state=False ablation (keeps sources, kills propagation)."
         ),
     }
     run.save_json("tables/embed_only.json", summary)
-    _plot(run, full_pl, embed_pl)
+    _plot(run, rows, np.array(per_layer[full["cutoff"]]), np.array(per_layer[embed["cutoff"]]))
 
-    print("\n=== Embedding-only source ablation (frozen mlsae sources, rank "
+    print("\n=== Source-prefix sweep (frozen mlsae sources, rank "
           f"{r}) ===")
-    print(f"  full sources:    test R² {summary['full_test_r2']:+.4f}  "
-          f"(early {summary['full_early_mean_r2']:+.3f} / "
-          f"late {summary['full_late_mean_r2']:+.3f})")
-    print(f"  embedding-only:  test R² {summary['embed_only_test_r2']:+.4f}  "
-          f"(early {summary['embed_only_early_mean_r2']:+.3f} / "
-          f"late {summary['embed_only_late_mean_r2']:+.3f})")
-    print(f"  drop from removing per-layer sources: {summary['drop']:+.4f}")
+    for row in rows:
+        print(f"  ℓ_max={row['cutoff']:2d} ({row['n_source_layers']:2d} source layers): "
+              f"test R²={row['test_r2']:+.4f}")
+    print(f"  embedding-only (ℓ_max=0) {summary['embed_only_test_r2']:+.4f}  →  "
+          f"full (ℓ_max={L-1}) {summary['full_test_r2']:+.4f}  "
+          f"(buildup {summary['drop_full_minus_embed']:+.4f})")
     return 0
 
 
-def _plot(run, full_pl, embed_pl) -> None:
+def _plot(run, rows, full_pl, embed_pl) -> None:
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=(7, 4))
-    ax.plot(range(len(full_pl)), full_pl, "-o", label="full per-layer sources")
-    ax.plot(range(len(embed_pl)), embed_pl, "-s", label="embedding-only (s_0)")
-    ax.axhline(0, color="k", lw=0.6)
-    ax.set_xlabel("layer ℓ"); ax.set_ylabel("held-out Δ_ℓ R²")
-    ax.set_title("Embedding-only source ablation: late-layer collapse")
-    ax.legend()
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
+    cut = [r["cutoff"] for r in rows]
+    ax1.plot(cut, [r["test_r2"] for r in rows], "-o", color="tab:blue")
+    ax1.axhline(0, color="k", lw=0.6)
+    ax1.set_xlabel("source-prefix cutoff ℓ_max (sources kept for ℓ≤ℓ_max)")
+    ax1.set_ylabel("held-out Δ reconstruction R²")
+    ax1.set_title("Reconstruction builds up as per-layer sources are added")
+    ax1.grid(alpha=0.3)
+    ax2.plot(range(len(full_pl)), full_pl, "-o", label="full (all sources)")
+    ax2.plot(range(len(embed_pl)), embed_pl, "-s", label="embedding-only (ℓ_max=0)")
+    ax2.axhline(0, color="k", lw=0.6)
+    ax2.set_xlabel("layer ℓ"); ax2.set_ylabel("held-out Δ_ℓ R²")
+    ax2.set_title("Per-layer R²: endpoints")
+    ax2.legend()
     fig.tight_layout()
-    fig.savefig(run.path("figures/embed_only_per_layer.png"), dpi=130)
+    fig.savefig(run.path("figures/source_prefix_sweep.png"), dpi=130)
     plt.close(fig)
 
 

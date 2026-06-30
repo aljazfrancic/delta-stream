@@ -78,12 +78,17 @@ def saturation_rank(step3_csv: Path, ranks: tuple[int, ...], *, tol: float = 0.0
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     add_common_args(parser)
-    parser.add_argument("--step3-csv", type=Path, required=True,
-                        help="Step 3 ridge_r2.csv — used to lock the saturation rank r.")
-    parser.add_argument("--granger-csv", type=Path, required=True,
-                        help="Step 5 granger_real.csv — used to select the AR order k.")
-    parser.add_argument("--k", type=int, default=None, help="Override the selected AR order.")
-    parser.add_argument("--rank", type=int, default=None, help="Override the locked rank r.")
+    parser.add_argument("--step3-csv", type=Path, default=None,
+                        help="Step 3 ridge_r2.csv — locks the saturation rank r "
+                             "(omit + pass --rank when no Step-3 run exists, e.g. E7).")
+    parser.add_argument("--granger-csv", type=Path, default=None,
+                        help="Step 5 granger_real.csv — used to select the AR order k "
+                             "(omit and pass --k to set the order directly).")
+    parser.add_argument("--k", type=int, default=None, help="Override / set the AR order.")
+    parser.add_argument("--rank", type=int, default=None, help="Override / set the rank r.")
+    parser.add_argument("--h5", type=Path, default=None,
+                        help="Override the residual-stream HDF5 (default data/<model>/…). "
+                             "Used by the E7 general-text completion.")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -100,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
     import pandas as pd
 
     # --- data + split (shared with Phase 1) ---
-    h5 = Path("data") / mcfg["name"] / "residual_stream.h5"
+    h5 = args.h5 if args.h5 is not None else Path("data") / mcfg["name"] / "residual_stream.h5"
     rs, _, _ = load_residual_stream(h5)
     n, n_states, d = rs.shape
     n_delta = n_states - 1
@@ -110,16 +115,30 @@ def main(argv: list[str] | None = None) -> int:
     run.log(f"loaded {h5}: deltas {dlt.shape}; split {len(tr)} train / {len(te)} test")
 
     # --- lock k (Granger profile + feasibility cap) and r (Step 3 saturation) ---
-    granger = pd.read_csv(args.granger_csv)
-    ksel = select_k(granger, n_delta, sweep=sweep)
-    k = args.k if args.k is not None else ksel["k"]
-    sat = saturation_rank(args.step3_csv, ranks)
-    r = args.rank if args.rank is not None else sat["median_rank"]
-    run.log(f"k selection: Granger-significant to lag {ksel['granger_selected_lag']}, "
-            f"cap {ksel['feasibility_cap']} -> k={k}"
-            + (" (CAPPED: short-horizon only)" if ksel["capped"] else ""))
-    run.log(f"rank: Step 3 saturation median r={sat['median_rank']} "
-            f"(per-layer {sat['per_layer']}) -> r={r}")
+    # CSVs auto-select k/r; when absent (e.g. E7 general text has no paired Step-3 run),
+    # --k/--rank must be supplied directly.
+    if args.granger_csv is not None:
+        ksel = select_k(pd.read_csv(args.granger_csv), n_delta, sweep=sweep)
+        k = args.k if args.k is not None else ksel["k"]
+        run.log(f"k selection: Granger-significant to lag {ksel['granger_selected_lag']}, "
+                f"cap {ksel['feasibility_cap']} -> k={k}"
+                + (" (CAPPED: short-horizon only)" if ksel["capped"] else ""))
+    else:
+        if args.k is None:
+            parser.error("pass --granger-csv or --k to set the AR order")
+        k = args.k
+        run.log(f"k set directly to {k} (no --granger-csv)")
+    if args.step3_csv is not None:
+        sat = saturation_rank(args.step3_csv, ranks)
+        r = args.rank if args.rank is not None else sat["median_rank"]
+        run.log(f"rank: Step 3 saturation median r={sat['median_rank']} "
+                f"(per-layer {sat['per_layer']}) -> r={r}")
+    else:
+        sat = None
+        if args.rank is None:
+            parser.error("pass --step3-csv or --rank to set the rank")
+        r = args.rank
+        run.log(f"rank set directly to {r} (no --step3-csv)")
 
     bands = band_depths(n_delta, k)
     run.log("bands (target depths): " + ", ".join(f"{nm}={bands[nm]}" for nm in BAND_NAMES))

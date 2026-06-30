@@ -39,6 +39,37 @@ from layer_dynamics.diagnostics.stationarity import BAND_NAMES, band_depths, sel
 from layer_dynamics.runlog import init_run
 
 
+def _class_kstar(dlt_c, *, test_frac, seed, sweep, rank, input_pcs, null_seed, tol, k_step1):
+    """Compact per-depth + per-band k* summary on one relation-class subset of Δ.
+
+    Mirrors the pooled per-depth/per-band loops in :func:`main` but returns only the
+    summary statistics (medians), so the by-class table stays small. Reuses the same
+    AR machinery and scrambled null so each class is computed exactly as the pooled run.
+    """
+    n = dlt_c.shape[0]
+    n_delta = dlt_c.shape[1]
+    tr, te = train_test_split_idx(n, test_frac=test_frac, seed=seed)
+    dtr, dte = dlt_c[tr], dlt_c[te]
+    basis = fit_delta_pca(dtr, input_pcs)
+    s_tr, s_te = scramble_per_depth(dtr, null_seed), scramble_per_depth(dte, null_seed + 777)
+    kw = {"sweep": sweep, "rank": rank, "basis": basis, "input_pcs": input_pcs}
+    kstars, incrs, nulls = [], [], []
+    for ell in range(1, n_delta):
+        real = depth_r2_curve(dtr, dte, ell, **kw)
+        kstars.append(kstar_from_curve(real, tol=tol))
+        incrs.append(incremental_over_lag1(real))
+        nulls.append(max(depth_r2_curve(s_tr, s_te, ell, **kw).values()))
+    bands = band_depths(n_delta, k_step1)
+    band_ks = {nm: kstar_from_curve(
+        band_r2_curve(dtr, dte, bands[nm], sweep=sweep, rank=rank, basis=basis,
+                      input_pcs=input_pcs), tol=tol) for nm in BAND_NAMES}
+    return {"n": n, "n_train": len(tr), "median_kstar": float(np.median(kstars)),
+            "max_kstar": int(np.max(kstars)),
+            "median_incremental_over_lag1": float(np.median(incrs)),
+            "median_null_best_r2": float(np.median(nulls)), "band_kstar": band_ks,
+            "per_depth_kstar": [int(x) for x in kstars]}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     add_common_args(parser)
@@ -48,6 +79,12 @@ def main(argv: list[str] | None = None) -> int:
                         help="Step 5 granger_real.csv — to cite the Granger reach for contrast.")
     parser.add_argument("--rank", type=int, default=None, help="Override the working rank r.")
     parser.add_argument("--tol", type=float, default=0.95, help="k* fraction-of-best threshold.")
+    parser.add_argument("--h5", type=Path, default=None,
+                        help="Override the residual-stream HDF5 (default data/<model>/…). "
+                             "Used by the E7 general-text completion.")
+    parser.add_argument("--by-class", action="store_true",
+                        help="Also report k* stratified by relation_class (Phase-2 Step-2 "
+                             "item 4 / proposal §5.4: effective depth per relation type).")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -67,8 +104,8 @@ def main(argv: list[str] | None = None) -> int:
         r = 256
     run.log(f"working rank r={r}, sweep k={list(sweep)}, tol={args.tol}")
 
-    h5 = Path("data") / mcfg["name"] / "residual_stream.h5"
-    rs, _, _ = load_residual_stream(h5)
+    h5 = args.h5 if args.h5 is not None else Path("data") / mcfg["name"] / "residual_stream.h5"
+    rs, relation_class, _ = load_residual_stream(h5)
     n, n_states, _ = rs.shape
     n_delta = n_states - 1
     dlt = deltas(rs)
@@ -124,6 +161,19 @@ def main(argv: list[str] | None = None) -> int:
         gsel = select_k(pd.read_csv(args.granger_csv), n_delta)
         granger_reach = int(gsel["granger_selected_lag"])
 
+    # --- per-class k* (Phase-2 Step-2 item 4 / proposal §5.4) ---
+    by_class = {}
+    if args.by_class:
+        for c in sorted(set(relation_class.tolist())):
+            mask = relation_class == c
+            summ = _class_kstar(dlt[mask], test_frac=test_frac, seed=args.seed, sweep=sweep,
+                                rank=r, input_pcs=input_pcs, null_seed=null_seed, tol=args.tol,
+                                k_step1=k_step1)
+            by_class[c] = summ
+            run.log(f"  [class {c:14s}] n={summ['n']:4d} median k*={summ['median_kstar']:.0f} "
+                    f"max={summ['max_kstar']} bands={summ['band_kstar']} "
+                    f"null={summ['median_null_best_r2']:.3f}")
+
     kstars = [row["kstar"] for row in kstar_rows]
     incrs = [row["incremental_over_lag1"] for row in kstar_rows]
     stats = {
@@ -137,6 +187,7 @@ def main(argv: list[str] | None = None) -> int:
         "median_null_best_r2": float(np.median([row["null_best_r2"] for row in kstar_rows])),
         "band_kstar": {row["band"]: row["kstar"] for row in band_rows},
         "granger_reach_lag": granger_reach,
+        "by_class": by_class,
         "interpretation": (
             "Reconstruction-effective depth k* is tiny (median {:.0f}) at every depth: a "
             "single preceding update captures essentially all held-out predictable "
@@ -160,6 +211,16 @@ def main(argv: list[str] | None = None) -> int:
     pd.DataFrame(kstar_rows).to_csv(run.path("tables/per_depth_kstar.csv"), index=False)
     pd.DataFrame(curve_rows).to_csv(run.path("tables/per_depth_r2_curve.csv"), index=False)
     pd.DataFrame(band_rows).to_csv(run.path("tables/band_kstar.csv"), index=False)
+    if by_class:
+        cls_rows = []
+        for c, s in by_class.items():
+            row = {"relation_class": c, "n": s["n"], "n_train": s["n_train"],
+                   "median_kstar": s["median_kstar"], "max_kstar": s["max_kstar"],
+                   "median_incremental_over_lag1": s["median_incremental_over_lag1"],
+                   "median_null_best_r2": s["median_null_best_r2"]}
+            row.update({f"band_{b}": kv for b, kv in s["band_kstar"].items()})
+            cls_rows.append(row)
+        pd.DataFrame(cls_rows).to_csv(run.path("tables/kstar_by_class.csv"), index=False)
     run.save_json("tables/step2_stats.json", stats)
     _plots(run, kstar_rows, curve_rows, sweep, granger_reach)
 
@@ -172,6 +233,9 @@ def main(argv: list[str] | None = None) -> int:
     print("scrambled-null median best R²: "
           f"{np.median([row['null_best_r2'] for row in kstar_rows]):.3f}")
     print(f"Granger reach (Step 5, for contrast): lag {granger_reach}")
+    for c, s in by_class.items():
+        print(f"  class {c:14s} (n={s['n']:4d}): median k*={s['median_kstar']:.0f} "
+              f"bands={s['band_kstar']} null={s['median_null_best_r2']:.3f}")
     return 0
 
 

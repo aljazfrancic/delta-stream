@@ -393,3 +393,103 @@ def scramble_per_depth(dlt: np.ndarray, seed: int) -> np.ndarray:
         rng = np.random.default_rng(seed + ell)
         out[:, ell, :] = dlt[rng.permutation(dlt.shape[0]), ell, :]
     return out
+
+
+def state_pca_basis(rs: np.ndarray, m: int) -> tuple[np.ndarray, np.ndarray]:
+    """Top-``m`` principal directions of the **states** v_ℓ, pooled over depth.
+
+    Returns ``(mean[D], dirs[m, D])`` with ``dirs`` orthonormal. These are the
+    persistent, high-variance ("rogue") directions the residual stream is dominated
+    by (top-1 ≈ 28 %, top-20 ≈ 85 % of variance on Pythia-410m). T1 projects the
+    updates onto the *complement* of this subspace to ask whether the AR-on-Δ
+    predictability survives where state persistence is no longer dominant — i.e.
+    whether it is genuine depth structure or the mechanical ±v_ℓ tautology
+    (Δ_ℓ ⊃ −v_ℓ ⊂ Δ_{ℓ-1}).
+    """
+    n, n_states, d = rs.shape
+    flat = rs.reshape(n * n_states, d).astype(np.float64)
+    mean = flat.mean(axis=0)
+    if m <= 0:
+        return mean, np.zeros((0, d))
+    _, _, vt = np.linalg.svd(flat - mean, full_matrices=False)
+    return mean, vt[: min(m, d)]
+
+
+def remove_state_dirs(dlt: np.ndarray, dirs: np.ndarray) -> np.ndarray:
+    """Project the updates Δ onto the orthogonal complement of ``dirs`` ([m, D]).
+
+    Removing the dominant **state** directions from every Δ_ℓ strips the persistent
+    ±v_ℓ component that inflates the AR-on-Δ R². No mean-centering of Δ is needed —
+    the per-depth intercept μ_ℓ in :func:`fit_ar_pooled` already absorbs offsets; here
+    we only remove variance *directions*. (Projection then differencing equals
+    differencing then projecting, since both are linear with the same projector, so
+    this is exactly "re-difference the persistence-removed states".)
+    """
+    if dirs.shape[0] == 0:
+        return dlt
+    n, n_delta, d = dlt.shape
+    flat = dlt.reshape(n * n_delta, d)
+    comp = (flat @ dirs.T) @ dirs  # component along the removed directions
+    return (flat - comp).reshape(n, n_delta, d).astype(dlt.dtype)
+
+
+def random_walk_surrogate(dlt: np.ndarray, seed: int, *, rank: int = 256) -> np.ndarray:
+    """Null T2: per-layer marginal-matched **independent-step** surrogate.
+
+    For each depth ℓ independently, draw new updates from a Gaussian matched to that
+    layer's empirical mean and (rank-truncated) covariance. The resulting Δ̂_ℓ are
+    *independent across depth* — equivalently a random walk v̂_ℓ = v̂_{ℓ-1} + ξ_ℓ
+    whose increments carry no cross-layer dependence — while every per-layer step
+    marginal (1st + 2nd moment, including the persistent high-variance directions) is
+    preserved.
+
+    This is the parametric persistence-matched companion to the scramble null. For
+    AR-on-Δ it is expected to collapse to ≈0: with independent steps the shared ±v_ℓ
+    terms cancel in expectation (Var(v_ℓ) contributions to Cov(Δ_ℓ, Δ_{ℓ-1}) net to
+    zero), so any AR-on-Δ predictability *above* this floor cannot be a mere
+    state-persistence artefact — it requires genuine step-to-step structure.
+    """
+    rng = np.random.default_rng(seed)
+    n, n_delta, d = dlt.shape
+    out = np.empty_like(dlt)
+    for ell in range(n_delta):
+        x = dlt[:, ell, :].astype(np.float64)
+        mu = x.mean(axis=0)
+        u, s, vt = np.linalg.svd(x - mu, full_matrices=False)
+        r = min(rank, s.shape[0])
+        factor = (s[:r] / np.sqrt(max(n - 1, 1)))[:, None] * vt[:r]  # [r, D], cov^½
+        z = rng.standard_normal((n, r))
+        out[:, ell, :] = (mu + z @ factor).astype(dlt.dtype)
+    return out
+
+
+def granger_significant_by_lag(
+    grid: dict, *, bonferroni: bool = True, alpha: float = 0.05
+) -> dict:
+    """Count Bonferroni-significant Granger cells split by lag==1 vs lag>=2.
+
+    The ±v_ℓ tautology lives **entirely at lag 1** (Δ_ℓ shares v_ℓ only with Δ_{ℓ-1};
+    Δ_{ℓ-2}=v_{ℓ-1}−v_{ℓ-2} shares no v_ℓ or v_{ℓ+1} term), so the lag≥2 significant
+    count is an intrinsically tautology-free read of depth dependence (T3). Returns
+    ``{n_tests, threshold, lag1_sig, lag1_total, lagge2_sig, lagge2_total}``.
+    """
+    nlp = grid["neg_log10_p"]
+    lags = grid["lags"]
+    n_tests = int(grid["n_tests"])
+    thr = -np.log10(alpha / n_tests if bonferroni else alpha)
+    lag1_sig = lag1_tot = ge2_sig = ge2_tot = 0
+    for ji, j in enumerate(lags):
+        col = nlp[:, ji]
+        finite = np.isfinite(col)
+        sig = int(np.nansum(col[finite] > thr))
+        tot = int(finite.sum())
+        if j == 1:
+            lag1_sig, lag1_tot = sig, tot
+        else:
+            ge2_sig += sig
+            ge2_tot += tot
+    return {
+        "n_tests": n_tests, "threshold": float(thr),
+        "lag1_sig": lag1_sig, "lag1_total": lag1_tot,
+        "lagge2_sig": ge2_sig, "lagge2_total": ge2_tot,
+    }

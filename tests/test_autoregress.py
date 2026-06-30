@@ -9,8 +9,12 @@ from layer_dynamics.diagnostics.autoregress import (
     feasible_depths,
     fit_ar_pooled,
     granger_lag_grid,
+    granger_significant_by_lag,
     pca_project,
+    random_walk_surrogate,
+    remove_state_dirs,
     scramble_per_depth,
+    state_pca_basis,
     wilks_rao_f,
 )
 
@@ -118,3 +122,54 @@ def test_scramble_preserves_marginals_and_uses_distinct_perms():
         np.testing.assert_allclose(a, b)
     # Different depths get different permutations (cross-depth structure broken).
     assert not np.allclose(s[:, 0, :], dlt[:, 0, :]) or not np.allclose(s[:, 1, :], dlt[:, 1, :])
+
+
+def test_state_pca_basis_orthonormal_and_top_variance():
+    rng = np.random.default_rng(0)
+    # States with one dominant direction (a "rogue" persistent dim).
+    big = rng.standard_normal((40, 9, 1)) * 50.0
+    rest = rng.standard_normal((40, 9, 5))
+    rs = np.concatenate([big * np.ones((1, 1, 5)), rest], axis=2)[:, :, :5]
+    mean, dirs = state_pca_basis(rs, m=3)
+    assert mean.shape == (5,) and dirs.shape == (3, 5)
+    np.testing.assert_allclose(dirs @ dirs.T, np.eye(3), atol=1e-6)  # orthonormal
+    assert state_pca_basis(rs, m=0)[1].shape == (0, 5)
+
+
+def test_remove_state_dirs_projects_out_and_preserves_complement():
+    rng = np.random.default_rng(1)
+    dlt = rng.standard_normal((30, 6, 8))
+    dirs = np.linalg.svd(rng.standard_normal((8, 8)))[0][:2]  # 2 orthonormal rows
+    out = remove_state_dirs(dlt, dirs)
+    # Components along the removed directions are ~0; complement is untouched.
+    along = out.reshape(-1, 8) @ dirs.T
+    np.testing.assert_allclose(along, 0.0, atol=1e-6)
+    # Removing nothing is a no-op.
+    np.testing.assert_allclose(remove_state_dirs(dlt, np.zeros((0, 8))), dlt)
+    # A second removal is idempotent (already in the complement).
+    np.testing.assert_allclose(remove_state_dirs(out, dirs), out, atol=1e-6)
+
+
+def test_random_walk_surrogate_matches_marginals_and_kills_ar():
+    # Genuine AR(1): the surrogate must reproduce per-depth step covariance but
+    # destroy the cross-depth law -> AR R²≈0 (parametric companion to scramble).
+    dlt = _make_ar1(n=800, n_delta=8, d=6)
+    surr = random_walk_surrogate(dlt, seed=0, rank=6)
+    assert surr.shape == dlt.shape
+    for ell in range(dlt.shape[1]):  # per-layer covariance preserved within sampling error
+        c_real = np.cov(dlt[:, ell, :], rowvar=False)
+        c_surr = np.cov(surr[:, ell, :], rowvar=False)
+        assert np.linalg.norm(c_real - c_surr) / np.linalg.norm(c_real) < 0.25
+    fit = fit_ar_pooled(surr[:640], surr[640:], k=1, ranks=(2, 4, 6))
+    assert fit.best_r2 < 0.1  # independent steps -> no AR predictability
+
+
+def test_granger_significant_by_lag_splits_lag1_and_higher():
+    dlt = _make_ar1(n=600, n_delta=6, d=5)
+    grid = granger_lag_grid(dlt, lags=(1, 2, 3), q_pca=4)
+    res = granger_significant_by_lag(grid)
+    assert res["lag1_total"] == 5  # depths ℓ=1..5 are testable at lag 1
+    assert res["lag1_sig"] >= 4  # a true AR(1) lights up lag 1
+    # lag>=2 totals = testable (ℓ≥2) cells across lags 2 and 3.
+    assert res["lagge2_total"] == 4 + 3
+    assert 0 <= res["lagge2_sig"] <= res["lagge2_total"]

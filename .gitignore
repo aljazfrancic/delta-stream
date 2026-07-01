@@ -16,17 +16,26 @@ data/*
 !data/.gitkeep
 runs/*
 !runs/.gitkeep
-# Track gate/run decision records (the written memos + the Phase 3 architecture spec,
-# which Phase 3 Step 1 reads) while keeping the regenerable bulk (figures, tables,
-# logs, config/meta, .h5/.parquet) ignored. Git needs each dir un-ignored before a
-# file inside it can be re-included, so: allow subdirs, re-ignore their contents,
-# then allow only the decision-record files.
+# Track gate/run decision records (memos + the Phase 3 architecture spec) and the
+# numeric intermediates, while keeping the heavy regenerable bulk (logs, config/meta,
+# checkpoints, .h5/.parquet) ignored. Git needs each dir un-ignored before a file
+# inside it can be re-included, so: allow subdirs, re-ignore their contents, then
+# allow only the records + the CSV/JSON tables.
 !runs/*/
 runs/*/*
 !runs/*/memo.md
 !runs/*/phase3_architecture.md
+# Numeric intermediates (tiny CSV/JSON, ~1 MB total): every figure regenerates from a
+# fresh clone via replot.py / make_paper_figures.py (the D1 reproduce.sh chain).
+!runs/*/tables/
+runs/*/tables/*
+!runs/*/tables/*.csv
+!runs/*/tables/*.json
 figures/*
 !figures/.gitkeep
+# The curated paper set (deterministic SVGs; see figures.apply_style) — versioned and
+# viewable on GitHub. Scratch / other figure outputs stay ignored.
+!figures/fig*.svg
 
 # Activation stores
 *.h5

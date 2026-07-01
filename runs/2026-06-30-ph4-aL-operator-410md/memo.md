@@ -61,4 +61,4 @@ ends, for both.)
   right abstraction (Branch B), and the free per-pair CLT decoders are redundant (E3).
 - **Honest scope:** the per-layer ρ profile is only moderately shared across dictionaries
   (0.54) — report the *spectrum-level* invariance (0.99), not a claim that each layer's
-  ρ is pinned. Figures: `figures/{eig_plane,rho_by_depth,modulus_hist,state_decay}.png`.
+  ρ is pinned. Figures: `figures/{eig_plane,rho_by_depth,modulus_hist,state_decay}.svg`.

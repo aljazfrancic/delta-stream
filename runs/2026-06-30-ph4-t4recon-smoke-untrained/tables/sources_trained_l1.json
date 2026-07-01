@@ -1,0 +1,27 @@
+{
+  "M_star": 1177,
+  "alive_count": [
+    0,
+    1177,
+    974
+  ],
+  "d_model": 1024,
+  "epochs": 2000,
+  "init_l0": 0.024611957845121893,
+  "k": 32,
+  "l1_coeff": 0.5,
+  "matched_recon_r2_mean": 0.9597814688297654,
+  "matched_recon_r2_min": 0.9544606560138791,
+  "mode": "l1",
+  "model": "pythia-410m-deduped",
+  "n_examples": 1555,
+  "n_latents": 8192,
+  "n_source_layers": 3,
+  "out_npz": "<scratch>/smoke_untrained_l1.npz",
+  "recon_r2": [
+    null,
+    0.9651022816456517,
+    0.9544606560138791
+  ],
+  "standardize": true
+}

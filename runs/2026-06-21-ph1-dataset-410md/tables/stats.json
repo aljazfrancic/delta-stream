@@ -1,0 +1,43 @@
+{
+  "dropped_classes": {
+    "occupation": 32,
+    "religion": 62
+  },
+  "kept_per_class": {
+    "geography": 511,
+    "language": 333,
+    "organization": 711
+  },
+  "kept_per_relation": {
+    "P103": 210,
+    "P108": 6,
+    "P127": 21,
+    "P131": 9,
+    "P138": 3,
+    "P159": 97,
+    "P17": 33,
+    "P176": 408,
+    "P178": 237,
+    "P19": 14,
+    "P190": 2,
+    "P20": 7,
+    "P27": 149,
+    "P276": 44,
+    "P30": 112,
+    "P36": 17,
+    "P364": 9,
+    "P37": 103,
+    "P407": 11,
+    "P449": 39,
+    "P495": 10,
+    "P937": 14
+  },
+  "meets_target": false,
+  "min_examples_per_relation": 300,
+  "model": "pythia-410m-deduped",
+  "n_candidates": 21601,
+  "n_correct_top1": 1819,
+  "n_kept": 1555,
+  "target_size": 5000,
+  "threshold": 0.1
+}

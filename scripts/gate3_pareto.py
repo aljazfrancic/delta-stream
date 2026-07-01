@@ -171,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     import pandas as pd
 
     pd.DataFrame(rows).to_csv(run.path("tables/pareto.csv"), index=False)
-    _plot_pareto(rows, run.path("figures/pareto.png"))
+    _plot_pareto(rows, run.path("figures/pareto.svg"))
 
     print(f"\n=== Phase 3 Gate-3 Pareto ({mcfg.get('name')}) ===")
     print(f"  {'λ_L1':>6} {'variant':>9} {'test L0':>9} {'test R²':>9}")
@@ -236,7 +236,7 @@ def _plot_pareto(rows: list[dict], path: Path) -> None:
     ax.legend(fontsize=8)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(path, dpi=120)
+    fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
 

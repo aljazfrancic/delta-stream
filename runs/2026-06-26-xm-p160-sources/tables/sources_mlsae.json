@@ -1,0 +1,42 @@
+{
+  "M_star": 2553,
+  "alive_count": [
+    0,
+    396,
+    484,
+    690,
+    909,
+    858,
+    708,
+    616,
+    628,
+    1264,
+    1866,
+    2553
+  ],
+  "d_model": 768,
+  "init_l0": 0.011489750620185403,
+  "matched_recon_r2_mean": 0.5873853890659261,
+  "matched_recon_r2_min": 0.4500587440739465,
+  "model": "pythia-160m-deduped",
+  "n_examples": 767,
+  "n_latents_full": 49152,
+  "n_source_layers": 12,
+  "out_npz": "data/pythia-160m-deduped/sources_mlsae.npz",
+  "recon_r2": [
+    null,
+    0.8625177735089271,
+    0.7679762056045827,
+    0.6613549963287577,
+    0.6022935727069461,
+    0.5667347055066965,
+    0.5286061902690757,
+    0.49126289505616594,
+    0.4500587440739465,
+    0.5110837300223023,
+    0.5646449244640905,
+    0.4547055421836961
+  ],
+  "sae_template": "tim-lawson/sae-pythia-160m-deduped-x64-k32-layers-{layer}",
+  "suite": "mlsae"
+}

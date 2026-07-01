@@ -59,7 +59,7 @@ def main(argv: list[str] | None = None) -> int:
         "baseline_A_best_test_r2": max(r["test_r2"] for r in base),
     }
     run.save_json("tables/baseline_comparison.json", summary)
-    _plot(ssm, base, (mlsae_l0, mlsae_r2), run.path("figures/baseline_pareto.png"))
+    _plot(ssm, base, (mlsae_l0, mlsae_r2), run.path("figures/baseline_pareto.svg"))
 
     print("\n=== Phase 4 Step 1 — reconstruction-vs-sparsity comparison (Δ held-out R²) ===")
     print(f"  {'method':>34} {'L0':>9} {'R²':>8}")
@@ -98,7 +98,7 @@ def _plot(ssm, base, mlsae_pt, path: Path) -> None:
     ax.legend(fontsize=8, loc="center right")
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(path, dpi=120)
+    fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
 

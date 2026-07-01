@@ -1,0 +1,45 @@
+{
+  "dropped_classes": {
+    "occupation": 95,
+    "religion": 103
+  },
+  "kept_per_class": {
+    "geography": 702,
+    "language": 765,
+    "organization": 1073
+  },
+  "kept_per_relation": {
+    "P103": 368,
+    "P108": 12,
+    "P127": 27,
+    "P131": 19,
+    "P138": 3,
+    "P1412": 4,
+    "P159": 130,
+    "P17": 84,
+    "P176": 650,
+    "P178": 351,
+    "P19": 7,
+    "P190": 1,
+    "P20": 7,
+    "P27": 191,
+    "P276": 45,
+    "P30": 106,
+    "P36": 58,
+    "P364": 136,
+    "P37": 247,
+    "P407": 10,
+    "P449": 32,
+    "P463": 1,
+    "P495": 17,
+    "P937": 34
+  },
+  "meets_target": false,
+  "min_examples_per_relation": 150,
+  "model": "Qwen/Qwen2-0.5B",
+  "n_candidates": 21601,
+  "n_correct_top1": 2856,
+  "n_kept": 2540,
+  "target_size": 5000,
+  "threshold": 0.1
+}

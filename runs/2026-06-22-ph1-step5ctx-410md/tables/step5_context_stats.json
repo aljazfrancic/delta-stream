@@ -1,0 +1,24 @@
+{
+  "align_ok": 1000,
+  "ar_best_perturbed": {
+    "k": 20,
+    "r2": 0.696355913248162,
+    "rank": 128
+  },
+  "ar_best_wrapped": {
+    "k": 20,
+    "r2": 0.6391979915479531,
+    "rank": 128
+  },
+  "ar_r2_delta_perturbed_minus_wrapped": 0.05715792170020895,
+  "granger_bonferroni_alpha": 0.00044642857142857147,
+  "granger_heatmap_corr": 0.9640782151016625,
+  "granger_n_tests": 112,
+  "granger_significant_perturbed": 109,
+  "granger_significant_wrapped": 112,
+  "interpretation": "If the AR R\u00b2 and the Granger heatmap are ~unchanged (high heatmap_corr, similar significant-cell counts) the cross-layer dynamics at the query token are depth-intrinsic (Gate-1 Q6 = survives). A substantial change means the structure is context-dependent (Q6 = no) -> the Gate-1 'pivot: context-reconstruction dynamics' route.",
+  "n_context": 1000,
+  "n_kept": 863,
+  "pool_size": 72,
+  "preamble_tokens": 6
+}

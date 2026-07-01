@@ -1,0 +1,28 @@
+{
+  "final_vs_phase1_max_abs_diff": 0.0,
+  "hdf5": "data/pythia-410m-deduped/residual_stream_multipos.h5",
+  "mib": 607.4,
+  "multi_token_subject": 1523,
+  "n_examples": 1555,
+  "n_positions": 4,
+  "position_names": [
+    "subj_first",
+    "subj_last",
+    "mid",
+    "final"
+  ],
+  "sanity_top1": "5/5",
+  "shape": [
+    1555,
+    4,
+    25,
+    1024
+  ],
+  "single_token_subject": 32,
+  "valid_per_position": {
+    "final": 1555,
+    "mid": 1555,
+    "subj_first": 1555,
+    "subj_last": 1555
+  }
+}

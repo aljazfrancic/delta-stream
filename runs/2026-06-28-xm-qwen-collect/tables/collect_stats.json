@@ -1,0 +1,13 @@
+{
+  "d_model": 896,
+  "hdf5": "data/Qwen/Qwen2-0.5B/residual_stream.h5",
+  "mib": 217.0,
+  "n_examples": 2540,
+  "n_layers": 24,
+  "sanity_ok": "5/5",
+  "shape": [
+    2540,
+    25,
+    896
+  ]
+}

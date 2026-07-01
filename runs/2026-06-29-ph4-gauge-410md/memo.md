@@ -57,4 +57,4 @@ mlsae source (a gauge-invariant fact, consistent with the distributed code and t
 diagnosis), but reconstruction, state-dynamics spectrum, and the feature subspace are.*
 
 Artifacts: `tables/gauge_stability.json`, `tables/gauge_pairs.csv`,
-`figures/gauge_stability.png`, refit checkpoints `checkpoints/ssm_seed{1,2}.pt`.
+`figures/gauge_stability.svg`, refit checkpoints `checkpoints/ssm_seed{1,2}.pt`.

@@ -34,7 +34,7 @@ per-layer sources is.
 | 19 | 20 | +0.576 |
 | 23 (full) | 24 | **+0.770** |
 
-`tables/embed_only.json`, `figures/source_prefix_sweep.png`.
+`tables/embed_only.json`, `figures/source_prefix_sweep.svg`.
 
 ## Interpretation — the ablation ladder, with E3
 

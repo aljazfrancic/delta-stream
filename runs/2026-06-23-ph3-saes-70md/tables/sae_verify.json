@@ -1,0 +1,72 @@
+{
+  "d_model": 512,
+  "matched_recon_r2_mean": 0.684584936063132,
+  "matched_recon_r2_min": 0.5807322740029914,
+  "model": "pythia-70m-deduped",
+  "n_examples": 1000,
+  "n_source_layers": 6,
+  "per_layer": [
+    {
+      "active_mean": 15.989,
+      "hookpoint": "layers.0",
+      "k_cfg": 16,
+      "matched": false,
+      "n_latents": 32768,
+      "recon_r2": -45.690695334214354,
+      "source_layer": 0,
+      "state": "v_0"
+    },
+    {
+      "active_mean": 16.0,
+      "hookpoint": "layers.0",
+      "k_cfg": 16,
+      "matched": true,
+      "n_latents": 32768,
+      "recon_r2": 0.8688684646869586,
+      "source_layer": 1,
+      "state": "v_1"
+    },
+    {
+      "active_mean": 16.0,
+      "hookpoint": "layers.1",
+      "k_cfg": 16,
+      "matched": true,
+      "n_latents": 32768,
+      "recon_r2": 0.7192202761638657,
+      "source_layer": 2,
+      "state": "v_2"
+    },
+    {
+      "active_mean": 16.0,
+      "hookpoint": "layers.2",
+      "k_cfg": 16,
+      "matched": true,
+      "n_latents": 32768,
+      "recon_r2": 0.6382156028297781,
+      "source_layer": 3,
+      "state": "v_3"
+    },
+    {
+      "active_mean": 16.0,
+      "hookpoint": "layers.3",
+      "k_cfg": 16,
+      "matched": true,
+      "n_latents": 32768,
+      "recon_r2": 0.6158880626320662,
+      "source_layer": 4,
+      "state": "v_4"
+    },
+    {
+      "active_mean": 16.0,
+      "hookpoint": "layers.4",
+      "k_cfg": 16,
+      "matched": true,
+      "n_latents": 32768,
+      "recon_r2": 0.5807322740029914,
+      "source_layer": 5,
+      "state": "v_5"
+    }
+  ],
+  "proxy_v0_recon_r2": -45.690695334214354,
+  "sae_repo": "EleutherAI/sae-pythia-70m-deduped-32k"
+}

@@ -27,7 +27,7 @@ Both outcomes are publishable; they say different things about H1.
         --desc ph1-step5ctx-410md
 
 Outputs: tables/context_ar_r2.csv, tables/context_granger.csv,
-tables/step5_context_stats.json, figures/context_compare.png.
+tables/step5_context_stats.json, figures/context_compare.svg.
 """
 
 from __future__ import annotations
@@ -251,7 +251,7 @@ def _plot(run, ar_w, ar_p, g_w, g_p, thr) -> None:
         ax.set_xlabel("depth ℓ"); ax.set_ylabel("lag j")
         ax.set_title(f"Granger −log10 p ({tag}) thr={thr:.1f}")
         fig.colorbar(im, ax=ax, label="−log10 p")
-    fig.tight_layout(); fig.savefig(run.path("figures/context_compare.png"), dpi=130)
+    fig.tight_layout(); fig.savefig(run.path("figures/context_compare.svg"), bbox_inches="tight")
     plt.close(fig)
 
 

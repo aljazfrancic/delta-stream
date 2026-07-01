@@ -1,0 +1,44 @@
+{
+  "dropped_classes": {
+    "occupation": 91,
+    "religion": 118
+  },
+  "kept_per_class": {
+    "geography": 470,
+    "language": 540,
+    "organization": 914
+  },
+  "kept_per_relation": {
+    "P103": 336,
+    "P108": 19,
+    "P127": 23,
+    "P131": 10,
+    "P159": 110,
+    "P17": 38,
+    "P176": 497,
+    "P178": 330,
+    "P19": 13,
+    "P190": 1,
+    "P20": 9,
+    "P27": 155,
+    "P276": 15,
+    "P30": 74,
+    "P36": 23,
+    "P364": 61,
+    "P37": 126,
+    "P407": 17,
+    "P449": 40,
+    "P463": 5,
+    "P495": 9,
+    "P740": 2,
+    "P937": 11
+  },
+  "meets_target": false,
+  "min_examples_per_relation": 150,
+  "model": "gpt2-large",
+  "n_candidates": 21601,
+  "n_correct_top1": 2253,
+  "n_kept": 1924,
+  "target_size": 5000,
+  "threshold": 0.1
+}

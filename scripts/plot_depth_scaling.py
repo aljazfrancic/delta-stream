@@ -16,7 +16,7 @@ All numbers are pulled from the run JSONs (no hand-entered values) so the figure
 regenerates from saved intermediates. gate3 dirs are globbed across seeds; the
 step4 dir (seed-stability, single fit) is the newest glob hit.
 
-    python scripts/plot_depth_scaling.py    # -> runs/crossmodel/figures/depth_scaling.png
+    python scripts/plot_depth_scaling.py    # -> runs/crossmodel/figures/depth_scaling.svg
 """
 
 from __future__ import annotations
@@ -139,8 +139,8 @@ def main() -> int:
     axR.grid(alpha=0.3)
 
     fig.tight_layout()
-    path = out / "figures" / "depth_scaling.png"
-    fig.savefig(path, dpi=140)
+    path = out / "figures" / "depth_scaling.svg"
+    fig.savefig(path, bbox_inches="tight")
     print(f"wrote {path}")
     for r in rows:
         tag = f"±{r['gap_sd']:.3f} (n={r['n_seeds']})" if r["n_seeds"] > 1 else "(n=1)"

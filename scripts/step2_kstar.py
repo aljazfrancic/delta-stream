@@ -264,7 +264,7 @@ def _plots(run, kstar_rows, curve_rows, sweep, granger_reach) -> None:
     ax.set_title("Reconstruction R²(k) per depth — saturates at k≈1 (real); null≈0")
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(min(depths), max(depths)))
     fig.colorbar(sm, ax=ax, label="target depth ℓ"); ax.legend(fontsize=8)
-    fig.tight_layout(); fig.savefig(run.path("figures/r2_vs_k_per_depth.png"), dpi=130)
+    fig.tight_layout(); fig.savefig(run.path("figures/r2_vs_k_per_depth.svg"), bbox_inches="tight")
     plt.close(fig)
 
     # 2. k*(ℓ) vs the Granger reach (the reconstruction-vs-significance gap).
@@ -278,7 +278,7 @@ def _plots(run, kstar_rows, curve_rows, sweep, granger_reach) -> None:
     ax.set_xlabel("target depth ℓ"); ax.set_ylabel("k")
     ax.set_title("Effective depth k*(ℓ): reconstruction (≈1) vs Granger significance reach")
     ax.legend(fontsize=8); fig.tight_layout()
-    fig.savefig(run.path("figures/kstar_vs_depth.png"), dpi=130); plt.close(fig)
+    fig.savefig(run.path("figures/kstar_vs_depth.svg"), bbox_inches="tight"); plt.close(fig)
 
     # 3. R²(depth × k) heatmap (real).
     piv = cdf.pivot(index="k", columns="depth", values="r2_real")
@@ -289,7 +289,7 @@ def _plots(run, kstar_rows, curve_rows, sweep, granger_reach) -> None:
     ax.set_xlabel("target depth ℓ"); ax.set_ylabel("AR order k")
     ax.set_title("Held-out R²(depth, k) — value concentrated at k=1 across all depths")
     fig.colorbar(im, ax=ax, label="held-out R²"); fig.tight_layout()
-    fig.savefig(run.path("figures/r2_depth_k_heatmap.png"), dpi=130); plt.close(fig)
+    fig.savefig(run.path("figures/r2_depth_k_heatmap.svg"), bbox_inches="tight"); plt.close(fig)
 
 
 if __name__ == "__main__":

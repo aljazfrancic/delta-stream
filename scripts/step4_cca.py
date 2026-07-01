@@ -18,8 +18,8 @@ and emit the per-layer (R², CC) scatter that supports that key.
         --desc ph1-step4-410md \
         --step3-csv runs/2026-06-21-ph1-step3-410md/tables/ridge_r2.csv
 
-Outputs: tables/cca_correlations.csv, figures/cca_heatmap.png,
-figures/cca_vs_r2.png (only with --step3-csv), tables/step4_stats.json.
+Outputs: tables/cca_correlations.csv, figures/cca_heatmap.svg,
+figures/cca_vs_r2.svg (only with --step3-csv), tables/step4_stats.json.
 """
 
 from __future__ import annotations
@@ -205,7 +205,7 @@ def _plots(run, df, te_cols, tr_cols, *, has_r2: bool) -> None:
     ax.set_title("Held-out canonical correlation between v_ℓ and Δ_ℓ")
     fig.colorbar(im, ax=ax, label="held-out corr")
     fig.tight_layout()
-    fig.savefig(run.path("figures/cca_heatmap.png"), dpi=130)
+    fig.savefig(run.path("figures/cca_heatmap.svg"), bbox_inches="tight")
     plt.close(fig)
 
     # Leading canonical correlation across depth: held-out vs in-sample (the gap
@@ -224,7 +224,7 @@ def _plots(run, df, te_cols, tr_cols, *, has_r2: bool) -> None:
     ax.set_title("Leading canonical correlation by depth")
     ax.legend(fontsize=8)
     fig.tight_layout()
-    fig.savefig(run.path("figures/cca_by_layer.png"), dpi=130)
+    fig.savefig(run.path("figures/cca_by_layer.svg"), bbox_inches="tight")
     plt.close(fig)
 
     if not has_r2:
@@ -242,7 +242,7 @@ def _plots(run, df, te_cols, tr_cols, *, has_r2: bool) -> None:
     ax.set_ylabel("mean held-out canonical corr (c1..c3)")
     ax.set_title("Interpretation key: predictability vs shared subspace")
     fig.tight_layout()
-    fig.savefig(run.path("figures/cca_vs_r2.png"), dpi=130)
+    fig.savefig(run.path("figures/cca_vs_r2.svg"), bbox_inches="tight")
     plt.close(fig)
 
 

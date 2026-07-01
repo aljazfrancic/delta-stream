@@ -134,7 +134,7 @@ Tick one (410m primary; the two clauses split):
 - [ ] **No-go — both fail** → N/A (reconstruction does not fail)
 
 Recon R²: **SSM test 0.70–0.87** vs baseline 0.65–0.82 across λ_L1∈{0.3…30}, matched-L0 gap +0.037→+0.066 · seed stability **0.45** (recorded limitation) · dataset Jaccard **0.89** · feature purity **0.83**, eyeball median R² **0.98** · Date: **2026-06-25** · Memo: `runs/gate3/memo.md`
-- [x] `runs/gate3/figures/` (Pareto vs per-layer baseline `pareto.png`; reconstruction eyeball `reconstruction.png`) — under `runs/2026-06-25-ph3-gate3-410md/` and `…-step4-410md/`
+- [x] `runs/gate3/figures/` (Pareto vs per-layer baseline `pareto.svg`; reconstruction eyeball `reconstruction.svg`) — under `runs/2026-06-25-ph3-gate3-410md/` and `…-step4-410md/`
 - [-] `runs/gate3/checkpoints/` — fits ~16 min each to regenerate; populated by Phase-4 ablation work
 
 > **Gate-3 outcome.** The **24-layer 410m primary** establishes the scientific claim the 70m debug lane could not: structured cross-layer propagation reconstructs Δ **materially** better than independent per-layer SAEs (gap 3–6× the shallow-model gap, seed-robust). The wrinkle that only appears at depth is a **structural seed-instability of the learned decoder directions** (state/feedthrough trade-off; unfixed by stronger reg) — recorded as a limitation per the plan, scoped out of the headline claim, and handled in Phase 4 by filtering causal candidates to the seed-stable subset. Branch B is larger than a stationary kernel by design (H2 failed) → a reconstruction-at-matched-sparsity win, **not** a parsimony win (report param counts vs CLT in Phase 4).

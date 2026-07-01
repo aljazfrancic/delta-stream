@@ -1,0 +1,38 @@
+{
+  "feasible_depths": [
+    1,
+    23
+  ],
+  "input_pcs": 256,
+  "interpretation": "Token-position invariance at k*=1: multi-token-subject subset (4\u00d74, n=1523) verdict query_position_specific \u2014 mean within-position R\u00b2 0.456, mean cross-position -0.364, worst retention -2.879, max kernel angle 60.2\u00b0. Single-token subset (3\u00d73, n=32) verdict query_position_specific. The scrambled null collapses the within-position fits (multi ~-0.001), so the diagonal is real example-specific structure, not the lag-1 \u2213v_\u2113 tautology \u2014 and because the tautology is shared by diagonal and off-diagonal alike, the *retention* (cross/within) is the position-invariance read and is robust to it. Foreign-position kernels lose a large share of the within-position R\u00b2 \u2192 the Phase 1 dynamics are (at least partly) specific to the query position where context aggregates; scope the framing to context-aggregated factual recall at the query position.",
+  "kstar": 1,
+  "model": "pythia-410m-deduped",
+  "multi": {
+    "max_output_angle_deg": 60.16885757446289,
+    "mean_diagonal_r2": 0.45619605853653983,
+    "mean_offdiagonal_r2": -0.3636564736295427,
+    "n": 1523,
+    "null_mean_diag_r2": -0.0005883492015505976,
+    "tolerances": {
+      "angle_tol_deg": 30.0,
+      "retention_tol": 0.1
+    },
+    "verdict": "query_position_specific",
+    "worst_retention": -2.8789777133839443
+  },
+  "n_layers": 24,
+  "single": {
+    "max_output_angle_deg": 60.43209457397461,
+    "mean_diagonal_r2": 0.22722091194963387,
+    "mean_offdiagonal_r2": -0.07249361757751033,
+    "n": 32,
+    "null_mean_diag_r2": -0.02614795580113723,
+    "tolerances": {
+      "angle_tol_deg": 30.0,
+      "retention_tol": 0.1
+    },
+    "verdict": "query_position_specific",
+    "worst_retention": -1.1415112405094554
+  },
+  "working_rank": 256
+}

@@ -1,0 +1,22 @@
+{
+  "d_model": 1024,
+  "hdf5": "data/pythia-410m-deduped-untrained-general/residual_stream.h5",
+  "mib": 151.9,
+  "n_examples": 1555,
+  "n_layers": 24,
+  "next": "phase4_pressure_tests.py --h5 data/pythia-410m-deduped-untrained-general/residual_stream.h5",
+  "sanity": {
+    "finite": true,
+    "norm_v0": 0.7993771433830261,
+    "norm_vL": 142.67465209960938,
+    "vL_decodes_to": " lights"
+  },
+  "seed": 0,
+  "shape": [
+    1555,
+    25,
+    1024
+  ],
+  "source": "generic",
+  "weights": "untrained_random_init"
+}

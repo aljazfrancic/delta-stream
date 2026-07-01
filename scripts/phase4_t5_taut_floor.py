@@ -22,7 +22,7 @@ persistent *directions*, which is what this projects onto.)
         --desc ph4-t5-taut-floor-410md-general \
         --h5 data/pythia-410m-deduped-general/residual_stream.h5
 
-Outputs: tables/t5_taut_floor.csv, tables/t5_stats.json, figures/t5_floor.png.
+Outputs: tables/t5_taut_floor.csv, tables/t5_stats.json, figures/t5_floor.svg.
 """
 
 from __future__ import annotations
@@ -133,7 +133,7 @@ def _plot(run, res) -> None:
     ax.set_ylabel("share of total Δ variance (additive)")
     ax.set_title("T5 · tautology floor (frac_par) vs genuine (frac_perp)")
     ax.legend(fontsize=8)
-    fig.tight_layout(); fig.savefig(run.path("figures/t5_floor.png"), dpi=130)
+    fig.tight_layout(); fig.savefig(run.path("figures/t5_floor.svg"), bbox_inches="tight")
     plt.close(fig)
 
 

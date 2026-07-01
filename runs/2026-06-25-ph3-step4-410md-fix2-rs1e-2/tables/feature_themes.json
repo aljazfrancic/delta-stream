@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Lahti",
+      "Royal Society of Edinburgh",
+      "Brandenburg-Prussia",
+      "Swedish Empire",
+      "Christopher Tugendhat, Baron Tugendhat",
+      "Moshe Dayan",
+      "Weimar Republic",
+      "William Pitt the Younger",
+      "Princeton University Press",
+      "Romain Rolland"
+    ],
+    "feature": 435,
+    "home_layer": 21,
+    "mass": 22703.6484375,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "language",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Wii U system software",
+      "Honda CB450",
+      "Google Account",
+      "iOS 8",
+      "IBM 3790",
+      "Nintendo 2DS",
+      "Renault 21",
+      "IBM 5100",
+      "Apple IIe Card",
+      "Nintendo DS Lite"
+    ],
+    "feature": 368,
+    "home_layer": 14,
+    "mass": 16625.537109375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Weimar Republic",
+      "Duiliu Zamfirescu",
+      "Swedish Empire",
+      "Marcel Pagnol",
+      "Brandenburg-Prussia",
+      "Christopher Tugendhat, Baron Tugendhat",
+      "Ovadia Yosef",
+      "Royal Society of Edinburgh",
+      "Lahti",
+      "Guillaume-Antoine Olivier"
+    ],
+    "feature": 2589,
+    "home_layer": 20,
+    "mass": 16623.931640625,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "geography",
+      "language",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Kingdom of Valencia",
+      "Ike Ekweremadu",
+      "Ovadia Yosef",
+      "Szymon Szymonowic",
+      "Sunidhi Chauhan",
+      "Madhan Bob",
+      "Portugal",
+      "Claude d'Annebault",
+      "Hawaii",
+      "Mukul Roy"
+    ],
+    "feature": 847,
+    "home_layer": 17,
+    "mass": 13064.19140625,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Windows Phone 8.1",
+      "Kingdom of Valencia",
+      "Windows Installer",
+      "Google Account",
+      "Szymon Szymonowic",
+      "IBM 3790",
+      "Apple Lossless",
+      "Ike Ekweremadu",
+      "Iranian reform movement",
+      "Weimar Republic"
+    ],
+    "feature": 478,
+    "home_layer": 16,
+    "mass": 12797.05078125,
+    "purity": 0.5,
+    "relations": [
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "La Grande Vadrouille",
+      "Scotland Today",
+      "Apur Panchali",
+      "Rang De Basanti",
+      "Turkish coffee",
+      "Darmstadt",
+      "Marco Pannella",
+      "Sadr City",
+      "Sir William Dunn, 1st Baronet, of Lakenheath",
+      "Romain Rolland"
+    ],
+    "feature": 91,
+    "home_layer": 17,
+    "mass": 12204.244140625,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Google Sites",
+      "Yasuyuki Kase",
+      "Koichi Ishii",
+      "Masahiko Nishimura",
+      "Marcel Pagnol",
+      "Google Maps",
+      "Valencia",
+      "Shigeaki Ikeda",
+      "Ikki Kajiwara",
+      "Wakako Tsuchida"
+    ],
+    "feature": 181,
+    "home_layer": 15,
+    "mass": 11505.1044921875,
+    "purity": 0.8,
+    "relations": [
+      "organization",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "IBM 729",
+      "IBM 1710",
+      "Jupiter mass",
+      "IBM 3790",
+      "Ontario",
+      "Cadillac ELR",
+      "Ferrari 375 MM",
+      "Renault 4P",
+      "Vietnamese Wikipedia",
+      "Renault 12"
+    ],
+    "feature": 161,
+    "home_layer": 11,
+    "mass": 11304.94921875,
+    "purity": 0.7,
+    "relations": [
+      "organization",
+      "organization",
+      "geography",
+      "organization",
+      "language",
+      "organization",
+      "organization",
+      "organization",
+      "language",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Weimar Republic",
+      "Swedish Empire",
+      "Brandenburg-Prussia",
+      "Copenhagen Business School",
+      "First Czechoslovak Republic",
+      "Karolinska Institute",
+      "Lahti",
+      "Windows NT 3.1",
+      "International Socialist Tendency",
+      "Windows NT 3.5"
+    ],
+    "feature": 1994,
+    "home_layer": 19,
+    "mass": 11099.9150390625,
+    "purity": 0.7,
+    "relations": [
+      "geography",
+      "language",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "organization"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Weimar Republic",
+      "Hawaii",
+      "Romain Rolland",
+      "William Pitt the Younger",
+      "Christopher Tugendhat, Baron Tugendhat",
+      "Kingdom of Valencia",
+      "People's Republic of China",
+      "Marco Pannella",
+      "Pierre-Jean Mariette",
+      "Cambridge"
+    ],
+    "feature": 1494,
+    "home_layer": 18,
+    "mass": 10957.1201171875,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Cleveland City Stars",
+      "Shanghai Animation Film Studio",
+      "Geneva Film Festival",
+      "Shanghai Electric",
+      "Adobe Fireworks",
+      "IBM Tivoli Workload Scheduler",
+      "Harvard Medical School",
+      "Hiroshi Takemura",
+      "Google Contacts",
+      "Canadian Cancer Society"
+    ],
+    "feature": 2245,
+    "home_layer": 23,
+    "mass": 10095.9287109375,
+    "purity": 0.7,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "organization",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Dateline NBC",
+      "CBS Schoolbreak Special",
+      "Wednesday Night Baseball",
+      "ESPN Sunday Night Football",
+      "The Andy Williams Show",
+      "CBS Television Quiz",
+      "CBS Evening News",
+      "Alfred Hitchcock Presents",
+      "Matinee Theater",
+      "IBM Network Control Program"
+    ],
+    "feature": 328,
+    "home_layer": 1,
+    "mass": 9785.2744140625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "IBM 3790",
+      "Renault 21",
+      "Nintendo DS Lite",
+      "IBM 5100",
+      "Kingdom of Valencia",
+      "Sony Alpha 99",
+      "Windows Phone 8.1",
+      "BMW M6",
+      "BMW 5 Series",
+      "Ferrari 375 MM"
+    ],
+    "feature": 312,
+    "home_layer": 15,
+    "mass": 9701.6396484375,
+    "purity": 0.9,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Union between Sweden and Norway",
+      "L'Isle",
+      "Tripolitania",
+      "Montreal Light, Heat & Power",
+      "Montreal World Film Festival",
+      "Dundee",
+      "Tavannes",
+      "College Football Scoreboard",
+      "Provence",
+      "Cape Verde"
+    ],
+    "feature": 873,
+    "home_layer": 8,
+    "mass": 8949.9462890625,
+    "purity": 0.5,
+    "relations": [
+      "geography",
+      "language",
+      "geography",
+      "geography",
+      "geography",
+      "language",
+      "language",
+      "organization",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "United Kingdom of Great Britain and Ireland",
+      "Yorkshire",
+      "KU Leuven",
+      "United Kingdom",
+      "Wallonia",
+      "Orange Free State",
+      "Irish Free State",
+      "Catalonia",
+      "Wales",
+      "Adobe Fireworks"
+    ],
+    "feature": 426,
+    "home_layer": 22,
+    "mass": 8511.818359375,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Portugal",
+      "Hawaii",
+      "Weimar Republic",
+      "Brandenburg-Prussia",
+      "First Czechoslovak Republic",
+      "Kingdom of Valencia",
+      "Kingdom of Afghanistan",
+      "People's Republic of China",
+      "Union between Sweden and Norway",
+      "Czech Republic"
+    ],
+    "feature": 123,
+    "home_layer": 2,
+    "mass": 8034.658203125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "IBM 1710",
+      "IBM 729",
+      "BMW 326",
+      "BMW R32",
+      "BMW 328",
+      "BMW M40",
+      "BMW 003",
+      "BMW M5",
+      "BMW M62",
+      "BMW E32"
+    ],
+    "feature": 838,
+    "home_layer": 10,
+    "mass": 7888.33984375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "IBM 729",
+      "IBM 1710",
+      "Harashima",
+      "Mukul Roy",
+      "Ovadia Yosef",
+      "IBM 3790",
+      "BMW 326",
+      "Jiddu Krishnamurti",
+      "Sunidhi Chauhan",
+      "Kingdom of Valencia"
+    ],
+    "feature": 427,
+    "home_layer": 12,
+    "mass": 7680.8779296875,
+    "purity": 0.6,
+    "relations": [
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Lahti",
+      "Christopher Tugendhat, Baron Tugendhat",
+      "Google Sites",
+      "William Pitt the Younger",
+      "Ovadia Yosef",
+      "Walter Long, 1st Viscount Long",
+      "Wojciech Rubinowicz",
+      "Duiliu Zamfirescu",
+      "Microsoft Developer Network",
+      "Copenhagen Business School"
+    ],
+    "feature": 3996,
+    "home_layer": 22,
+    "mass": 7118.3544921875,
+    "purity": 0.8,
+    "relations": [
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Union between Sweden and Norway",
+      "Montreal Light, Heat & Power",
+      "Copenhagen Business School",
+      "Lahti",
+      "Kingdom of Valencia",
+      "Weimar Republic",
+      "IBM 729",
+      "Sands of Beirut",
+      "BMW 501",
+      "Hawaii"
+    ],
+    "feature": 859,
+    "home_layer": 7,
+    "mass": 7063.23486328125,
+    "purity": 0.8,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "organization",
+      "geography"
+    ],
+    "top_class": "geography"
+  }
+]

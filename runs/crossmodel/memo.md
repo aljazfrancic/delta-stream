@@ -8,7 +8,7 @@ its 12-layer SAE-coverage prefix). With the Pythia 70m/410m references this is *
 1358; Pythia-160m 767; GPT-2-medium 1795; GPT-2-large 1924; **Qwen2-0.5B 2540** (> 410m's 1555).
 **SAE sources:** GPT-2-small = res-jb L1 (`jbloom/GPT2-Small-SAEs-Reformatted`, resid_pre); 160m =
 MLSAE TopK; **Qwen = chanind L1** (`chanind/sae-qwen2-0.5b-res`, resid_post, via `saes_qwen.py`).
-**Runs:** `runs/2026-06-2{5,6,8}-xm-*`. **Figure:** `runs/crossmodel/figures/depth_scaling.png`.
+**Runs:** `runs/2026-06-2{5,6,8}-xm-*`. **Figure:** `runs/crossmodel/figures/depth_scaling.svg`.
 
 > **Headline (three results, strengthened in wave 2).**
 > **(1) H1 and H2 replicate across 3 families and 4 depths.** Δ_ℓ is AR-predictable over depth
@@ -147,5 +147,5 @@ independent families.
 ```
 scripts/run_crossmodel.sh both        # wave 1: GPT-2-small + Pythia-160m (H1 -> H2 -> Phase-3)
 scripts/run_crossmodel.sh wave2       # wave 2: Qwen2-0.5B (full) + GPT-2 medium/large (H1/H2)
-scripts/plot_depth_scaling.py         # -> runs/crossmodel/figures/depth_scaling.png
+scripts/plot_depth_scaling.py         # -> runs/crossmodel/figures/depth_scaling.svg
 ```

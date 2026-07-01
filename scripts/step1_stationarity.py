@@ -318,7 +318,7 @@ def _plots(run, kernels, cross, perlag, k, spreads, bootstrap, angles, r) -> Non
             ax.text(j, i, f"{mat[i, j]:.3f}", ha="center", va="center",
                     color="w" if mat[i, j] < mat.max() - 0.15 else "k", fontsize=9)
     fig.colorbar(im, ax=ax, label="held-out R²"); fig.tight_layout()
-    fig.savefig(run.path("figures/cross_band_r2.png"), dpi=130); plt.close(fig)
+    fig.savefig(run.path("figures/cross_band_r2.svg"), bbox_inches="tight"); plt.close(fig)
 
     # 2. Per-lag Frobenius distance, grouped by band pair.
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -329,7 +329,7 @@ def _plots(run, kernels, cross, perlag, k, spreads, bootstrap, angles, r) -> Non
     ax.set_xlabel("lag j"); ax.set_ylabel("relative ‖W_j^A − W_j^B‖_F")
     ax.set_xticks(list(lags)); ax.set_title("Per-lag kernel-block distance between bands")
     ax.legend(fontsize=8); fig.tight_layout()
-    fig.savefig(run.path("figures/per_lag_frobenius.png"), dpi=130); plt.close(fig)
+    fig.savefig(run.path("figures/per_lag_frobenius.svg"), bbox_inches="tight"); plt.close(fig)
 
     # 3. Bootstrap: within-band spread distributions vs between-band distances.
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -342,7 +342,7 @@ def _plots(run, kernels, cross, perlag, k, spreads, bootstrap, angles, r) -> Non
     ax.set_ylabel("relative Frobenius distance")
     ax.set_title("Within-band bootstrap spread vs between-band distance")
     ax.legend(fontsize=7); fig.tight_layout()
-    fig.savefig(run.path("figures/bootstrap_separation.png"), dpi=130); plt.close(fig)
+    fig.savefig(run.path("figures/bootstrap_separation.svg"), bbox_inches="tight"); plt.close(fig)
 
     # 4. Principal angle spectra (output / Δ-space): mean & max angle per band pair.
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -356,7 +356,7 @@ def _plots(run, kernels, cross, perlag, k, spreads, bootstrap, angles, r) -> Non
     ax.set_ylim(0, 92); ax.axhline(90, color="grey", lw=0.6, ls=":")
     ax.set_title(f"Top-{r} output-subspace principal angles between bands")
     ax.legend(fontsize=8); fig.tight_layout()
-    fig.savefig(run.path("figures/principal_angles.png"), dpi=130); plt.close(fig)
+    fig.savefig(run.path("figures/principal_angles.svg"), bbox_inches="tight"); plt.close(fig)
 
 
 if __name__ == "__main__":

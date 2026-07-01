@@ -31,7 +31,7 @@ runs the three data-only tests that do separate them, on one residual-stream sto
         --h5 data/pythia-410m-deduped-general/residual_stream.h5
 
 Outputs: tables/{t1_persistence_sweep,t2_surrogate,t3_granger_by_lag}.csv,
-tables/pressure_stats.json, figures/{t1_persistence_sweep,t2_t3_summary}.png.
+tables/pressure_stats.json, figures/{t1_persistence_sweep,t2_t3_summary}.svg.
 """
 
 from __future__ import annotations
@@ -215,7 +215,7 @@ def _plots(run, t1_rows, t2, by_lag_real, by_lag_null) -> None:
     r = by_lag_real
     axes[1].set_title(f"T2 nulls + T3 lag≥2 Granger: "
                       f"{r['lagge2_sig']}/{r['lagge2_total']} sig")
-    fig.tight_layout(); fig.savefig(run.path("figures/t2_t3_summary.png"), dpi=130)
+    fig.tight_layout(); fig.savefig(run.path("figures/t2_t3_summary.svg"), bbox_inches="tight")
     plt.close(fig)
 
 

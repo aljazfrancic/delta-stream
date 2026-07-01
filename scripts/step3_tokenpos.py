@@ -242,7 +242,7 @@ def _plots(run, multi_res, single_res) -> None:
                 ax.text(j, i, f"{mat[i, j]:.2f}", ha="center", va="center",
                         color="w" if mat[i, j] < mat.max() * 0.6 else "k", fontsize=8)
         fig.colorbar(im, ax=ax, label="held-out R²"); fig.tight_layout()
-        fig.savefig(run.path(f"figures/confusion_{tag}.png"), dpi=130); plt.close(fig)
+        fig.savefig(run.path(f"figures/confusion_{tag}.svg"), bbox_inches="tight"); plt.close(fig)
 
     # within vs mean-cross per fit-position (multi subset).
     real = multi_res["real"]
@@ -256,7 +256,7 @@ def _plots(run, multi_res, single_res) -> None:
     ax.set_xticks(x, names, rotation=20, ha="right"); ax.set_ylabel("held-out R²")
     ax.set_title("Within- vs cross-position reconstruction (multi-token subset)")
     ax.legend(fontsize=8); fig.tight_layout()
-    fig.savefig(run.path("figures/within_vs_cross.png"), dpi=130); plt.close(fig)
+    fig.savefig(run.path("figures/within_vs_cross.svg"), bbox_inches="tight"); plt.close(fig)
 
 
 if __name__ == "__main__":

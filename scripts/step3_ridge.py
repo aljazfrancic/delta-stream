@@ -9,7 +9,7 @@ gate baseline is added separately (part B).
 
     python scripts/step3_ridge.py --config configs/pythia-410m-deduped.yaml --desc ph1-step3-410m
 
-Outputs: tables/ridge_r2.csv, figures/r2_heatmap.png, figures/r2_by_layer.png,
+Outputs: tables/ridge_r2.csv, figures/r2_heatmap.svg, figures/r2_by_layer.svg,
 tables/step3_stats.json (incl. layer-averaged best-rank ridge R² — the quantity
 the Step 5 gate compares against the Tuned Lens).
 """
@@ -140,7 +140,9 @@ def _plots(run, df, ranks) -> None:
     ax.set_xlabel("layer pair ℓ"); ax.set_ylabel("rank")
     ax.set_title("Δ_ℓ ridge held-out R²(ℓ, rank)")
     fig.colorbar(im, ax=ax, label="pooled R²")
-    fig.tight_layout(); fig.savefig(run.path("figures/r2_heatmap.png"), dpi=130); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(run.path("figures/r2_heatmap.svg"), bbox_inches="tight")
+    plt.close(fig)
 
     # Per-layer best ridge vs zero baseline.
     fig, ax = plt.subplots(figsize=(10, 3.6))
@@ -152,7 +154,9 @@ def _plots(run, df, ranks) -> None:
     ax.axhline(0, color="k", lw=0.6, label="mean-pred (R²=0)")
     ax.set_xlabel("layer pair ℓ"); ax.set_ylabel("pooled R² on Δ_ℓ")
     ax.set_title("Depth-local predictability of Δ_ℓ"); ax.legend(fontsize=8)
-    fig.tight_layout(); fig.savefig(run.path("figures/r2_by_layer.png"), dpi=130); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(run.path("figures/r2_by_layer.svg"), bbox_inches="tight")
+    plt.close(fig)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,4 @@
+relation_class,n,n_train,median_kstar,max_kstar,median_incremental_over_lag1,median_null_best_r2,band_early,band_middle,band_late
+geography,511,409,1.0,3,0.03657690148121773,6.05073968592551e-05,1,1,1
+language,333,266,1.0,3,0.02538490723638087,8.3100848815576e-06,1,1,1
+organization,711,569,1.0,2,0.03762293146613005,2.2043542167948793e-05,1,1,1

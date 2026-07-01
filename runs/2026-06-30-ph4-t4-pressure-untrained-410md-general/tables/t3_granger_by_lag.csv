@@ -1,0 +1,3 @@
+variant,n_tests,threshold,lag1_sig,lag1_total,lagge2_sig,lagge2_total
+real,112,3.3502480183341627,23,23,89,89
+scramble_null,112,3.3502480183341627,0,23,0,89

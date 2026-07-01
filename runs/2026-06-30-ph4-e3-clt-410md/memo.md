@@ -32,7 +32,7 @@ convention, pooled vs per-depth mean), reporting the **effective parameter count
 | `clt_full` | unconstrained `O(L²)` per-pair | 52.41M | 0.1 | 0.918 | **0.784** | 0.134 |
 
 `SSM − CLT` held-out gap **−0.0035**; CLT/SSM parameter ratio **6.27×**. See
-`tables/baseline_clt.json`, `figures/clt_vs_ssm.png`.
+`tables/baseline_clt.json`, `figures/clt_vs_ssm.svg`.
 
 ## Interpretation
 

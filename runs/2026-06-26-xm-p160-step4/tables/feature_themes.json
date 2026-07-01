@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Beijing College Student Film Festival",
+      "Damascus International Film Festival",
+      "Miami International Film Festival",
+      "Japan Open Tennis Championships",
+      "Amazon Simple Queue Service",
+      "Stockholm metro",
+      "Amazon Silk",
+      "21st Ankara International Film Festival",
+      "Sisowath of Cambodia",
+      "Edmonton Journal"
+    ],
+    "feature": 419,
+    "home_layer": 8,
+    "mass": 7261.36279296875,
+    "purity": 0.8,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "organization",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Windows Phone 8.1",
+      "Sony NEX-5",
+      "Google Images",
+      "Renault 25",
+      "Honda S600",
+      "iPhone 5",
+      "Sega Game Gear",
+      "Vincent van Gogh",
+      "Cosimo de' Medici",
+      "Toyota Highlander"
+    ],
+    "feature": 215,
+    "home_layer": 7,
+    "mass": 5145.603515625,
+    "purity": 0.8,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Copenhagen Business School",
+      "Lancaster Newspapers, Inc.",
+      "Google Health",
+      "London Indian Film Festival",
+      "Google Images",
+      "Windows Phone 8.1",
+      "Beijing Guoan F.C.",
+      "Kingdom of Egypt",
+      "Google Patents",
+      "Braddock, Cornwall"
+    ],
+    "feature": 470,
+    "home_layer": 6,
+    "mass": 4890.376953125,
+    "purity": 0.6,
+    "relations": [
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "organization",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Toyota SA",
+      "Windows Phone 8.1",
+      "Toyota Supra",
+      "Toyota Mark X ZiO",
+      "Toyota bB",
+      "Honda Passport",
+      "Honda RS125R",
+      "Toyota Origin",
+      "Honda Wave series",
+      "Honda Brio"
+    ],
+    "feature": 402,
+    "home_layer": 9,
+    "mass": 4783.2724609375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Soviet Union",
+      "Serbia",
+      "Romania",
+      "Wappo people",
+      "Alberta",
+      "Guyana",
+      "Montana",
+      "Bulgaria",
+      "Italy",
+      "Shanghai Shenxin F.C."
+    ],
+    "feature": 703,
+    "home_layer": 5,
+    "mass": 4707.80126953125,
+    "purity": 0.9,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "geography"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Sky2",
+      "Honda ST1300",
+      "Honda VFR800",
+      "Sky Witness",
+      "Chicago Stock Exchange",
+      "IBM 1710",
+      "IBM AP-101",
+      "Jameson Dublin International Film Festival",
+      "Gleb Kotelnikov",
+      "Grand-Saconnex"
+    ],
+    "feature": 53,
+    "home_layer": 8,
+    "mass": 4672.08984375,
+    "purity": 0.6,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "language",
+      "language"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Sky Witness",
+      "Braddock, Cornwall",
+      "Google Patents",
+      "Jameson Dublin International Film Festival",
+      "Bangkok International Film Festival",
+      "Edinburgh International Film Festival",
+      "Space Center Houston",
+      "Canada Life Financial",
+      "London Indian Film Festival",
+      "Harlem International Film Festival"
+    ],
+    "feature": 704,
+    "home_layer": 10,
+    "mass": 3957.788818359375,
+    "purity": 0.8,
+    "relations": [
+      "organization",
+      "geography",
+      "organization",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Finnish Socialist Workers' Republic",
+      "Prague-West District",
+      "Splettstoesser Glacier",
+      "Co-operative Commonwealth Federation (Ontario Section)",
+      "Wilson Piedmont Glacier",
+      "Grand Duchy of Finland",
+      "Rutford Ice Stream",
+      "Mawson Glacier",
+      "Rayner Glacier",
+      "Iskar Glacier"
+    ],
+    "feature": 1243,
+    "home_layer": 9,
+    "mass": 3846.767578125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Grand Duchy of Finland",
+      "Kingdom of Egypt",
+      "Koichi Ishii",
+      "Russian Wikipedia",
+      "samurai cinema",
+      "Samsung NX-mount",
+      "Apple A4",
+      "Apple A5",
+      "Sydney Olympic FC",
+      "Space Center Houston"
+    ],
+    "feature": 371,
+    "home_layer": 1,
+    "mass": 3774.455078125,
+    "purity": 0.6,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "language",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Google Now",
+      "Harumi Inoue",
+      "Dutch name",
+      "Windows Phone 8.1",
+      "Braddock, Cornwall",
+      "Amazon Silk",
+      "Kinji Fukasaku",
+      "Soviet Union",
+      "Google Pay Send",
+      "Koichi Ishii"
+    ],
+    "feature": 637,
+    "home_layer": 6,
+    "mass": 3657.846923828125,
+    "purity": 0.4,
+    "relations": [
+      "organization",
+      "geography",
+      "language",
+      "organization",
+      "geography",
+      "organization",
+      "geography",
+      "language",
+      "organization",
+      "geography"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "New Brunswick",
+      "International Documentary Film Festival Amsterdam",
+      "Ukrainian Wikipedia",
+      "Beijing College Student Film Festival",
+      "Armenia",
+      "Idaho",
+      "Alberta",
+      "Ireland",
+      "Canada",
+      "Virginia"
+    ],
+    "feature": 5,
+    "home_layer": 7,
+    "mass": 3438.95654296875,
+    "purity": 0.8,
+    "relations": [
+      "language",
+      "geography",
+      "language",
+      "geography",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Detroit City Hall",
+      "Google Patents",
+      "Kingdom of Egypt",
+      "Kosuke Matsuura",
+      "Rai 1",
+      "Google Health",
+      "Google Images",
+      "Pankaj Udhas",
+      "Molar Massif",
+      "Sachiko Kobayashi"
+    ],
+    "feature": 257,
+    "home_layer": 3,
+    "mass": 3428.777099609375,
+    "purity": 0.5,
+    "relations": [
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "United Kingdom of Great Britain and Ireland",
+      "Jupiter Glacier",
+      "Henry Somerset, 7th Duke of Beaufort",
+      "Palmer Archipelago",
+      "Cosimo de' Medici",
+      "French Southern and Antarctic Lands",
+      "Venus Glacier",
+      "Lomonosov Mountains",
+      "Vincent van Gogh",
+      "Giovanni di Bicci de' Medici"
+    ],
+    "feature": 54,
+    "home_layer": 8,
+    "mass": 3320.285400390625,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Braddock, Cornwall",
+      "First Congress of Vienna",
+      "Detroit City Hall",
+      "Toyota SA",
+      "Kinji Fukasaku",
+      "Stockholm Pride",
+      "Renault 25",
+      "Renault 12",
+      "Honda VFR1200F",
+      "2004 Istanbul summit"
+    ],
+    "feature": 31,
+    "home_layer": 7,
+    "mass": 3220.754638671875,
+    "purity": 0.5,
+    "relations": [
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "geography"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Aurora de Chile",
+      "Toyota Tacoma",
+      "Windows Phone 8.1",
+      "Guyana",
+      "Honda Wave series",
+      "Bimal Roy",
+      "Jithan Ramesh",
+      "Kinji Fukasaku",
+      "Pisharoth Rama Pisharoty",
+      "Ravi Shankar"
+    ],
+    "feature": 468,
+    "home_layer": 4,
+    "mass": 3169.25927734375,
+    "purity": 0.6,
+    "relations": [
+      "geography",
+      "organization",
+      "organization",
+      "language",
+      "organization",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Korean Wikipedia",
+      "Jacques Leroy de Saint Arnaud",
+      "Aleksey Khomyakov",
+      "Pedro de la Rosa",
+      "Augustin Barruel",
+      "Raymond Queneau",
+      "Jacques Sadoul",
+      "Victor de Riqueti, marquis de Mirabeau",
+      "Claude Bartolone",
+      "Auguste Villiers de l'Isle-Adam"
+    ],
+    "feature": 1022,
+    "home_layer": 9,
+    "mass": 3051.826171875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Slovakia",
+      "Mackellar Inlet",
+      "Publications Ice Shelf",
+      "Namibia",
+      "Iskar Glacier",
+      "Germany",
+      "Urdoviza Glacier",
+      "Brunt Ice Shelf",
+      "Eureka Glacier",
+      "Rutford Ice Stream"
+    ],
+    "feature": 96,
+    "home_layer": 3,
+    "mass": 3011.412841796875,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Cambridge",
+      "Mackellar Inlet",
+      "Jupiter Glacier",
+      "Brunt Ice Shelf",
+      "Bach Ice Shelf",
+      "Rutford Ice Stream",
+      "Publications Ice Shelf",
+      "Croom, County Limerick",
+      "Iskar Glacier",
+      "Molar Massif"
+    ],
+    "feature": 36,
+    "home_layer": 2,
+    "mass": 2952.46923828125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "United Kingdom of Great Britain and Ireland",
+      "Jupiter Glacier",
+      "Tarnobrzeg Voivodeship",
+      "French Southern and Antarctic Lands",
+      "Palmer Archipelago",
+      "Henry Somerset, 7th Duke of Beaufort",
+      "Venus Glacier",
+      "Slovenia",
+      "Debenham Glacier",
+      "Imperial Trans-Antarctic Expedition"
+    ],
+    "feature": 459,
+    "home_layer": 8,
+    "mass": 2938.481689453125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Kingdom of Egypt",
+      "Grand Duchy of Finland",
+      "Chevrolet Van",
+      "Chevrolet Corvette C7",
+      "Chevrolet TrailBlazer",
+      "Chevrolet Vega",
+      "Samsung NX-mount",
+      "Rai 1",
+      "Chevrolet Corvette C5-R",
+      "Sony Crackle"
+    ],
+    "feature": 327,
+    "home_layer": 2,
+    "mass": 2850.295654296875,
+    "purity": 0.8,
+    "relations": [
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  }
+]

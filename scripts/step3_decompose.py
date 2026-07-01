@@ -145,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
     import pandas as pd
 
     pd.DataFrame(result.history).to_csv(run.path("tables/altmin_history.csv"), index=False)
-    _plot_curves(result.history, run.path("figures/altmin_curves.png"))
+    _plot_curves(result.history, run.path("figures/altmin_curves.svg"))
 
     print(f"\n=== Phase 3 Branch B decomposition — debug ({mcfg.get('name')}) ===")
     print(f"  train R²={train_ev['r2']:+.3f}  test R²={test_ev['r2']:+.3f}  "
@@ -176,7 +176,9 @@ def _plot_curves(history: list[dict], path: Path) -> None:
     axes[1].set_xlabel("outer iter")
     axes[2].plot(its, [h["l0"] for h in history], "o-", color="C3")
     axes[2].set_title("input density (L0 fraction)"); axes[2].set_xlabel("outer iter")
-    fig.tight_layout(); fig.savefig(path, dpi=120); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(path, bbox_inches="tight")
+    plt.close(fig)
 
 
 if __name__ == "__main__":

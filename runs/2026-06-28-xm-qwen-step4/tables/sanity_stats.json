@@ -1,0 +1,108 @@
+{
+  "collapse": {
+    "b_norm": 6.947179794311523,
+    "collapsed": false,
+    "l0": 0.021251766859822815,
+    "operator_total_fro": 367.5228954633494
+  },
+  "dataset_stability": {
+    "overlap": {
+      "intersection": 95,
+      "jaccard": 0.9047619047619048,
+      "n_a": 100,
+      "n_b": 100
+    },
+    "shared_dir_match_0.7": 0.9789473684210527,
+    "shared_dir_mean_cos": 0.8648971319198608
+  },
+  "device": "cuda",
+  "dims": {
+    "d_input": 1492,
+    "d_model": 896,
+    "d_state": 32,
+    "n_layers": 12,
+    "rank": 32
+  },
+  "eyeball_idx": [
+    33,
+    83,
+    152,
+    355,
+    546,
+    623,
+    1035,
+    1289,
+    1652,
+    1720
+  ],
+  "eyeball_per_example_r2": [
+    0.8636071681976318,
+    0.885388970375061,
+    0.9216163158416748,
+    0.8933460712432861,
+    0.8813308477401733,
+    0.7145696878433228,
+    0.9226503372192383,
+    0.9154853820800781,
+    0.8922475576400757,
+    0.719720721244812
+  ],
+  "feature_theme_purity": 0.96,
+  "flags": {
+    "collapse_ok": true,
+    "dataset_overlap": 0.9047619047619048,
+    "reconstruction_ok": true,
+    "seed_stability_ok": true
+  },
+  "hyperparams": {
+    "batch_size": 128,
+    "input_steps": 25,
+    "lambda_l1": 1.0,
+    "lambda_reg": 0.0001,
+    "lambda_reg_state": null,
+    "operator_lr": 0.01,
+    "operator_steps": 40,
+    "outer_iters": 10
+  },
+  "main_train": {
+    "b_norm": 6.947179794311523,
+    "l0": 0.021251766859822815,
+    "l1": 347868.31640625,
+    "loss": 417929.9841160156,
+    "op_A": 10.291410446166992,
+    "op_B": 132.5916290283203,
+    "op_C": 27.428211212158203,
+    "op_D": 341.5176696777344,
+    "r2": 0.857689907288287,
+    "recon": 70048.16040039062,
+    "reg": 135073.09375
+  },
+  "model": "Qwen/Qwen2-0.5B",
+  "n_train": 2032,
+  "seed_stability": {
+    "mean_match_rate_0.7": 0.8133333333333334,
+    "pairs": [
+      {
+        "match_rate_0.7": 0.8,
+        "mean_cos": 0.8000779747962952,
+        "median_cos": 0.8150807619094849,
+        "seed_a": 0,
+        "seed_b": 1
+      },
+      {
+        "match_rate_0.7": 0.83,
+        "mean_cos": 0.8187117576599121,
+        "median_cos": 0.8320062160491943,
+        "seed_a": 0,
+        "seed_b": 2
+      },
+      {
+        "match_rate_0.7": 0.81,
+        "mean_cos": 0.8067694902420044,
+        "median_cos": 0.8133050203323364,
+        "seed_a": 1,
+        "seed_b": 2
+      }
+    ]
+  }
+}

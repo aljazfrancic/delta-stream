@@ -1,0 +1,248 @@
+{
+  "bands": {
+    "early": [
+      1,
+      2,
+      3
+    ],
+    "late": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "middle": [
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "between_angles": {
+    "early-late": {
+      "input": {
+        "max_deg": 0.05233915150165558,
+        "mean_deg": 0.014748986810445786,
+        "median_deg": 0.0
+      },
+      "output": {
+        "max_deg": 89.75520324707031,
+        "mean_deg": 56.48345947265625,
+        "median_deg": 57.01165771484375
+      }
+    },
+    "early-middle": {
+      "input": {
+        "max_deg": 0.048456642776727676,
+        "mean_deg": 0.015061669982969761,
+        "median_deg": 0.0
+      },
+      "output": {
+        "max_deg": 89.97431945800781,
+        "mean_deg": 55.77690505981445,
+        "median_deg": 56.379825592041016
+      }
+    },
+    "middle-late": {
+      "input": {
+        "max_deg": 0.05233915150165558,
+        "mean_deg": 0.01511465571820736,
+        "median_deg": 0.0
+      },
+      "output": {
+        "max_deg": 89.83829498291016,
+        "mean_deg": 56.57897186279297,
+        "median_deg": 57.09455108642578
+      }
+    }
+  },
+  "between_frobenius_stack": {
+    "early-late": 1.4161664247512817,
+    "early-middle": 1.4040004014968872,
+    "middle-late": 1.4041613340377808
+  },
+  "bootstrap": {
+    "early-late": {
+      "between": 1.4161664247512817,
+      "separated": true,
+      "within_a_p95": 0.36613871455192565,
+      "within_b_p95": 0.5357168704271315,
+      "z_between_over_within_sd": 47.24981509822056
+    },
+    "early-middle": {
+      "between": 1.4040004014968872,
+      "separated": true,
+      "within_a_p95": 0.36613871455192565,
+      "within_b_p95": 0.409896770119667,
+      "z_between_over_within_sd": 84.3209649429808
+    },
+    "middle-late": {
+      "between": 1.4041613340377808,
+      "separated": true,
+      "within_a_p95": 0.409896770119667,
+      "within_b_p95": 0.5357168704271315,
+      "z_between_over_within_sd": 43.98597659013664
+    }
+  },
+  "caveats": "AR-on-\u0394 stationarity is a strong proxy for H2's MA/generative stationarity, not a logical equivalent (plan Step 1); the MA recheck is Phase 3 Step 4. Consecutive \u0394's share a \u00b1v_\u2113 term, a mechanism identical across depth that biases the kernel comparison TOWARD stationarity \u2014 so a stationary verdict is a permissive (not conservative) read; the AR signal itself was confirmed real by the Step 5 scrambled null. k is CAPPED at the feasibility limit: this tests SHORT-horizon stationarity only; long-horizon (lags up to the Granger reach) is deferred to the Phase 3 Step 4 MA recheck. Dataset is 3 classes / 1555 ex (below the \u22651000/class target); the per-class cross-relation test is Step 4.",
+  "cross_band_r2": {
+    "early": {
+      "early": 0.8524664073027185,
+      "late": -1.2767205560367207,
+      "middle": -1.792539042424678
+    },
+    "late": {
+      "early": -2.8313350402394994,
+      "late": 0.7637265765586864,
+      "middle": -1.3881742450191132
+    },
+    "middle": {
+      "early": -2.0964040338600487,
+      "late": -0.9976953686842343,
+      "middle": 0.8233802374458596
+    }
+  },
+  "cross_band_r2_by_rank": {
+    "32": {
+      "early": {
+        "early": 0.4258741330499337,
+        "late": -0.739638447039906,
+        "middle": -1.081712346843657
+      },
+      "late": {
+        "early": -1.956430665441954,
+        "late": 0.4463557969779437,
+        "middle": -0.8092478580616618
+      },
+      "middle": {
+        "early": -1.0548700813664715,
+        "late": -0.4833862965333222,
+        "middle": 0.2744811004052904
+      }
+    },
+    "64": {
+      "early": {
+        "early": 0.6092058578386781,
+        "late": -0.9892570647316268,
+        "middle": -1.4283143945733259
+      },
+      "late": {
+        "early": -2.375914429865237,
+        "late": 0.5432528193810269,
+        "middle": -1.0407828811504536
+      },
+      "middle": {
+        "early": -1.4886449324559186,
+        "late": -0.6863219767388602,
+        "middle": 0.43028871112769074
+      }
+    },
+    "128": {
+      "early": {
+        "early": 0.7514674826240206,
+        "late": -1.177755847191067,
+        "middle": -1.669668548794037
+      },
+      "late": {
+        "early": -2.681798781795565,
+        "late": 0.664666124837257,
+        "middle": -1.27146210523907
+      },
+      "middle": {
+        "early": -1.9145675344672277,
+        "late": -0.8899696922889604,
+        "middle": 0.625089934565788
+      }
+    },
+    "256": {
+      "early": {
+        "early": 0.8524664073027185,
+        "late": -1.2767205560367207,
+        "middle": -1.792539042424678
+      },
+      "late": {
+        "early": -2.8313350402394994,
+        "late": 0.7637265765586864,
+        "middle": -1.3881742450191132
+      },
+      "middle": {
+        "early": -2.0964040338600487,
+        "late": -0.9976953686842343,
+        "middle": 0.8233802374458596
+      }
+    }
+  },
+  "d_model": 768,
+  "decision": {
+    "any_bootstrap_separated": true,
+    "between_frobenius": {
+      "early-late": 1.4161664247512817,
+      "early-middle": 1.4040004014968872,
+      "middle-late": 1.4041613340377808
+    },
+    "boundary_ratio": 1.000114624284097,
+    "cross_band_retention": {
+      "early->late": -1.6716984785177433,
+      "early->middle": -2.177048902685795,
+      "late->early": -3.321345000793758,
+      "late->middle": -1.6859455472543947,
+      "middle->early": -2.4592218718544725,
+      "middle->late": -1.3063515128408907
+    },
+    "max_output_angle_deg": 56.57897186279297,
+    "phase3_branch": "B (state-space / fully depth-indexed kernel)",
+    "segment_boundary": null,
+    "tolerances": {
+      "angle_tol_deg": 30.0,
+      "collinearity_thresh": 1.5,
+      "retention_tol": 0.1
+    },
+    "triangle_ratio": 1.0085496519683954,
+    "verdict": "pervasive_drift",
+    "worst_cross_band_retention": -3.321345000793758
+  },
+  "input_pcs": 256,
+  "k": 1,
+  "k_selection": {
+    "bonferroni_threshold_nlp": 2.934498451243568,
+    "capped": true,
+    "feasibility_cap": 1,
+    "granger_selected_lag": 10,
+    "k": 1,
+    "n_granger_cells": 43
+  },
+  "locked_rank": 128,
+  "model": "gpt2",
+  "n_boot": 200,
+  "n_layers": 12,
+  "n_test": 272,
+  "n_train": 1086,
+  "saturation_rank": {
+    "median_rank": 128,
+    "per_layer": [
+      16,
+      128,
+      128,
+      128,
+      128,
+      128,
+      128,
+      128,
+      128,
+      128,
+      128,
+      128
+    ]
+  },
+  "spot_check": {
+    "gain": 0.09072132397069554,
+    "r2_2r": 0.7164593370119463,
+    "r2_r": 0.6257380130412508
+  },
+  "within_band_r2": {
+    "early": 0.8524664073027185,
+    "late": 0.7637265765586864,
+    "middle": 0.8233802374458596
+  },
+  "working_rank": 256
+}

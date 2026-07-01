@@ -214,7 +214,9 @@ def _plots(run, df_ar, ranks, lags, g_real, g_null, thr_nlp) -> None:
     ax.axhline(0, color="k", lw=0.6)
     ax.set_xlabel("AR order k"); ax.set_ylabel("held-out pooled R² on Δ_ℓ (vs μ_ℓ)")
     ax.set_title("AR(k) depth-local predictability of Δ"); ax.legend(fontsize=7, ncol=2)
-    fig.tight_layout(); fig.savefig(run.path("figures/ar_r2_vs_k.png"), dpi=130); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(run.path("figures/ar_r2_vs_k.svg"), bbox_inches="tight")
+    plt.close(fig)
 
     # Granger (depth × lag) −log10 p heatmaps, real and null, shared colour scale.
     vmax = float(np.nanmax([np.nanmax(g_real["neg_log10_p"]), thr_nlp * 2]))
@@ -228,7 +230,7 @@ def _plots(run, df_ar, ranks, lags, g_real, g_null, thr_nlp) -> None:
                      f"[Bonferroni thr={thr_nlp:.1f}]")
         fig.colorbar(im, ax=ax, label="−log10 p")
         fig.tight_layout()
-        fig.savefig(run.path(f"figures/granger_{tag}.png"), dpi=130); plt.close(fig)
+        fig.savefig(run.path(f"figures/granger_{tag}.svg"), bbox_inches="tight"); plt.close(fig)
 
 
 if __name__ == "__main__":

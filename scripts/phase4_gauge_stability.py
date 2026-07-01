@@ -238,7 +238,7 @@ def main(argv: list[str] | None = None) -> int:
     import pandas as pd
 
     pd.DataFrame(per_pair).to_csv(run.path("tables/gauge_pairs.csv"), index=False)
-    _plot(raw_cos_all, imp_cos_all, summary, run.path("figures/gauge_stability.png"))
+    _plot(raw_cos_all, imp_cos_all, summary, run.path("figures/gauge_stability.svg"))
 
     print(f"\n=== Phase 4 S1 — gauge-invariant seed stability ({mcfg.get('name')}) ===")
     print(f"  features compared: {len(fidx)} (top by |u| mass); seeds {seeds}")
@@ -292,7 +292,7 @@ def _plot(raw_cos, imp_cos, summary, path: Path) -> None:
     for i, v in enumerate(vals):
         ax.text(i, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=120)
+    fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
 

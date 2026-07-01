@@ -1,0 +1,37 @@
+{
+  "cross_seed_modulus_cosine_mean": 0.99865244945345,
+  "cross_seed_modulus_cosine_pairs": [
+    0.9988701729421264,
+    0.9984515143147382,
+    0.9986356611034857
+  ],
+  "d_state": 32,
+  "frac_complex_mean": 0.7065217391304348,
+  "interpretation": "\u03c1(A_\u2113)<1 at every layer \u21d2 the learned state is contractive (forgets with depth); spectral memory \u03c4\u22481 layer and the state-path kernel's fast gap2/gap1 decay are the operator-level mechanism behind the reconstruction k*\u22481 (Step 2). The modulus spectrum is seed-stable (gauge-invariant, per S1) and dictionary-robust (L1\u2194mlsae), so it is a reportable property of the model, not a fitting artefact.",
+  "l1_ckpt": "runs/2026-06-30-ph4-e2-checkpoint-l1-410md/checkpoints/ssm_seed0.pt",
+  "l1_vs_mlsae_modulus_cosine": 0.9927960656891982,
+  "l1_vs_mlsae_rho_corr": 0.5432886855114005,
+  "layers_noncontractive": 0.0,
+  "mean_mod_median": 0.08378282189369202,
+  "mlsae_ckpts": [
+    "runs/2026-06-26-ph4-checkpoint-410md/checkpoints/ssm_seed0.pt",
+    "runs/2026-06-29-ph4-gauge-410md/checkpoints/ssm_seed1.pt",
+    "runs/2026-06-29-ph4-gauge-410md/checkpoints/ssm_seed2.pt"
+  ],
+  "n_transitions": 23,
+  "rho_geomean": 0.29985958337783813,
+  "rho_max": 0.8808445334434509,
+  "rho_median": 0.42952844500541687,
+  "spectral_memory_tau_layers": 0.8302606981036273,
+  "state_path_gap2_over_gap1": 0.48544302988158305,
+  "state_path_ratio_to_gap1": [
+    1.0,
+    0.48544302988158305,
+    0.21057788761904225,
+    0.08943540493235057,
+    0.03591581224143306,
+    0.014701551050473247,
+    0.005847971296824104,
+    0.0025492683446278496
+  ]
+}

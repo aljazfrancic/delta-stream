@@ -1,0 +1,13 @@
+{
+  "d_model": 1024,
+  "hdf5": "data/gpt2-medium/residual_stream.h5",
+  "mib": 175.3,
+  "n_examples": 1795,
+  "n_layers": 24,
+  "sanity_ok": "5/5",
+  "shape": [
+    1795,
+    25,
+    1024
+  ]
+}

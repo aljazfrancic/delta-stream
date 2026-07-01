@@ -1,0 +1,25 @@
+{
+  "d_model": 1024,
+  "hdf5": "data/pythia-410m-deduped-general/residual_stream.h5",
+  "length_max": 24,
+  "length_median": 9,
+  "length_min": 4,
+  "mib": 151.9,
+  "n_docs_pool": 4000,
+  "n_examples": 1555,
+  "n_layers": 24,
+  "sample_windows": [
+    " do I code the clientvalidation",
+    " the utiility - the action will",
+    "y) = -y**2. Let",
+    " 2 percent of survey respondents said",
+    "S \u2014 Indian grocery store Patel Brothers is planning"
+  ],
+  "sanity_ok": "5/5",
+  "shape": [
+    1555,
+    25,
+    1024
+  ],
+  "source": "NeelNanda/pile-10k"
+}

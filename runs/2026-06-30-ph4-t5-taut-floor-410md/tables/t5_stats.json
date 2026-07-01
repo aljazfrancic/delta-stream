@@ -1,0 +1,45 @@
+{
+  "best_rank": 128,
+  "by_m": [
+    {
+      "frac_par": 0.040791861062301676,
+      "frac_perp": 0.6088618940126765,
+      "m": 1,
+      "par_var_frac": 0.04374449257950899,
+      "r2_par": 0.9325027827939558,
+      "r2_perp": 0.6367146534455919
+    },
+    {
+      "frac_par": 0.2544382412928182,
+      "frac_perp": 0.39521551378216,
+      "m": 5,
+      "par_var_frac": 0.26869048922935324,
+      "r2_par": 0.9469566340907237,
+      "r2_perp": 0.5404216791405951
+    },
+    {
+      "frac_par": 0.42028054280745497,
+      "frac_perp": 0.22937321226752327,
+      "m": 20,
+      "par_var_frac": 0.4546121657997704,
+      "r2_par": 0.9244815128695073,
+      "r2_perp": 0.4205689930797263
+    },
+    {
+      "frac_par": 0.5201591080490167,
+      "frac_perp": 0.12949464702596158,
+      "m": 50,
+      "par_var_frac": 0.5803182223999578,
+      "r2_par": 0.896334266220096,
+      "r2_perp": 0.308554371282163
+    }
+  ],
+  "d_model": 1024,
+  "h5": "data/pythia-410m-deduped/residual_stream.h5",
+  "interpretation": "R\u00b2_full splits EXACTLY into frac_par (tautology floor \u2014 explained variance inside the top-m persistent state directions) + frac_perp (genuine remainder, in the complement). frac_par is the explicit subtracted baseline for the headline AR R\u00b2; r2_par\u22481 confirms the persistent directions are near-perfectly 'predictable' (smooth drift = the tautology), while frac_perp is the depth structure that survives it. Cross-checks T1, whose refit-on-complement R\u00b2 is a re-optimised analog of r2_perp.",
+  "k": 20,
+  "n_layers": 24,
+  "n_test": 311,
+  "n_train": 1244,
+  "r2_full": 0.6496537550749782
+}

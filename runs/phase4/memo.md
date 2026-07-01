@@ -116,7 +116,7 @@ clean. **→ The single-feature existence proof fails; this is the pre-registere
   set): k=1 **+0.010**, k=30 **+0.084**, **k=100 +0.301** (crosses 0.20), k=300 **+0.385** (full).
   Recall is distributed across ~100 small features.
 - **Matched-random-group control (2026-06-28, S3 — pooled over 8 seed-stable candidates × 100
-  examples; `tables/distributed_control.json`, `figures/distributed_control.png`).** The group
+  examples; `tables/distributed_control.json`, `figures/distributed_control.svg`).** The group
   ablation is now controlled, turning the anecdote into a measured result. At matched group size,
   ablating each example's **top-k co-firing** features crosses 0.20 at **k=100 (+0.237 ± 0.035)**
   while a **count-matched random** group of the same example's *active* features does **not**

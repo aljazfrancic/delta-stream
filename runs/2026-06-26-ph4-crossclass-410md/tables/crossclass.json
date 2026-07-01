@@ -1,0 +1,45 @@
+{
+  "classes": [
+    "geography",
+    "language",
+    "organization"
+  ],
+  "cross_mean": -0.19099325627162714,
+  "dims": {
+    "d_input": 4433,
+    "d_model": 1024,
+    "d_state": 32,
+    "n_layers": 24,
+    "rank": 32
+  },
+  "hyperparams": {
+    "batch_size": 128,
+    "input_steps": 25,
+    "lambda_l1": 1.0,
+    "lambda_reg": 0.0001,
+    "lambda_reg_state": null,
+    "operator_lr": 0.01,
+    "operator_steps": 40,
+    "outer_iters": 10
+  },
+  "matrix": {
+    "geography": {
+      "geography": 0.8205507073849533,
+      "language": -0.04271435197583773,
+      "organization": -0.2671214491846938
+    },
+    "language": {
+      "geography": 0.12009156045460367,
+      "language": 0.8217111962924482,
+      "organization": -0.5065097716066809
+    },
+    "organization": {
+      "geography": 0.03610754783529213,
+      "language": -0.4858130731524464,
+      "organization": 0.8616503158426736
+    }
+  },
+  "model": "pythia-410m-deduped",
+  "retention": -0.2288338082892956,
+  "within_mean": 0.8346374065066916
+}

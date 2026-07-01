@@ -202,7 +202,7 @@ def _plot(run, rows) -> None:
     ax.set_title("Residual-write CLT vs state-space SSM (frozen sources, matched rank)")
     ax.grid(alpha=0.3)
     fig.tight_layout()
-    fig.savefig(run.path("figures/clt_vs_ssm.png"), dpi=130)
+    fig.savefig(run.path("figures/clt_vs_ssm.svg"), bbox_inches="tight")
     plt.close(fig)
 
 

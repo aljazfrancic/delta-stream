@@ -1,0 +1,42 @@
+{
+  "ar_best": {
+    "k": 10,
+    "r2": 0.899113531709465,
+    "rank": 128
+  },
+  "ar_input_pcs": 256,
+  "ar_null_best": {
+    "k": 5,
+    "r2": 0.004795823767513974,
+    "rank": 16
+  },
+  "ar_real_minus_null_bestr2": 0.894317707941951,
+  "d_model": 768,
+  "granger_bonferroni_alpha": 0.0011627906976744186,
+  "granger_n_tests": 43,
+  "granger_neg_log10_threshold": 2.934498451243568,
+  "granger_null_significant": 0,
+  "granger_q_pca": 32,
+  "granger_real_significant": 43,
+  "granger_real_significant_frac": 1.0,
+  "interpretation": "Pooled AR(k) R\u00b2 is the held-out fraction of \u0394_\u2113 variance (beyond the per-depth mean \u03bc_\u2113) explained by the k preceding updates; a single kernel is shared across depth, so a high value is jointly consistent with H1 and approximate AR-stationarity. The Granger grid is the per-(depth,lag) nested-F that localises how far back the dependence reaches and is the stationarity-free read. Null 1 (scrambled per depth) must collapse both.",
+  "lags": [
+    1,
+    2,
+    3,
+    5,
+    8,
+    10
+  ],
+  "n_layers": 12,
+  "n_test": 153,
+  "n_train": 614,
+  "nonstationary_h1_flag": false,
+  "ranks": [
+    16,
+    32,
+    64,
+    128
+  ],
+  "step3_ridge_v_alone_r2": 0.7724789020850457
+}

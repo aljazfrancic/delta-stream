@@ -1,0 +1,16 @@
+{
+  "dropped_classes": {
+    "geography": 20,
+    "organization": 25
+  },
+  "kept_per_class": {},
+  "kept_per_relation": {},
+  "meets_target": false,
+  "min_examples_per_relation": 100,
+  "model": "pythia-70m",
+  "n_candidates": 21601,
+  "n_correct_top1": 210,
+  "n_kept": 0,
+  "target_size": 1000,
+  "threshold": 0.3
+}

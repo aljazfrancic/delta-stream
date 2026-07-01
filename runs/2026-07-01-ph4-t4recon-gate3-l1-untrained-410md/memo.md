@@ -47,5 +47,5 @@ init; learned increment +0.021, rising to a majority under sparsity."
 
 **Absolute levels.** Untrained ssm R² 0.68–0.75 vs trained 0.81–0.87 (untrained activations
 are intrinsically less reconstructable; the *gap* controls for this via the per-layer
-baseline, which is the pre-registered quantity). Figure `figures/pareto.png`. Single init,
+baseline, which is the pre-registered quantity). Figure `figures/pareto.svg`. Single init,
 seed 0; qualitative conclusion draw-robust (consistent with T4's robustness).

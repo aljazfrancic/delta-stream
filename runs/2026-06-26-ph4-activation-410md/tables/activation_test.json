@@ -1,0 +1,26 @@
+{
+  "control_rule": "exact-zero",
+  "feature": 297,
+  "frac_above_threshold": 0.0,
+  "frac_threshold": 0.7,
+  "home_layer": 9,
+  "mean_logprob_increase": -0.02084699086844921,
+  "mean_signed_activation": 4.851738929748535,
+  "median_logprob_increase": -0.02399301528930664,
+  "model": "pythia-410m-deduped",
+  "n_silent": 100,
+  "nat_threshold": 1.0,
+  "pass": false,
+  "semantic_tokens": [
+    "Apple",
+    "Microsoft",
+    "Adobe",
+    "IBM",
+    "Google",
+    "Intel",
+    "Sony",
+    "Nokia",
+    "Samsung",
+    "Nintendo"
+  ]
+}

@@ -172,7 +172,7 @@ def _plot(run, rows, full_pl, embed_pl) -> None:
     ax2.set_title("Per-layer R²: endpoints")
     ax2.legend()
     fig.tight_layout()
-    fig.savefig(run.path("figures/source_prefix_sweep.png"), dpi=130)
+    fig.savefig(run.path("figures/source_prefix_sweep.svg"), bbox_inches="tight")
     plt.close(fig)
 
 

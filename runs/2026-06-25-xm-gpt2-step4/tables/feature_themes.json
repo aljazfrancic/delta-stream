@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Microsoft Windows",
+      "Microsoft Dynamics",
+      "Microsoft Office 97",
+      "Google Translate",
+      "Nintendo 2DS",
+      "Google Chrome",
+      "Microsoft Office Live",
+      "Microsoft SharePoint",
+      "Microsoft Project",
+      "iOS 8"
+    ],
+    "feature": 1892,
+    "home_layer": 11,
+    "mass": 13426.263671875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Donkey Kong",
+      "Internet Explorer 5",
+      "Microsoft SharePoint",
+      "Honda CR-V",
+      "Windows Server 2012",
+      "Microsoft Plus!",
+      "SNES-CD",
+      "Honda Passport",
+      "Google Account",
+      "Renault 12"
+    ],
+    "feature": 103,
+    "home_layer": 1,
+    "mass": 13174.12109375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Google Earth",
+      "Windows 2000",
+      "Microsoft Windows",
+      "Google Chrome",
+      "Microsoft Office 97",
+      "Microsoft Office Live",
+      "Internet Explorer 5",
+      "Google Translate",
+      "Apple Watch",
+      "Google Glass"
+    ],
+    "feature": 1706,
+    "home_layer": 9,
+    "mass": 12943.28125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Guernsey",
+      "Bermuda",
+      "Sierra Leone",
+      "United States Virgin Islands",
+      "Guam",
+      "Kenya",
+      "Western Cape",
+      "Independent State of Croatia",
+      "Miss Universe",
+      "L'Isle"
+    ],
+    "feature": 770,
+    "home_layer": 11,
+    "mass": 11560.6640625,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Google Contacts",
+      "IBM WebSphere MQ",
+      "MacApp",
+      "Google AdSense",
+      "Microsoft Access",
+      "Mac OS X 10.0",
+      "Google File System",
+      "Microsoft Silverlight",
+      "IBM Personal Computer",
+      "Microsoft Dynamics NAV"
+    ],
+    "feature": 238,
+    "home_layer": 11,
+    "mass": 11250.560546875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Google Earth",
+      "Microsoft Windows",
+      "Google Translate",
+      "Google Chrome",
+      "Windows 2000",
+      "Microsoft Office 97",
+      "Apple Watch",
+      "Apple A5",
+      "Google Reader",
+      "Adobe Photoshop"
+    ],
+    "feature": 1648,
+    "home_layer": 10,
+    "mass": 11147.0146484375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Final Fantasy V",
+      "Microsoft Office Live",
+      "Nintendo 2DS",
+      "Nintendo DS",
+      "Microsoft SQL Server",
+      "Google Ads",
+      "Microsoft Office 97",
+      "Microsoft OneNote",
+      "New Nintendo 3DS",
+      "Nintendo 3DS"
+    ],
+    "feature": 1101,
+    "home_layer": 8,
+    "mass": 10629.53125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Microsoft Surface",
+      "Google AdSense",
+      "Google Maps",
+      "Google Web Toolkit",
+      "Microsoft Windows",
+      "SNES-CD",
+      "Google Chrome",
+      "Google Earth",
+      "Chrome OS",
+      "IBM Rational Unified Process"
+    ],
+    "feature": 1260,
+    "home_layer": 6,
+    "mass": 10079.8173828125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Steve Jobs",
+      "Windows Genuine Advantage",
+      "Boeing 747 Large Cargo Freighter",
+      "IBM Type-III Library",
+      "Mac OS X 10.1",
+      "Adobe Captivate",
+      "Wii U",
+      "Office Open XML",
+      "Google Account",
+      "Google Earth"
+    ],
+    "feature": 189,
+    "home_layer": 2,
+    "mass": 9947.0185546875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Game Boy Micro",
+      "Game Boy Advance SP",
+      "Wii U",
+      "Nintendo Entertainment System",
+      "Sega Mega-CD",
+      "SNES-CD",
+      "iPhone 3GS",
+      "New Nintendo 3DS",
+      "Sega 32X",
+      "Chevrolet TrailBlazer"
+    ],
+    "feature": 635,
+    "home_layer": 10,
+    "mass": 9292.9775390625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Microsoft Windows SDK",
+      "Google Finance",
+      "Adobe Flash Player",
+      "Apple A5",
+      "Chrome OS",
+      "Windows Phone 8",
+      ".NET Framework",
+      "Google Reader",
+      "Adobe Photoshop",
+      "Nintendo 2DS"
+    ],
+    "feature": 791,
+    "home_layer": 7,
+    "mass": 8785.7666015625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Game Boy Advance SP",
+      "Xbox Live",
+      "Xbox One",
+      "Microsoft Plus!",
+      "Honda N360",
+      "Nintendo 3DS",
+      "IBM 9370",
+      "Sony Alpha 77",
+      "Porsche 944",
+      "Nintendo DS"
+    ],
+    "feature": 643,
+    "home_layer": 4,
+    "mass": 8279.7646484375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Suzuki GSV-R",
+      "Game Boy Micro",
+      "iPhone 5",
+      "Intel MCS-48",
+      "BMW 3 Series",
+      "iPhone",
+      "Chevrolet Lumina APV",
+      "Chevrolet Caprice",
+      "iPhone 3GS",
+      "Volvo 300 Series"
+    ],
+    "feature": 544,
+    "home_layer": 7,
+    "mass": 7804.1689453125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Apple A5",
+      "Adobe Flash Player",
+      "Google Reader",
+      "iOS 6",
+      "Microsoft Windows SDK",
+      "Windows Phone 8",
+      "Google Finance",
+      "Internet Explorer 10",
+      "Intel 80486SX",
+      "Windows Live OneCare"
+    ],
+    "feature": 654,
+    "home_layer": 5,
+    "mass": 7249.35986328125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Guam",
+      "Sierra Leone",
+      "Bermuda",
+      "Guernsey",
+      "Monaco",
+      "United States Virgin Islands",
+      "Netherlands Antilles",
+      "Kenya",
+      "Bulgaria",
+      "Western Cape"
+    ],
+    "feature": 460,
+    "home_layer": 9,
+    "mass": 6381.48828125,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Miss Universe",
+      "Guernsey",
+      "Bermuda",
+      "Sierra Leone",
+      "Dmitry Medvedev",
+      "Bulgaria",
+      "Monaco",
+      "Guam",
+      "Kenya",
+      "United States Virgin Islands"
+    ],
+    "feature": 1276,
+    "home_layer": 10,
+    "mass": 6293.3017578125,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Nintendo DSi",
+      "Nintendo DS",
+      "Nokia 808 PureView",
+      "BMW E9",
+      "BMW M3",
+      "New Nintendo 3DS",
+      "BMW M30",
+      "Sony SLT camera",
+      "BMW X3",
+      "BMW 7 Series"
+    ],
+    "feature": 1437,
+    "home_layer": 10,
+    "mass": 6075.47216796875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Microsoft Windows SDK",
+      "Android Jelly Bean",
+      "Nintendo 2DS",
+      "Sony Alpha 77",
+      "Chrome OS",
+      "Nintendo DS",
+      "iOS 8",
+      "Nintendo 2DS",
+      "Windows Live Writer",
+      "Intel 80486SX"
+    ],
+    "feature": 807,
+    "home_layer": 11,
+    "mass": 5721.64453125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Nintendo Entertainment System",
+      "Game Boy Micro",
+      "SNES-CD",
+      "Wii U",
+      "Game Boy Advance SP",
+      "Sega Mega-CD",
+      "IBM WebSphere Application Server",
+      "Honda Insight",
+      "Windows Server 2008 R2",
+      "Windows Driver Frameworks"
+    ],
+    "feature": 1748,
+    "home_layer": 9,
+    "mass": 5580.380859375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Valencia",
+      "Louis Blanc",
+      "Mario Bros.",
+      "Super Game Boy",
+      "Benin",
+      "Xbox",
+      "Emmanuel Glacier",
+      "Windows Server 2003",
+      "Mount Cameroon",
+      "John Ruskin"
+    ],
+    "feature": 63,
+    "home_layer": 1,
+    "mass": 5490.44482421875,
+    "purity": 0.5,
+    "relations": [
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "geography",
+      "organization",
+      "geography",
+      "organization",
+      "geography",
+      "language"
+    ],
+    "top_class": "geography"
+  }
+]

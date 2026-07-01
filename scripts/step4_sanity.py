@@ -177,7 +177,7 @@ def main(argv: list[str] | None = None) -> int:
     per_ex_r2 = _per_example_r2(pred, actual)
     run.log(f"[2] eyeball examples {eye_idx}: per-example R² "
             f"{np.round(per_ex_r2, 2).tolist()}")
-    _plot_reconstruction(pred, actual, eye_idx, per_ex_r2, run.path("figures/reconstruction.png"))
+    _plot_reconstruction(pred, actual, eye_idx, per_ex_r2, run.path("figures/reconstruction.svg"))
 
     # check 3 — feature structure / theme
     feats = top_features(u0, top_n=args.top_interp)
@@ -353,8 +353,8 @@ def _plot_reconstruction(pred, actual, idx, per_ex_r2, path: Path) -> None:
         ax.set_xlabel("actual Δ", fontsize=7)
         ax.set_ylabel("pred Δ", fontsize=7)
     fig.suptitle("Branch B reconstruction: predicted vs actual Δ (all layers)", fontsize=10)
-    fig.tight_layout()
-    fig.savefig(path, dpi=120)
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
 

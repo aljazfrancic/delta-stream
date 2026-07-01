@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Subodh Kant Sahay",
+      "Kiichi Miyazawa",
+      "Yoshio Shirai",
+      "Apur Panchali",
+      "Ghatanji",
+      "Hiroshi Teshigahara",
+      "Hitachinaka",
+      "Madan Lal",
+      "Harumi Inoue",
+      "Kimio Yanagisawa"
+    ],
+    "feature": 277,
+    "home_layer": 17,
+    "mass": 58781.8125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Christophe Hondelatte",
+      "Laurent Lafitte",
+      "Jean Desailly",
+      "Valentin Rasputin",
+      "Vincent Lacoste",
+      "Jeanne Moreau",
+      "Sully Prudhomme",
+      "Brigitte Fontaine",
+      "Jean Lefebvre",
+      "Francis Jammes"
+    ],
+    "feature": 224,
+    "home_layer": 8,
+    "mass": 45488.1015625,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Valencia",
+      "Cambridge",
+      "Claude Bartolone",
+      "Venus Glacier",
+      "Marco Pannella",
+      "Aprilov Point",
+      "Berwick Glacier",
+      "Romain Rolland",
+      "Whillans Ice Stream",
+      "Henrique Maximiano Coelho Neto"
+    ],
+    "feature": 312,
+    "home_layer": 1,
+    "mass": 39079.484375,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "geography",
+      "language",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "People's Republic of China",
+      "Kingdom of Afghanistan",
+      "Kingdom of Valencia",
+      "First Czechoslovak Republic",
+      "Weimar Republic",
+      "Microsoft Digital Video Recording",
+      "Hawaii",
+      "Microsoft Project",
+      "Adobe InDesign",
+      "Microsoft Office Live"
+    ],
+    "feature": 418,
+    "home_layer": 3,
+    "mass": 35937.82421875,
+    "purity": 0.6,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "People's Republic of China",
+      "Kingdom of Afghanistan",
+      "Weimar Republic",
+      "First Czechoslovak Republic",
+      "Kingdom of Valencia",
+      "Hawaii",
+      "Portugal",
+      "Brandenburg-Prussia",
+      "Union between Sweden and Norway",
+      "Nottingham Crown Court"
+    ],
+    "feature": 17,
+    "home_layer": 2,
+    "mass": 34706.8359375,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Kingdom of Afghanistan",
+      "People's Republic of China",
+      "Kingdom of Valencia",
+      "Brandenburg-Prussia",
+      "Union between Sweden and Norway",
+      "First Czechoslovak Republic",
+      "Laurent Lafitte",
+      "Weimar Republic",
+      "Hawaii",
+      "Jean-Christophe Bouvet"
+    ],
+    "feature": 381,
+    "home_layer": 4,
+    "mass": 33004.43359375,
+    "purity": 0.8,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "language",
+      "geography",
+      "geography",
+      "language"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Christophe Hondelatte",
+      "Laurent Lafitte",
+      "Pierre Messmer",
+      "Patrick Rambaud",
+      "Louis Dutens",
+      "Georges Marchal",
+      "Pauline Lafont",
+      "Jean Desailly",
+      "Ginette Leclerc",
+      "Armand Lunel"
+    ],
+    "feature": 98,
+    "home_layer": 5,
+    "mass": 31907.841796875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "John Ruskin",
+      "France Gall",
+      "Robert Buron",
+      "Pierre Brice",
+      "Gwen Stefani",
+      "Ernest Picard",
+      "Claude Bartolone",
+      "Henry de Montherlant",
+      "Jules Berry",
+      "Julien Courbet"
+    ],
+    "feature": 147,
+    "home_layer": 19,
+    "mass": 30167.2421875,
+    "purity": 0.9,
+    "relations": [
+      "language",
+      "geography",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "IBM 1710",
+      "IBM 729",
+      "Adobe Encore",
+      "IBM TopView",
+      "Windows Installer",
+      "Microsoft Digital Video Recording",
+      "Toyota Toyoace",
+      "Windows Phone 8.1",
+      "Windows Phone 7",
+      "Honda Pilot"
+    ],
+    "feature": 111,
+    "home_layer": 18,
+    "mass": 29889.44140625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Nokia Lumia 710",
+      "Honda Zoomer",
+      "Renault Juvaquatre",
+      "Volvo S40",
+      "BMW X5",
+      "Nokia N9",
+      "Cadillac ELR",
+      "iOS 8",
+      "Cadillac XTS",
+      "BMW X3"
+    ],
+    "feature": 149,
+    "home_layer": 15,
+    "mass": 29364.810546875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Heikki Saari",
+      "Koichi Kobayashi",
+      "Ike Ekweremadu",
+      "Prasanna",
+      "Kalraj Mishra",
+      "Eiko Shimamiya",
+      "Haseeb Ahsan",
+      "Pop Shalini",
+      "Wakako Tsuchida",
+      "Moses Ndiema Masai"
+    ],
+    "feature": 332,
+    "home_layer": 16,
+    "mass": 29239.783203125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Montreal World Film Festival",
+      "2004 Istanbul summit",
+      "Laurent Lafitte",
+      "Detroit Windsor International Film Festival",
+      "Christophe Hondelatte",
+      "Jean Desailly",
+      "2011 Australian Open",
+      "Geneva Film Festival",
+      "21st Ankara International Film Festival",
+      "Kennedy Space Center"
+    ],
+    "feature": 596,
+    "home_layer": 6,
+    "mass": 28415.662109375,
+    "purity": 0.7,
+    "relations": [
+      "geography",
+      "geography",
+      "language",
+      "geography",
+      "language",
+      "language",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Hendrick de Keyser",
+      "Jean Desailly",
+      "Patrick Rambaud",
+      "Laurent Lafitte",
+      "Paul-Jean Toulet",
+      "Louis Joxe",
+      "Gautier de Coincy",
+      "Jacques Legras",
+      "Jo Coenen",
+      "Sully Prudhomme"
+    ],
+    "feature": 985,
+    "home_layer": 12,
+    "mass": 28151.6796875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Takeshi Urata",
+      "Ikki Kajiwara",
+      "Etsushi Toyokawa",
+      "Kosuke Matsuura",
+      "Eiko Shimamiya",
+      "France Gall",
+      "Koichi Kobayashi",
+      "Shigeaki Ikeda",
+      "Ameen Sayani",
+      "Masahiko Nishimura"
+    ],
+    "feature": 642,
+    "home_layer": 20,
+    "mass": 28096.33203125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Google Street View",
+      "BMW S65",
+      "Nintendo DS Lite",
+      "Honda CR-X del Sol",
+      "Honda Zoomer",
+      "IBM 3790",
+      "BMW M6",
+      "Renault Safrane",
+      "Fiat Duna",
+      "BMW 003"
+    ],
+    "feature": 391,
+    "home_layer": 14,
+    "mass": 27769.24609375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Jean Desailly",
+      "Jean de La Fontaine",
+      "Jean Dujardin",
+      "Michel Ordener",
+      "Jacques Legras",
+      "Christophe Hondelatte",
+      "Francis Jammes",
+      "Jean Lefebvre",
+      "Louis Joxe",
+      "Brigitte Fontaine"
+    ],
+    "feature": 143,
+    "home_layer": 10,
+    "mass": 27764.2578125,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Weimar Republic",
+      "Nokia X family",
+      "Hawaii",
+      "Internet Explorer 5",
+      "Honda Zoomer",
+      "iOS 8",
+      "Kingdom of Valencia",
+      "Brandenburg-Prussia",
+      "Cadillac ATS",
+      "Julien Dray"
+    ],
+    "feature": 681,
+    "home_layer": 13,
+    "mass": 27626.35546875,
+    "purity": 0.5,
+    "relations": [
+      "geography",
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "organization",
+      "language"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "16th London Turkish Film Festival",
+      "Canberra International Film Festival",
+      "Berlin International Film Festival",
+      "Jameson Dublin International Film Festival",
+      "Atlanta International Documentary Film Festival",
+      "Wii U",
+      "Scottish National Portrait Gallery",
+      "Bangkok International Film Festival",
+      "Vancouver Pride Festival",
+      "Montreal World Film Festival"
+    ],
+    "feature": 1133,
+    "home_layer": 7,
+    "mass": 26773.490234375,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Robert Buron",
+      "Pierre Alcover",
+      "Raymond Queneau",
+      "Pierre Brice",
+      "Claude Simon",
+      "Lindsey Davis",
+      "Zachary Taylor",
+      "Pierre Fresnay",
+      "Maurice Clavel",
+      "Francis Ponge"
+    ],
+    "feature": 314,
+    "home_layer": 21,
+    "mass": 26364.82421875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Christophe Hondelatte",
+      "Jacques Legras",
+      "Sully Prudhomme",
+      "Jean Desailly",
+      "Laurent Lafitte",
+      "Jo Coenen",
+      "Cees Nooteboom",
+      "Jean Dujardin",
+      "Maximilian Voloshin",
+      "Jacques MacDonald"
+    ],
+    "feature": 96,
+    "home_layer": 11,
+    "mass": 25413.63671875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  }
+]

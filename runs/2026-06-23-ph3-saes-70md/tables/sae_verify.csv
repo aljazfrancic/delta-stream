@@ -1,0 +1,7 @@
+source_layer,state,hookpoint,matched,recon_r2,n_latents,k_cfg,active_mean
+0,v_0,layers.0,False,-45.690695334214354,32768,16,15.989
+1,v_1,layers.0,True,0.8688684646869586,32768,16,16.0
+2,v_2,layers.1,True,0.7192202761638657,32768,16,16.0
+3,v_3,layers.2,True,0.6382156028297781,32768,16,16.0
+4,v_4,layers.3,True,0.6158880626320662,32768,16,16.0
+5,v_5,layers.4,True,0.5807322740029914,32768,16,16.0

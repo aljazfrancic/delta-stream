@@ -1,0 +1,51 @@
+{
+  "caveat": "Held-out canonical correlations \u22481 are real (robust to strong shrinkage; collapse to ~0 under the scrambled null) but substantially reflect the definitional \u2212v_\u2113 component of \u0394_\u2113 = v_{\u2113+1} \u2212 v_\u2113 \u2014 the same residual-stream tautology as the Step 3 identity baseline, amplified by a few high-variance ('rogue') residual dimensions. CCA therefore confirms abundant shared subspace structure (Gate-1 Q3 = yes) but does not expose structure the ridge missed; the substantive predictability claim stays the Step 3 ridge R\u00b2 vs the mean/Tuned-Lens baselines.",
+  "d_model": 1024,
+  "gamma": 0.1,
+  "interpretation": {
+    "corr_r2_vs_meanCC": 0.10036653200730888,
+    "regime_counts": {
+      "highR2_highCC": 17,
+      "lowR2_highCC": 7
+    },
+    "threshold": 0.5
+  },
+  "layer_avg_null_te_top1": -0.0065621347646654905,
+  "layer_avg_null_te_top3": -0.0037348940686233825,
+  "layer_avg_te_top1": 0.9996898404954445,
+  "layer_avg_te_top3": 0.999351415938096,
+  "layer_avg_te_topk": 0.9976662965158006,
+  "layer_avg_tr_top1": 1.0,
+  "mean_overfit_gap_top1": 0.0003101595045553879,
+  "n_components": 10,
+  "n_layers": 24,
+  "n_test": 311,
+  "n_train": 1244,
+  "per_layer_te_top1": [
+    1.0,
+    0.9997,
+    0.9998,
+    0.9997,
+    0.9998,
+    0.9998,
+    0.9998,
+    0.9997,
+    0.9998,
+    0.9998,
+    0.9997,
+    0.9997,
+    0.9998,
+    0.9997,
+    0.9998,
+    0.9997,
+    0.9997,
+    0.9997,
+    0.9996,
+    0.9994,
+    0.9995,
+    0.9995,
+    0.9995,
+    0.9995
+  ],
+  "real_minus_null_top1": 1.00625197526011
+}

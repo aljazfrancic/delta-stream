@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Honda Logo",
+      "Nintendo Entertainment System",
+      "Game Boy Micro",
+      "BMW New Class",
+      "Honda Legend",
+      "Honda Life",
+      "Honda Pilot",
+      "Chevrolet Corvette C6",
+      "Chevrolet Orlando",
+      "Sega Game Gear"
+    ],
+    "feature": 595,
+    "home_layer": 3,
+    "mass": 9610.36328125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Nintendo Entertainment System",
+      "Honda Logo",
+      "BMW New Class",
+      "Honda Life",
+      "IBM Personal Computer",
+      "Honda Stream",
+      "Honda Legend",
+      "BMW ActiveE",
+      "Porsche 356",
+      "Honda Pilot"
+    ],
+    "feature": 138,
+    "home_layer": 2,
+    "mass": 8234.71875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Microsoft Schedule Plus",
+      "Windows Genuine Advantage",
+      "Adobe Connect",
+      "Office Open XML",
+      "IBM Type-III Library",
+      "Event Viewer",
+      "Active Server Pages",
+      "AppleScript",
+      "Microsoft Office XP",
+      "Google AdSense"
+    ],
+    "feature": 757,
+    "home_layer": 6,
+    "mass": 7950.05712890625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Final Fantasy V",
+      "Chevrolet Corvette C5-R",
+      "Triumph GT6",
+      "Nissan Pathfinder",
+      "Cadillac V-12",
+      "Super Nintendo Entertainment System",
+      "Chevrolet TrailBlazer",
+      "Internet Explorer 10",
+      "Chevrolet Corvette C7",
+      "Cadillac Eldorado"
+    ],
+    "feature": 389,
+    "home_layer": 5,
+    "mass": 7792.20556640625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Android Runtime",
+      "Final Fantasy Legend II",
+      "Windows Genuine Advantage",
+      "IBM WebSphere Application Server",
+      "Windows Installer",
+      "Final Fantasy III",
+      "Windows Mixed Reality",
+      "ActiveSync",
+      "Final Fantasy X",
+      "Microsoft Schedule Plus"
+    ],
+    "feature": 876,
+    "home_layer": 9,
+    "mass": 7104.05029296875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Final Cut Studio",
+      "iPod Mini",
+      "iPod Classic",
+      "Mac OS X Tiger",
+      "Chevrolet Silverado",
+      "Chevrolet Camaro (first generation)",
+      "Wii Balance Board",
+      "OS X Mountain Lion",
+      "Chevrolet Cobalt",
+      "Chevrolet Tavera"
+    ],
+    "feature": 592,
+    "home_layer": 4,
+    "mass": 6396.97900390625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Wii U",
+      "Fiat Barchetta",
+      "Xeon",
+      "Nissan Z-car",
+      "Microsoft Band",
+      "Super Nintendo Entertainment System",
+      "Nissan S30",
+      "Honda CBR600F3",
+      "Fiat Strada",
+      "Dodge Caravan"
+    ],
+    "feature": 105,
+    "home_layer": 1,
+    "mass": 6354.0283203125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Macintosh File System",
+      "Microsoft Internet Explorer 6",
+      "Microsoft Excel",
+      "Active Server Pages",
+      "Microsoft Office 2000",
+      "Microsoft Office 2003",
+      "Windows Genuine Advantage",
+      "Microsoft Office XP",
+      "IBM Type-III Library",
+      "IBM System i"
+    ],
+    "feature": 326,
+    "home_layer": 7,
+    "mass": 6333.0146484375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Google Account",
+      "High Level Shader Language",
+      "Google Translate",
+      "Intel Threading Building Blocks",
+      "Honda Vigor",
+      "Google Ads",
+      "Windows Genuine Advantage",
+      "Final Fantasy Legend II",
+      "Active Server Pages",
+      "Macintosh File System"
+    ],
+    "feature": 503,
+    "home_layer": 8,
+    "mass": 5702.03759765625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Tim Cook",
+      "IBM Business System 12",
+      "IBM System Object Model",
+      "IBM Information Management System",
+      "UNESCO Goodwill Ambassador",
+      "Bill Gates",
+      "IBM Db2",
+      "IBM Rational ClearCase",
+      "Steve Wozniak",
+      "IBM Lotus Word Pro"
+    ],
+    "feature": 453,
+    "home_layer": 2,
+    "mass": 3654.986083984375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Kingdom of Bohemia",
+      "Bohemia",
+      "Spitting Image",
+      "President of the Basque Autonomous Community",
+      "Ankara Province",
+      "Moscow Mathematical Society",
+      "Upplands-Bro Municipality",
+      "Kabardino-Balkar Republic",
+      "Adaptation",
+      "Constantijn Huygens"
+    ],
+    "feature": 80,
+    "home_layer": 1,
+    "mass": 3527.420166015625,
+    "purity": 0.7,
+    "relations": [
+      "geography",
+      "geography",
+      "language",
+      "language",
+      "geography",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "UNESCO Goodwill Ambassador",
+      "Nissan Pulsar",
+      "Intel Pentium Dual-Core",
+      "Tim Cook",
+      "Nissan Teana",
+      "Nissan Elgrand",
+      "Nissan Navara",
+      "IBM 4300",
+      "Douglas DC-1",
+      "Steve Jobs"
+    ],
+    "feature": 129,
+    "home_layer": 11,
+    "mass": 3229.094970703125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Active Server Pages",
+      "Apple Filing Protocol",
+      "Windows NT 4.0",
+      "Pentium M",
+      "Fiat 132/Argenta",
+      "IBM System i",
+      "Nissan MR engine",
+      "Macintosh File System",
+      "Office Open XML",
+      "macOS Server"
+    ],
+    "feature": 220,
+    "home_layer": 4,
+    "mass": 3226.853271484375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Boeing 747 Large Cargo Freighter",
+      "Microsoft Schedule Plus",
+      "Office Open XML",
+      "Microsoft Office 2000",
+      "IBM Type-III Library",
+      "Adobe Connect",
+      "Intel 80286",
+      "Adobe Captivate",
+      "Nintendo 3DS",
+      "Google AdSense"
+    ],
+    "feature": 27,
+    "home_layer": 1,
+    "mass": 3116.87744140625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Suriname",
+      "Equatorial Guinea",
+      "Lugano",
+      "Aargau",
+      "Aarau",
+      "Altai Republic",
+      "Kabardino-Balkar Republic",
+      "Cape Verde",
+      "Republic of Tatarstan",
+      "Kokkola"
+    ],
+    "feature": 214,
+    "home_layer": 8,
+    "mass": 3097.614501953125,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Game Boy Advance",
+      "Android Runtime",
+      "Fiat Tipo",
+      "Final Cut Studio",
+      "Nintendo DS",
+      "Final Fantasy V",
+      "Nintendo 2DS",
+      "Ferrari 599 GTB Fiorano",
+      "Ferrari 375 MM",
+      "Infiniti JX"
+    ],
+    "feature": 231,
+    "home_layer": 5,
+    "mass": 3007.199462890625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Valencian Community",
+      "Prague-West District",
+      "Jamaica",
+      "Finnish Socialist Workers' Republic",
+      "CherryPy",
+      "Shigeru Miyamoto",
+      "Peru",
+      "Kavkaz Center",
+      "Jean-Louis Curtis",
+      "Paul-Jean Toulet"
+    ],
+    "feature": 194,
+    "home_layer": 1,
+    "mass": 2930.236083984375,
+    "purity": 0.5,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "language",
+      "organization",
+      "geography",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Microsoft Excel",
+      "IBM Type-III Library",
+      "Microsoft Office 2000",
+      "Adobe Connect",
+      "Microsoft Access",
+      "IBM Tivoli Workload Scheduler",
+      "IBM OfficeVision",
+      "Microsoft Dynamics NAV",
+      "Apple Pay",
+      "Microsoft Exchange Server"
+    ],
+    "feature": 0,
+    "home_layer": 11,
+    "mass": 2843.8037109375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Suriname",
+      "Equatorial Guinea",
+      "Lugano",
+      "Vaasa",
+      "Guyana",
+      "Aarau",
+      "Aargau",
+      "Iceland",
+      "Kokkola",
+      "Senegal"
+    ],
+    "feature": 633,
+    "home_layer": 9,
+    "mass": 2761.6513671875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "iOS 8",
+      "Android Runtime",
+      "Windows Virtual PC",
+      "New Nintendo 3DS",
+      "Windows Mixed Reality",
+      "Microsoft Project",
+      "ActiveSync",
+      "Final Fantasy Legend III",
+      "IBM Parallel Sysplex",
+      "IBM WebSphere Application Server"
+    ],
+    "feature": 257,
+    "home_layer": 10,
+    "mass": 2715.53173828125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  }
+]

@@ -32,7 +32,7 @@ Granger = # of (depth × lag) cells Bonferroni-significant out of 112.
 
 Full per-k curve (generic, real vs null): k=1 0.882/−0.002 · k=2 0.900 · k=3 0.909 · k=5 0.922 ·
 k=10 0.887 · k=15 0.911 · k=20 0.935/−0.001. Every k clears the null by ~0.9. See
-`tables/ar_r2.csv`, `tables/granger_real.csv`, `figures/{ar_r2_vs_k,granger_real,granger_null}.png`.
+`tables/ar_r2.csv`, `tables/granger_real.csv`, `figures/{ar_r2_vs_k,granger_real,granger_null}.svg`.
 
 ## Interpretation — what replicates, and the honest read on the *level*
 

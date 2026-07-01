@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Muadh ibn Jabal",
+      "Ali Shariati",
+      "mufti",
+      "bhikkhu",
+      "Mirza Ghulam Ahmad",
+      "Suleiman the Magnificent",
+      "Zunghar Khanate",
+      "Uqba ibn Nafi",
+      "Jesus Christ",
+      "Ahmed es-Sikeli"
+    ],
+    "feature": 8180,
+    "home_layer": 4,
+    "mass": 3981.566650390625,
+    "purity": 1.0,
+    "relations": [
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion"
+    ],
+    "top_class": "religion"
+  },
+  {
+    "examples": [
+      "Mahur Berenji Rural District",
+      "Wanne-Eickel Central Station",
+      "SV Ried",
+      "regiopolis",
+      "Mandara Mountains",
+      "TROS",
+      "Graham Linehan",
+      "Boinpalle mandal",
+      "Eurasian Steppe",
+      "Ulpiana"
+    ],
+    "feature": 4110,
+    "home_layer": 3,
+    "mass": 2178.468505859375,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "occupation",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Jean Chiappe",
+      "Jean Allemane",
+      "Jean Davy",
+      "Pierre-Joseph Cambon",
+      "Charles Maurras",
+      "Jacques Laurent",
+      "Dominique Bouhours",
+      "Jean-Claude Izzo",
+      "Jean Piat",
+      "Jean Gaven"
+    ],
+    "feature": 27754,
+    "home_layer": 5,
+    "mass": 2151.867919921875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Emanuel Tov",
+      "Imre Nagy",
+      "Demerara",
+      "Jack Ralite",
+      "Hemant Birje",
+      "Antonio Maura",
+      "Brian Cushing",
+      "Nina Compan\u00e9ez",
+      "Jiang Qinqin",
+      "Jim Sorgi"
+    ],
+    "feature": 11185,
+    "home_layer": 2,
+    "mass": 2061.824462890625,
+    "purity": 0.7,
+    "relations": [
+      "language",
+      "language",
+      "geography",
+      "language",
+      "language",
+      "language",
+      "occupation",
+      "language",
+      "language",
+      "occupation"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Nikolai Myaskovsky",
+      "Orna Banai",
+      "Ivano Staccioli",
+      "Andrea Bianchi",
+      "Juan J. Campanella",
+      "Aitor Karanka",
+      "Johanne Luise Heiberg",
+      "Augusto Pinochet",
+      "Arvo Tuominen",
+      "John Glynn"
+    ],
+    "feature": 8789,
+    "home_layer": 2,
+    "mass": 1802.2115478515625,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Russian Red",
+      "Aitor Karanka",
+      "Anatoly Sagalevich",
+      "Arvo Tuominen",
+      "Jean Crotti",
+      "Anil Kapoor",
+      "Orna Banai",
+      "Kalairani",
+      "Henri Salvador",
+      "El General"
+    ],
+    "feature": 12563,
+    "home_layer": 3,
+    "mass": 1625.398681640625,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Duygu Asena",
+      "Helsinki",
+      "Sarah Waters",
+      "ASEAN",
+      "West Germany",
+      "Yardena Arazi",
+      "Denise Robins",
+      "Burundi",
+      "Pakistan",
+      "Jharkhand"
+    ],
+    "feature": 889,
+    "home_layer": 3,
+    "mass": 1587.0648193359375,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Orna Banai",
+      "Anil Kapoor",
+      "Russian Red",
+      "Natalia Shvedova",
+      "Aitor Karanka",
+      "Roman Karmen",
+      "Rui Naiwei",
+      "Anatoly Sagalevich",
+      "Georges Polti",
+      "Joaquin Mir Trinxet"
+    ],
+    "feature": 10982,
+    "home_layer": 4,
+    "mass": 1526.623779296875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Edward Bond",
+      "George Hardinge",
+      "Sarah Waters",
+      "Osvaldo Soriano",
+      "George Howard Earle III",
+      "Enzo Cannavale",
+      "Chrisye",
+      "Michael Moore",
+      "George Shaw",
+      "Paul Personne"
+    ],
+    "feature": 22564,
+    "home_layer": 3,
+    "mass": 1420.053466796875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Natalia Shvedova",
+      "Matt Greenhalgh",
+      "Zhang Zhidong",
+      "Mauro Zani",
+      "Renzo Novatore",
+      "Anil Kapoor",
+      "Fyodor Pavlovich Reshetnikov",
+      "Joaquin Mir Trinxet",
+      "Georges Polti",
+      "Juan J. Campanella"
+    ],
+    "feature": 11107,
+    "home_layer": 5,
+    "mass": 1265.2113037109375,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Roman Karmen",
+      "Pierre C. Cartier",
+      "Aleksei Losev",
+      "Paul Ulrich Villard",
+      "Kannonkoski",
+      "Michael A. Smith",
+      "Carlos Fuentes",
+      "Thomas Sturge Moore",
+      "Vincent de Moro-Giafferi",
+      "Joseph Milner"
+    ],
+    "feature": 15543,
+    "home_layer": 1,
+    "mass": 1180.3162841796875,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Roman Karmen",
+      "Charles Augustin Sainte-Beuve",
+      "Nikolai Bukharin",
+      "Jean-Pierre Andrevon",
+      "Jean-Marie Cavada",
+      "Lipke Holthuis",
+      "Sarah Waters",
+      "Philip V of Spain",
+      "Itay Tiran",
+      "Jeroen Willems"
+    ],
+    "feature": 3554,
+    "home_layer": 1,
+    "mass": 1157.2843017578125,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Thomas Hardy",
+      "Margrethe II of Denmark",
+      "Oliver Cromwell",
+      "Christa Theret",
+      "Henri Storck",
+      "Baal Shem of London",
+      "Giovanni Borgia, 2nd Duke of Gandia",
+      "Francis James Child",
+      "Jacques Poulin",
+      "Paul Tortelier"
+    ],
+    "feature": 6035,
+    "home_layer": 4,
+    "mass": 1051.5667724609375,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Ioannes Paulus II Peninsula",
+      "Tughlaq dynasty",
+      "Belgium",
+      "Syria",
+      "Kingdom of France",
+      "Republic of Venice",
+      "Kingdom of Libya",
+      "Israel Zolli",
+      "Almoravid dynasty",
+      "Jesus Christ"
+    ],
+    "feature": 29812,
+    "home_layer": 1,
+    "mass": 1013.582763671875,
+    "purity": 0.7,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "religion",
+      "religion",
+      "religion"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Robert Stout",
+      "Lin Huiyin",
+      "Antonio Maura",
+      "Emanuel Tov",
+      "Tristan Tzara",
+      "Vincent d'Indy",
+      "Vic Sotto",
+      "Imre Nagy",
+      "Willem Wilmink",
+      "Nino Bravo"
+    ],
+    "feature": 13738,
+    "home_layer": 2,
+    "mass": 1009.3698120117188,
+    "purity": 0.8,
+    "relations": [
+      "occupation",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "occupation",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "regiopolis",
+      "TROS",
+      "Don Durant",
+      "Patricia Idlette",
+      "Formentera",
+      "Morris McGregor",
+      "SV Ried",
+      "Robert Stout",
+      "Mandara Mountains",
+      "Lou Reed"
+    ],
+    "feature": 23296,
+    "home_layer": 4,
+    "mass": 906.8414306640625,
+    "purity": 0.5,
+    "relations": [
+      "geography",
+      "geography",
+      "occupation",
+      "occupation",
+      "language",
+      "occupation",
+      "geography",
+      "occupation",
+      "geography",
+      "occupation"
+    ],
+    "top_class": "occupation"
+  },
+  {
+    "examples": [
+      "Mathieu Flamini",
+      "Ray Emery",
+      "Taylor Heinicke",
+      "Damiano Tommasi",
+      "Enrico Cucchi",
+      "Mikel Alonso",
+      "Manti Te'o",
+      "Morgan Schneiderlin",
+      "Ulrich Le Pen",
+      "Erik Kramer"
+    ],
+    "feature": 16285,
+    "home_layer": 2,
+    "mass": 901.2156982421875,
+    "purity": 1.0,
+    "relations": [
+      "occupation",
+      "occupation",
+      "occupation",
+      "occupation",
+      "occupation",
+      "occupation",
+      "occupation",
+      "occupation",
+      "occupation",
+      "occupation"
+    ],
+    "top_class": "occupation"
+  },
+  {
+    "examples": [
+      "Paul Capellani",
+      "Victor Margueritte",
+      "Charles Maurras",
+      "Anthony Delon",
+      "Thom Hoffman",
+      "Michel Onfray",
+      "Rajesh Khanna",
+      "Leslie Caron",
+      "Jean Martinelli",
+      "Joseph Joubert"
+    ],
+    "feature": 11627,
+    "home_layer": 3,
+    "mass": 895.3139038085938,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Emanuel Tov",
+      "Imre Nagy",
+      "Demerara",
+      "Lin Huiyin",
+      "Tristan Tzara",
+      "Jiang Qinqin",
+      "Roldano Lupi",
+      "Aleksei Losev",
+      "Willem Wilmink",
+      "Parvin E'tesami"
+    ],
+    "feature": 551,
+    "home_layer": 1,
+    "mass": 875.7186889648438,
+    "purity": 0.9,
+    "relations": [
+      "language",
+      "language",
+      "geography",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "mufti",
+      "Rumi",
+      "imam",
+      "Omar Bongo",
+      "Umayyad Caliphate",
+      "Clovis I",
+      "Abu Bakr ibn Umar",
+      "Skanderbeg",
+      "Dokka Umarov",
+      "Uqba ibn Nafi"
+    ],
+    "feature": 18147,
+    "home_layer": 1,
+    "mass": 867.8403930664062,
+    "purity": 1.0,
+    "relations": [
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion",
+      "religion"
+    ],
+    "top_class": "religion"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "d_model": 1024,
+  "hdf5": "data/pythia-410m-deduped-untrained/residual_stream.h5",
+  "mib": 151.9,
+  "n_examples": 1555,
+  "n_layers": 24,
+  "next": "phase4_pressure_tests.py --h5 data/pythia-410m-deduped-untrained/residual_stream.h5",
+  "sanity": {
+    "finite": true,
+    "norm_v0": 0.796369194984436,
+    "norm_vL": 142.41224670410156,
+    "vL_decodes_to": " Pag"
+  },
+  "seed": 0,
+  "shape": [
+    1555,
+    25,
+    1024
+  ],
+  "source": "factual",
+  "weights": "untrained_random_init"
+}

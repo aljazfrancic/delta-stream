@@ -19,7 +19,7 @@ Runs on the saved Branch-B checkpoints — no model forward, seconds on CPU.
         --desc ph4-aL-operator-410md
 
 Outputs: tables/{spectrum_by_depth,state_path_decay,seed_stability}.csv,
-tables/aL_stats.json, figures/{eig_plane,rho_by_depth,modulus_hist,state_decay}.png.
+tables/aL_stats.json, figures/{eig_plane,rho_by_depth,modulus_hist,state_decay}.svg.
 """
 
 from __future__ import annotations
@@ -160,7 +160,9 @@ def _plots(run, spec, decay, mlsae_specs) -> None:
     ax.set_xlabel("Re λ"); ax.set_ylabel("Im λ")
     ax.set_title("A_ℓ eigenvalues (contractive: inside unit circle)")
     fig.colorbar(sc, ax=ax, label="depth ℓ", shrink=0.8)
-    fig.tight_layout(); fig.savefig(run.path("figures/eig_plane.png"), dpi=130); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(run.path("figures/eig_plane.svg"), bbox_inches="tight")
+    plt.close(fig)
 
     # 2. Spectral radius by depth (L1 + mlsae seed band).
     fig, ax = plt.subplots(figsize=(6.5, 4))
@@ -173,7 +175,9 @@ def _plots(run, spec, decay, mlsae_specs) -> None:
     ax.set_xlabel("transition layer ℓ"); ax.set_ylabel("spectral radius ρ(A_ℓ)")
     ax.set_title("State operator is contractive at every depth (ρ<1)")
     ax.legend(fontsize=8)
-    fig.tight_layout(); fig.savefig(run.path("figures/rho_by_depth.png"), dpi=130); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(run.path("figures/rho_by_depth.svg"), bbox_inches="tight")
+    plt.close(fig)
 
     # 3. Modulus histogram (pooled).
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -183,7 +187,9 @@ def _plots(run, spec, decay, mlsae_specs) -> None:
     ax.set_xlabel("|λ|"); ax.set_ylabel("count")
     ax.set_title("Eigenvalue moduli (most modes strongly contractive)")
     ax.legend(fontsize=8)
-    fig.tight_layout(); fig.savefig(run.path("figures/modulus_hist.png"), dpi=130); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(run.path("figures/modulus_hist.svg"), bbox_inches="tight")
+    plt.close(fig)
 
     # 4. State-path memory kernel by gap.
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -191,7 +197,9 @@ def _plots(run, spec, decay, mlsae_specs) -> None:
     ax.set_xlabel("depth gap g = ℓ − j (source→observation)")
     ax.set_ylabel("‖C(∏A)B‖_F  (ratio to gap 1)")
     ax.set_title("State memory kernel decays fast → k*≈1")
-    fig.tight_layout(); fig.savefig(run.path("figures/state_decay.png"), dpi=130); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(run.path("figures/state_decay.svg"), bbox_inches="tight")
+    plt.close(fig)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,84 @@
+{
+  "d_model": 1024,
+  "h5": "data/pythia-410m-deduped/residual_stream.h5",
+  "interpretation": "T1: if real_best_r2 survives as m grows (state var removed), the AR-on-\u0394 predictability is genuine depth structure, not the \u00b1v_\u2113 persistence tautology; if it decays toward scramble_null_r2 it was tautological. T2: real\u2212surrogate is the honest floor (independent matched steps cancel the \u00b1v_\u2113 term); >0 means the predictability needs genuine step-to-step structure. T3: lag\u22652 significant cells are tautology-free (the shared v_\u2113 only couples lag 1).",
+  "n_layers": 24,
+  "n_test": 311,
+  "n_train": 1244,
+  "state_var_top1": 0.3198964067466372,
+  "state_var_top20": 0.790023140369438,
+  "t1_persistence_sweep": [
+    {
+      "m_removed": 0,
+      "real_best_r2": 0.6496537780839016,
+      "real_k": 20,
+      "real_minus_scramble": 0.6495842876829317,
+      "real_rank": 128,
+      "scramble_null_r2": 6.949040096981829e-05,
+      "state_var_removed": 0.0
+    },
+    {
+      "m_removed": 1,
+      "real_best_r2": 0.6369057888162474,
+      "real_k": 20,
+      "real_minus_scramble": 0.6367908261851388,
+      "real_rank": 128,
+      "scramble_null_r2": 0.00011496263110855054,
+      "state_var_removed": 0.3198964067466372
+    },
+    {
+      "m_removed": 5,
+      "real_best_r2": 0.5483051394012812,
+      "real_k": 20,
+      "real_minus_scramble": 0.548190454399863,
+      "real_rank": 128,
+      "scramble_null_r2": 0.00011468500141820215,
+      "state_var_removed": 0.6053898541673483
+    },
+    {
+      "m_removed": 20,
+      "real_best_r2": 0.4535165014422756,
+      "real_k": 1,
+      "real_minus_scramble": 0.4533873288030522,
+      "real_rank": 128,
+      "scramble_null_r2": 0.00012917263922340716,
+      "state_var_removed": 0.790023140369438
+    },
+    {
+      "m_removed": 50,
+      "real_best_r2": 0.43606632826714975,
+      "real_k": 1,
+      "real_minus_scramble": 0.4359509475633182,
+      "real_rank": 128,
+      "scramble_null_r2": 0.00011538070383154686,
+      "state_var_removed": 0.8707700764330638
+    }
+  ],
+  "t2_surrogate": {
+    "real_best_r2": 0.6496537780839016,
+    "real_k": 20,
+    "real_minus_scramble": 0.6495842876829317,
+    "real_minus_surrogate": 0.6496108873146813,
+    "real_rank": 128,
+    "scramble_r2": 6.949040096981829e-05,
+    "surrogate_r2": 4.2890769220260694e-05
+  },
+  "t3_granger": {
+    "real": {
+      "lag1_sig": 23,
+      "lag1_total": 23,
+      "lagge2_sig": 89,
+      "lagge2_total": 89,
+      "n_tests": 112,
+      "threshold": 3.3502480183341627
+    },
+    "scramble_null": {
+      "lag1_sig": 0,
+      "lag1_total": 23,
+      "lagge2_sig": 0,
+      "lagge2_total": 89,
+      "n_tests": 112,
+      "threshold": 3.3502480183341627
+    }
+  }
+}

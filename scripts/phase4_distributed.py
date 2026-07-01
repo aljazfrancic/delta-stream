@@ -301,7 +301,7 @@ def main(argv: list[str] | None = None) -> int:
     }
     run.save_json("tables/distributed_control.json", control)
     _plot_control(ks, top_mean, top_sd, rnd_mean, rnd_sd, iso_mean, iso_sd, shp_mean, shp_sd,
-                  args.mass_match_k, mm_drop, run.path("figures/distributed_control.png"),
+                  args.mass_match_k, mm_drop, run.path("figures/distributed_control.svg"),
                   mcfg.get("name"))
 
     print(f"\n=== Phase 4 distributed-code control ({mcfg.get('name')}) ===")
@@ -343,7 +343,7 @@ def _plot_control(ks, top_mean, top_sd, rnd_mean, rnd_sd, iso_mean, iso_sd, shp_
     ax.set_title(f"Distributed-code control — {model_name}")
     ax.legend(frameon=False, fontsize=8)
     fig.tight_layout()
-    fig.savefig(path, dpi=120)
+    fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
 

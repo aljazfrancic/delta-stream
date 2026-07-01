@@ -1,0 +1,27 @@
+{
+  "M_star": 188,
+  "alive_count": [
+    0,
+    151,
+    188
+  ],
+  "d_model": 1024,
+  "epochs": 1500,
+  "init_l0": 0.11346491528129347,
+  "k": 32,
+  "l1_coeff": 0.03,
+  "matched_recon_r2_mean": 0.9877688832894235,
+  "matched_recon_r2_min": 0.9871237469566089,
+  "mode": "topk",
+  "model": "pythia-410m-deduped",
+  "n_examples": 1555,
+  "n_latents": 8192,
+  "n_source_layers": 3,
+  "out_npz": "data/pythia-410m-deduped/sources_trained_topk.npz",
+  "recon_r2": [
+    null,
+    0.9884140196222381,
+    0.9871237469566089
+  ],
+  "standardize": true
+}

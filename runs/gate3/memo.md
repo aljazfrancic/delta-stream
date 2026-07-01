@@ -65,7 +65,7 @@ interpolated onto the SSM L0 grid:
 | 0.0149 | +0.857 | +0.809 | **+0.048** |
 
 Every gap is strongly positive → **reconstruction clause MET, with margin** (3–6× the 70m
-debug gap). `ssm_on_or_above_baseline = True`. See `figures/pareto.png`.
+debug gap). `ssm_on_or_above_baseline = True`. See `figures/pareto.svg`.
 
 **3. How does it compare to a crosscoder baseline? — NOT RUN.** Crosscoder / MLSAE / CLT
 are the Phase 4 Step 1 baseline suite; the go criterion is keyed to the per-layer-SAE
@@ -87,7 +87,7 @@ No collapse (‖ops‖=252 ≫ ‖b‖=11, L0≈0.009).
 
 **5. Do top features look interpretable? — YES.** Top-20 features by |u| mass have mean
 relation-class **purity 0.83**. Reconstruction eyeball: median per-example R² **0.98** over
-10 random examples (0.94–0.99; `figures/reconstruction.png`).
+10 random examples (0.94–0.99; `figures/reconstruction.svg`).
 
 ---
 

@@ -1,0 +1,8 @@
+{
+  "baseline": "tuned_lens_implied_delta",
+  "delta_r2_pooled_full": -0.2902942578239325,
+  "delta_r2_pooled_test": -0.3088076370428292,
+  "model": "pythia-410m-deduped",
+  "note": "non-feature baseline; settles-with-depth reference (Gate 1: TL \u226a ridge on \u0394).",
+  "resource_id": "EleutherAI/pythia-410m-deduped"
+}

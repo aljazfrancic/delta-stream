@@ -113,6 +113,9 @@ def main(argv: list[str] | None = None) -> int:
     rs, _, _ = load_residual_stream(h5)
     delta = torch.tensor(deltas(rs), dtype=torch.float32)
     N, L, M = u.shape
+    if delta.shape[1] > L:  # partial SAE coverage (e.g. Qwen 12L prefix of a 24L model)
+        run.log(f"partial SAE coverage -> truncating delta to first {L} layers")
+        delta = delta[:, :L]
     D = delta.shape[2]
     r = args.rank
     run.log(f"sources {tuple(u.shape)} from {args.sources_npz.name}, delta {tuple(delta.shape)}, "

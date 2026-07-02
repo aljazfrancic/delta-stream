@@ -649,26 +649,33 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
             axL.scatter([r["L"]], [r[gm]], marker="D", s=70,
                         color=xcol.get(r["family"], "tab:orange"), zorder=4,
                         label=f"{r['family']} / {r['suite']}")
+    xmax = max(r["L"] for r in rows)
     for r in rows:
         tag = (f"+{r[gm]:.3f}±{r[gs]:.3f}" if r["n_seeds"] > 1 else f"+{r[gm]:.3f}")
+        left = r["L"] == xmax  # rightmost point: label to the left or it clips outside
         axL.annotate(f"{r['label']}\n{tag}", (r["L"], r[gm]),
-                     textcoords="offset points", xytext=(6, -2), fontsize=8)
+                     textcoords="offset points", xytext=(-6, -2) if left else (6, -2),
+                     ha="right" if left else "left", fontsize=8)
     axL.axhline(0, color="k", lw=0.8)
     axL.set_xlabel("depth L (layers)")
     axL.set_ylabel(
         f"SSM − per-layer-baseline R² gap at λ_L1={rows[0].get('knee_lambda', 1):g}"
         if knee else "max SSM − per-layer-baseline R² gap")
     axL.set_title("Cross-layer propagation gain grows with depth")
-    # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044))
-    axL.legend(fontsize=8, loc="lower right"); axL.grid(alpha=0.3)
+    # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044));
+    # anchored a little up so the box clears the y=0 line
+    axL.legend(fontsize=8, loc="lower right", bbox_to_anchor=(0.98, 0.10))
+    axL.grid(alpha=0.3)
 
     for sae_type, color in (("TopK", "tab:blue"), ("L1", "tab:orange")):
         pts = [r for r in rows if r.get("sae_type") == sae_type]
         axR.scatter([r["L"] for r in pts], [r["seed"] for r in pts], s=70, color=color,
                     label=f"{sae_type} SAEs")
     for r in rows:
+        left = r["L"] == xmax
         axR.annotate(f"{r['label']}\n{r['seed']:.2f}", (r["L"], r["seed"]),
-                     textcoords="offset points", xytext=(6, -4), fontsize=8)
+                     textcoords="offset points", xytext=(-6, -4) if left else (6, -4),
+                     ha="right" if left else "left", fontsize=8)
     axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
     axR.set_xlabel("depth L (layers)"); axR.set_ylabel("seed match@0.7")
     axR.set_ylim(0, 1.05); axR.set_title("Seed-stability tracks SAE source type, not depth")

@@ -142,17 +142,21 @@ def main() -> int:
             axL.scatter([r["L"]], [r["knee_mean"]], marker="D", s=70,
                         color=xfam_color.get(r["family"], "tab:orange"),
                         zorder=4, label=f"{r['family']} / {r['suite']} (cross-family)")
+    xmax = max(r["L"] for r in rows)
     for r in rows:
         tag = (f"+{r['knee_mean']:.3f}±{r['knee_sd']:.3f}" if r["n_seeds"] > 1
                else f"+{r['knee_mean']:.3f}")
+        left = r["L"] == xmax  # rightmost point: label to the left or it clips outside
         axL.annotate(f"{r['label']}\n{tag}", (r["L"], r["knee_mean"]),
-                     textcoords="offset points", xytext=(6, -2), fontsize=8)
+                     textcoords="offset points", xytext=(-6, -2) if left else (6, -2),
+                     ha="right" if left else "left", fontsize=8)
     axL.axhline(0, color="k", lw=0.8)
     axL.set_xlabel("depth L (number of layers)")
     axL.set_ylabel(f"SSM − per-layer-baseline R² gap at λ_L1={KNEE_LAMBDA:g}")
     axL.set_title("Cross-layer propagation gain grows with depth")
-    # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044))
-    axL.legend(fontsize=8, loc="lower right")
+    # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044));
+    # anchored a little up so the box clears the y=0 line
+    axL.legend(fontsize=8, loc="lower right", bbox_to_anchor=(0.98, 0.10))
     axL.grid(alpha=0.3)
 
     # --- right: seed-stability vs depth, grouped by SAE *type* (the actual lever) ---
@@ -162,7 +166,9 @@ def main() -> int:
                     label=f"{sae_type} SAEs")
     for r in rows:
         axR.annotate(f"{r['label']}\n{r['seed']:.2f}", (r["L"], r["seed"]),
-                     textcoords="offset points", xytext=(6, -4), fontsize=8)
+                     textcoords="offset points",
+                     xytext=(-6, -4) if r["L"] == xmax else (6, -4),
+                     ha="right" if r["L"] == xmax else "left", fontsize=8)
     axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
     axR.set_xlabel("depth L (number of layers)")
     axR.set_ylabel("seed match@0.7 (decoder-direction stability)")

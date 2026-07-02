@@ -69,6 +69,11 @@ def main(argv: list[str] | None = None) -> int:
                         help="Override the residual-stream HDF5 (default: "
                              "data/<model>/residual_stream.h5). Used by the E4 "
                              "generic-text generality control.")
+    parser.add_argument("--split-by", choices=["random", "object", "subject"],
+                        default="random",
+                        help="R5: entity-disjoint train/test split keyed on the "
+                             "filtered_triples.parquet column (objects recur heavily; "
+                             "random shares answers across the boundary).")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -88,9 +93,15 @@ def main(argv: list[str] | None = None) -> int:
     dlt = deltas(rs)  # [N, L, D]
     run.log(f"loaded {h5}: residual_stream {rs.shape}, deltas {dlt.shape}")
 
-    tr, te = train_test_split_idx(n, test_frac=test_frac, seed=args.seed)
+    if args.split_by != "random":
+        from layer_dynamics.diagnostics.dataset import entity_split_idx
+
+        pq = Path("data") / mcfg["name"] / "filtered_triples.parquet"
+        tr, te = entity_split_idx(n, pq, args.split_by, test_frac=test_frac, seed=args.seed)
+    else:
+        tr, te = train_test_split_idx(n, test_frac=test_frac, seed=args.seed)
     dlt_tr, dlt_te = dlt[tr], dlt[te]
-    run.log(f"split: {len(tr)} train / {len(te)} test (same split as Step 3)")
+    run.log(f"split: {len(tr)} train / {len(te)} test (by={args.split_by})")
     run.log(f"AR lag sweep k={list(lags)}, ranks={list(ranks)}, "
             f"predictor PCs={input_pcs}, Granger q_pca={q_pca}")
 

@@ -57,6 +57,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--h5", type=Path, default=None,
                         help="Override residual-stream HDF5 (e.g. the untrained-model "
                              "store for the T4 reconstruction control).")
+    parser.add_argument("--exclude-test", action="store_true",
+                        help="R4: train the SAEs (and alive masks) on the Gate-3 TRAIN "
+                             "rows only (standard split, this run's --seed); all rows "
+                             "are still encoded. Output gets a _trainonly suffix.")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -73,10 +77,17 @@ def main(argv: list[str] | None = None) -> int:
     n, n_states, d = rs.shape
     run.log(f"loaded {h5}: residual_stream {rs.shape}; training sources v_1..v_{n_states - 2}")
 
+    train_rows = None
+    if args.exclude_test:
+        from layer_dynamics.diagnostics.dataset import train_test_split_idx
+
+        train_rows, held = train_test_split_idx(n, test_frac=0.2, seed=args.seed)
+        run.log(f"--exclude-test: SAEs fit on {len(train_rows)} train rows only "
+                f"({len(held)} eval rows untouched by dictionary training)")
     cs, state_dicts = build_compressed_sources_trained(
         rs, mode=args.mode, n_latents=args.n_latents, k=args.k, l1_coeff=args.l1_coeff,
         standardize=not args.no_standardize, epochs=args.epochs, lr=args.lr,
-        seed=args.seed, device=device, log=run.log,
+        seed=args.seed, device=device, train_rows=train_rows, log=run.log,
     )
     m_star = cs.u.shape[2]
     init_l0 = float((cs.u != 0).mean())
@@ -88,7 +99,9 @@ def main(argv: list[str] | None = None) -> int:
     run.log(f"matched recon R²: mean={np.nanmean(cs.recon_r2):+.3f} "
             f"min={np.nanmin(cs.recon_r2):+.3f} max={np.nanmax(cs.recon_r2):+.3f}")
 
-    out_npz = args.out_npz or (Path("data") / mcfg["name"] / f"sources_trained_{args.mode}.npz")
+    suffix = "_trainonly" if args.exclude_test else ""
+    out_npz = args.out_npz or (
+        Path("data") / mcfg["name"] / f"sources_trained_{args.mode}{suffix}.npz")
     out_npz.parent.mkdir(parents=True, exist_ok=True)
     np.savez(out_npz, u=cs.u, feat_index=cs.feat_index, alive_count=cs.alive_count,
              recon_r2=cs.recon_r2, n_latents_full=cs.n_latents_full,
@@ -104,6 +117,8 @@ def main(argv: list[str] | None = None) -> int:
         "model": mcfg["name"], "mode": args.mode, "n_latents": int(args.n_latents),
         "k": int(args.k), "l1_coeff": float(args.l1_coeff),
         "standardize": not args.no_standardize, "epochs": int(args.epochs),
+        "exclude_test": bool(args.exclude_test),
+        "n_train_rows": int(len(train_rows)) if train_rows is not None else int(n),
         "n_examples": int(n), "n_source_layers": int(n_states - 1), "d_model": int(d),
         "M_star": int(m_star), "init_l0": init_l0, "out_npz": str(out_npz),
         "alive_count": cs.alive_count.tolist(),

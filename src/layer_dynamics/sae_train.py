@@ -192,6 +192,7 @@ def build_compressed_sources_trained(
     lr: float = 1e-3,
     seed: int = 0,
     device: str = "cpu",
+    train_rows: np.ndarray | None = None,
     log=None,
 ) -> tuple[CompressedSources, list[dict]]:
     """Train one SAE per source layer and return drop-in Branch-B sources + state dicts.
@@ -201,6 +202,13 @@ def build_compressed_sources_trained(
     to the mlsae build); each layer is pruned to its alive latents and padded to
     ``M* = max_ℓ |alive_ℓ|``. The returned ``state_dicts`` (one per source layer, ``None``
     for ``v_0``) let the caller persist the trained dictionaries for reuse/interpretation.
+
+    ``train_rows`` (review item R4): when given, the SAE **fit** and the alive-latent
+    mask use only these example rows, so a downstream evaluation split that holds out
+    the complement stays untouched by dictionary training; all N rows are still
+    *encoded* into the returned sources (the eval scripts need test-row codes).
+    Without it (the recorded E2 behaviour) every row participates in training —
+    dictionary-level leakage into the eval split, mild but real.
     """
     n, n_states, _ = rs.shape
     n_layers = n_states - 1
@@ -215,13 +223,15 @@ def build_compressed_sources_trained(
             alive_lists.append(np.empty(0, dtype=np.int64))
             continue
         x = rs[:, ellp, :].astype(np.float32)
-        res = train_sae(x, mode=mode, n_latents=n_latents, k=k, l1_coeff=l1_coeff,
+        x_fit = x if train_rows is None else x[train_rows]
+        res = train_sae(x_fit, mode=mode, n_latents=n_latents, k=k, l1_coeff=l1_coeff,
                         standardize=standardize, epochs=epochs, lr=lr, seed=seed,
                         device=device, log=None)
         with torch.no_grad():
             acts = res.sae.encode_acts(
                 torch.as_tensor(x, device=device)).cpu().numpy().astype(np.float32)
-        alive = np.where(np.any(acts != 0.0, axis=0))[0]
+        fit_rows = slice(None) if train_rows is None else train_rows
+        alive = np.where(np.any(acts[fit_rows] != 0.0, axis=0))[0]
         alive_lists.append(alive)
         acts_alive[ellp] = acts[:, alive]
         state_dicts[ellp] = {kk: v.detach().cpu().numpy() for kk, v in

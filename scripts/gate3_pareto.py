@@ -83,6 +83,11 @@ def main(argv: list[str] | None = None) -> int:
                         help="Override residual-stream HDF5 (e.g. the untrained-model "
                              "store for the T4 reconstruction control; pair with the "
                              "matching --sources-npz).")
+    parser.add_argument("--split-by", choices=["random", "object", "subject"],
+                        default="random",
+                        help="R5: entity-disjoint train/test split keyed on the "
+                             "filtered_triples.parquet column (objects recur heavily; "
+                             "random shares answers across the boundary).")
     args = parser.parse_args(argv)
 
     lambdas = [float(x) for x in args.lambdas.split(",") if x.strip()]
@@ -114,12 +119,20 @@ def main(argv: list[str] | None = None) -> int:
     sae_l0 = float((u != 0).mean())
     run.log(f"sources u {u.shape} M={d_input} init L0={sae_l0:.4f}")
 
-    train_idx, test_idx = train_test_split_idx(n, test_frac=args.test_frac, seed=args.seed)
+    if args.split_by != "random":
+        from layer_dynamics.diagnostics.dataset import entity_split_idx
+
+        pq = Path("data") / mcfg["name"] / "filtered_triples.parquet"
+        train_idx, test_idx = entity_split_idx(n, pq, args.split_by,
+                                               test_frac=args.test_frac, seed=args.seed)
+    else:
+        train_idx, test_idx = train_test_split_idx(n, test_frac=args.test_frac, seed=args.seed)
     u_tr = torch.from_numpy(u[train_idx])
     u_te = torch.from_numpy(u[test_idx])
     d_tr = torch.from_numpy(delta[train_idx])
     d_te = torch.from_numpy(delta[test_idx])
-    run.log(f"split: {len(train_idx)} train / {len(test_idx)} test (seed {args.seed})")
+    run.log(f"split: {len(train_idx)} train / {len(test_idx)} test "
+            f"(by={args.split_by}, seed {args.seed})")
 
     d_state = args.d_state if args.d_state is not None else args.rank
     dims = SSMDims(n_layers=n_layers, d_model=d_model, d_input=d_input,
@@ -162,6 +175,7 @@ def main(argv: list[str] | None = None) -> int:
         "model": mcfg.get("name"), "device": device, "sae_repo": args.sae_repo,
         "dims": vars(dims), "lambdas": lambdas, "lambda_reg": args.lambda_reg,
         "outer_iters": args.outer_iters, "sae_init_l0": sae_l0,
+        "split_by": args.split_by,
         "n_train": len(train_idx), "n_test": len(test_idx),
         "rows": rows, "matched_l0_gaps": gaps,
         "ssm_on_or_above_baseline": on_or_above,

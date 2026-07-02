@@ -97,3 +97,20 @@ def test_build_sources_feat_index_matches_alive_count():
         c = int(cs.alive_count[ell])
         assert np.all(cs.feat_index[ell, :c] >= 0) or c == 0
         assert np.all(cs.feat_index[ell, c:] == -1)
+
+
+def test_build_sources_train_rows_encodes_all_rows():
+    """R4: with train_rows, the SAE fit/alive-mask see only train rows but every row
+    is encoded into the returned sources."""
+    rs = _toy_rs(n=30, n_states=4, d=16, seed=5)
+    train_rows = np.arange(20)
+    cs, _ = build_compressed_sources_trained(
+        rs, mode="topk", n_latents=32, k=3, epochs=50, train_rows=train_rows)
+    assert cs.u.shape[0] == 30                       # all rows encoded
+    assert np.all(cs.u[:, 0, :] == 0)                # v_0 still zero-init
+    held = cs.u[20:, 1:, :]                          # held-out rows, SAE'd layers
+    assert np.abs(held).sum() > 0                    # test rows got real codes
+    # deterministic wrt the same train_rows
+    cs2, _ = build_compressed_sources_trained(
+        rs, mode="topk", n_latents=32, k=3, epochs=50, train_rows=train_rows)
+    assert np.allclose(cs.u, cs2.u)

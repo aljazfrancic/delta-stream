@@ -632,24 +632,32 @@ def within_vs_cross(conf: pd.DataFrame) -> plt.Figure:
 
 
 def depth_scaling(rows: list[dict]) -> plt.Figure:
+    # Prefer the robust λ-knee gap (raw same-λ SSM−baseline difference; review
+    # 2026-07-02: gap_max's matched-L0 interpolation is fragile on the saturated
+    # Pareto tail — the 160m ±0.015 error bar was that artifact, not seed noise).
+    # Falls back to the gap_max stats for pre-review JSONs.
+    knee = "knee_mean" in rows[0]
+    gm, gs = ("knee_mean", "knee_sd") if knee else ("gap_mean", "gap_sd")
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(12, 4.6))
     pyth = [r for r in rows if r["family"] == "Pythia"]
-    axL.errorbar([r["L"] for r in pyth], [r["gap_mean"] for r in pyth],
-                 yerr=[r["gap_sd"] for r in pyth], fmt="-o", color="tab:blue", capsize=4,
+    axL.errorbar([r["L"] for r in pyth], [r[gm] for r in pyth],
+                 yerr=[r[gs] for r in pyth], fmt="-o", color="tab:blue", capsize=4,
                  label="Pythia / mlsae (mean±sd)", zorder=3)
     xcol = {"GPT-2": "tab:orange", "Qwen": "tab:green"}
     for r in rows:
         if r["family"] != "Pythia":
-            axL.scatter([r["L"]], [r["gap_mean"]], marker="D", s=70,
+            axL.scatter([r["L"]], [r[gm]], marker="D", s=70,
                         color=xcol.get(r["family"], "tab:orange"), zorder=4,
                         label=f"{r['family']} / {r['suite']}")
     for r in rows:
-        tag = (f"+{r['gap_mean']:.3f}±{r['gap_sd']:.3f}" if r["n_seeds"] > 1
-               else f"+{r['gap_mean']:.3f}")
-        axL.annotate(f"{r['label']}\n{tag}", (r["L"], r["gap_mean"]),
+        tag = (f"+{r[gm]:.3f}±{r[gs]:.3f}" if r["n_seeds"] > 1 else f"+{r[gm]:.3f}")
+        axL.annotate(f"{r['label']}\n{tag}", (r["L"], r[gm]),
                      textcoords="offset points", xytext=(6, -2), fontsize=8)
     axL.axhline(0, color="k", lw=0.8)
-    axL.set_xlabel("depth L (layers)"); axL.set_ylabel("max SSM − per-layer-baseline R² gap")
+    axL.set_xlabel("depth L (layers)")
+    axL.set_ylabel(
+        f"SSM − per-layer-baseline R² gap at λ_L1={rows[0].get('knee_lambda', 1):g}"
+        if knee else "max SSM − per-layer-baseline R² gap")
     axL.set_title("Cross-layer propagation gain grows with depth")
     axL.legend(fontsize=8, loc="upper left"); axL.grid(alpha=0.3)
 

@@ -63,6 +63,31 @@ def _gap_max(gate3_dir: str) -> float | None:
     return max(gaps) if gaps else None
 
 
+KNEE_LAMBDA = 1.0  # the λ_L1 knee (memory: ph3-altmin-tuning); present in every gate3 grid
+
+
+def _gap_knee(gate3_dir: str, lam: float = KNEE_LAMBDA) -> float | None:
+    """Raw SSM−baseline held-out R² difference at the λ knee (review 2026-07-02).
+
+    The robust per-seed statistic. ``gap_max`` interpolates the baseline Pareto at
+    matched L0 and takes the max over λ — but at high λ the baseline's L0 *saturates*
+    while R² keeps falling, so the Pareto is non-monotone in L0 and the interpolation
+    can pair an SSM point with a collapsed baseline point (the 160m seed-0 0.037
+    outlier: raw same-λ diff only 0.020). At the knee the curve is dense and the two
+    arms' L0 mismatch costs ≲3e-4 R², so the raw same-λ difference is the honest
+    matched-sparsity gap; across seeds it is tight (sd ~0.001–0.002) where gap_max
+    swings by 0.015.
+    """
+    jf = Path(gate3_dir) / "tables" / "gate3_pareto.json"
+    if not jf.exists():
+        return None
+    g = json.loads(jf.read_text())
+    rows = {(r["variant"], r["lambda_l1"]): r["test_r2"] for r in g.get("rows", [])}
+    if ("ssm", lam) not in rows or ("baseline", lam) not in rows:
+        return None
+    return float(rows[("ssm", lam)] - rows[("baseline", lam)])
+
+
 def _n_layers(gate3_dir: str) -> int:
     return int(json.loads((Path(gate3_dir) / "tables" / "gate3_pareto.json").read_text())
                ["dims"]["n_layers"])
@@ -72,11 +97,12 @@ def collect() -> list[dict]:
     rows = []
     for label, gpat, spat, suite, family, sae_type in MODELS:
         gdirs = sorted(set(glob.glob(gpat)))
-        per_seed = [(d, _gap_max(d)) for d in gdirs]
-        per_seed = [(d, v) for d, v in per_seed if v is not None]
+        per_seed = [(d, _gap_max(d), _gap_knee(d)) for d in gdirs]
+        per_seed = [(d, v, k) for d, v, k in per_seed if v is not None and k is not None]
         if not per_seed:
             raise FileNotFoundError(f"no gate3 runs with gaps for {label}: {gpat}")
-        gaps = np.array([v for _, v in per_seed])
+        gaps = np.array([v for _, v, _ in per_seed])
+        knees = np.array([k for _, _, k in per_seed])
         s = json.loads((Path(_newest(spat)) / "tables" / "sanity_stats.json").read_text())
         rows.append({
             "label": label, "suite": suite, "family": family, "sae_type": sae_type,
@@ -84,6 +110,10 @@ def collect() -> list[dict]:
             "gap_mean": float(gaps.mean()),
             "gap_sd": float(gaps.std(ddof=1)) if len(gaps) > 1 else 0.0,
             "gap_seeds": [float(x) for x in gaps], "n_seeds": int(len(gaps)),
+            "knee_lambda": KNEE_LAMBDA,
+            "knee_mean": float(knees.mean()),
+            "knee_sd": float(knees.std(ddof=1)) if len(knees) > 1 else 0.0,
+            "knee_seeds": [float(x) for x in knees],
             "seed": float(s["seed_stability"]["mean_match_rate_0.7"]),
         })
     return sorted(rows, key=lambda r: r["L"])
@@ -99,25 +129,27 @@ def main() -> int:
 
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(12, 4.6))
 
-    # --- left: depth-scaling of the cross-layer-propagation gap (Pythia = mean±sd over seeds) ---
+    # --- left: depth-scaling of the cross-layer-propagation gap (Pythia = mean±sd over
+    # seeds), using the robust λ-knee statistic (gap_max kept in the JSON for the record —
+    # its matched-L0 interpolation is fragile on the saturated Pareto tail; review 2026-07-02).
     pyth = [r for r in rows if r["family"] == "Pythia"]
-    axL.errorbar([r["L"] for r in pyth], [r["gap_mean"] for r in pyth],
-                 yerr=[r["gap_sd"] for r in pyth], fmt="-o", color="tab:blue", capsize=4,
+    axL.errorbar([r["L"] for r in pyth], [r["knee_mean"] for r in pyth],
+                 yerr=[r["knee_sd"] for r in pyth], fmt="-o", color="tab:blue", capsize=4,
                  label="Pythia / mlsae (in-family, mean±sd)", zorder=3)
     xfam_color = {"GPT-2": "tab:orange", "Qwen": "tab:green"}
     for r in rows:
         if r["family"] != "Pythia":
-            axL.scatter([r["L"]], [r["gap_mean"]], marker="D", s=70,
+            axL.scatter([r["L"]], [r["knee_mean"]], marker="D", s=70,
                         color=xfam_color.get(r["family"], "tab:orange"),
                         zorder=4, label=f"{r['family']} / {r['suite']} (cross-family)")
     for r in rows:
-        tag = (f"+{r['gap_mean']:.3f}±{r['gap_sd']:.3f}" if r["n_seeds"] > 1
-               else f"+{r['gap_mean']:.3f}")
-        axL.annotate(f"{r['label']}\n{tag}", (r["L"], r["gap_mean"]),
+        tag = (f"+{r['knee_mean']:.3f}±{r['knee_sd']:.3f}" if r["n_seeds"] > 1
+               else f"+{r['knee_mean']:.3f}")
+        axL.annotate(f"{r['label']}\n{tag}", (r["L"], r["knee_mean"]),
                      textcoords="offset points", xytext=(6, -2), fontsize=8)
     axL.axhline(0, color="k", lw=0.8)
     axL.set_xlabel("depth L (number of layers)")
-    axL.set_ylabel("max SSM − per-layer-baseline R² gap")
+    axL.set_ylabel(f"SSM − per-layer-baseline R² gap at λ_L1={KNEE_LAMBDA:g}")
     axL.set_title("Cross-layer propagation gain grows with depth")
     axL.legend(fontsize=8, loc="upper left")
     axL.grid(alpha=0.3)

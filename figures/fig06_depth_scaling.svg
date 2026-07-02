@@ -381,61 +381,61 @@ z
    </g>
    <g id="legend_1">
     <g id="patch_7">
-     <path d="M 50.613203 63.200312 
-L 180.313203 63.200312 
-Q 181.913203 63.200312 181.913203 61.600312 
-L 181.913203 26.398437 
-Q 181.913203 24.798437 180.313203 24.798437 
-L 50.613203 24.798437 
-Q 49.013203 24.798437 49.013203 26.398437 
-L 49.013203 61.600312 
-Q 49.013203 63.200312 50.613203 63.200312 
+     <path d="M 241.967623 284.438672 
+L 371.667623 284.438672 
+Q 373.267623 284.438672 373.267623 282.838672 
+L 373.267623 247.636797 
+Q 373.267623 246.036797 371.667623 246.036797 
+L 241.967623 246.036797 
+Q 240.367623 246.036797 240.367623 247.636797 
+L 240.367623 282.838672 
+Q 240.367623 284.438672 241.967623 284.438672 
 z
 " style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
     <g id="PathCollection_3">
      <g>
-      <use xlink:href="#m3d00a9c69f" x="60.213203" y="31.977187" style="fill: #ff7f0e; stroke: #ff7f0e"/>
+      <use xlink:href="#m3d00a9c69f" x="251.567623" y="253.215547" style="fill: #ff7f0e; stroke: #ff7f0e"/>
      </g>
     </g>
     <g id="text_22">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="74.613203" y="34.077187" transform="rotate(-0 74.613203 34.077187)">GPT-2 / res-jb</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="265.967623" y="255.315547" transform="rotate(-0 265.967623 255.315547)">GPT-2 / res-jb</text>
     </g>
     <g id="PathCollection_4">
      <g>
-      <use xlink:href="#m84ecd33166" x="60.213203" y="43.977812" style="fill: #2ca02c; stroke: #2ca02c"/>
+      <use xlink:href="#m84ecd33166" x="251.567623" y="265.216172" style="fill: #2ca02c; stroke: #2ca02c"/>
      </g>
     </g>
     <g id="text_23">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="74.613203" y="46.077812" transform="rotate(-0 74.613203 46.077812)">Qwen / chanind</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="265.967623" y="267.316172" transform="rotate(-0 265.967623 267.316172)">Qwen / chanind</text>
     </g>
     <g id="LineCollection_2">
-     <path d="M 60.213203 59.278437 
-L 60.213203 51.278437 
+     <path d="M 251.567623 280.516797 
+L 251.567623 272.516797 
 " style="fill: none; stroke: #1f77b4; stroke-width: 1.5"/>
     </g>
     <g id="line2d_31">
      <g>
-      <use xlink:href="#m0ebf2814c3" x="60.213203" y="59.278437" style="fill: #1f77b4; stroke: #1f77b4"/>
+      <use xlink:href="#m0ebf2814c3" x="251.567623" y="280.516797" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
     <g id="line2d_32">
      <g>
-      <use xlink:href="#m0ebf2814c3" x="60.213203" y="51.278437" style="fill: #1f77b4; stroke: #1f77b4"/>
+      <use xlink:href="#m0ebf2814c3" x="251.567623" y="272.516797" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
     <g id="line2d_33">
-     <path d="M 52.213203 55.278437 
-L 68.213203 55.278437 
+     <path d="M 243.567623 276.516797 
+L 259.567623 276.516797 
 " style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
     </g>
     <g id="line2d_34">
      <g>
-      <use xlink:href="#m7bdcd54610" x="60.213203" y="55.278437" style="fill: #1f77b4; stroke: #1f77b4"/>
+      <use xlink:href="#m7bdcd54610" x="251.567623" y="276.516797" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
     <g id="text_24">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="74.613203" y="58.078437" transform="rotate(-0 74.613203 58.078437)">Pythia / mlsae (mean±sd)</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="265.967623" y="279.316797" transform="rotate(-0 265.967623 279.316797)">Pythia / mlsae (mean±sd)</text>
     </g>
    </g>
   </g>

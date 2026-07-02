@@ -151,7 +151,8 @@ def main() -> int:
     axL.set_xlabel("depth L (number of layers)")
     axL.set_ylabel(f"SSM − per-layer-baseline R² gap at λ_L1={KNEE_LAMBDA:g}")
     axL.set_title("Cross-layer propagation gain grows with depth")
-    axL.legend(fontsize=8, loc="upper left")
+    # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044))
+    axL.legend(fontsize=8, loc="lower right")
     axL.grid(alpha=0.3)
 
     # --- right: seed-stability vs depth, grouped by SAE *type* (the actual lever) ---

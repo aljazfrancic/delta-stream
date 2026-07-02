@@ -659,7 +659,8 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
         f"SSM − per-layer-baseline R² gap at λ_L1={rows[0].get('knee_lambda', 1):g}"
         if knee else "max SSM − per-layer-baseline R² gap")
     axL.set_title("Cross-layer propagation gain grows with depth")
-    axL.legend(fontsize=8, loc="upper left"); axL.grid(alpha=0.3)
+    # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044))
+    axL.legend(fontsize=8, loc="lower right"); axL.grid(alpha=0.3)
 
     for sae_type, color in (("TopK", "tab:blue"), ("L1", "tab:orange")):
         pts = [r for r in rows if r.get("sae_type") == sae_type]

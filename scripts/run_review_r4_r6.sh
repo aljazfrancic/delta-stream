@@ -49,6 +49,21 @@ $PY scripts/gate3_pareto.py --config $CFG410 --desc r5-gate3-objsplit-410md \
     --rank 32 --lambdas 0.3,1,3 --outer-iters 10 --batch-size 128 \
     --device cuda --seed 0 --split-by object
 
+echo "=== S2c: fig06 completeness — seeds 1-2 for the cross-family points ($(date -Is)) ==="
+# GPT-2 / Qwen were single-seed (seed 0) in fig06 while Pythia had 3-seed error bars
+# (user question 2026-07-03). Same args as the recorded xm runs, only --seed varies;
+# descs match plot_depth_scaling's globs so the aggregation picks them up.
+for SEED in 1 2; do
+    $PY scripts/gate3_pareto.py --config configs/gpt2-small.yaml \
+        --desc xm-gpt2-gate3-s$SEED --sources-npz data/gpt2/sources_resjb.npz \
+        --rank 32 --lambdas 0.3,1,3,10,30 --outer-iters 10 --device cuda --seed $SEED
+    $PY scripts/gate3_pareto.py --config configs/qwen2-0.5b.yaml \
+        --desc xm-qwen-gate3-s$SEED --sources-npz data/Qwen/Qwen2-0.5B/sources_qwen.npz \
+        --rank 32 --lambdas 0.3,1,3,10,30 --outer-iters 10 --device cuda --seed $SEED
+done
+$PY scripts/plot_depth_scaling.py
+$PY scripts/make_paper_figures.py
+
 echo "=== S3a: R6 pressure battery on the TRAINED gpt2 store ($(date -Is)) ==="
 $PY scripts/phase4_pressure_tests.py --config configs/gpt2-small.yaml \
     --desc r6-pressure-gpt2-trained

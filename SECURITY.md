@@ -2,9 +2,12 @@
 
 This is a single-user mechanistic-interpretability research pipeline. It runs
 locally, performs **inference only**, and loads **trusted, public model weights**
-(EleutherAI Pythia and the matching Tuned Lens) from the Hugging Face Hub as
-safetensors. It does not accept untrusted input, does not run as a service, and
-is not deployed anywhere.
+from a fixed, code-pinned set of Hugging Face Hub repositories (EleutherAI
+Pythia + SAEs, the matching Tuned Lens, `tim-lawson` MLSAE suites,
+`jbloom/GPT2-Small-SAEs-Reformatted`, `chanind` Qwen SAEs, `openai-community`
+GPT-2, Qwen2-0.5B) as safetensors. No repository ID ever comes from user input
+or external data. It does not accept untrusted input, does not run as a
+service, and is not deployed anywhere.
 
 ## Dependabot / known advisories — accepted risk
 
@@ -39,12 +42,32 @@ this project. The pins are an intentional risk acceptance, not an oversight.
   issue is only exploitable with torch < 2.6 *and* the Trainer) and X-CLIP
   checkpoint conversion (PYSEC-2025-217). Neither is reachable.
 
+#### CVE-2026-4372 / GHSA-29pf-2h5f-8g72 (reviewed 2026-07-02) — accepted
+
+- **What it is:** RCE via a *malicious model repository* — a crafted
+  `config.json` sets `_attn_implementation_internal` to an attacker-controlled
+  Hub repo ID, and `from_pretrained()` then downloads and executes the
+  attacker's kernel code, bypassing `trust_remote_code`. Fixed only in
+  **5.3.0**, which the `<5` pin cannot reach (every 4.x is in the vulnerable
+  range, so an in-range bump does not help).
+- **Exposure:** exploitation requires loading an **attacker-controlled model
+  repo**. This pipeline loads only the fixed, code-pinned set of trusted
+  repositories listed at the top of this file; no repo ID is derived from user
+  input or external data, and no new repos are added without a code change
+  that this file's re-review triggers cover. The malicious-`config.json`
+  vector therefore has no entry point here. Accepted; both Dependabot alerts
+  (#13 uv.lock, #14 pyproject.toml — same CVE, two manifests) dismissed as
+  tolerable risk with a comment linking this file.
+
 ## Re-review triggers
 
 Revisit this acceptance if any of the following change:
 
 - the project starts loading **untrusted** model checkpoints, runs as a
   **service**, or accepts untrusted input;
+- a **new Hub repository** is added as a weight source (re-check it is a
+  trusted publisher — CVE-2026-4372 makes the model repo itself the attack
+  vector);
 - the GPU is retargeted (newer card or CPU-only), freeing the torch pin;
 - `transformer-lens` ships a transformers-5-compatible release, freeing the
   transformers pin.

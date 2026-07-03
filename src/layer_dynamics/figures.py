@@ -383,6 +383,68 @@ def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
     return fig
 
 
+def clt_three_axis(
+    budget: dict[str, list[tuple[float, float, int]]],
+    model_gaps: list[tuple[str, float, float, float, bool]],
+    n_curve: list[tuple[int, float, float, float]],
+) -> plt.Figure:
+    """The R1/R2/R3 reframe of the CLT comparison (replaces the retired
+    "depth-graded tie" fig08): free per-pair decoders vs the state-space form
+    along the three axes that actually decide it.
+
+    ``budget``: family -> [(params_M, test_r2, rank)] — the param-budget Pareto.
+    ``model_gaps``: [(label, gap, lo, hi, filled)] — SSM−CLT with paired CIs per
+      model at rank 32 (open marker = pre-review reg grid, no CI).
+    ``n_curve``: [(n_train, gap, lo, hi)] — SSM−CLT vs training-set size (410m).
+    """
+    fig, (axA, axB, axC) = plt.subplots(1, 3, figsize=(15, 4.4))
+
+    styles = {"per_layer": ("s", "C1", "per-layer (no cross-layer)"),
+              "ssm": ("o", "C0", "state-space SSM"),
+              "clt_full": ("D", "C2", "free per-pair CLT")}
+    for fam, pts in budget.items():
+        m, c, lab = styles[fam]
+        pts = sorted(pts)
+        axA.plot([p[0] for p in pts], [p[1] for p in pts], marker=m, color=c, label=lab)
+        for pm, r2, rk in pts:
+            axA.annotate(f"r{rk}", (pm, r2), textcoords="offset points",
+                         xytext=(4, -9), fontsize=7, color=c)
+    axA.set_xscale("log")
+    axA.set_xlabel("total parameters (millions, log)")
+    axA.set_ylabel("held-out Δ reconstruction R²")
+    axA.set_title("Matched budget: SSM Pareto-dominates ≤52M")
+    axA.legend(fontsize=8, loc="lower right"); axA.grid(alpha=0.3)
+
+    ys = range(len(model_gaps))
+    for y, (_label, gap, lo, hi, filled) in zip(ys, model_gaps, strict=True):
+        kw = {"color": "C0"} if filled else {"markerfacecolor": "none", "color": "gray"}
+        axB.errorbar([gap], [y], xerr=[[gap - lo], [hi - gap]] if filled else None,
+                     fmt="o", capsize=4, **kw)
+    axB.set_yticks(list(ys), [g[0] for g in model_gaps])
+    axB.axvline(0, color="k", lw=0.8)
+    axB.set_xlabel("SSM − CLT held-out R² (rank 32, 95% CI)")
+    axB.set_title("Matched per-decoder rank: small CLT edge everywhere")
+    axB.grid(alpha=0.3)
+
+    axC.axhline(0, color="k", lw=0.8)
+    axC.errorbar([p[0] for p in n_curve], [p[1] for p in n_curve],
+                 yerr=[[p[1] - p[2] for p in n_curve], [p[3] - p[1] for p in n_curve]],
+                 fmt="o-", color="C0", capsize=4)
+    axC.set_xlabel("training examples N")
+    axC.set_ylabel("SSM − CLT held-out R² (95% CI)")
+    axC.set_title("Low data: the CLT's edge is data-bought")
+    axC.annotate("SSM better", (0.03, 0.95), xycoords="axes fraction", fontsize=8,
+                 color="C0", va="top")
+    axC.annotate("CLT better", (0.03, 0.05), xycoords="axes fraction", fontsize=8,
+                 color="C2")
+    axC.grid(alpha=0.3)
+
+    fig.suptitle("Free per-pair CLT vs state-space SSM — rank, parameter budget, data "
+                 "(410m unless labelled)")
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    return fig
+
+
 def clt_vs_ssm(rows: list[dict], *, title="Residual-write CLT vs state-space SSM") -> plt.Figure:
     fig, ax = plt.subplots(figsize=(6.5, 4))
     for row in rows:

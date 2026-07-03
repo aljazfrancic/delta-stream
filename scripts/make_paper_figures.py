@@ -19,7 +19,6 @@ from pathlib import Path
 import pandas as pd
 
 from layer_dynamics import figures
-from layer_dynamics.figures import plt
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -84,27 +83,69 @@ def baseline_pareto():
     return figures.baseline_pareto(js) if js else None
 
 
-def clt_parsimony_depth():
-    """Combined E3 (410m/24L) + E8 (Qwen/12L): the parsimony tie is depth-graded."""
-    e3 = tbl_json("e3-clt-410md", "baseline_clt.json")
-    e8 = tbl_json("e8-clt-qwen", "baseline_clt.json")
-    if not e3 or not e8:
+def clt_three_axis():
+    """R1/R2/R3 reframe (2026-07-03) — retires the E3/E8 "depth-graded tie" story.
+
+    The E3 tie was an edge-limited reg-grid artifact; with the grid fixed the CLT
+    leads at matched per-decoder rank everywhere, but the SSM Pareto-dominates at
+    matched TOTAL params and wins outright below ~1k training examples.
+    """
+    def run_json(suffix):
+        """baseline_clt.json of the newest run whose dir name ENDS with suffix
+        (tbl_json's substring glob would let ...rank32 match ...rank32-lamprobe)."""
+        hits = sorted(p for p in ROOT.glob(f"runs/*{suffix}") if p.is_dir())
+        f = hits[-1] / "tables" / "baseline_clt.json" if hits else None
+        return json.loads(f.read_text()) if f and f.exists() else None
+
+    def best_rows(*suffixes):
+        """Best (max test R²) row per model family across several runs' tables."""
+        best: dict[str, dict] = {}
+        for suf in suffixes:
+            js = run_json(suf)
+            if not js:
+                continue
+            for row in js["rows"]:
+                cur = best.get(row["model"])
+                if cur is None or row["test_r2"] > cur["test_r2"]:
+                    best[row["model"]] = row
+        return best
+
+    # Panel A: param-budget Pareto (410m; rank-32 = best across base grid + λ probe)
+    by_rank = {16: best_rows("r2-clt-410md-rank16"),
+               32: best_rows("r2-clt-410md-rank32", "r2-clt-410md-rank32-lamprobe"),
+               64: best_rows("r2-clt-410md-rank64")}
+    budget: dict[str, list] = {}
+    for rk, fam_rows in by_rank.items():
+        for fam, row in fam_rows.items():
+            budget.setdefault(fam, []).append((row["n_params"] / 1e6, row["test_r2"], rk))
+
+    # Panel B: SSM−CLT per model at rank 32 (paired CIs; Qwen = pre-review grid, open)
+    model_gaps = []
+    for label, suf in (("Pythia-70m (6L)", "r1-clt-p70"),
+                       ("GPT-2-small (12L)", "r1-clt-gpt2"),
+                       ("Pythia-160m (12L)", "r1-clt-p160"),
+                       ("Pythia-410m (24L)", "r2-clt-410md-rank32-lamprobe")):
+        js = run_json(suf)
+        ci = (js or {}).get("paired_bootstrap_cis", {}).get("ssm_minus_clt_full")
+        if ci:
+            model_gaps.append((label, ci["gap"], ci["ci_lo"], ci["ci_hi"], True))
+    e8 = run_json("e8-clt-qwen")
+    if e8 and "ssm_vs_clt_test_r2_gap" in e8:
+        g = e8["ssm_vs_clt_test_r2_gap"]
+        model_gaps.append(("Qwen2-0.5B (12L)\n(pre-review grid)", g, g, g, False))
+
+    # Panel C: sample-efficiency (410m rank 32, consistent λ≤1 grid across N)
+    n_curve = []
+    for n, suf in ((300, "r3-clt-410md-n300"), (600, "r3-clt-410md-n600"),
+                   (1244, "r2-clt-410md-rank32")):
+        js = run_json(suf)
+        ci = (js or {}).get("paired_bootstrap_cis", {}).get("ssm_minus_clt_full")
+        if ci:
+            n_curve.append((n, ci["gap"], ci["ci_lo"], ci["ci_hi"]))
+
+    if not (budget and model_gaps and n_curve):
         return None
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.2), sharey=True)
-    for ax, js, name in ((axes[0], e3, "Pythia-410m (24L): CLT≈SSM tie"),
-                         (axes[1], e8, "Qwen2-0.5B (12L): CLT still buys +0.02")):
-        for row in js["rows"]:
-            p = row.get("n_params", row.get("n_params_M", 0) * 1e6) / 1e6
-            ax.scatter(p, row["test_r2"], s=80)
-            ax.annotate(row["model"], (p, row["test_r2"]), textcoords="offset points",
-                        xytext=(6, 5), fontsize=8)
-        ax.set_xscale("log"); ax.grid(alpha=0.3)
-        ax.set_xlabel("effective parameters (millions, log)"); ax.set_title(name)
-    axes[0].set_ylabel("held-out Δ reconstruction R²")
-    fig.suptitle("Residual-write CLT vs SSM parsimony is depth-graded "
-                 "(E3 tie at 24L, E8 gap at 12L)")
-    fig.tight_layout(rect=[0, 0, 1, 0.95])
-    return fig
+    return figures.clt_three_axis(budget, model_gaps, n_curve)
 
 
 def distributed_code():
@@ -168,7 +209,7 @@ PAPER_FIGURES = [
     ("fig05_kstar_vs_depth", kstar),
     ("fig06_depth_scaling", depth_scaling),
     ("fig07_baseline_pareto", baseline_pareto),
-    ("fig08_clt_parsimony_depth", clt_parsimony_depth),
+    ("fig08_clt_three_axis", clt_three_axis),
     ("fig09_distributed_code", distributed_code),
     ("fig10_crossclass", crossclass),
     ("fig11_seed_stability", seed_stability),

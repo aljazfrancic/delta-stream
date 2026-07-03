@@ -324,13 +324,36 @@ def altmin_curves(df: pd.DataFrame) -> plt.Figure:
     return fig
 
 
+def _pareto_frontier(rows: list[dict]) -> list[dict]:
+    """Non-dominated subset of a λ-sweep trace (lower L0 or higher R², sorted by L0).
+
+    At extreme λ the held-out inferred L0 *saturates* (more penalty buys no sparsity,
+    only destroys R²), so the raw trace folds back on itself — e.g. the λ=30 point is
+    strictly worse than λ=10 on both axes. Connecting the raw trace by L0 then draws a
+    spurious dip (and can make the two methods' polylines cross inside a regime no one
+    would operate at). The frontier keeps only points not dominated by any other.
+    """
+    pts = sorted(rows, key=lambda r: (r["l0"], -r["r2"]))
+    front: list[dict] = []
+    for p in pts:
+        if not front or p["r2"] > front[-1]["r2"]:
+            front.append(p)
+    return front
+
+
 def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
     ssm = sorted(js["ssm"], key=lambda r: r["l0"])
     base = sorted(js["baseline_A_perlayer_dict"], key=lambda r: r["l0"])
     fig, ax = plt.subplots(figsize=(6.2, 4.4))
-    ax.plot([r["l0"] for r in ssm], [r["r2"] for r in ssm], "o-", color="C0",
+    for rows, color, marker in ((ssm, "C0", "o"), (base, "C1", "s")):
+        dom = [r for r in rows if r not in _pareto_frontier(rows)]
+        if dom:  # dominated λ points: shown, not connected (L0-saturated regime)
+            ax.scatter([r["l0"] for r in dom], [r["r2"] for r in dom], marker=marker,
+                       facecolors="none", edgecolors=color, s=36, alpha=0.6, zorder=2)
+    ssm_f, base_f = _pareto_frontier(ssm), _pareto_frontier(base)
+    ax.plot([r["l0"] for r in ssm_f], [r["r2"] for r in ssm_f], "o-", color="C0",
             label="Branch B SSM (my method)")
-    ax.plot([r["l0"] for r in base], [r["r2"] for r in base], "s--", color="C1",
+    ax.plot([r["l0"] for r in base_f], [r["r2"] for r in base_f], "s--", color="C1",
             label="Baseline A: per-layer dict on Δ")
     mlsae = js.get("baseline_B_mlsae_implied_delta")
     if isinstance(mlsae, dict) and "l0" in mlsae:

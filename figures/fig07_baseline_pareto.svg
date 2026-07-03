@@ -255,9 +255,31 @@ L 431.42848 46.265758
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="14.038594" y="146.530344" transform="rotate(-90 14.038594 146.530344)">held-out Δ reconstruction R²</text>
     </g>
    </g>
+   <g id="PathCollection_1">
+    <path d="M 129.721947 70.576881 
+C 130.517556 70.576881 131.280686 70.260782 131.843267 69.698201 
+C 132.405848 69.13562 132.721947 68.37249 132.721947 67.576881 
+C 132.721947 66.781271 132.405848 66.018141 131.843267 65.45556 
+C 131.280686 64.89298 130.517556 64.576881 129.721947 64.576881 
+C 128.926337 64.576881 128.163207 64.89298 127.600626 65.45556 
+C 127.038046 66.018141 126.721947 66.781271 126.721947 67.576881 
+C 126.721947 68.37249 127.038046 69.13562 127.600626 69.698201 
+C 128.163207 70.260782 128.926337 70.576881 129.721947 70.576881 
+L 129.721947 70.576881 
+z
+" clip-path="url(#p2c8e679996)" style="fill: none; stroke: #1f77b4; stroke-opacity: 0.6"/>
+   </g>
+   <g id="PathCollection_2">
+    <path d="M 126.097058 80.077164 
+L 132.097058 80.077164 
+L 132.097058 74.077164 
+L 126.097058 74.077164 
+L 126.097058 80.077164 
+z
+" clip-path="url(#p2c8e679996)" style="fill: none; stroke: #ff7f0e; stroke-opacity: 0.6"/>
+   </g>
    <g id="line2d_21">
     <path d="M 114.860367 49.183369 
-L 129.721947 67.576881 
 L 149.781877 36.354383 
 L 207.021134 34.295082 
 L 413.937502 32.228611 
@@ -277,7 +299,6 @@ z
     </defs>
     <g clip-path="url(#p2c8e679996)">
      <use xlink:href="#m7bdcd54610" x="114.860367" y="49.183369" style="fill: #1f77b4; stroke: #1f77b4"/>
-     <use xlink:href="#m7bdcd54610" x="129.721947" y="67.576881" style="fill: #1f77b4; stroke: #1f77b4"/>
      <use xlink:href="#m7bdcd54610" x="149.781877" y="36.354383" style="fill: #1f77b4; stroke: #1f77b4"/>
      <use xlink:href="#m7bdcd54610" x="207.021134" y="34.295082" style="fill: #1f77b4; stroke: #1f77b4"/>
      <use xlink:href="#m7bdcd54610" x="413.937502" y="32.228611" style="fill: #1f77b4; stroke: #1f77b4"/>
@@ -285,7 +306,6 @@ z
    </g>
    <g id="line2d_22">
     <path d="M 108.899681 57.585206 
-L 129.097058 77.077164 
 L 139.539713 45.864585 
 L 185.68214 44.559649 
 L 382.464504 42.953636 
@@ -300,7 +320,6 @@ z
     </defs>
     <g clip-path="url(#p2c8e679996)">
      <use xlink:href="#m9919fd9543" x="108.899681" y="57.585206" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
-     <use xlink:href="#m9919fd9543" x="129.097058" y="77.077164" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
      <use xlink:href="#m9919fd9543" x="139.539713" y="45.864585" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
      <use xlink:href="#m9919fd9543" x="185.68214" y="44.559649" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
      <use xlink:href="#m9919fd9543" x="382.464504" y="42.953636" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
@@ -337,7 +356,7 @@ L 431.42848 20.798437
    <g id="text_14">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="239.027717" y="14.798437" transform="rotate(-0 239.027717 14.798437)">Phase 4 Step 1 — Δ reconstruction vs sparsity</text>
    </g>
-   <g id="PathCollection_1">
+   <g id="PathCollection_3">
     <defs>
      <path id="m2bc9002e1d" d="M 0 -6.324555 
 L -1.419951 -1.954395 
@@ -394,7 +413,7 @@ L 297.15973 145.808782
     <g id="text_16">
      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="303.55973" y="148.608782" transform="rotate(-0 303.55973 148.608782)">Baseline A: per-layer dict on Δ</text>
     </g>
-    <g id="PathCollection_2">
+    <g id="PathCollection_4">
      <g>
       <use xlink:href="#m2bc9002e1d" x="289.15973" y="158.509407" style="fill: #d62728; stroke: #d62728"/>
      </g>

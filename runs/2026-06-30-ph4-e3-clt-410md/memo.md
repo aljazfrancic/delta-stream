@@ -4,6 +4,22 @@
 `runs/2026-06-30-ph4-e3-clt-410md` (`scripts/phase4_baseline_clt.py`, `src/layer_dynamics/clt.py`).
 **Sources:** the cached mlsae per-layer sparse sources `u[1555,24,4433]`, frozen.
 
+> **⚠ SUPERSEDED (2026-07-03, review items R1/R2/R3 — annotated during the 4th-pass
+> review; the body below is the dated 2026-06-30 record, unedited).** The headline
+> "**tie** at 6.27× fewer params" is **dead**: this run's λ_reg grid topped out at 0.1,
+> which was every model's best (edge-landing). Extending the grid (R2) lifts all three
+> and the best-of-grid CLT **leads** at matched per-decoder rank — merged rank-32 gap
+> **SSM−CLT −0.0142 [−0.0185, −0.0099]** (paired bootstrap over test examples) — and R1
+> finds a small significant CLT edge at every depth (6L −0.009 / 12L −0.050 & −0.023 /
+> 24L −0.011, not monotone → the E8 "depth-graded tie" framing is retired too). **What
+> replaces the parsimony claim (the honest §4.2 statement):** at matched **total**
+> parameter budget the SSM Pareto-dominates ≤52M (SSM r64 @16.9M = 0.8155 > CLT r32
+> @52.4M = 0.804 > CLT r16 @26.2M = 0.794; CLT needs 105M to lead outright), and the
+> SSM generalises better below ~1k train examples (R3 sign-flip: N=300 SSM +0.0204,
+> N=600 +0.0128, N=1244 CLT −0.0105 — crossover ≈ N≈1k). SSM−per_layer stays large and
+> CI-significant everywhere (+0.022…+0.053). See progress.md (R1/R2/R3), fig08
+> (`fig08_clt_three_axis.svg`), runs `2026-07-0{2,3}-r{1,2,3}-clt-*`.
+
 E3 supplies the number the paper's *primary* conceptual comparison ([proposal §4.2], Baseline D)
 never had. CLT places a **free** low-rank decoder at every (source, target) layer pair `ℓ'≤ℓ` —
 the unconstrained `O(L²)` parameterisation our Branch-B state-space model is meant to be a

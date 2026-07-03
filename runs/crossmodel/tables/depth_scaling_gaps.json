@@ -1,7 +1,7 @@
 [
   {
     "label": "Pythia-70m",
-    "suite": "mlsae",
+    "suite": "eleuther-32k",
     "family": "Pythia",
     "sae_type": "TopK",
     "L": 6,

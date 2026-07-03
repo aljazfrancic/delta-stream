@@ -3,8 +3,10 @@
 
 Reads each model's Gate-3 Pareto + Step-4 sanity tables and plots two panels:
 
-  (left)  max SSM-vs-per-layer-baseline reconstruction gap vs depth L — the
-          headline depth-scaling result (monotone in the Pythia/mlsae family).
+  (left)  SSM-vs-per-layer-baseline reconstruction gap (λ=1 knee) vs depth L — the
+          headline depth-scaling result (monotone within the Pythia family; NB the
+          Pythia line mixes two TopK suites — eleuther-32k at 6L, mlsae at 12/24L —
+          and depth is confounded with width/params within the family).
           The Pythia points are **mean ± sd over seeds** (S2): every gate3 run
           matching the model's glob is one seed; seed 0 is the original Gate-3
           fit, seeds 1–2 are added by ``scripts/run_s2_seeds.sh``.
@@ -36,8 +38,12 @@ import matplotlib.pyplot as plt
 # GPT-2-medium/large have no public residual SAEs (H1/H2-only lanes) so they are not here.
 # The Pythia gate3 globs deliberately match the seed-0 dir + the S2 ``-s1``/``-s2`` dirs.
 MODELS = [
+    # NB (4th-pass review 2026-07-03): the 70m sources are EleutherAI
+    # sae-pythia-70m-deduped-32k (TopK k=16), NOT the tim-lawson mlsae suite (x64 k=32)
+    # used at 160m/410m — same sparsity *type*, different suite. The in-family Pythia
+    # line therefore mixes two TopK suites; the caption must say so.
     ("Pythia-70m", "runs/*-ph3-gate3-70md*", "runs/2026-06-24-ph3-step4-70md",
-     "mlsae", "Pythia", "TopK"),
+     "eleuther-32k", "Pythia", "TopK"),
     ("GPT-2-small", "runs/*-xm-gpt2-gate3*", "runs/*-xm-gpt2-step4", "res-jb", "GPT-2", "L1"),
     ("Pythia-160m", "runs/*-xm-p160-gate3*", "runs/*-xm-p160-step4", "mlsae", "Pythia", "TopK"),
     ("Qwen2-0.5B", "runs/*-xm-qwen-gate3*", "runs/*-xm-qwen-step4", "chanind", "Qwen", "L1"),
@@ -135,7 +141,7 @@ def main() -> int:
     pyth = [r for r in rows if r["family"] == "Pythia"]
     axL.errorbar([r["L"] for r in pyth], [r["knee_mean"] for r in pyth],
                  yerr=[r["knee_sd"] for r in pyth], fmt="-o", color="tab:blue", capsize=4,
-                 label="Pythia / mlsae (in-family, mean±sd)", zorder=3)
+                 label="Pythia / TopK suites (in-family, mean±sd)", zorder=3)
     xfam_color = {"GPT-2": "tab:orange", "Qwen": "tab:green"}
     for r in rows:
         if r["family"] != "Pythia":
@@ -146,6 +152,10 @@ def main() -> int:
     for r in rows:
         tag = (f"+{r['knee_mean']:.3f}±{r['knee_sd']:.3f}" if r["n_seeds"] > 1
                else f"+{r['knee_mean']:.3f}")
+        # Qwen's Phase-3 runs on the 12L SAE-coverage prefix of a 24-layer model — its
+        # x-position is modeled-prefix length, not model depth (4th-pass review).
+        if r["family"] == "Qwen":
+            tag += "\n(12L prefix of a 24L model)"
         left = r["L"] == xmax  # rightmost point: label to the left or it clips outside
         axL.annotate(f"{r['label']}\n{tag}", (r["L"], r["knee_mean"]),
                      textcoords="offset points", xytext=(-6, -2) if left else (6, -2),
@@ -153,7 +163,9 @@ def main() -> int:
     axL.axhline(0, color="k", lw=0.8)
     axL.set_xlabel("depth L (number of layers)")
     axL.set_ylabel(f"SSM − per-layer-baseline R² gap at λ_L1={KNEE_LAMBDA:g}")
-    axL.set_title("Cross-layer propagation gain grows with depth")
+    # Honest title (4th-pass review): the monotone trend is within-Pythia, where depth is
+    # confounded with width/params; cross-family points at 12L span 0.013–0.041.
+    axL.set_title("Cross-layer propagation gain vs depth (monotone within Pythia)")
     # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044));
     # anchored a little up so the box clears the y=0 line
     axL.legend(fontsize=8, loc="lower right", bbox_to_anchor=(0.98, 0.10))

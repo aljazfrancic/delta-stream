@@ -6,6 +6,22 @@ decisively and seed-robustly; the seed-stability clause fails *structurally* and
 recorded as a limitation (per the plan's "reconstruction fine, seed unstable → record as a
 limitation" branch). **Date:** 2026-06-25.
 
+> **⚠ STATUS UPDATE (2026-07-03 — annotated during the 4th-pass review; the body below is
+> the dated 2026-06-25 record, unedited).** Two findings supersede parts of this memo:
+> **(1) The recorded seed-stability limitation is CLOSED, not open.** E2 (2026-06-30)
+> showed the 0.45 decoder-direction instability is caused by the **TopK dictionary**, not
+> the SSM: a trained **L1** source on the same 410m activations gives match@0.7 **1.00**
+> (matched trained-TopK control: 0.08) at the same reconstruction win (+0.041→+0.047,
+> R² 0.876); R4 (2026-07-03) re-confirmed with leakage-free train-only SAEs (match@0.7
+> 1.00, gaps +0.037…+0.070). The headline part (2) below and the "structural / unmoved by
+> λ_reg" diagnosis stand as observations *about the mlsae-TopK source*, but the limitation
+> no longer applies to the L1-sourced model the paper reports.
+> **(2) The reconstruction gap now carries a paired bootstrap CI** (R0, 2026-07-03): at the
+> canonical λ_L1=1 point, SSM−baseline = **+0.0489 [+0.0464, +0.0516]** (mlsae) /
+> **+0.0483 [+0.0458, +0.0509]** (trained-L1) over the 311 test examples.
+> Full chain: progress.md (E2 · R4 · R0) + `runs/2026-06-30-ph4-e2-*`, `runs/2026-07-03-r4-*`,
+> `runs/2026-07-03-r0-gate3-ci-{mlsae,l1}`.
+
 **Primary model:** Pythia-410m-deduped (L=24, D=1024). **Sources:** public per-layer
 **residual** SAEs from the MLSAE suite `tim-lawson/sae-pythia-410m-deduped-x64-k32-layers-{0..23}`
 (Lawson et al. 2024; M=65536, TopK k=32; `u_0` zero-init — `v_0` has no embedding SAE).

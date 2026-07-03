@@ -110,10 +110,13 @@ def clt_three_axis():
                     best[row["model"]] = row
         return best
 
-    # Panel A: param-budget Pareto (410m; rank-32 = best across base grid + λ probe)
+    # Panel A: param-budget Pareto (410m; rank-32 = best across base grid + λ probe;
+    # rank-64/128 per_layer points from R9, the 4th-pass param-matched control —
+    # per_layer@r64 ≈ 8.4M ≈ ssm@r32, per_layer@r128 ≈ 16.8M ≈ ssm@r64).
     by_rank = {16: best_rows("r2-clt-410md-rank16"),
                32: best_rows("r2-clt-410md-rank32", "r2-clt-410md-rank32-lamprobe"),
-               64: best_rows("r2-clt-410md-rank64")}
+               64: best_rows("r2-clt-410md-rank64", "r9-perlayer-rank64"),
+               128: best_rows("r9-perlayer-rank128")}
     budget: dict[str, list] = {}
     for rk, fam_rows in by_rank.items():
         for fam, row in fam_rows.items():

@@ -319,15 +319,16 @@ L -4 -0
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(183.342936 217.267598)">+0.013±0.002</text>
    </g>
    <g id="text_19">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(183.342936 74.706317)">Qwen2-0.5B</text>
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(183.342936 84.30788)">+0.041±0.003</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(183.342936 65.10413)">Qwen2-0.5B</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(183.342936 74.705692)">+0.041±0.003</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(183.342936 84.30788)">(12L prefix of a 24L model)</text>
    </g>
    <g id="text_20">
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(350.642853 31.805621)">Pythia-410m</text>
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(342.269103 41.407184)">+0.050±0.001</text>
    </g>
    <g id="text_21">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="234.877603" y="14.798437" transform="rotate(-0 234.877603 14.798437)">Cross-layer propagation gain grows with depth</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="234.877603" y="14.798437" transform="rotate(-0 234.877603 14.798437)">Cross-layer propagation gain vs depth (monotone within Pythia)</text>
    </g>
    <g id="line2d_30">
     <path d="M 62.273603 240.622161 
@@ -381,61 +382,61 @@ z
    </g>
    <g id="legend_1">
     <g id="patch_7">
-     <path d="M 281.847427 257.674648 
+     <path d="M 260.878677 257.674648 
 L 411.547427 257.674648 
 Q 413.147427 257.674648 413.147427 256.074648 
 L 413.147427 220.872773 
 Q 413.147427 219.272773 411.547427 219.272773 
-L 281.847427 219.272773 
-Q 280.247427 219.272773 280.247427 220.872773 
-L 280.247427 256.074648 
-Q 280.247427 257.674648 281.847427 257.674648 
+L 260.878677 219.272773 
+Q 259.278677 219.272773 259.278677 220.872773 
+L 259.278677 256.074648 
+Q 259.278677 257.674648 260.878677 257.674648 
 z
 " style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
     <g id="PathCollection_3">
      <g>
-      <use xlink:href="#m3d00a9c69f" x="291.447427" y="226.451523" style="fill: #ff7f0e; stroke: #ff7f0e"/>
+      <use xlink:href="#m3d00a9c69f" x="270.478677" y="226.451523" style="fill: #ff7f0e; stroke: #ff7f0e"/>
      </g>
     </g>
     <g id="text_22">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="305.847427" y="228.551523" transform="rotate(-0 305.847427 228.551523)">GPT-2 / res-jb</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="284.878677" y="228.551523" transform="rotate(-0 284.878677 228.551523)">GPT-2 / res-jb</text>
     </g>
     <g id="PathCollection_4">
      <g>
-      <use xlink:href="#m84ecd33166" x="291.447427" y="238.452148" style="fill: #2ca02c; stroke: #2ca02c"/>
+      <use xlink:href="#m84ecd33166" x="270.478677" y="238.452148" style="fill: #2ca02c; stroke: #2ca02c"/>
      </g>
     </g>
     <g id="text_23">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="305.847427" y="240.552148" transform="rotate(-0 305.847427 240.552148)">Qwen / chanind</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="284.878677" y="240.552148" transform="rotate(-0 284.878677 240.552148)">Qwen / chanind</text>
     </g>
     <g id="LineCollection_2">
-     <path d="M 291.447427 253.752773 
-L 291.447427 245.752773 
+     <path d="M 270.478677 253.752773 
+L 270.478677 245.752773 
 " style="fill: none; stroke: #1f77b4; stroke-width: 1.5"/>
     </g>
     <g id="line2d_31">
      <g>
-      <use xlink:href="#m0ebf2814c3" x="291.447427" y="253.752773" style="fill: #1f77b4; stroke: #1f77b4"/>
+      <use xlink:href="#m0ebf2814c3" x="270.478677" y="253.752773" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
     <g id="line2d_32">
      <g>
-      <use xlink:href="#m0ebf2814c3" x="291.447427" y="245.752773" style="fill: #1f77b4; stroke: #1f77b4"/>
+      <use xlink:href="#m0ebf2814c3" x="270.478677" y="245.752773" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
     <g id="line2d_33">
-     <path d="M 283.447427 249.752773 
-L 299.447427 249.752773 
+     <path d="M 262.478677 249.752773 
+L 278.478677 249.752773 
 " style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
     </g>
     <g id="line2d_34">
      <g>
-      <use xlink:href="#m7bdcd54610" x="291.447427" y="249.752773" style="fill: #1f77b4; stroke: #1f77b4"/>
+      <use xlink:href="#m7bdcd54610" x="270.478677" y="249.752773" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
     <g id="text_24">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="305.847427" y="252.552773" transform="rotate(-0 305.847427 252.552773)">Pythia / mlsae (mean±sd)</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="284.878677" y="252.552773" transform="rotate(-0 284.878677 252.552773)">Pythia / TopK suites (mean±sd)</text>
     </g>
    </g>
   </g>

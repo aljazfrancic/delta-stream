@@ -1,0 +1,22 @@
+{
+  "d_model": 768,
+  "hdf5": "data/gpt2-untrained/residual_stream.h5",
+  "mib": 51.7,
+  "n_examples": 1358,
+  "n_layers": 12,
+  "next": "phase4_pressure_tests.py --h5 data/gpt2-untrained/residual_stream.h5",
+  "sanity": {
+    "finite": true,
+    "norm_v0": 1.157152533531189,
+    "norm_vL": 92.447265625,
+    "vL_decodes_to": " Investigators"
+  },
+  "seed": 0,
+  "shape": [
+    1358,
+    13,
+    768
+  ],
+  "source": "factual",
+  "weights": "untrained_random_init"
+}

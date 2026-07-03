@@ -91,6 +91,12 @@ def ridge_by_layer(df: pd.DataFrame) -> plt.Figure:
     ax.axhline(0, color="k", lw=0.6, label="mean-pred (R²=0)")
     ax.set_xlabel("layer pair ℓ"); ax.set_ylabel("pooled R² on Δ_ℓ")
     ax.set_title("Depth-local predictability of Δ_ℓ (ridge vs Tuned Lens)")
+    # Keep the corrected H1 interpretation attached to the raw number (D3 hazard #1):
+    # T1/T4/T5 showed the level is part ±v_ℓ persistence and substantially architectural.
+    ax.annotate("NB: level includes the ±v_ℓ persistence share; the tautology-free\n"
+                "structure is substantially architectural (T4, two families) — see figs 14–15",
+                xy=(0.99, 0.03), xycoords="axes fraction", ha="right", va="bottom",
+                fontsize=7, color="dimgray")
     ax.legend(fontsize=8)
     fig.tight_layout()
     return fig
@@ -151,6 +157,11 @@ def ar_r2_vs_k(df: pd.DataFrame) -> plt.Figure:
     ax.axhline(0, color="k", lw=0.6)
     ax.set_xlabel("AR order k"); ax.set_ylabel("held-out pooled R² on Δ_ℓ")
     ax.set_title("AR(k) depth-local predictability of Δ"); ax.legend(fontsize=7, ncol=2)
+    # Corrected H1 interpretation stays attached to the raw curve (D3 hazard #1).
+    ax.annotate("NB: tautology-free share ≈0.44 after persistence stripping (T1),\n"
+                "and substantially architectural (T4) — see figs 14–15",
+                xy=(0.99, 0.03), xycoords="axes fraction", ha="right", va="bottom",
+                fontsize=7, color="dimgray")
     fig.tight_layout()
     return fig
 
@@ -412,7 +423,10 @@ def clt_three_axis(
     axA.set_xscale("log")
     axA.set_xlabel("total parameters (millions, log)")
     axA.set_ylabel("held-out Δ reconstruction R²")
-    axA.set_title("Matched budget: SSM Pareto-dominates ≤52M")
+    # Neutral title (4th-pass review): with the R9 param-matched per_layer points
+    # (r64 ≈ ssm r32's budget, r128 ≈ ssm r64's) the "SSM Pareto-dominates" reading
+    # no longer holds against per_layer — let the frontier speak.
+    axA.set_title("Params → R² at matched total budget (410m, frozen sources)")
     axA.legend(fontsize=8, loc="lower right"); axA.grid(alpha=0.3)
 
     ys = range(len(model_gaps))
@@ -737,9 +751,11 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
     gm, gs = ("knee_mean", "knee_sd") if knee else ("gap_mean", "gap_sd")
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(12, 4.6))
     pyth = [r for r in rows if r["family"] == "Pythia"]
+    # NB: the Pythia line mixes two TopK suites (70m = eleuther-32k, 160m/410m = mlsae)
+    # and depth is confounded with width/params in-family — caption must carry both.
     axL.errorbar([r["L"] for r in pyth], [r[gm] for r in pyth],
                  yerr=[r[gs] for r in pyth], fmt="-o", color="tab:blue", capsize=4,
-                 label="Pythia / mlsae (mean±sd)", zorder=3)
+                 label="Pythia / TopK suites (mean±sd)", zorder=3)
     xcol = {"GPT-2": "tab:orange", "Qwen": "tab:green"}
     for r in rows:
         if r["family"] != "Pythia":
@@ -749,6 +765,10 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
     xmax = max(r["L"] for r in rows)
     for r in rows:
         tag = (f"+{r[gm]:.3f}±{r[gs]:.3f}" if r["n_seeds"] > 1 else f"+{r[gm]:.3f}")
+        # Qwen's Phase-3 runs on the 12L SAE-coverage prefix of a 24-layer model — its
+        # x-position is modeled-prefix length, not model depth (4th-pass review).
+        if r["family"] == "Qwen":
+            tag += "\n(12L prefix of a 24L model)"
         left = r["L"] == xmax  # rightmost point: label to the left or it clips outside
         axL.annotate(f"{r['label']}\n{tag}", (r["L"], r[gm]),
                      textcoords="offset points", xytext=(-6, -2) if left else (6, -2),
@@ -758,7 +778,9 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
     axL.set_ylabel(
         f"SSM − per-layer-baseline R² gap at λ_L1={rows[0].get('knee_lambda', 1):g}"
         if knee else "max SSM − per-layer-baseline R² gap")
-    axL.set_title("Cross-layer propagation gain grows with depth")
+    # Honest title (4th-pass review): monotone is a within-Pythia statement (depth is
+    # confounded with width/params in-family; 12L cross-family points span 0.013–0.041).
+    axL.set_title("Cross-layer propagation gain vs depth (monotone within Pythia)")
     # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044));
     # anchored a little up so the box clears the y=0 line
     axL.legend(fontsize=8, loc="lower right", bbox_to_anchor=(0.98, 0.10))

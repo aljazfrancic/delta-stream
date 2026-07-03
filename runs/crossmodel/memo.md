@@ -10,6 +10,22 @@ its 12-layer SAE-coverage prefix). With the Pythia 70m/410m references this is *
 MLSAE TopK; **Qwen = chanind L1** (`chanind/sae-qwen2-0.5b-res`, resid_post, via `saes_qwen.py`).
 **Runs:** `runs/2026-06-2{5,6,8}-xm-*`. **Figure:** `runs/crossmodel/figures/depth_scaling.svg`.
 
+> **⚠ STATUS UPDATE (2026-07-03 — annotated during the 4th-pass review; the body below is
+> the dated record, unedited).** Headline (2)'s S2 revision ("endpoint contrast, not a
+> clean monotone line") was itself **superseded on 2026-07-02**: the ±0.015 12L error bar
+> was an artifact of the `gap_max` statistic (matched-L0 interpolation against a saturated
+> baseline Pareto tail + max-over-λ), not seed noise. Under the robust **λ=1 knee-gap**
+> statistic the Pythia depth series **is monotone with tight bars**:
+> **6L +0.0076±0.0012 → 12L +0.0130±0.0019 → 24L +0.0504±0.0014** (3 seeds each; GPT-2
+> 12L +0.0175±0.0025, Qwen 12L +0.0413±0.0025 after the 2026-07-03 s1/s2 seed runs).
+> Two standing caveats the write-up must carry: (i) within Pythia, depth is confounded
+> with width/params (the 4th-pass cloud plan's Pythia-1b/1.4b lane deconfounds it);
+> (ii) the Qwen point is the **12L SAE-coverage prefix of a 24-layer model**, not a
+> 12-layer model — its anomalously large gap at x=12 is consistent with tracking *model*
+> depth rather than modeled-prefix length. See progress.md (fig06 forensics 2026-07-02 +
+> 4th-pass review 2026-07-03); `runs/crossmodel/tables/depth_scaling_gaps.json` carries
+> both statistics (`knee_*` + legacy `gap_*`).
+
 > **Headline (three results, strengthened in wave 2).**
 > **(1) H1 and H2 replicate across 3 families and 4 depths.** Δ_ℓ is AR-predictable over depth
 > above the scrambled null and the AR kernel is **non-stationary** (every cross-band off-diagonal

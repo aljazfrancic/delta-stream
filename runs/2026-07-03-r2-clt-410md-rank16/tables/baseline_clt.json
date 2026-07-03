@@ -1,0 +1,87 @@
+{
+  "clt_param_ratio_vs_ssm": 6.29,
+  "d_model": 1024,
+  "epochs": 180,
+  "interpretation": "All families decode the SAME frozen per-layer sources at rank r, so the only difference is the decoder parameterisation. The unconstrained O(L\u00b2) CLT is strictly more expressive in-sample; whether it beats the state-space SSM HELD-OUT (vs its larger overfit) is the \u00a74.2 question. Positive ssm_vs_clt_test_r2_gap with clt_param_ratio_vs_ssm > 1 = parsimony win.",
+  "n_layers": 24,
+  "n_sources": 4433,
+  "n_test": 311,
+  "n_train": 1244,
+  "paired_bootstrap_cis": {
+    "clt_full_minus_per_layer": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": 0.11702374909073114,
+      "ci_lo": 0.1000000910833478,
+      "gap": 0.10828673171971559,
+      "n_boot": 10000,
+      "n_test": 311,
+      "r2_a": 0.7941154537262868,
+      "r2_b": 0.6858287220065712,
+      "significant": true
+    },
+    "ssm_minus_clt_full": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": -0.03467497630044818,
+      "ci_lo": -0.047720408905297516,
+      "gap": -0.04106489991894602,
+      "n_boot": 10000,
+      "n_test": 311,
+      "r2_a": 0.7530505538073408,
+      "r2_b": 0.7941154537262868,
+      "significant": true
+    },
+    "ssm_minus_per_layer": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": 0.07220509704202413,
+      "ci_lo": 0.062315347418189046,
+      "gap": 0.06722183180076957,
+      "n_boot": 10000,
+      "n_test": 311,
+      "r2_a": 0.7530505538073408,
+      "r2_b": 0.6858287220065712,
+      "significant": true
+    }
+  },
+  "rank": 16,
+  "reference_gate3_ssm_lasso_test_r2": 0.857,
+  "reg_grid": [
+    0.01,
+    0.1,
+    0.3,
+    1.0
+  ],
+  "rows": [
+    {
+      "lambda_reg": 1.0,
+      "model": "per_layer",
+      "n_params": 2120064,
+      "n_params_M": 2.12,
+      "overfit_gap": 0.0426,
+      "test_r2": 0.6858287092948137,
+      "train_r2": 0.728391264194679
+    },
+    {
+      "lambda_reg": 1.0,
+      "model": "ssm",
+      "n_params": 4168432,
+      "n_params_M": 4.17,
+      "overfit_gap": 0.0562,
+      "test_r2": 0.7530505325255554,
+      "train_r2": 0.8092997700074747
+    },
+    {
+      "lambda_reg": 1.0,
+      "model": "clt_full",
+      "n_params": 26218176,
+      "n_params_M": 26.22,
+      "overfit_gap": 0.0961,
+      "test_r2": 0.7941154575280998,
+      "train_r2": 0.8901780803512965
+    }
+  ],
+  "sources": "sources_mlsae.npz",
+  "ssm_vs_clt_test_r2_gap": -0.0411
+}

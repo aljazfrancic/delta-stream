@@ -1,0 +1,87 @@
+{
+  "clt_param_ratio_vs_ssm": 1.9,
+  "d_model": 512,
+  "epochs": 180,
+  "interpretation": "All families decode the SAME frozen per-layer sources at rank r, so the only difference is the decoder parameterisation. The unconstrained O(L\u00b2) CLT is strictly more expressive in-sample; whether it beats the state-space SSM HELD-OUT (vs its larger overfit) is the \u00a74.2 question. Positive ssm_vs_clt_test_r2_gap with clt_param_ratio_vs_ssm > 1 = parsimony win.",
+  "n_layers": 6,
+  "n_sources": 32768,
+  "n_test": 200,
+  "n_train": 800,
+  "paired_bootstrap_cis": {
+    "clt_full_minus_per_layer": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": 0.08008212819695472,
+      "ci_lo": 0.04268241012468934,
+      "gap": 0.060402510488157146,
+      "n_boot": 10000,
+      "n_test": 200,
+      "r2_a": 0.7920036369543149,
+      "r2_b": 0.7316011264661577,
+      "significant": true
+    },
+    "ssm_minus_clt_full": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": -0.0005829814705066383,
+      "ci_lo": -0.017825242737308143,
+      "gap": -0.008902024791961005,
+      "n_boot": 10000,
+      "n_test": 200,
+      "r2_a": 0.7831016121623539,
+      "r2_b": 0.7920036369543149,
+      "significant": true
+    },
+    "ssm_minus_per_layer": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": 0.06931859981268644,
+      "ci_lo": 0.035097343008965255,
+      "gap": 0.05150048569619614,
+      "n_boot": 10000,
+      "n_test": 200,
+      "r2_a": 0.7831016121623539,
+      "r2_b": 0.7316011264661577,
+      "significant": true
+    }
+  },
+  "rank": 32,
+  "reference_gate3_ssm_lasso_test_r2": 0.857,
+  "reg_grid": [
+    0.01,
+    0.1,
+    0.3,
+    1.0
+  ],
+  "rows": [
+    {
+      "lambda_reg": 1.0,
+      "model": "per_layer",
+      "n_params": 6392832,
+      "n_params_M": 6.39,
+      "overfit_gap": 0.0766,
+      "test_r2": 0.7316011264661577,
+      "train_r2": 0.8081787256297964
+    },
+    {
+      "lambda_reg": 1.0,
+      "model": "ssm",
+      "n_params": 11755520,
+      "n_params_M": 11.76,
+      "overfit_gap": 0.0632,
+      "test_r2": 0.7831016271031745,
+      "train_r2": 0.8462717370034021
+    },
+    {
+      "lambda_reg": 1.0,
+      "model": "clt_full",
+      "n_params": 22367232,
+      "n_params_M": 22.37,
+      "overfit_gap": 0.0559,
+      "test_r2": 0.7920036518951356,
+      "train_r2": 0.8478800853646609
+    }
+  ],
+  "sources": "EleutherAI/sae-pythia-70m-deduped-32k",
+  "ssm_vs_clt_test_r2_gap": -0.0089
+}

@@ -305,6 +305,10 @@ L 488.870185 20.798437
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_18">
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(261.625402 227.721227)">NB: tautology-free share ≈0.44 after persistence stripping (T1),</text>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(299.281027 236.123141)">and substantially architectural (T4) — see figs 14–15</text>
+   </g>
+   <g id="text_19">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="264.396694" y="14.798437" transform="rotate(-0 264.396694 14.798437)">AR(k) depth-local predictability of Δ</text>
    </g>
    <g id="legend_1">
@@ -327,7 +331,7 @@ L 53.223203 29.967344
 L 60.223203 29.967344 
 " style="fill: none; stroke: #1f77b4; stroke-opacity: 0.5; stroke-width: 0.8; stroke-linecap: square"/>
     </g>
-    <g id="text_19">
+    <g id="text_20">
      <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="65.823203" y="32.417344" transform="rotate(-0 65.823203 32.417344)">real r16</text>
     </g>
     <g id="line2d_24">
@@ -336,7 +340,7 @@ L 53.223203 40.467891
 L 60.223203 40.467891 
 " style="fill: none; stroke: #ff7f0e; stroke-opacity: 0.5; stroke-width: 0.8; stroke-linecap: square"/>
     </g>
-    <g id="text_20">
+    <g id="text_21">
      <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="65.823203" y="42.917891" transform="rotate(-0 65.823203 42.917891)">real r32</text>
     </g>
     <g id="line2d_25">
@@ -345,7 +349,7 @@ L 53.223203 50.968437
 L 60.223203 50.968437 
 " style="fill: none; stroke: #2ca02c; stroke-opacity: 0.5; stroke-width: 0.8; stroke-linecap: square"/>
     </g>
-    <g id="text_21">
+    <g id="text_22">
      <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="65.823203" y="53.418437" transform="rotate(-0 65.823203 53.418437)">real r64</text>
     </g>
     <g id="line2d_26">
@@ -354,7 +358,7 @@ L 114.098047 29.967344
 L 121.098047 29.967344 
 " style="fill: none; stroke: #d62728; stroke-opacity: 0.5; stroke-width: 0.8; stroke-linecap: square"/>
     </g>
-    <g id="text_22">
+    <g id="text_23">
      <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="126.698047" y="32.417344" transform="rotate(-0 126.698047 32.417344)">real r128</text>
     </g>
     <g id="line2d_27">
@@ -366,7 +370,7 @@ L 121.098047 40.467891
       <use xlink:href="#m7bdcd54610" x="114.098047" y="40.467891" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
-    <g id="text_23">
+    <g id="text_24">
      <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="126.698047" y="42.917891" transform="rotate(-0 126.698047 42.917891)">real (best rank)</text>
     </g>
     <g id="line2d_28">
@@ -386,7 +390,7 @@ z
       <use xlink:href="#md65f965ce0" x="114.098047" y="50.968437" style="fill: #d62728; stroke: #d62728; stroke-linejoin: miter"/>
      </g>
     </g>
-    <g id="text_24">
+    <g id="text_25">
      <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="126.698047" y="53.418437" transform="rotate(-0 126.698047 53.418437)">scrambled null</text>
     </g>
    </g>

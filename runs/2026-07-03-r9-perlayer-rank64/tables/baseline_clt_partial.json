@@ -1,0 +1,13 @@
+{
+  "rows": [
+    {
+      "lambda_reg": 1.0,
+      "model": "per_layer",
+      "n_params": 8406528,
+      "n_params_M": 8.41,
+      "overfit_gap": 0.0543,
+      "test_r2": 0.8027339276954579,
+      "train_r2": 0.8570665703459607
+    }
+  ]
+}

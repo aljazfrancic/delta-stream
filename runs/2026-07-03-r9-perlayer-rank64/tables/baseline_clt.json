@@ -1,0 +1,30 @@
+{
+  "d_model": 1024,
+  "epochs": 180,
+  "interpretation": "All families decode the SAME frozen per-layer sources at rank r, so the only difference is the decoder parameterisation. The unconstrained O(L\u00b2) CLT is strictly more expressive in-sample; whether it beats the state-space SSM HELD-OUT (vs its larger overfit) is the \u00a74.2 question. Positive ssm_vs_clt_test_r2_gap with clt_param_ratio_vs_ssm > 1 = parsimony win.",
+  "n_layers": 24,
+  "n_sources": 4433,
+  "n_test": 311,
+  "n_train": 1244,
+  "paired_bootstrap_cis": {},
+  "rank": 64,
+  "reference_gate3_ssm_lasso_test_r2": 0.857,
+  "reg_grid": [
+    0.3,
+    1.0,
+    3.0,
+    10.0
+  ],
+  "rows": [
+    {
+      "lambda_reg": 1.0,
+      "model": "per_layer",
+      "n_params": 8406528,
+      "n_params_M": 8.41,
+      "overfit_gap": 0.0543,
+      "test_r2": 0.8027339276954579,
+      "train_r2": 0.8570665703459607
+    }
+  ],
+  "sources": "sources_mlsae.npz"
+}

@@ -7,6 +7,18 @@ at the final prompt token → `residual_stream[1555, 25, 1024]`. **Date:** 2026-
 `runs/2026-06-22-ph2-step1-410md/` (stationarity), `runs/2026-06-22-ph2-step2-410md/`
 (effective depth).
 
+> **⚠ STATUS UPDATE (2026-07-03 — annotated during the 4th-pass review; the body below
+> is the dated 2026-06-22 record, unedited).** The two questions this memo leaves open
+> were both resolved later: **Q5 (cross-model) is ANSWERED, not deferred** — H1/H2
+> replicate on **6 models / 3 families** (Pythia 70m/160m/410m + GPT-2 s/m/l + Qwen2-0.5B;
+> C1 2026-06-28, `runs/crossmodel/memo.md`), with k\*=1 everywhere; only Gemma/Llama
+> (≥2B, don't fit the 3 GB box) remain as limitation **L2**. **Q4 (cross-class) is
+> DESCOPED, not blocked** — C2 decision 2026-07-01 (option b): the paper is scoped to
+> the 3 relation classes, stated as limitation **L3**; the class-related evidence that
+> does exist is E6 (k\*=1 class-invariant) and Phase-4 Step-2 (cross-class kernels
+> circuit-specific). The architecture lock below (Branch B) was never in question —
+> Q3–Q5 were scope/generality checks by design. See progress.md (C1, C2, L2, L3).
+
 > Headline: **H2 (approximate stationarity across depth) is rejected.** The AR-on-Δ
 > kernel that predicts Δ_ℓ from its recent past is **strongly depth-dependent** — a
 > kernel fit on one depth band predicts another band's updates *worse than that band's

@@ -9,6 +9,15 @@
 > - [Implementation plan](implementation-plan/README.md) — phased, step-by-step experimental protocol with go/no-go gates.
 > - [Glossary](glossary.md) — every technical term and every cited paper is listed with a plain-language entry. No prior knowledge is assumed. Terms in the text below link directly to glossary entries.
 
+> **Status note (added 2026-07-03; this proposal is otherwise left as written).** The
+> study ran to completion — outcomes and all deviations are recorded solely in
+> [progress.md](../progress.md). For a reader quoting this document, the scope actuals
+> differ from the aspirations below in three pre-authorized ways: relation classes are
+> **geography / language / organization** (not "dates, people"; limitation L3); the
+> cross-model families run on-box are **Pythia (3 sizes), GPT-2 (3 sizes), Qwen2-0.5B**
+> — Gemma-2 / Llama-3.1 did not fit the 3 GB dev GPU (limitation L2); and **H2 failed**,
+> so the fitted decomposition is the §5 state-space branch, not the stationary kernel.
+
 ---
 
 ## 1. One-paragraph summary

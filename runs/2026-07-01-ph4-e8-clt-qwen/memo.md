@@ -1,5 +1,19 @@
 # E8 — Residual-write CLT vs SSM on Qwen2-0.5B (cross-model parsimony control)
 
+> **⚠ SUPERSEDED (2026-07-03, review item R1 — annotated during the 4th-pass review; the
+> body below is the dated 2026-07-01 record, unedited).** The "depth-graded tie" framing
+> this memo introduces is **retired**: E3's 24L "tie" was an edge-limited λ_reg-grid
+> artifact (R2), and the R1 depth series (extended grid, paired CIs) shows a small
+> significant CLT edge at **every** depth — 6L −0.0089 / 12L −0.0503 (GPT-2) & −0.0232
+> (160m) / 24L −0.0105…−0.0142 — **not monotone in depth** (largest on GPT-2), so the
+> per-model gap tracks model/dictionary, not depth. E8's Qwen −0.0209 fits that picture
+> as one more 12L point, with the extra caveats that it used the pre-review grid
+> (1e-4…1e-1, edge-landing risk) and Qwen's sources are a 12L prefix of a 24L model.
+> What survives from E8 unchanged: **SSM ≫ per_layer +0.037 on a third family.** The
+> honest §4.2 statement now lives on three axes (fig08): budget-Pareto dominance ≤52M +
+> low-data sign-flip (crossover ≈ N≈1k) + small rank-matched CLT edge everywhere.
+> See progress.md (R1/R2/R3) and the superseded banner on the E3 memo.
+
 **Purpose.** E3 (the §4.2 headline) showed on Pythia-410m that the depth-indexed
 state-space SSM *ties* a free `O(L²)` residual-write CLT held-out at ~6× fewer params.
 That was a single-model number. E8 re-runs the **identical** comparison

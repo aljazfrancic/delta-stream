@@ -1,0 +1,22 @@
+{
+  "rows": [
+    {
+      "lambda_reg": 0.3,
+      "model": "ssm",
+      "n_params": 16885696,
+      "n_params_M": 16.89,
+      "overfit_gap": 0.0878,
+      "test_r2": 0.8155036270249717,
+      "train_r2": 0.9032711883029919
+    },
+    {
+      "lambda_reg": 1.0,
+      "model": "clt_full",
+      "n_params": 104798976,
+      "n_params_M": 104.8,
+      "overfit_gap": 0.0911,
+      "test_r2": 0.8429785295220186,
+      "train_r2": 0.9340475973806033
+    }
+  ]
+}

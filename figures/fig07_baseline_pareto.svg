@@ -36,6 +36,18 @@ L 46.626953 20.798437
 z
 " style="fill: #ffffff"/>
    </g>
+   <g id="PathCollection_1">
+    <path d="M 0 311.90483 
+C 0.795609 311.90483 1.55874 311.588731 2.12132 311.02615 
+C 2.683901 310.463569 3 309.700439 3 308.90483 
+C 3 308.10922 2.683901 307.34609 2.12132 306.783509 
+C 1.55874 306.220928 0.795609 305.90483 0 305.90483 
+C -0.795609 305.90483 -1.55874 306.220928 -2.12132 306.783509 
+C -2.683901 307.34609 -3 308.10922 -3 308.90483 
+C -3 309.700439 -2.683901 310.463569 -2.12132 311.02615 
+C -1.55874 311.588731 -0.795609 311.90483 0 311.90483 
+" clip-path="url(#p2c8e679996)" style="fill: none; stroke: #808080"/>
+   </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
@@ -255,7 +267,7 @@ L 431.42848 46.265758
      <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="14.038594" y="146.530344" transform="rotate(-90 14.038594 146.530344)">held-out Δ reconstruction R²</text>
     </g>
    </g>
-   <g id="PathCollection_1">
+   <g id="PathCollection_2">
     <path d="M 129.721947 70.576881 
 C 130.517556 70.576881 131.280686 70.260782 131.843267 69.698201 
 C 132.405848 69.13562 132.721947 68.37249 132.721947 67.576881 
@@ -269,7 +281,7 @@ L 129.721947 70.576881
 z
 " clip-path="url(#p2c8e679996)" style="fill: none; stroke: #1f77b4; stroke-opacity: 0.6"/>
    </g>
-   <g id="PathCollection_2">
+   <g id="PathCollection_3">
     <path d="M 126.097058 80.077164 
 L 132.097058 80.077164 
 L 132.097058 74.077164 
@@ -356,7 +368,7 @@ L 431.42848 20.798437
    <g id="text_14">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="239.027717" y="14.798437" transform="rotate(-0 239.027717 14.798437)">Phase 4 Step 1 — Δ reconstruction vs sparsity</text>
    </g>
-   <g id="PathCollection_3">
+   <g id="PathCollection_4">
     <defs>
      <path id="m2bc9002e1d" d="M 0 -6.324555 
 L -1.419951 -1.954395 
@@ -377,49 +389,66 @@ z
    </g>
    <g id="legend_1">
     <g id="patch_7">
-     <path d="M 279.55973 165.731282 
-L 425.82848 165.731282 
-Q 427.42848 165.731282 427.42848 164.131282 
-L 427.42848 128.929407 
-Q 427.42848 127.329407 425.82848 127.329407 
-L 279.55973 127.329407 
-Q 277.95973 127.329407 277.95973 128.929407 
-L 277.95973 164.131282 
-Q 277.95973 165.731282 279.55973 165.731282 
+     <path d="M 275.70973 171.731594 
+L 425.82848 171.731594 
+Q 427.42848 171.731594 427.42848 170.131594 
+L 427.42848 122.929094 
+Q 427.42848 121.329094 425.82848 121.329094 
+L 275.70973 121.329094 
+Q 274.10973 121.329094 274.10973 122.929094 
+L 274.10973 170.131594 
+Q 274.10973 171.731594 275.70973 171.731594 
 z
 " style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
-    <g id="line2d_24">
-     <path d="M 281.15973 133.808157 
-L 289.15973 133.808157 
-L 297.15973 133.808157 
-" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
-     <g>
-      <use xlink:href="#m7bdcd54610" x="289.15973" y="133.808157" style="fill: #1f77b4; stroke: #1f77b4"/>
-     </g>
+    <g id="PathCollection_5">
+     <path d="M 285.30973 131.507844 
+C 286.105339 131.507844 286.86847 131.191746 287.43105 130.629165 
+C 287.993631 130.066584 288.30973 129.303454 288.30973 128.507844 
+C 288.30973 127.712235 287.993631 126.949105 287.43105 126.386524 
+C 286.86847 125.823943 286.105339 125.507844 285.30973 125.507844 
+C 284.514121 125.507844 283.750991 125.823943 283.18841 126.386524 
+C 282.625829 126.949105 282.30973 127.712235 282.30973 128.507844 
+C 282.30973 129.303454 282.625829 130.066584 283.18841 130.629165 
+C 283.750991 131.191746 284.514121 131.507844 285.30973 131.507844 
+L 285.30973 131.507844 
+z
+" style="fill: none; stroke: #808080"/>
     </g>
     <g id="text_15">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="303.55973" y="136.608157" transform="rotate(-0 303.55973 136.608157)">Branch B SSM (my method)</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="130.607844" transform="rotate(-0 299.70973 130.607844)">dominated λ point (off frontier)</text>
     </g>
-    <g id="line2d_25">
-     <path d="M 281.15973 145.808782 
-L 289.15973 145.808782 
-L 297.15973 145.808782 
-" style="fill: none; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #ff7f0e; stroke-width: 1.5"/>
+    <g id="line2d_24">
+     <path d="M 277.30973 139.808469 
+L 285.30973 139.808469 
+L 293.30973 139.808469 
+" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
      <g>
-      <use xlink:href="#m9919fd9543" x="289.15973" y="145.808782" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
+      <use xlink:href="#m7bdcd54610" x="285.30973" y="139.808469" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
     <g id="text_16">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="303.55973" y="148.608782" transform="rotate(-0 303.55973 148.608782)">Baseline A: per-layer dict on Δ</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="142.608469" transform="rotate(-0 299.70973 142.608469)">Branch B SSM (my method)</text>
     </g>
-    <g id="PathCollection_4">
+    <g id="line2d_25">
+     <path d="M 277.30973 151.809094 
+L 285.30973 151.809094 
+L 293.30973 151.809094 
+" style="fill: none; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #ff7f0e; stroke-width: 1.5"/>
      <g>
-      <use xlink:href="#m2bc9002e1d" x="289.15973" y="158.509407" style="fill: #d62728; stroke: #d62728"/>
+      <use xlink:href="#m9919fd9543" x="285.30973" y="151.809094" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
      </g>
     </g>
     <g id="text_17">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="303.55973" y="160.609407" transform="rotate(-0 303.55973 160.609407)">Baseline B: MLSAE implied Δ</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="154.609094" transform="rotate(-0 299.70973 154.609094)">Baseline A: per-layer dict on Δ</text>
+    </g>
+    <g id="PathCollection_6">
+     <g>
+      <use xlink:href="#m2bc9002e1d" x="285.30973" y="164.509719" style="fill: #d62728; stroke: #d62728"/>
+     </g>
+    </g>
+    <g id="text_18">
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="166.609719" transform="rotate(-0 299.70973 166.609719)">Baseline B: MLSAE implied Δ</text>
     </g>
    </g>
   </g>

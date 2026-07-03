@@ -345,11 +345,16 @@ def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
     ssm = sorted(js["ssm"], key=lambda r: r["l0"])
     base = sorted(js["baseline_A_perlayer_dict"], key=lambda r: r["l0"])
     fig, ax = plt.subplots(figsize=(6.2, 4.4))
+    any_dom = False
     for rows, color, marker in ((ssm, "C0", "o"), (base, "C1", "s")):
         dom = [r for r in rows if r not in _pareto_frontier(rows)]
         if dom:  # dominated λ points: shown, not connected (L0-saturated regime)
+            any_dom = True
             ax.scatter([r["l0"] for r in dom], [r["r2"] for r in dom], marker=marker,
                        facecolors="none", edgecolors=color, s=36, alpha=0.6, zorder=2)
+    if any_dom:  # one neutral legend entry for both hollow-marker sets
+        ax.scatter([], [], marker="o", facecolors="none", edgecolors="gray",
+                   label="dominated λ point (off frontier)")
     ssm_f, base_f = _pareto_frontier(ssm), _pareto_frontier(base)
     ax.plot([r["l0"] for r in ssm_f], [r["r2"] for r in ssm_f], "o-", color="C0",
             label="Branch B SSM (my method)")

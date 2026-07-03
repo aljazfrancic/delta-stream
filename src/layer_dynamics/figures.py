@@ -369,7 +369,8 @@ def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
     # (no LASSO input inference) — a different operating point than this plot's axes,
     # so it gets its own figure rather than a curve here.
     ax.annotate("CLT (Baseline D): see CLT-vs-SSM figure (frozen-source protocol)",
-                (0.5, 0.04), xycoords="axes fraction", fontsize=8, color="gray")
+                (0.97, 0.04), xycoords="axes fraction", ha="right",
+                fontsize=8, color="gray")
     ax.set_xscale("log")
     ax.set_xlabel("held-out input density (L0 fraction)")
     ax.set_ylabel("held-out Δ reconstruction R²")

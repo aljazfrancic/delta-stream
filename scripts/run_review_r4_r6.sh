@@ -23,6 +23,11 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 PY="uv run python"
 CFG410=configs/pythia-410m-deduped.yaml
 
+echo "=== S0: rank-32 λ_reg probe {3, 10} — S1 landed on the new grid edge λ=1 ($(date -Is)) ==="
+$PY scripts/phase4_baseline_clt.py --config $CFG410 \
+    --sources-npz data/pythia-410m-deduped/sources_mlsae.npz \
+    --desc r2-clt-410md-rank32-lamprobe --rank 32 --epochs 180 --reg-grid 3 10
+
 echo "=== S1a: R4 train-only L1 SAE retrain ($(date -Is)) ==="
 $PY scripts/train_410m_saes.py --config $CFG410 --mode l1 --l1-coeff 0.5 \
     --epochs 1000 --exclude-test --desc r4-train-l1-trainonly-410md

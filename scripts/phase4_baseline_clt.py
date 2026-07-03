@@ -218,6 +218,11 @@ def main(argv: list[str] | None = None) -> int:
             _free(model)
         rows.append({"model": name, "n_params": n_params, "n_params_M": round(n_params / 1e6, 2),
                      **best, "overfit_gap": round(best["train_r2"] - best["test_r2"], 4)})
+        # incremental save: a later model OOMing must not lose completed fits
+        run.save_json("tables/baseline_clt_partial.json", {"rows": rows})
+        np.savez_compressed(run.path("tables/per_example_ss.npz"),
+                            test_idx=te, ss_tot=ss_tot_arr,
+                            **{f"ss_res_{k}": v for k, v in ss_arrays.items()})
 
     # R0: paired bootstrap CIs over test examples for every fitted pair
     cis = {}

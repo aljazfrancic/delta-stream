@@ -363,9 +363,13 @@ L 431.42848 20.798437
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_13">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end; fill: #808080" x="419.884434" y="262.203699" transform="rotate(-0 419.884434 262.203699)">CLT (Baseline D): see CLT-vs-SSM figure (frozen-source protocol)</text>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start; fill: #808080" x="54.322984" y="212.361548" transform="rotate(-0 54.322984 212.361548)">R² = 0 (per-depth mean)</text>
    </g>
    <g id="text_14">
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #808080" transform="translate(262.476934 193.644086)">CLT (Baseline D): see CLT-vs-SSM figure</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #808080" transform="translate(323.998184 203.246273)">(frozen-source protocol)</text>
+   </g>
+   <g id="text_15">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="239.027717" y="14.798437" transform="rotate(-0 239.027717 14.798437)">Phase 4 Step 1 — Δ reconstruction vs sparsity</text>
    </g>
    <g id="PathCollection_4">
@@ -415,7 +419,7 @@ L 285.30973 131.507844
 z
 " style="fill: none; stroke: #808080"/>
     </g>
-    <g id="text_15">
+    <g id="text_16">
      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="130.607844" transform="rotate(-0 299.70973 130.607844)">dominated λ point (off frontier)</text>
     </g>
     <g id="line2d_24">
@@ -427,7 +431,7 @@ L 293.30973 139.808469
       <use xlink:href="#m7bdcd54610" x="285.30973" y="139.808469" style="fill: #1f77b4; stroke: #1f77b4"/>
      </g>
     </g>
-    <g id="text_16">
+    <g id="text_17">
      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="142.608469" transform="rotate(-0 299.70973 142.608469)">Branch B SSM (my method)</text>
     </g>
     <g id="line2d_25">
@@ -439,7 +443,7 @@ L 293.30973 151.809094
       <use xlink:href="#m9919fd9543" x="285.30973" y="151.809094" style="fill: #ff7f0e; stroke: #ff7f0e; stroke-linejoin: miter"/>
      </g>
     </g>
-    <g id="text_17">
+    <g id="text_18">
      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="154.609094" transform="rotate(-0 299.70973 154.609094)">Baseline A: per-layer dict on Δ</text>
     </g>
     <g id="PathCollection_6">
@@ -447,7 +451,7 @@ L 293.30973 151.809094
       <use xlink:href="#m2bc9002e1d" x="285.30973" y="164.509719" style="fill: #d62728; stroke: #d62728"/>
      </g>
     </g>
-    <g id="text_18">
+    <g id="text_19">
      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="299.70973" y="166.609719" transform="rotate(-0 299.70973 166.609719)">Baseline B: MLSAE implied Δ</text>
     </g>
    </g>

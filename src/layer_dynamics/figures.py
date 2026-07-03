@@ -365,11 +365,14 @@ def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
         ax.scatter([mlsae["l0"]], [mlsae["r2"]], marker="*", s=160, color="C3", zorder=5,
                    label="Baseline B: MLSAE implied Δ")
     ax.axhline(0.0, color="gray", lw=0.8, ls=":")
+    ax.annotate("R² = 0 (per-depth mean)", (0.02, 0.0), xycoords=("axes fraction", "data"),
+                va="bottom", fontsize=7, color="gray")
     # Baseline D (CLT) has numbers since E3/R2, but under the FROZEN-SOURCE protocol
     # (no LASSO input inference) — a different operating point than this plot's axes,
-    # so it gets its own figure rather than a curve here.
-    ax.annotate("CLT (Baseline D): see CLT-vs-SSM figure (frozen-source protocol)",
-                (0.97, 0.04), xycoords="axes fraction", ha="right",
+    # so it gets its own figure rather than a curve here. Placed under the legend so
+    # it reads as a footnote, not as a label of the y=0 reference line.
+    ax.annotate("CLT (Baseline D): see CLT-vs-SSM figure\n(frozen-source protocol)",
+                (0.97, 0.34), xycoords="axes fraction", ha="right", va="top",
                 fontsize=8, color="gray")
     ax.set_xscale("log")
     ax.set_xlabel("held-out input density (L0 fraction)")

@@ -19,8 +19,15 @@ limitation" branch). **Date:** 2026-06-25.
 > **(2) The reconstruction gap now carries a paired bootstrap CI** (R0, 2026-07-03): at the
 > canonical λ_L1=1 point, SSM−baseline = **+0.0489 [+0.0464, +0.0516]** (mlsae) /
 > **+0.0483 [+0.0458, +0.0509]** (trained-L1) over the 311 test examples.
-> Full chain: progress.md (E2 · R4 · R0) + `runs/2026-06-30-ph4-e2-*`, `runs/2026-07-03-r4-*`,
-> `runs/2026-07-03-r0-gate3-ci-{mlsae,l1}`.
+> **(3) The gap is a matched-RANK statement; at matched total parameters it shrinks ~6×**
+> (R9/R9b, 2026-07-03/04): a rank-64 per-layer baseline (8.41M params ≈ the rank-32 SSM's
+> 8.36M) reaches +0.849 under this memo's LASSO protocol vs the SSM's +0.857 → the
+> state-path edge survives per-example code inference at **≈+0.008** (CI pending), while
+> in the frozen-source protocol the same param-matched comparison is a wash (±0.005 both
+> directions). Quote the headline gap only alongside the param-matched qualifier.
+> Full chain: progress.md (E2 · R4 · R0 · R9 · R9b) + `runs/2026-06-30-ph4-e2-*`,
+> `runs/2026-07-03-r4-*`, `runs/2026-07-03-r0-gate3-ci-{mlsae,l1}`,
+> `runs/2026-07-03-r9-perlayer-rank{64,128}`, `runs/2026-07-04-r9b-gate3-rank64-knee`.
 
 **Primary model:** Pythia-410m-deduped (L=24, D=1024). **Sources:** public per-layer
 **residual** SAEs from the MLSAE suite `tim-lawson/sae-pythia-410m-deduped-x64-k32-layers-{0..23}`

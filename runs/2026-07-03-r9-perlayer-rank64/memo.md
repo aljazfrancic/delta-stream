@@ -46,12 +46,13 @@ ssm r32 0.7975; CLT r32 0.8117 @52.4M; CLT r64 0.8430 @105M.
   near one params→R² frontier on frozen sources. Write-up: do not call the
   cross-layer state *uniquely* load-bearing in the frozen protocol; it is one
   of two roughly equally effective ways to spend parameters there.
-- **Decides next:** **R9b** (`runs/2026-07-03-r9b-gate3-rank64-knee`) — the
-  LASSO-protocol analogue (gate3 at rank 64 vs the recorded rank-32 SSM at the
-  λ=1 knee). If the rank-64 baseline closes the +0.049 LASSO gap too, the
-  Gate-3 "load-bearing" language gets the same param-matched caveat; if it
-  doesn't, the LASSO protocol keeps it (the state path buys something width
-  cannot when codes are re-inferred per example).
+- **Decided by R9b (same night, `runs/2026-07-04-r9b-gate3-rank64-knee`):**
+  under the LASSO protocol the rank-64 baseline reaches +0.849 vs the recorded
+  rank-32 SSM's +0.8571 — the state-path edge **survives per-example code
+  inference at ≈+0.008** (vs +0.049 at matched rank; CI pending). So the two
+  protocols dissociate: matched-params wash on frozen sources (this memo),
+  small surviving SSM edge under LASSO inference (R9b). See the R9b memo for
+  the wording rule and the r64-SSM divergence ops note.
 
 ## Caveats
 

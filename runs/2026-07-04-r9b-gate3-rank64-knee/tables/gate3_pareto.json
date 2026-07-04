@@ -1,0 +1,49 @@
+{
+  "device": "cuda",
+  "dims": {
+    "d_input": 4433,
+    "d_model": 1024,
+    "d_state": 64,
+    "n_layers": 24,
+    "rank": 64
+  },
+  "lambda_reg": 0.0001,
+  "lambdas": [
+    1.0
+  ],
+  "matched_l0_gaps": [],
+  "model": "pythia-410m-deduped",
+  "n_test": 311,
+  "n_train": 1244,
+  "outer_iters": 10,
+  "rows": [
+    {
+      "b_norm": 24.3674373626709,
+      "lambda_l1": 1.0,
+      "op_C": 111.2638931274414,
+      "op_D": 26829.962890625,
+      "test_l0": 1.0,
+      "test_r2": -14072692234456.95,
+      "test_recon": 7.654528922960265e+18,
+      "train_l0": 1.0,
+      "train_r2": -4103918192.5496182,
+      "variant": "ssm"
+    },
+    {
+      "b_norm": 12.262478828430176,
+      "lambda_l1": 1.0,
+      "op_C": 0.024261219426989555,
+      "op_D": 282.98956298828125,
+      "test_l0": 0.015752822360020784,
+      "test_r2": 0.8493443961617035,
+      "test_recon": 81945.775390625,
+      "train_l0": 0.009300632206710414,
+      "train_r2": 0.8747407219496581,
+      "variant": "baseline"
+    }
+  ],
+  "sae_init_l0": 0.006917813369426273,
+  "sae_repo": "EleutherAI/sae-pythia-70m-deduped-32k",
+  "split_by": "random",
+  "ssm_on_or_above_baseline": false
+}

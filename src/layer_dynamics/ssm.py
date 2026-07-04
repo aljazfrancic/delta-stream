@@ -121,6 +121,26 @@ class LowRankSSM(nn.Module):
                     u[:, ell] @ self.B2[ell]) @ self.B1[ell].T
         return torch.stack(out, dim=1)  # [batch, L, D]
 
+    @torch.no_grad()
+    def states(self, u: Tensor) -> Tensor:
+        """Inputs ``u[batch, L, M]`` → latent-state trajectory ``z[batch, L, dz]``.
+
+        ``z[:, ℓ]`` is the state entering observation ℓ (``z_0`` for ℓ=0), i.e. exactly
+        the ``z`` the forward pass multiplies by ``C_ℓ`` — a function of ``u_0 … u_{ℓ-1}``
+        only. Diagnostic readout (no grad); requires ``use_state=True`` (the no-state
+        baseline has no meaningful trajectory).
+        """
+        if not self.use_state:
+            raise ValueError("states() is undefined for the use_state=False baseline")
+        L = self.dims.n_layers
+        z = self._z0(u.shape[0])
+        out = [z]
+        for ell in range(L - 1):
+            z = (z @ self.A2[ell]) @ self.A1[ell].T + (
+                u[:, ell] @ self.B2[ell]) @ self.B1[ell].T
+            out.append(z)
+        return torch.stack(out, dim=1)  # [batch, L, dz]
+
     def operator_fro2(self) -> Tensor:
         """Σ ‖A_ℓ‖_F² + ‖B_ℓ‖_F² + ‖C_ℓ‖_F² + ‖D_ℓ‖_F² of the *products* (low-rank-exact).
 

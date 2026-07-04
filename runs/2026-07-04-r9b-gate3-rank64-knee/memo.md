@@ -29,12 +29,15 @@ when the baseline gets the same total parameters?
 Matched-params gap **ssm(r32) − baseline(r64) ≈ +0.008**. Conservative in two
 ways: the r64 baseline runs slightly *denser* (L0 0.0158 vs 0.0149 — more
 active code, which helps it), and its train R² (+0.875) shows headroom rather
-than saturation. **Pending refinement:** a paired bootstrap CI for the +0.008
-needs a per-example-SS export refit of the r64 baseline arm (~15 min;
-`r0_bootstrap_ci.py` has the machinery and the ssm-r32 arrays already exist).
-For scale: the R0 CI half-width on the same 311 examples was ±0.0026, and S2
-seed-sd on gate3 gaps was 0.001–0.003 — +0.008 is plausibly but not yet
-demonstrably significant.
+than saturation. **Refinement DONE 2026-07-04
+(`runs/2026-07-04-r9b-gate3-ci-rank64`): the paired bootstrap over the same
+311 test examples gives +0.0077 [+0.0053, +0.0102] — SIGNIFICANT.** The
+`r0_bootstrap_ci.py --rank 64` refit reproduces this run's baseline arm
+exactly (test R² +0.84934, deterministic protocol) and pairs its per-example
+SS against the recorded r32 SSM arrays. So the param-matched LASSO-protocol
+edge is small but real, not a seed/interpolation artifact — the write-up can
+state "+0.049 rank-matched, +0.008 [+0.005, +0.010] param-matched" with both
+CIs.
 
 ## Ops note — the rank-64 SSM arm DIVERGED (excluded)
 

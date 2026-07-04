@@ -1,0 +1,28 @@
+{
+  "gate3": {
+    "baseline_test_l0": 0.015752822160720825,
+    "baseline_test_r2": 0.8493443983726703,
+    "checkpoint_dir": "runs/2026-06-26-ph4-checkpoint-410md",
+    "gap_ci": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": 0.010218811454251407,
+      "ci_lo": 0.0053141682874411345,
+      "gap": 0.007734452614696408,
+      "n_boot": 10000,
+      "n_test": 311,
+      "r2_a": 0.8570788509873667,
+      "r2_b": 0.8493443983726703,
+      "significant": true
+    },
+    "lambda_l1": 1.0,
+    "n_test": 311,
+    "note": "Paired bootstrap over test examples at the canonical operating point (\u03bb_L1 knee). L0 reported for both arms \u2014 the gap claim is at comparable sparsity, so check l0_base \u2248 l0_ssm.",
+    "outer_iters": 10,
+    "part": "gate3",
+    "rank": 64,
+    "sources": "sources_mlsae.npz",
+    "ssm_test_l0": 0.01489682961255312,
+    "ssm_test_r2": 0.8570788509873667
+  }
+}

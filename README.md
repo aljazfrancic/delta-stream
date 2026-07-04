@@ -73,5 +73,10 @@ first-order state-space model, k\*≈1; Gate 3 **GO** (SSM beats the matched per
 baseline, +0.049 [+0.046, +0.052] at the λ=1 knee on 410m; the TopK seed-instability
 was closed by an L1 source); Phase 4: causal existence proof = clean **null**
 (distributed, magnitude-driven code); CLT comparison restated on three axes (fig08).
-Cross-model: 6 models / 3 families. See [progress.md](progress.md) for the full record,
-the remaining write-up items (D1–D3), and the on-box/cloud action plan.
+Cross-model: 6 models / 3 families. The 4th-pass on-box action plan closed 2026-07-04:
+the Gate-3 state-path edge survives param-matching (+0.008 [+0.005, +0.010] beside the
++0.049 rank-matched headline); the SSM state is **functionally informative** (R7 probe:
+beats dimension-matched PCA of the codes on answer identity at mid-depth, both
+dictionaries — not "reconstruction-only"); the reconstruction win's ~half-architectural
+/ ~half-learned split replicates on GPT-2 (R10). See [progress.md](progress.md) for the
+full record, the remaining write-up items (D1–D3), and the cloud plan.

@@ -74,6 +74,32 @@ def test_no_state_forward_drops_cross_layer_term():
     assert not torch.allclose(out[:, 0], out2[:, 0])
 
 
+def test_states_trajectory_matches_reference_recursion():
+    """states() returns the z the forward multiplies by C_ℓ: z_0, then the recursion —
+    z_ℓ depends on u_0…u_{ℓ-1} only (perturbing u_ℓ must not change z up through ℓ)."""
+    import pytest
+
+    d = _dims()
+    m = LowRankSSM(d, seed=5, init_scale=0.5)
+    u = torch.randn(6, d.n_layers, d.d_input)
+    z = m.states(u)
+    assert z.shape == (6, d.n_layers, d.d_state)
+    ref = m._z0(6)
+    assert torch.allclose(z[:, 0], ref)
+    for ell in range(d.n_layers - 1):
+        A = m.A1[ell] @ m.A2[ell].T
+        B = m.B1[ell] @ m.B2[ell].T
+        ref = ref @ A.T + u[:, ell] @ B.T
+        assert torch.allclose(z[:, ell + 1], ref, atol=1e-5)
+    u2 = u.clone()
+    u2[:, 2] += 3.0
+    z2 = m.states(u2)
+    assert torch.allclose(z2[:, : 3], z[:, : 3], atol=1e-6)
+    assert not torch.allclose(z2[:, 3], z[:, 3])
+    with pytest.raises(ValueError):
+        LowRankSSM(d, seed=5, use_state=False).states(u)
+
+
 def test_operator_fro2_matches_materialised():
     d = _dims()
     m = LowRankSSM(d, seed=3, init_scale=0.3)

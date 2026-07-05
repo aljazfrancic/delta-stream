@@ -78,5 +78,14 @@ the Gate-3 state-path edge survives param-matching (+0.008 [+0.005, +0.010] besi
 +0.049 rank-matched headline); the SSM state is **functionally informative** (R7 probe:
 beats dimension-matched PCA of the codes on answer identity at mid-depth, both
 dictionaries — not "reconstruction-only"); the reconstruction win's ~half-architectural
-/ ~half-learned split replicates on GPT-2 (R10). See [progress.md](progress.md) for the
-full record, the remaining write-up items (D1–D3), and the cloud plan.
+/ ~half-learned split replicates on GPT-2 (R10).
+
+The **on-box research programme is fully closed** (2026-07-05): the two optional extras
+landed — **R8** (attn/mlp Δ split: both writes reproduce H1 tautology-free and H2
+non-stationarity; the MLP write is first-order while the smaller attention write carries
+the deep Granger reach) and **Programme C** (full-depth Qwen: the SSM's gain roughly
+doubles from the 12-layer SAE prefix to full 24-layer coverage, +0.043→+0.072). All 15
+paper figures reproduce from the tracked run tables via `scripts/make_paper_figures.py`.
+Only off-box items remain (bigger-Pythia depth deconfound, Gemma/Llama diagnostics, a
+natively-trained CLT) plus the D3 draft. See [progress.md](progress.md) for the full
+record, the remaining write-up items (D1–D3), and the cloud plan.

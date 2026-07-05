@@ -240,14 +240,16 @@ def kstar_vs_depth(kdf: pd.DataFrame, *, granger_reach: int | None = None,
         dep, text = spike_note
         row = kdf[kdf["depth"] == dep]
         if not row.empty:
+            # sit the note in the open centre-right band (where the legend used to
+            # land) and point back to the ℓ=17 bar; legend moves to the empty top-left.
             ax.annotate(text, xy=(dep, float(row["kstar"].iloc[0])),
-                        xytext=(dep - 5.5, 0.32 * ax.get_ylim()[1]), fontsize=7,
+                        xytext=(dep + 1.5, 0.52 * ax.get_ylim()[1]), fontsize=7,
                         color="dimgray", ha="center", bbox=_NOTE_BBOX,
                         arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
     ax.set_xlabel(r"target depth $\ell$"); ax.set_ylabel("$k$")
     ax.set_title(r"Effective depth $k^*(\ell)$: reconstruction ($\approx$1) vs Granger reach")
     _int_ticks(ax, y=True)
-    ax.legend()
+    ax.legend(loc="upper left")
     fig.tight_layout()
     return fig
 

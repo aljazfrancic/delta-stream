@@ -485,30 +485,30 @@ L 560.947273 22.6
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="patch_30">
-    <path d="M 324.228073 149.27864 
-Q 362.972145 166.517854 400.899033 183.393461 
+    <path d="M 428.778695 114.546102 
+Q 416.500822 148.615755 404.526188 181.843954 
 " style="fill: none; stroke: #696969; stroke-width: 0.8; stroke-linecap: round"/>
-    <path d="M 398.909977 180.976095 
-L 400.899033 183.393461 
-L 397.771707 183.534287 
+    <path d="M 406.792563 179.68443 
+L 404.526188 181.843954 
+L 404.158394 178.73514 
 " style="fill: none; stroke: #696969; stroke-width: 0.8; stroke-linecap: round"/>
    </g>
    <g id="text_20">
     <g id="patch_31">
-     <path d="M 236.821789 148.465726 
-L 340.631789 148.465726 
-Q 342.381789 148.465726 342.381789 146.715726 
-L 342.381789 120.24889 
-Q 342.381789 118.49889 340.631789 118.49889 
-L 236.821789 118.49889 
-Q 235.071789 118.49889 235.071789 120.24889 
-L 235.071789 146.715726 
-Q 235.071789 148.465726 236.821789 148.465726 
+     <path d="M 382.952417 112.661784 
+L 486.762417 112.661784 
+Q 488.512417 112.661784 488.512417 110.911784 
+L 488.512417 84.444949 
+Q 488.512417 82.694949 486.762417 82.694949 
+L 382.952417 82.694949 
+Q 381.202417 82.694949 381.202417 84.444949 
+L 381.202417 110.911784 
+Q 381.202417 112.661784 382.952417 112.661784 
 z
 " style="fill: #ffffff; opacity: 0.75"/>
     </g>
     <!-- $\ell$=17: lag-1 $R^2$ dips to 0.64 — -->
-    <g style="fill: #696969" transform="translate(236.821789 127.529574)">
+    <g style="fill: #696969" transform="translate(382.952417 91.725632)">
      <text>
       <tspan x="0" y="-0.466812" style="font-style: oblique; font-size: 7px; font-family: 'DejaVu Sans'; fill: #696969">ℓ</tspan>
       <tspan x="42.129883" y="-0.466812" style="font-style: oblique; font-size: 7px; font-family: 'DejaVu Sans'; fill: #696969">R</tspan>
@@ -541,8 +541,8 @@ z
       <tspan x="96.786781" y="-0.466812" style="font-size: 7px; font-family: 'DejaVu Sans Display'; fill: #696969">—</tspan>
      </text>
     </g>
-    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(240.29882 135.931488)">the answer-promotion write</text>
-    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(242.779445 144.333402)">(R7 probe jump; cf. fig 13)</text>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(386.429448 100.127546)">the answer-promotion write</text>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(388.910073 108.52946)">(R7 probe jump; cf. fig 13)</text>
    </g>
    <g id="text_21">
     <!-- Effective depth $k^*(\ell)$: reconstruction ($\approx$1) vs Granger reach -->
@@ -612,27 +612,27 @@ z
    </g>
    <g id="legend_1">
     <g id="patch_32">
-     <path d="M 438.337273 132.032042 
-L 555.347273 132.032042 
-Q 556.947273 132.032042 556.947273 130.432042 
-L 556.947273 93.787667 
-Q 556.947273 92.187667 555.347273 92.187667 
-L 438.337273 92.187667 
-Q 436.737273 92.187667 436.737273 93.787667 
-L 436.737273 130.432042 
-Q 436.737273 132.032042 438.337273 132.032042 
+     <path d="M 42.982109 66.444375 
+L 159.992109 66.444375 
+Q 161.592109 66.444375 161.592109 64.844375 
+L 161.592109 28.2 
+Q 161.592109 26.6 159.992109 26.6 
+L 42.982109 26.6 
+Q 41.382109 26.6 41.382109 28.2 
+L 41.382109 64.844375 
+Q 41.382109 66.444375 42.982109 66.444375 
 z
 " style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
     <g id="line2d_20">
-     <path d="M 439.937273 98.667667 
-L 447.937273 98.667667 
-L 455.937273 98.667667 
+     <path d="M 44.582109 33.08 
+L 52.582109 33.08 
+L 60.582109 33.08 
 " style="fill: none; stroke-dasharray: 0.8,1.32; stroke-dashoffset: 0; stroke: #000000; stroke-width: 0.8"/>
     </g>
     <g id="text_22">
      <!-- max feasible $k$ -->
-     <g transform="translate(462.337273 101.467667)">
+     <g transform="translate(66.982109 35.88)">
       <text>
        <tspan x="0" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">m</tspan>
        <tspan x="7.792969" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">a</tspan>
@@ -652,25 +652,25 @@ L 455.937273 98.667667
      </g>
     </g>
     <g id="line2d_21">
-     <path d="M 439.937273 110.668292 
-L 447.937273 110.668292 
-L 455.937273 110.668292 
+     <path d="M 44.582109 45.080625 
+L 52.582109 45.080625 
+L 60.582109 45.080625 
 " style="fill: none; stroke-dasharray: 5.55,2.4; stroke-dashoffset: 0; stroke: #d62728; stroke-width: 1.5"/>
     </g>
     <g id="text_23">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="462.337273" y="113.468292" transform="rotate(-0 462.337273 113.468292)">Granger reach (lag 20)</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="66.982109" y="47.880625" transform="rotate(-0 66.982109 47.880625)">Granger reach (lag 20)</text>
     </g>
     <g id="patch_33">
-     <path d="M 439.937273 126.910167 
-L 455.937273 126.910167 
-L 455.937273 121.310167 
-L 439.937273 121.310167 
+     <path d="M 44.582109 61.3225 
+L 60.582109 61.3225 
+L 60.582109 55.7225 
+L 44.582109 55.7225 
 z
 " style="fill: #1f77b4"/>
     </g>
     <g id="text_24">
      <!-- reconstruction $k^*$ -->
-     <g transform="translate(462.337273 126.910167)">
+     <g transform="translate(66.982109 61.3225)">
       <text>
        <tspan x="0" y="-0.53975" style="font-size: 8px; font-family: 'DejaVu Sans'">r</tspan>
        <tspan x="3.289062" y="-0.53975" style="font-size: 8px; font-family: 'DejaVu Sans'">e</tspan>

@@ -140,6 +140,8 @@ def main(argv: list[str] | None = None) -> int:
     run.log(f"dims: L={n_layers} D={d_model} M={d_input} d_z={d_state} r={args.rank}; "
             f"λ_L1 grid={lambdas}")
 
+    import pandas as pd
+
     variants = {"ssm": True, "baseline": False}  # full Branch B vs no-state per-layer dict
     rows: list[dict] = []
     for lam in lambdas:
@@ -164,6 +166,11 @@ def main(argv: list[str] | None = None) -> int:
             run.log(f"  {vname} λ={lam:g}: test R²={te_ev['r2']:+.3f} test L0={te_ev['l0']:.4f} "
                     f"(train R²={tr_ev['r2']:+.3f}) |C|={te_ev['op_C']:.1f} "
                     f"|D|={te_ev['op_D']:.1f}")
+            # Persist after every completed (λ, variant) so a freeze/OOM mid-sweep keeps
+            # the finished rows (this box froze 3× on 2026-07-05 and lost whole runs
+            # because the CSV was written only at the end). Overwritten each time; the
+            # final write below adds the plot + full JSON.
+            pd.DataFrame(rows).to_csv(run.path("tables/pareto.csv"), index=False)
 
     # --- Pareto comparison: SSM vs baseline at matched L0 (interp baseline onto SSM L0) ---
     ssm_rows = sorted((r for r in rows if r["variant"] == "ssm"), key=lambda r: r["test_l0"])
@@ -181,8 +188,6 @@ def main(argv: list[str] | None = None) -> int:
         "ssm_on_or_above_baseline": on_or_above,
     }
     run.save_json("tables/gate3_pareto.json", stats)
-
-    import pandas as pd
 
     pd.DataFrame(rows).to_csv(run.path("tables/pareto.csv"), index=False)
     _plot_pareto(rows, run.path("figures/pareto.svg"))

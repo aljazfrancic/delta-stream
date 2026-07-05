@@ -137,6 +137,11 @@ def main(argv: list[str] | None = None) -> int:
                              "(R2 convergence curve; 0 = off).")
     parser.add_argument("--n-boot", type=int, default=10_000,
                         help="Paired-bootstrap resamples for the gap CIs (R0).")
+    parser.add_argument("--val-frac", type=float, default=0.0,
+                        help="Carve this fraction of the train split into a validation "
+                             "set and select each family's λ_reg on it instead of on "
+                             "test (4th-pass finding 4: kills the test-selection bias "
+                             "on the SSM−CLT CI). 0 = legacy best-test selection.")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -170,10 +175,16 @@ def main(argv: list[str] | None = None) -> int:
     tr, te = train_test_split_idx(N, test_frac=0.2, seed=args.seed)
     if args.n_train is not None:  # R3: tr is already a random permutation → prefix is random
         tr = tr[: args.n_train]
+    val = None
+    if args.val_frac > 0:  # tr is a random permutation → any slice is a random subset
+        n_val = int(round(len(tr) * args.val_frac))
+        val, tr = tr[:n_val], tr[n_val:]
+        u_val, d_val = u[val], delta[val]
     u_tr, u_te = u[tr], u[te]            # kept on CPU; streamed per minibatch
     d_tr, d_te = delta[tr], delta[te]
     run.log(f"split: {len(tr)} train / {len(te)} test (same as Gate-3"
-            + (f", train subsampled to {len(tr)}" if args.n_train else "") + ")")
+            + (f", train subsampled to {len(tr)}" if args.n_train else "")
+            + (f", validation carve-out {len(val)}" if val is not None else "") + ")")
 
     builders = {
         "per_layer": (lambda: LowRankSSM(SSMDims(L, D, M, r, r), use_state=False, seed=args.seed),
@@ -187,10 +198,13 @@ def main(argv: list[str] | None = None) -> int:
 
     rows = []
     conv_rows: list[dict] = []
+    grid_rows: list[dict] = []
     ss_arrays: dict[str, np.ndarray] = {}
     ss_tot_arr = None
+    select_on = "val_r2" if val is not None else "test_r2"
     for name, (ctor, n_params) in builders.items():
-        run.log(f"[{name}] n_params={n_params/1e6:.2f}M — λ_reg sweep {args.reg_grid}")
+        run.log(f"[{name}] n_params={n_params/1e6:.2f}M — λ_reg sweep {args.reg_grid} "
+                f"(selected on {select_on})")
         best = None
         for lam in args.reg_grid:
             model = ctor().to(device)
@@ -208,9 +222,15 @@ def main(argv: list[str] | None = None) -> int:
                         eval_cb=_conv_cb if args.eval_every > 0 else None)
             tr_r2 = _r2(model, u_tr, d_tr, bs=args.batch_size, device=device)
             te_r2 = _r2(model, u_te, d_te, bs=args.batch_size, device=device)
-            run.log(f"  [{name}] λ_reg={lam:g}: train R²={tr_r2:+.4f} test R²={te_r2:+.4f}")
-            if best is None or te_r2 > best["test_r2"]:
-                best = {"lambda_reg": lam, "train_r2": tr_r2, "test_r2": te_r2}
+            point = {"lambda_reg": lam, "train_r2": tr_r2, "test_r2": te_r2}
+            if val is not None:
+                point["val_r2"] = _r2(model, u_val, d_val, bs=args.batch_size, device=device)
+            grid_rows.append({"model": name, **point})
+            run.log(f"  [{name}] λ_reg={lam:g}: train R²={tr_r2:+.4f}"
+                    + (f" val R²={point['val_r2']:+.4f}" if val is not None else "")
+                    + f" test R²={te_r2:+.4f}")
+            if best is None or point[select_on] > best[select_on]:
+                best = point
                 ss_res, ss_tot = _per_example_ss(model, u_te, d_te,
                                                  bs=args.batch_size, device=device)
                 ss_arrays[name] = ss_res
@@ -242,6 +262,8 @@ def main(argv: list[str] | None = None) -> int:
         "rank": r, "n_layers": L, "d_model": D, "n_sources": M,
         "sources": src_name, "epochs": args.epochs, "reg_grid": args.reg_grid,
         "n_train": int(len(tr)), "n_test": int(len(te)),
+        "lambda_selection": "validation" if val is not None else "test",
+        "n_val": int(len(val)) if val is not None else 0,
         "rows": rows,
         "paired_bootstrap_cis": cis,
         "reference_gate3_ssm_lasso_test_r2": 0.857,
@@ -257,14 +279,17 @@ def main(argv: list[str] | None = None) -> int:
         summary["ssm_vs_clt_test_r2_gap"] = round(ssm["test_r2"] - clt["test_r2"], 4)
         summary["clt_param_ratio_vs_ssm"] = round(clt["n_params"] / ssm["n_params"], 2)
     run.save_json("tables/baseline_clt.json", summary)
-    if conv_rows:
-        import pandas as pd
+    import pandas as pd
 
+    pd.DataFrame(grid_rows).to_csv(run.path("tables/lambda_grid.csv"), index=False)
+    if conv_rows:
         pd.DataFrame(conv_rows).to_csv(run.path("tables/convergence.csv"), index=False)
     _plot(run, rows)
 
     print("\n=== Residual-write CLT vs SSM vs per-layer (frozen mlsae sources, rank "
           f"{r}) ===")
+    if val is not None:
+        print(f"(λ_reg selected on a {len(val)}-example validation carve-out, not test)")
     print(f"{'model':<12}{'params':>10}{'best λ_reg':>12}{'train R²':>11}{'test R²':>10}"
           f"{'overfit':>9}")
     for row in rows:

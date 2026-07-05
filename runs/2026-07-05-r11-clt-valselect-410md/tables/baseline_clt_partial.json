@@ -1,0 +1,34 @@
+{
+  "rows": [
+    {
+      "lambda_reg": 3.0,
+      "model": "per_layer",
+      "n_params": 4215552,
+      "n_params_M": 4.22,
+      "overfit_gap": 0.0467,
+      "test_r2": 0.7360464455575606,
+      "train_r2": 0.7827477128690444,
+      "val_r2": 0.7385631819319112
+    },
+    {
+      "lambda_reg": 3.0,
+      "model": "ssm",
+      "n_params": 8359904,
+      "n_params_M": 8.36,
+      "overfit_gap": 0.0607,
+      "test_r2": 0.7878662476791713,
+      "train_r2": 0.8485690947346725,
+      "val_r2": 0.7901771967448827
+    },
+    {
+      "lambda_reg": 3.0,
+      "model": "clt_full",
+      "n_params": 52411776,
+      "n_params_M": 52.41,
+      "overfit_gap": 0.0966,
+      "test_r2": 0.796891938156662,
+      "train_r2": 0.8935371654617082,
+      "val_r2": 0.7924395935257263
+    }
+  ]
+}

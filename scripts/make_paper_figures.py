@@ -246,7 +246,7 @@ def main() -> int:
           f"{args.out.relative_to(ROOT)}/")
     for s in skipped:
         print(f"  ! skipped {s}")
-    return 0
+    return 0 if not skipped else 1  # D1 reproduce.sh relies on this exit code
 
 
 if __name__ == "__main__":

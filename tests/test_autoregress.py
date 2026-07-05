@@ -9,6 +9,7 @@ from layer_dynamics.diagnostics.autoregress import (
     feasible_depths,
     fit_ar_pooled,
     granger_lag_grid,
+    granger_permutation_check,
     granger_significant_by_lag,
     pca_project,
     random_walk_surrogate,
@@ -215,3 +216,35 @@ def test_granger_significant_by_lag_splits_lag1_and_higher():
     # lag>=2 totals = testable (ℓ≥2) cells across lags 2 and 3.
     assert res["lagge2_total"] == 4 + 3
     assert 0 <= res["lagge2_sig"] <= res["lagge2_total"]
+
+
+def test_granger_permutation_check_calibrated_and_detects_signal():
+    # Real AR(1) signal: the observed F must sit at the permutation floor while the
+    # permutation null of F matches the parametric F(df1, df2) reference used by
+    # the grid (Freedman–Lane exchangeability calibration, finding 10).
+    dlt = _make_ar1(n=500, n_delta=6, d=6)
+    rows = granger_permutation_check(dlt, depth=4, lags=(1, 2), q_pca=4,
+                                     n_perm=199, seed=0)
+    assert [r["lag"] for r in rows] == [1, 2]
+    lag1 = rows[0]
+    assert lag1["p_perm"] <= lag1["p_perm_floor"] + 1e-12  # signal at the floor
+    # Observed F agrees with the grid's lstsq-based computation at the same cell.
+    grid = granger_lag_grid(dlt, lags=(1, 2), q_pca=4)
+    assert np.isclose(lag1["F_obs"], grid["F"][4, 0], rtol=1e-6)
+    # Tail calibration on Gaussian-ish data: the 95th percentile of the permuted F
+    # should be near the parametric one (ratio ~1; generous band for n_perm=199).
+    for r in rows:
+        assert 0.7 < r["q95_ratio_emp_over_param"] < 1.4
+
+
+def test_granger_permutation_check_null_p_tracks_parametric():
+    # Pure noise: whatever the draw's F happens to be, the permutation p must
+    # AGREE with the parametric p (that agreement is the calibration claim; a
+    # single null draw can legitimately land in the tail of both).
+    for seed_data in (3, 4, 5):
+        rng = np.random.default_rng(seed_data)
+        dlt = rng.standard_normal((400, 5, 6))
+        rows = granger_permutation_check(dlt, depth=3, lags=(1,), q_pca=4,
+                                         n_perm=199, seed=1)
+        r = rows[0]
+        assert abs(r["p_perm"] - r["p_parametric"]) < 0.08  # n_perm=199 resolution

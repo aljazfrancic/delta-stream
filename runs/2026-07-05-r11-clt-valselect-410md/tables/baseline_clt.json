@@ -1,0 +1,93 @@
+{
+  "clt_param_ratio_vs_ssm": 6.27,
+  "d_model": 1024,
+  "epochs": 180,
+  "interpretation": "All families decode the SAME frozen per-layer sources at rank r, so the only difference is the decoder parameterisation. The unconstrained O(L\u00b2) CLT is strictly more expressive in-sample; whether it beats the state-space SSM HELD-OUT (vs its larger overfit) is the \u00a74.2 question. Positive ssm_vs_clt_test_r2_gap with clt_param_ratio_vs_ssm > 1 = parsimony win.",
+  "lambda_selection": "validation",
+  "n_layers": 24,
+  "n_sources": 4433,
+  "n_test": 311,
+  "n_train": 1057,
+  "n_val": 187,
+  "paired_bootstrap_cis": {
+    "clt_full_minus_per_layer": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": 0.06547425910830497,
+      "ci_lo": 0.05630043214187026,
+      "gap": 0.060845469401618724,
+      "n_boot": 10000,
+      "n_test": 311,
+      "r2_a": 0.7968919592510312,
+      "r2_b": 0.7360464898494125,
+      "significant": true
+    },
+    "ssm_minus_clt_full": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": -0.004540086956694724,
+      "ci_lo": -0.013613899773918092,
+      "gap": -0.009025711244344592,
+      "n_boot": 10000,
+      "n_test": 311,
+      "r2_a": 0.7878662480066866,
+      "r2_b": 0.7968919592510312,
+      "significant": true
+    },
+    "ssm_minus_per_layer": {
+      "alpha": 0.05,
+      "boot_seed": 0,
+      "ci_hi": 0.05518884910270572,
+      "ci_lo": 0.048465642239898445,
+      "gap": 0.05181975815727413,
+      "n_boot": 10000,
+      "n_test": 311,
+      "r2_a": 0.7878662480066866,
+      "r2_b": 0.7360464898494125,
+      "significant": true
+    }
+  },
+  "rank": 32,
+  "reference_gate3_ssm_lasso_test_r2": 0.857,
+  "reg_grid": [
+    0.3,
+    1.0,
+    3.0,
+    10.0,
+    30.0
+  ],
+  "rows": [
+    {
+      "lambda_reg": 3.0,
+      "model": "per_layer",
+      "n_params": 4215552,
+      "n_params_M": 4.22,
+      "overfit_gap": 0.0467,
+      "test_r2": 0.7360464455575606,
+      "train_r2": 0.7827477128690444,
+      "val_r2": 0.7385631819319112
+    },
+    {
+      "lambda_reg": 3.0,
+      "model": "ssm",
+      "n_params": 8359904,
+      "n_params_M": 8.36,
+      "overfit_gap": 0.0607,
+      "test_r2": 0.7878662476791713,
+      "train_r2": 0.8485690947346725,
+      "val_r2": 0.7901771967448827
+    },
+    {
+      "lambda_reg": 3.0,
+      "model": "clt_full",
+      "n_params": 52411776,
+      "n_params_M": 52.41,
+      "overfit_gap": 0.0966,
+      "test_r2": 0.796891938156662,
+      "train_r2": 0.8935371654617082,
+      "val_r2": 0.7924395935257263
+    }
+  ],
+  "sources": "sources_mlsae.npz",
+  "ssm_vs_clt_test_r2_gap": -0.009
+}

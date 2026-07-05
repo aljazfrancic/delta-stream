@@ -148,7 +148,11 @@ def cca_heatmap(df: pd.DataFrame) -> plt.Figure:
 
 
 def ar_r2_vs_k(df: pd.DataFrame) -> plt.Figure:
-    real = df[df["label"] == "real"]; null = df[df["label"] == "null"]
+    # pandas parses the CSV string "null" as NaN by default, so a round-trip through
+    # ar_r2.csv turns the null rows' label into NaN — normalise before filtering
+    # (found 2026-07-05: fig02's scrambled-null line had been silently empty).
+    lab = df["label"].fillna("null")
+    real = df[lab == "real"]; null = df[lab == "null"]
     fig, ax = plt.subplots(figsize=(7, 4))
     for c in _rank_cols(df):
         ax.plot(real["k"], real[c], "-", lw=0.8, alpha=0.5, label=f"real {c}")

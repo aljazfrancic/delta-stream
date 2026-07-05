@@ -1,0 +1,250 @@
+{
+  "bands": {
+    "early": [
+      5,
+      6,
+      7
+    ],
+    "late": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "middle": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "between_angles": {
+    "early-late": {
+      "input": {
+        "max_deg": 89.89892578125,
+        "mean_deg": 51.88028335571289,
+        "median_deg": 51.84386444091797
+      },
+      "output": {
+        "max_deg": 89.97334289550781,
+        "mean_deg": 43.39659881591797,
+        "median_deg": 42.617862701416016
+      }
+    },
+    "early-middle": {
+      "input": {
+        "max_deg": 89.94126892089844,
+        "mean_deg": 52.515811920166016,
+        "median_deg": 52.76873016357422
+      },
+      "output": {
+        "max_deg": 89.97913360595703,
+        "mean_deg": 38.1585578918457,
+        "median_deg": 34.274742126464844
+      }
+    },
+    "middle-late": {
+      "input": {
+        "max_deg": 89.98487091064453,
+        "mean_deg": 52.82379913330078,
+        "median_deg": 53.34791946411133
+      },
+      "output": {
+        "max_deg": 89.86932373046875,
+        "mean_deg": 41.885498046875,
+        "median_deg": 40.10382080078125
+      }
+    }
+  },
+  "between_frobenius_stack": {
+    "early-late": 1.461256504058838,
+    "early-middle": 1.4046285152435303,
+    "middle-late": 1.4390524625778198
+  },
+  "bootstrap": {
+    "early-late": {
+      "between": 1.461256504058838,
+      "separated": true,
+      "within_a_p95": 0.4654614582657814,
+      "within_b_p95": 0.5165671199560166,
+      "z_between_over_within_sd": 114.23320463487667
+    },
+    "early-middle": {
+      "between": 1.4046285152435303,
+      "separated": true,
+      "within_a_p95": 0.4654614582657814,
+      "within_b_p95": 0.47049511373043057,
+      "z_between_over_within_sd": 110.50027440913013
+    },
+    "middle-late": {
+      "between": 1.4390524625778198,
+      "separated": true,
+      "within_a_p95": 0.47049511373043057,
+      "within_b_p95": 0.5165671199560166,
+      "z_between_over_within_sd": 128.50617181330063
+    }
+  },
+  "caveats": "AR-on-\u0394 stationarity is a strong proxy for H2's MA/generative stationarity, not a logical equivalent (plan Step 1); the MA recheck is Phase 3 Step 4. Consecutive \u0394's share a \u00b1v_\u2113 term, a mechanism identical across depth that biases the kernel comparison TOWARD stationarity \u2014 so a stationary verdict is a permissive (not conservative) read; the AR signal itself was confirmed real by the Step 5 scrambled null. Dataset is 3 classes / 1555 ex (below the \u22651000/class target); the per-class cross-relation test is Step 4.",
+  "cross_band_r2": {
+    "early": {
+      "early": 0.8785303064403684,
+      "late": -0.4431431720557586,
+      "middle": -0.5581752719377098
+    },
+    "late": {
+      "early": -1.6474215556568739,
+      "late": 0.5517679101337472,
+      "middle": -2.227400414112756
+    },
+    "middle": {
+      "early": -0.5634694317067415,
+      "late": -0.6293522655451578,
+      "middle": 0.784275180256964
+    }
+  },
+  "cross_band_r2_by_rank": {
+    "32": {
+      "early": {
+        "early": 0.47823870045100336,
+        "late": -0.20007641332345205,
+        "middle": -0.24207228893821253
+      },
+      "late": {
+        "early": -0.9856579610459149,
+        "late": 0.3030911082044787,
+        "middle": -1.3265290654617359
+      },
+      "middle": {
+        "early": -0.17867881714217804,
+        "late": -0.1983338139014197,
+        "middle": 0.32027790136222933
+      }
+    },
+    "64": {
+      "early": {
+        "early": 0.6287706959229022,
+        "late": -0.2825445225296086,
+        "middle": -0.3480210817070324
+      },
+      "late": {
+        "early": -1.1848841638190266,
+        "late": 0.385003863564808,
+        "middle": -1.5993673137850544
+      },
+      "middle": {
+        "early": -0.2833550208786053,
+        "late": -0.303763603751652,
+        "middle": 0.43620276554311543
+      }
+    },
+    "128": {
+      "early": {
+        "early": 0.7699242348869202,
+        "late": -0.3638758385727039,
+        "middle": -0.4541210280257826
+      },
+      "late": {
+        "early": -1.3777821324548332,
+        "late": 0.45458981492949835,
+        "middle": -1.8711713469895526
+      },
+      "middle": {
+        "early": -0.39353123896257647,
+        "late": -0.42848119376544513,
+        "middle": 0.5785666368298759
+      }
+    },
+    "256": {
+      "early": {
+        "early": 0.8517448663657797,
+        "late": -0.4197312263012174,
+        "middle": -0.5270099989384844
+      },
+      "late": {
+        "early": -1.5456810937008507,
+        "late": 0.5140199847065848,
+        "middle": -2.0910194691135358
+      },
+      "middle": {
+        "early": -0.4962707150665857,
+        "late": -0.5519285396806277,
+        "middle": 0.7058393362542728
+      }
+    },
+    "512": {
+      "early": {
+        "early": 0.8785303064403684,
+        "late": -0.4431431720557586,
+        "middle": -0.5581752719377098
+      },
+      "late": {
+        "early": -1.6474215556568739,
+        "late": 0.5517679101337472,
+        "middle": -2.227400414112756
+      },
+      "middle": {
+        "early": -0.5634694317067415,
+        "late": -0.6293522655451578,
+        "middle": 0.784275180256964
+      }
+    }
+  },
+  "d_model": 1024,
+  "decision": {
+    "any_bootstrap_separated": true,
+    "between_frobenius": {
+      "early-late": 1.461256504058838,
+      "early-middle": 1.4046285152435303,
+      "middle-late": 1.4390524625778198
+    },
+    "boundary_ratio": 1.024507509964883,
+    "cross_band_retention": {
+      "early->late": -0.8031332810716408,
+      "early->middle": -0.7117084487549719,
+      "late->early": -1.8752017358762512,
+      "late->middle": -2.840075103974295,
+      "middle->early": -0.6413773407428691,
+      "middle->late": -1.1406104885523414
+    },
+    "max_output_angle_deg": 43.39659881591797,
+    "phase3_branch": "B (state-space / fully depth-indexed kernel)",
+    "segment_boundary": null,
+    "tolerances": {
+      "angle_tol_deg": 30.0,
+      "collinearity_thresh": 1.5,
+      "retention_tol": 0.1
+    },
+    "triangle_ratio": 1.0154296261313804,
+    "verdict": "pervasive_drift",
+    "worst_cross_band_retention": -2.840075103974295
+  },
+  "input_pcs": 256,
+  "k": 5,
+  "k_selection": null,
+  "locked_rank": 256,
+  "model": "pythia-410m-deduped",
+  "n_boot": 200,
+  "n_layers": 24,
+  "n_test": 311,
+  "n_train": 1244,
+  "saturation_rank": null,
+  "spot_check": {
+    "gain": 0.06888509956630329,
+    "r2_2r": 0.6025341012822272,
+    "r2_r": 0.5336490017159239
+  },
+  "within_band_r2": {
+    "early": 0.8785303064403684,
+    "late": 0.5517679101337472,
+    "middle": 0.784275180256964
+  },
+  "working_rank": 512
+}

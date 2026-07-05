@@ -572,3 +572,78 @@ def granger_significant_by_lag(
         "lag1_sig": lag1_sig, "lag1_total": lag1_tot,
         "lagge2_sig": ge2_sig, "lagge2_total": ge2_tot,
     }
+
+
+def granger_permutation_check(
+    dlt: np.ndarray,
+    *,
+    depth: int,
+    lags: tuple[int, ...] = LAG_SWEEP,
+    q_pca: int = 32,
+    n_perm: int = 999,
+    seed: int = 0,
+) -> list[dict]:
+    """Freedman–Lane permutation calibration of the Granger nested-F at one depth.
+
+    The grid's p-values use Rao's F, which assumes Gaussian errors — mildly
+    violated by the heavy-tailed rogue dims (3rd-pass review, finding 10). At
+    target ``depth``, for every feasible lag ``j ≤ depth``, this permutes the
+    reduced-model residuals (Freedman & Lane 1983: ``y* = ŷ_red + π(r_red)``),
+    recomputes Rao's F, and reports (i) the permutation exceedance p of the
+    observed F (resolution floor ``1/(n_perm+1)``) and (ii) whether the
+    permutation null of F matches the parametric F(df1, df2) reference — KS
+    test + 95th/99th-percentile ratios — i.e. whether the F approximation is
+    calibrated under exchangeability, Gaussian errors or not.
+    """
+    from scipy import stats
+
+    n = dlt.shape[0]
+    proj = pca_project(dlt, q_pca)  # same coordinates as granger_lag_grid
+    ones = np.ones((n, 1))
+    rng = np.random.default_rng(seed)
+    out = []
+    for j in lags:
+        if depth < j:
+            continue
+        y = proj[:, depth, :]
+        red_cols = [ones] + [proj[:, depth - jj, :] for jj in range(1, j)]
+        z_red = np.concatenate(red_cols, axis=1)
+        z_j = proj[:, depth - j, :]
+        # Orthonormal basis with the first block spanning z_red, so one matmul
+        # per permutation serves both the reduced and the full projection.
+        q_red = np.linalg.qr(z_red)[0]
+        z_j_perp = z_j - q_red @ (q_red.T @ z_j)
+        q_extra = np.linalg.qr(z_j_perp)[0]
+        ve = n - (z_red.shape[1] + z_j.shape[1])
+
+        def _sscp_pair(resid: np.ndarray, *, _qr=q_red, _qe=q_extra) -> tuple:
+            rss = resid.T @ resid
+            a = _qr.T @ resid
+            b = _qe.T @ resid
+            e_red = rss - a.T @ a
+            e_full = e_red - b.T @ b
+            return e_full, e_red
+
+        r_red = y - q_red @ (q_red.T @ y)  # y and its reduced-model residuals
+        e_full, e_red = _sscp_pair(r_red)
+        obs = wilks_rao_f(e_full, e_red, p=q_pca, vh=q_pca, ve=ve)
+
+        f_star = np.empty(n_perm)
+        for b in range(n_perm):
+            e_f, e_r = _sscp_pair(r_red[rng.permutation(n)])
+            f_star[b] = wilks_rao_f(e_f, e_r, p=q_pca, vh=q_pca, ve=ve)["F"]
+        f_star = f_star[np.isfinite(f_star)]
+        p_perm = (1 + int((f_star >= obs["F"]).sum())) / (len(f_star) + 1)
+        ks_stat, ks_p = stats.kstest(f_star, "f", args=(obs["df1"], obs["df2"]))
+        q_emp = np.quantile(f_star, [0.95, 0.99])
+        q_par = stats.f.ppf([0.95, 0.99], obs["df1"], obs["df2"])
+        out.append({
+            "depth": depth, "lag": j, "n_perm": int(len(f_star)),
+            "F_obs": obs["F"], "df1": obs["df1"], "df2": obs["df2"],
+            "p_parametric": obs["p_value"], "p_perm": p_perm,
+            "p_perm_floor": 1.0 / (len(f_star) + 1),
+            "ks_stat": float(ks_stat), "ks_p": float(ks_p),
+            "q95_ratio_emp_over_param": float(q_emp[0] / q_par[0]),
+            "q99_ratio_emp_over_param": float(q_emp[1] / q_par[1]),
+        })
+    return out

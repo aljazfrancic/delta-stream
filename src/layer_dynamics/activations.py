@@ -25,6 +25,117 @@ def _content_len(model, prompt: str) -> int:
     return len(model.tokenizer(prompt, add_special_tokens=False)["input_ids"])
 
 
+def stream_write_hook_names(n_layers: int) -> dict[str, list[str]]:
+    """Per-layer residual-write hooks for the R8 attn-vs-MLP Δ split.
+
+    ``hook_attn_out`` / ``hook_mlp_out`` are the tensors the block *adds* to the
+    residual stream, so ``Δ_ℓ = attn_out_ℓ + mlp_out_ℓ`` exactly (sequential and
+    parallel-attn/MLP architectures alike — TransformerLens sums these terms
+    verbatim into ``resid_post``)."""
+    return {
+        "attn": [f"blocks.{ell}.hook_attn_out" for ell in range(n_layers)],
+        "mlp": [f"blocks.{ell}.hook_mlp_out" for ell in range(n_layers)],
+    }
+
+
+def build_pseudo_stream(v0: np.ndarray, writes: np.ndarray) -> np.ndarray:
+    """Cumulative pseudo-stream ``w`` whose diffs are exactly one write stream.
+
+    ``w_0 = v_0`` (the embedding) and ``w_{ℓ+1} = w_ℓ + write_ℓ``, so downstream
+    ``deltas(w)`` recovers ``writes`` and every Δ-based diagnostic (AR, Granger,
+    stationarity, k*) runs unchanged on a single stream's per-layer residual
+    writes. Only the diffs are meaningful — ``w_ℓ`` for ℓ ≥ 1 is *not* a real
+    model state (the true stream also accumulates the other sublayer's writes).
+    Accumulation in float64, returned as float32 (the store dtype).
+    """
+    n, n_layers, d = writes.shape
+    assert v0.shape == (n, d)
+    w = np.empty((n, n_layers + 1, d), dtype=np.float64)
+    w[:, 0] = v0
+    np.cumsum(writes.astype(np.float64), axis=1, out=w[:, 1:])
+    w[:, 1:] += v0[:, None, :]
+    return w.astype(np.float32)
+
+
+def stream_additivity_stats(
+    attn: np.ndarray, mlp: np.ndarray, dlt: np.ndarray
+) -> dict:
+    """How exactly ``attn + mlp`` reproduces ``Δ`` (fp32 rounding is the only slack).
+
+    Returns the max absolute error, the relative Frobenius error, and per-layer
+    share diagnostics for the memo: mean ‖attn_ℓ‖ / ‖mlp_ℓ‖ / ‖Δ_ℓ‖ and the
+    attention energy share ‖attn‖² / (‖attn‖² + ‖mlp‖²).
+    """
+    err = attn + mlp - dlt
+    max_abs = float(np.abs(err).max())
+    rel_fro = float(np.linalg.norm(err) / np.linalg.norm(dlt))
+    a2 = (attn.astype(np.float64) ** 2).sum(axis=2)  # [N, L]
+    m2 = (mlp.astype(np.float64) ** 2).sum(axis=2)
+    d2 = (dlt.astype(np.float64) ** 2).sum(axis=2)
+    return {
+        "max_abs_err": max_abs,
+        "rel_frobenius_err": rel_fro,
+        "mean_norm_attn": np.sqrt(a2).mean(axis=0).tolist(),
+        "mean_norm_mlp": np.sqrt(m2).mean(axis=0).tolist(),
+        "mean_norm_delta": np.sqrt(d2).mean(axis=0).tolist(),
+        "attn_energy_share": (a2.sum(axis=0) / (a2.sum(axis=0) + m2.sum(axis=0))).tolist(),
+    }
+
+
+def collect_stream_writes(
+    model,
+    prompts: list[str],
+    *,
+    batch_size: int = 8,
+    progress: bool = True,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Collect per-layer attn/MLP residual writes + the residual trajectory.
+
+    One forward pass per batch reads, at the final prompt token, the attention
+    write ``attn_out_ℓ``, the MLP write ``mlp_out_ℓ`` (each ``[N, L, D]``) and the
+    residual states ``v_0 … v_L`` (``[N, L+1, D]``, identical to
+    :func:`collect_trajectories`) — so the R8 additivity check
+    ``attn + mlp = Δ`` runs against the same forward pass, not a stored file.
+    """
+    import torch
+
+    model.tokenizer.padding_side = "right"
+    n_layers = model.cfg.n_layers
+    d_model = model.cfg.d_model
+    resid_names = resid_hook_names(n_layers)
+    stream_names = stream_write_hook_names(n_layers)
+    attn_names, mlp_names = stream_names["attn"], stream_names["mlp"]
+    nameset = set(resid_names) | set(attn_names) | set(mlp_names)
+
+    attn = np.empty((len(prompts), n_layers, d_model), dtype=np.float32)
+    mlp = np.empty((len(prompts), n_layers, d_model), dtype=np.float32)
+    resid = np.empty((len(prompts), n_layers + 1, d_model), dtype=np.float32)
+
+    rng = range(0, len(prompts), batch_size)
+    if progress:
+        from tqdm import tqdm
+
+        rng = tqdm(rng, desc="collecting(streams)", unit="batch")
+
+    with torch.no_grad():
+        for start in rng:
+            batch = prompts[start : start + batch_size]
+            last_idx = torch.tensor([_content_len(model, p) for p in batch])
+            tokens = model.to_tokens(batch, prepend_bos=True)
+            _, cache = model.run_with_cache(
+                tokens, names_filter=lambda n: n in nameset, return_type=None
+            )
+            rows = torch.arange(len(batch))
+            sl = slice(start, start + len(batch))
+            for li, name in enumerate(resid_names):
+                resid[sl, li, :] = cache[name][rows, last_idx].float().cpu().numpy()
+            for li, (a_name, m_name) in enumerate(zip(attn_names, mlp_names, strict=True)):
+                attn[sl, li, :] = cache[a_name][rows, last_idx].float().cpu().numpy()
+                mlp[sl, li, :] = cache[m_name][rows, last_idx].float().cpu().numpy()
+
+    return attn, mlp, resid
+
+
 def collect_trajectories(
     model,
     prompts: list[str],

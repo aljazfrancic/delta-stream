@@ -107,3 +107,28 @@ def test_regularized_cca_heldout_survives_real_structure():
     res = regularized_cca(x[:400], y[:400], x[400:], y[400:], n_components=4, gamma=0.1)
     assert res["test"][0] > 0.6   # real shared structure generalises
     assert res["test"][3] < 0.4   # but only the two planted directions do
+
+
+def test_ar_r2_vs_k_survives_csv_null_label_roundtrip(tmp_path):
+    # pandas reads the literal CSV string "null" as NaN; the fig02 builder must
+    # still find the scrambled-null rows (regression: the null line was empty).
+    import matplotlib
+    matplotlib.use("Agg")
+    import pandas as pd
+
+    from layer_dynamics import figures
+
+    df = pd.DataFrame({
+        "label": ["real", "real", "null", "null"],
+        "k": [1, 2, 1, 2],
+        "r16": [0.3, 0.4, 0.0, 0.0],
+        "best_r2": [0.4, 0.5, 0.0, 0.01],
+    })
+    p = tmp_path / "ar_r2.csv"
+    df.to_csv(p, index=False)
+    rt = pd.read_csv(p)
+    assert rt["label"].isna().sum() == 2  # the failure mode being guarded
+    fig = figures.ar_r2_vs_k(rt)
+    null_line = [ln for ax in fig.axes for ln in ax.get_lines()
+                 if ln.get_label() == "scrambled null"][0]
+    assert len(null_line.get_xdata()) == 2  # both null rows plotted

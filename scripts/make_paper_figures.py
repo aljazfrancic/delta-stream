@@ -58,19 +58,26 @@ def h1_granger():
     if df is None:
         return None
     return figures.granger_heatmap(
-        df, title="Granger nested-F (−log10 p): depth structure to lag 20")
+        df, title=r"Granger nested-F ($-\log_{10}\, p$): depth structure to lag 20")
 
 
 def h2_cross_band():
     df = tbl_csv("ph2-step1-410md", "cross_band_r2.csv")
     if df is None:
         return None
-    return figures.cross_band(df, title="H2 fails: every cross-band R² negative")
+    return figures.cross_band(df, title="H2 fails: every cross-band $R^2$ negative")
 
 
 def kstar():
     df = tbl_csv("ph2-step2-410md", "per_depth_kstar.csv")
-    return figures.kstar_vs_depth(df, granger_reach=20) if df is not None else None
+    if df is None:
+        return None
+    # The one k*>1 bar: Δ_17's lag-1 R² collapses to 0.64 (≈0.86 elsewhere), so the
+    # 95%-of-best rule needs a second lag. Store-specific: ℓ=17 is the 410m
+    # answer-promotion depth (R7 probe jumps 0.57→0.76 there; fig 13 dips there too).
+    note = (17, "$\\ell$=17: lag-1 $R^2$ dips to 0.64 —\nthe answer-promotion write"
+                "\n(R7 probe jump; cf. fig 13)")
+    return figures.kstar_vs_depth(df, granger_reach=20, spike_note=note)
 
 
 def depth_scaling():
@@ -181,7 +188,7 @@ def aL_spectrum():
 
 def source_prefix():
     js = tbl_json("e5-prefix", "embed_only.json")
-    return figures.source_prefix(js) if js and js.get("rows") else None
+    return figures.source_prefix(js, notes=True) if js and js.get("rows") else None
 
 
 def tautology_factual_vs_generic():

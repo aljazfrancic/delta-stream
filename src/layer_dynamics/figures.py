@@ -23,6 +23,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+from matplotlib.ticker import MaxNLocator  # noqa: E402
 
 _STYLED = False
 
@@ -64,6 +65,21 @@ def _rank_cols(df: pd.DataFrame) -> list[str]:
     return [c for c in df.columns if re.fullmatch(r"r\d+", str(c))]
 
 
+def _int_ticks(ax, *, x: bool = True, y: bool = False) -> None:
+    """Integer major ticks for axes indexing whole quantities (layer ℓ, depth L,
+    AR order k, lag j, m) — the default locator happily emits 2.5/7.5 there."""
+    if x:
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    if y:
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+
+
+# NB annotations sit inside the axes; a translucent pad keeps curves from
+# striking through the text (fig01/fig02 overlapped their reference lines).
+_NOTE_BBOX = {"boxstyle": "round,pad=0.25", "facecolor": "white",
+              "edgecolor": "none", "alpha": 0.75}
+
+
 def _annot_heatmap(ax, mat, *, cmap="viridis", vmin=None, vmax=None, fmt="{:.2f}",
                    annot=True):
     im = ax.imshow(mat, cmap=cmap, vmin=vmin, vmax=vmax, aspect="auto")
@@ -88,15 +104,16 @@ def ridge_by_layer(df: pd.DataFrame) -> plt.Figure:
                 label="Tuned-Lens implied (gate baseline)")
     if "zero" in df:
         ax.plot(df["layer"], df["zero"], "--", color="grey", label="zero-pred")
-    ax.axhline(0, color="k", lw=0.6, label="mean-pred (R²=0)")
-    ax.set_xlabel("layer pair ℓ"); ax.set_ylabel("pooled R² on Δ_ℓ")
-    ax.set_title("Depth-local predictability of Δ_ℓ (ridge vs Tuned Lens)")
+    ax.axhline(0, color="k", lw=0.6, label="mean-pred ($R^2$=0)")
+    ax.set_xlabel(r"layer pair $\ell$"); ax.set_ylabel(r"pooled $R^2$ on $\Delta_\ell$")
+    ax.set_title(r"Depth-local predictability of $\Delta_\ell$ (ridge vs Tuned Lens)")
+    _int_ticks(ax)
     # Keep the corrected H1 interpretation attached to the raw number (D3 hazard #1):
     # T1/T4/T5 showed the level is part ±v_ℓ persistence and substantially architectural.
-    ax.annotate("NB: level includes the ±v_ℓ persistence share; the tautology-free\n"
-                "structure is substantially architectural (T4, two families) — see figs 14–15",
+    ax.annotate(r"NB: level includes the $\pm v_\ell$ persistence share; the tautology-free"
+                "\nstructure is substantially architectural (T4, two families) — see figs 14–15",
                 xy=(0.99, 0.03), xycoords="axes fraction", ha="right", va="bottom",
-                fontsize=7, color="dimgray")
+                fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     ax.legend(fontsize=8)
     fig.tight_layout()
     return fig
@@ -108,9 +125,10 @@ def ridge_heatmap(df: pd.DataFrame) -> plt.Figure:
     fig, ax = plt.subplots(figsize=(9, 3.2))
     im = ax.imshow(mat, aspect="auto", cmap="viridis", origin="lower", vmin=0)
     ax.set_yticks(range(len(cols)), [c.lstrip("r") for c in cols])
-    ax.set_xlabel("layer pair ℓ"); ax.set_ylabel("rank")
-    ax.set_title("Δ_ℓ ridge held-out R²(ℓ, rank)")
-    fig.colorbar(im, ax=ax, label="pooled R²")
+    ax.set_xlabel(r"layer pair $\ell$"); ax.set_ylabel("rank")
+    ax.set_title(r"$\Delta_\ell$ ridge held-out $R^2(\ell,\, \mathrm{rank})$")
+    _int_ticks(ax)
+    fig.colorbar(im, ax=ax, label="pooled $R^2$")
     fig.tight_layout()
     return fig
 
@@ -127,8 +145,9 @@ def cca_by_layer(df: pd.DataFrame) -> plt.Figure:
         ax.plot(df["layer"], df["null_te1"], "-^", ms=3, color="tab:red",
                 label="scrambled-null c1")
     ax.set_ylim(0, 1.02)
-    ax.set_xlabel("layer pair ℓ"); ax.set_ylabel("canonical correlation")
+    ax.set_xlabel(r"layer pair $\ell$"); ax.set_ylabel("canonical correlation")
     ax.set_title("Leading canonical correlation by depth"); ax.legend(fontsize=8)
+    _int_ticks(ax)
     fig.tight_layout()
     return fig
 
@@ -140,8 +159,9 @@ def cca_heatmap(df: pd.DataFrame) -> plt.Figure:
     fig, ax = plt.subplots(figsize=(9, 3.2))
     im = ax.imshow(mat, aspect="auto", cmap="viridis", origin="lower", vmin=0, vmax=1)
     ax.set_yticks(range(len(te_cols)), [c.replace("te", "c") for c in te_cols])
-    ax.set_xlabel("layer pair ℓ"); ax.set_ylabel("canonical component")
-    ax.set_title("Held-out canonical correlation between v_ℓ and Δ_ℓ")
+    ax.set_xlabel(r"layer pair $\ell$"); ax.set_ylabel("canonical component")
+    ax.set_title(r"Held-out canonical correlation between $v_\ell$ and $\Delta_\ell$")
+    _int_ticks(ax)
     fig.colorbar(im, ax=ax, label="held-out corr")
     fig.tight_layout()
     return fig
@@ -159,13 +179,15 @@ def ar_r2_vs_k(df: pd.DataFrame) -> plt.Figure:
     ax.plot(real["k"], real["best_r2"], "-o", color="tab:blue", lw=2, label="real (best rank)")
     ax.plot(null["k"], null["best_r2"], "--s", color="tab:red", lw=1.5, label="scrambled null")
     ax.axhline(0, color="k", lw=0.6)
-    ax.set_xlabel("AR order k"); ax.set_ylabel("held-out pooled R² on Δ_ℓ")
-    ax.set_title("AR(k) depth-local predictability of Δ"); ax.legend(fontsize=7, ncol=2)
-    # Corrected H1 interpretation stays attached to the raw curve (D3 hazard #1).
+    ax.set_xlabel("AR order $k$"); ax.set_ylabel(r"held-out pooled $R^2$ on $\Delta_\ell$")
+    ax.set_title(r"AR($k$) depth-local predictability of $\Delta$"); ax.legend(fontsize=7, ncol=2)
+    _int_ticks(ax)
+    # Corrected H1 interpretation stays attached to the raw curve (D3 hazard #1);
+    # lifted off the y=0 scrambled-null line, which used to strike through it.
     ax.annotate("NB: tautology-free share ≈0.44 after persistence stripping (T1),\n"
                 "and substantially architectural (T4) — see figs 14–15",
-                xy=(0.99, 0.03), xycoords="axes fraction", ha="right", va="bottom",
-                fontsize=7, color="dimgray")
+                xy=(0.99, 0.09), xycoords="axes fraction", ha="right", va="bottom",
+                fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     fig.tight_layout()
     return fig
 
@@ -179,10 +201,11 @@ def granger_heatmap(df: pd.DataFrame, *, title: str, vmax: float | None = None,
                    extent=[piv.columns.min() - 0.5, piv.columns.max() + 0.5,
                            -0.5, len(piv.index) - 0.5])
     ax.set_yticks(range(len(piv.index)), [str(j) for j in piv.index])
-    ax.set_xlabel("target depth ℓ"); ax.set_ylabel("lag j")
+    ax.set_xlabel(r"target depth $\ell$"); ax.set_ylabel("lag $j$")
     ttl = title + (f"  [Bonferroni thr={thr:.1f}]" if thr else "")
     ax.set_title(ttl)
-    fig.colorbar(im, ax=ax, label="−log10 p")
+    _int_ticks(ax)
+    fig.colorbar(im, ax=ax, label=r"$-\log_{10}\, p$")
     fig.tight_layout()
     return fig
 
@@ -197,21 +220,33 @@ def cross_band(df: pd.DataFrame, *, title="Cross-band held-out R²") -> plt.Figu
     ax.set_xticks(range(len(bands)), bands); ax.set_yticks(range(len(bands)), bands)
     ax.set_xlabel("evaluated on band"); ax.set_ylabel("kernel fit on band")
     ax.set_title(title)
-    fig.colorbar(im, ax=ax, label="held-out R²")
+    fig.colorbar(im, ax=ax, label="held-out $R^2$")
     fig.tight_layout()
     return fig
 
 
-def kstar_vs_depth(kdf: pd.DataFrame, *, granger_reach: int | None = None) -> plt.Figure:
+def kstar_vs_depth(kdf: pd.DataFrame, *, granger_reach: int | None = None,
+                   spike_note: tuple[int, str] | None = None) -> plt.Figure:
+    """``spike_note=(depth, text)`` annotates one bar — store-specific, so the
+    caller supplies it (the 410m factual store's ℓ=17 answer-promotion dip)."""
     fig, ax = plt.subplots(figsize=(8, 3.4))
-    ax.bar(kdf["depth"], kdf["kstar"], color="tab:blue", label="reconstruction k*")
+    ax.bar(kdf["depth"], kdf["kstar"], color="tab:blue", label="reconstruction $k^*$")
     if "max_feasible_k" in kdf:
-        ax.plot(kdf["depth"], kdf["max_feasible_k"], "k:", lw=0.8, label="max feasible k")
+        ax.plot(kdf["depth"], kdf["max_feasible_k"], "k:", lw=0.8, label="max feasible $k$")
     if granger_reach is not None:
         ax.axhline(granger_reach, color="tab:red", lw=1.5, ls="--",
                    label=f"Granger reach (lag {granger_reach})")
-    ax.set_xlabel("target depth ℓ"); ax.set_ylabel("k")
-    ax.set_title("Effective depth k*(ℓ): reconstruction (≈1) vs Granger reach")
+    if spike_note is not None:
+        dep, text = spike_note
+        row = kdf[kdf["depth"] == dep]
+        if not row.empty:
+            ax.annotate(text, xy=(dep, float(row["kstar"].iloc[0])),
+                        xytext=(dep - 5.5, 0.32 * ax.get_ylim()[1]), fontsize=7,
+                        color="dimgray", ha="center", bbox=_NOTE_BBOX,
+                        arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
+    ax.set_xlabel(r"target depth $\ell$"); ax.set_ylabel("$k$")
+    ax.set_title(r"Effective depth $k^*(\ell)$: reconstruction ($\approx$1) vs Granger reach")
+    _int_ticks(ax, y=True)
     ax.legend()
     fig.tight_layout()
     return fig
@@ -224,9 +259,10 @@ def kstar_r2_heatmap(cdf: pd.DataFrame) -> plt.Figure:
                    extent=[piv.columns.min() - 0.5, piv.columns.max() + 0.5,
                            -0.5, len(piv.index) - 0.5])
     ax.set_yticks(range(len(piv.index)), [str(k) for k in piv.index])
-    ax.set_xlabel("target depth ℓ"); ax.set_ylabel("AR order k")
-    ax.set_title("Held-out R²(depth, k) — value concentrated at k=1")
-    fig.colorbar(im, ax=ax, label="held-out R²")
+    ax.set_xlabel(r"target depth $\ell$"); ax.set_ylabel("AR order $k$")
+    ax.set_title(r"Held-out $R^2$(depth, $k$) — value concentrated at $k$=1")
+    _int_ticks(ax)
+    fig.colorbar(im, ax=ax, label="held-out $R^2$")
     fig.tight_layout()
     return fig
 
@@ -242,10 +278,12 @@ def kstar_r2_vs_k(cdf: pd.DataFrame) -> plt.Figure:
     nm = cdf.groupby("k")["r2_null"].mean()
     ax.plot(nm.index, nm.to_numpy(), "k--", lw=1.5, label="scrambled null (mean)")
     ax.axhline(0, color="grey", lw=0.6)
-    ax.set_xlabel("AR order k"); ax.set_ylabel("held-out R² on Δ_ℓ (single depth)")
-    ax.set_title("Reconstruction R²(k) per depth — saturates at k≈1; null≈0")
+    ax.set_xlabel("AR order $k$")
+    ax.set_ylabel(r"held-out $R^2$ on $\Delta_\ell$ (single depth)")
+    ax.set_title(r"Reconstruction $R^2(k)$ per depth — saturates at $k\approx$1; null≈0")
+    _int_ticks(ax)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(min(depths), max(depths)))
-    fig.colorbar(sm, ax=ax, label="target depth ℓ"); ax.legend()
+    fig.colorbar(sm, ax=ax, label=r"target depth $\ell$"); ax.legend()
     fig.tight_layout()
     return fig
 
@@ -257,10 +295,10 @@ def cca_vs_r2(df: pd.DataFrame) -> plt.Figure:
         ax.annotate(int(r["layer"]), (r["ridge_best_r2"], r["mean_te_top3"]),
                     fontsize=6, xytext=(2, 2), textcoords="offset points")
     ax.axvline(0.5, color="grey", lw=0.6, ls=":"); ax.axhline(0.5, color="grey", lw=0.6, ls=":")
-    ax.set_xlabel("ridge held-out R² (best rank)")
+    ax.set_xlabel("ridge held-out $R^2$ (best rank)")
     ax.set_ylabel("mean held-out canonical corr (c1..c3)")
     ax.set_title("Interpretation key: predictability vs shared subspace")
-    fig.colorbar(sc, ax=ax, label="layer ℓ")
+    fig.colorbar(sc, ax=ax, label=r"layer $\ell$")
     fig.tight_layout()
     return fig
 
@@ -270,9 +308,10 @@ def pressure_t2_t3(t1: pd.DataFrame, t2: dict, t3: dict) -> plt.Figure:
     axes[0].plot(t1["m_removed"], t1["real_best_r2"], "-o", label="real")
     axes[0].plot(t1["m_removed"], t1["scramble_null_r2"], "--s", label="scramble null")
     axes[0].axhline(0, color="k", lw=0.6)
-    axes[0].set_xlabel("# top state directions removed (m)")
-    axes[0].set_ylabel("best held-out AR R² on Δ")
+    axes[0].set_xlabel("# top state directions removed ($m$)")
+    axes[0].set_ylabel(r"best held-out AR $R^2$ on $\Delta$")
     axes[0].set_title("T1 · persistence-stratified AR"); axes[0].legend(fontsize=8)
+    _int_ticks(axes[0])
     if "state_var_removed" in t1:
         sx = axes[0].twiny(); sx.set_xlim(axes[0].get_xlim())
         sx.set_xticks(t1["m_removed"], [f"{v:.2f}" for v in t1["state_var_removed"]],
@@ -281,7 +320,8 @@ def pressure_t2_t3(t1: pd.DataFrame, t2: dict, t3: dict) -> plt.Figure:
     labels = ["real", "surrogate\n(T2)", "scramble"]
     vals = [t2["real_best_r2"], t2["surrogate_r2"], t2["scramble_r2"]]
     axes[1].bar(labels, vals, color=["tab:blue", "tab:orange", "tab:red"])
-    axes[1].axhline(0, color="k", lw=0.6); axes[1].set_ylabel("best held-out AR R² on Δ")
+    axes[1].axhline(0, color="k", lw=0.6)
+    axes[1].set_ylabel(r"best held-out AR $R^2$ on $\Delta$")
     axes[1].set_title(f"T2 nulls + T3 lag≥2 Granger: {t3['lagge2_sig']}/{t3['lagge2_total']} sig")
     fig.tight_layout()
     return fig
@@ -298,7 +338,7 @@ def confusion(df: pd.DataFrame, *, title: str) -> plt.Figure:
     ax.set_yticks(range(n), names)
     ax.set_xlabel("evaluated on"); ax.set_ylabel("kernel fit on")
     ax.set_title(title)
-    fig.colorbar(im, ax=ax, label="held-out R²")
+    fig.colorbar(im, ax=ax, label="held-out $R^2$")
     fig.tight_layout()
     return fig
 
@@ -316,11 +356,11 @@ def pareto(df: pd.DataFrame, *,
             continue
         ax.plot(pts["test_l0"], pts["test_r2"], st, color=col, label=label)
         for _, p in pts.iterrows():
-            ax.annotate(f"λ={p['lambda_l1']:g}", (p["test_l0"], p["test_r2"]),
+            ax.annotate(rf"$\lambda$={p['lambda_l1']:g}", (p["test_l0"], p["test_r2"]),
                         fontsize=6, xytext=(3, 3), textcoords="offset points")
     ax.set_xscale("log")
     ax.set_xlabel("held-out input density (L0 fraction)")
-    ax.set_ylabel("held-out reconstruction R²")
+    ax.set_ylabel("held-out reconstruction $R^2$")
     ax.set_title(title); ax.legend(); ax.grid(True, alpha=0.3)
     fig.tight_layout()
     return fig
@@ -332,9 +372,11 @@ def altmin_curves(df: pd.DataFrame) -> plt.Figure:
     axes[0].plot(its, df["loss"], "o-", color="C0"); axes[0].set_yscale("log")
     axes[0].set_title("loss"); axes[0].set_xlabel("outer iter")
     axes[1].plot(its, df["r2"], "o-", color="C2"); axes[1].axhline(0, ls=":", c="grey")
-    axes[1].set_title("train reconstruction R²"); axes[1].set_xlabel("outer iter")
+    axes[1].set_title("train reconstruction $R^2$"); axes[1].set_xlabel("outer iter")
     axes[2].plot(its, df["l0"], "o-", color="C3")
     axes[2].set_title("input density (L0 fraction)"); axes[2].set_xlabel("outer iter")
+    for a in axes:
+        _int_ticks(a)
     fig.tight_layout()
     return fig
 
@@ -369,30 +411,31 @@ def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
                        facecolors="none", edgecolors=color, s=36, alpha=0.6, zorder=2)
     if any_dom:  # one neutral legend entry for both hollow-marker sets
         ax.scatter([], [], marker="o", facecolors="none", edgecolors="gray",
-                   label="dominated λ point (off frontier)")
+                   label=r"dominated $\lambda$ point (off frontier)")
     ssm_f, base_f = _pareto_frontier(ssm), _pareto_frontier(base)
     ax.plot([r["l0"] for r in ssm_f], [r["r2"] for r in ssm_f], "o-", color="C0",
             label="Branch B SSM (my method)")
     ax.plot([r["l0"] for r in base_f], [r["r2"] for r in base_f], "s--", color="C1",
-            label="Baseline A: per-layer dict on Δ")
+            label=r"Baseline A: per-layer dict on $\Delta$")
     mlsae = js.get("baseline_B_mlsae_implied_delta")
     if isinstance(mlsae, dict) and "l0" in mlsae:
         ax.scatter([mlsae["l0"]], [mlsae["r2"]], marker="*", s=160, color="C3", zorder=5,
-                   label="Baseline B: MLSAE implied Δ")
+                   label=r"Baseline B: MLSAE implied $\Delta$")
     ax.axhline(0.0, color="gray", lw=0.8, ls=":")
-    ax.annotate("R² = 0 (per-depth mean)", (0.02, 0.0), xycoords=("axes fraction", "data"),
+    ax.annotate("$R^2$ = 0 (per-depth mean)", (0.02, 0.0), xycoords=("axes fraction", "data"),
                 va="bottom", fontsize=7, color="gray")
     # Baseline D (CLT) has numbers since E3/R2, but under the FROZEN-SOURCE protocol
-    # (no LASSO input inference) — a different operating point than this plot's axes,
-    # so it gets its own figure rather than a curve here. Placed under the legend so
-    # it reads as a footnote, not as a label of the y=0 reference line.
-    ax.annotate("CLT (Baseline D): see CLT-vs-SSM figure\n(frozen-source protocol)",
+    # (no LASSO input inference), so it has no L0 coordinate on these axes — the
+    # footnote says why the enumerated fourth baseline is absent and where it lives.
+    # Placed under the legend so it reads as a footnote, not an axis-line label.
+    ax.annotate("Baseline D (CLT): frozen-source protocol,\nno comparable L0 — "
+                "see the three-axis CLT figure",
                 (0.97, 0.34), xycoords="axes fraction", ha="right", va="top",
-                fontsize=8, color="gray")
+                fontsize=7, color="gray")
     ax.set_xscale("log")
     ax.set_xlabel("held-out input density (L0 fraction)")
-    ax.set_ylabel("held-out Δ reconstruction R²")
-    ax.set_title("Phase 4 Step 1 — Δ reconstruction vs sparsity")
+    ax.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")
+    ax.set_title(r"Phase 4 Step 1 — $\Delta$ reconstruction vs sparsity")
     ax.legend(loc="center right"); ax.grid(True, alpha=0.3)
     fig.tight_layout()
     return fig
@@ -421,16 +464,19 @@ def clt_three_axis(
         m, c, lab = styles[fam]
         pts = sorted(pts)
         axA.plot([p[0] for p in pts], [p[1] for p in pts], marker=m, color=c, label=lab)
+        # ssm labels above, others below: the ssm/per_layer curves nearly coincide
+        # at matched budget (that IS the R9 result), so same-side labels collide.
+        dy = 5 if fam == "ssm" else -10
         for pm, r2, rk in pts:
             axA.annotate(f"r{rk}", (pm, r2), textcoords="offset points",
-                         xytext=(4, -9), fontsize=7, color=c)
+                         xytext=(4, dy), fontsize=7, color=c)
     axA.set_xscale("log")
     axA.set_xlabel("total parameters (millions, log)")
-    axA.set_ylabel("held-out Δ reconstruction R²")
+    axA.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")
     # Neutral title (4th-pass review): with the R9 param-matched per_layer points
     # (r64 ≈ ssm r32's budget, r128 ≈ ssm r64's) the "SSM Pareto-dominates" reading
     # no longer holds against per_layer — let the frontier speak.
-    axA.set_title("Params → R² at matched total budget (410m, frozen sources)")
+    axA.set_title(r"Params → $R^2$ at matched total budget (410m, frozen sources)")
     axA.legend(fontsize=8, loc="lower right"); axA.grid(alpha=0.3)
 
     ys = range(len(model_gaps))
@@ -440,7 +486,7 @@ def clt_three_axis(
                      fmt="o", capsize=4, **kw)
     axB.set_yticks(list(ys), [g[0] for g in model_gaps])
     axB.axvline(0, color="k", lw=0.8)
-    axB.set_xlabel("SSM − CLT held-out R² (rank 32, 95% CI)")
+    axB.set_xlabel(r"SSM − CLT held-out $R^2$ (rank 32, 95% CI)")
     axB.set_title("Matched per-decoder rank: small CLT edge everywhere")
     axB.grid(alpha=0.3)
 
@@ -448,13 +494,23 @@ def clt_three_axis(
     axC.errorbar([p[0] for p in n_curve], [p[1] for p in n_curve],
                  yerr=[[p[1] - p[2] for p in n_curve], [p[3] - p[1] for p in n_curve]],
                  fmt="o-", color="C0", capsize=4)
-    axC.set_xlabel("training examples N")
-    axC.set_ylabel("SSM − CLT held-out R² (95% CI)")
+    axC.set_xlabel("training examples $N$")
+    axC.set_ylabel(r"SSM − CLT held-out $R^2$ (95% CI)")
     axC.set_title("Low data: the CLT's edge is data-bought")
-    axC.annotate("SSM better", (0.03, 0.95), xycoords="axes fraction", fontsize=8,
-                 color="C0", va="top")
-    axC.annotate("CLT better", (0.03, 0.05), xycoords="axes fraction", fontsize=8,
-                 color="C2")
+    _int_ticks(axC)
+    # The y-axis is the paired gap, so sign = winner: above 0 the SSM reconstructs
+    # better, below 0 the CLT does. Arrows + family colors (SSM C0 / CLT C2, as in
+    # panel A) placed in the two empty corners — the data runs upper-left→lower-right.
+    axC.annotate("SSM better", (0.945, 0.96), xycoords="axes fraction", fontsize=8,
+                 color="C0", ha="right", va="top", fontweight="bold")
+    axC.annotate("", xy=(0.97, 0.985), xytext=(0.97, 0.80),
+                 xycoords="axes fraction", textcoords="axes fraction",
+                 arrowprops={"arrowstyle": "->", "color": "C0", "lw": 1.4})
+    axC.annotate("CLT better", (0.085, 0.04), xycoords="axes fraction", fontsize=8,
+                 color="C2", ha="left", va="bottom", fontweight="bold")
+    axC.annotate("", xy=(0.055, 0.015), xytext=(0.055, 0.20),
+                 xycoords="axes fraction", textcoords="axes fraction",
+                 arrowprops={"arrowstyle": "->", "color": "C2", "lw": 1.4})
     axC.grid(alpha=0.3)
 
     fig.suptitle("Free per-pair CLT vs state-space SSM — rank, parameter budget, data "
@@ -473,7 +529,7 @@ def clt_vs_ssm(rows: list[dict], *, title="Residual-write CLT vs state-space SSM
                     fontsize=8)
     ax.set_xscale("log")
     ax.set_xlabel("effective parameters (millions, log)")
-    ax.set_ylabel("held-out Δ reconstruction R²")
+    ax.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")
     ax.set_title(title); ax.grid(alpha=0.3)
     fig.tight_layout()
     return fig
@@ -504,7 +560,7 @@ def distributed_control(js: dict[str, Any], *, title="Distributed-code control")
                 ms=10, ls="", label=f"matched-random (mass, ≈top-{js['mass_match_k']})")
     ax.axhline(0.20, ls="--", color="0.4", lw=1, label="0.20 threshold")
     ax.set_xscale("log")
-    ax.set_xlabel("group size k (features ablated per example)")
+    ax.set_xlabel("group size $k$ (features ablated per example)")
     ax.set_ylabel("mean drop in answer prob")
     ax.set_title(title); ax.legend(frameon=False, fontsize=8)
     fig.tight_layout()
@@ -524,6 +580,12 @@ def _gauge_bar_ax(ax, summary: dict[str, float]) -> None:
     ax.set_title("System-level invariants are seed-stable")
     for i, v in enumerate(vals):
         ax.text(i, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
+    # E2 (2026-06-30) closed the per-feature story: instability is a property of the
+    # TopK dictionary, not the model — keep that scope attached to the low red/blue bars.
+    ax.annotate("NB: per-feature instability is TopK-dictionary-specific —\n"
+                "a trained-L1 source reaches match@0.7 = 1.00 (E2)",
+                xy=(0.02, 0.845), xycoords="axes fraction", ha="left", va="top",
+                fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     ax.legend()
 
 
@@ -557,39 +619,63 @@ def aL_spectrum(spec_df: pd.DataFrame, decay_df: pd.DataFrame | None = None) -> 
     n = 1 if decay_df is None else 2
     fig, axes = plt.subplots(1, n, figsize=(5.5 * n, 3.8), squeeze=False)
     ax = axes[0][0]
-    ax.plot(spec_df["layer"], spec_df["rho"], "-o", color="tab:red", label="ρ(A_ℓ)")
-    ax.axhline(1.0, color="k", lw=0.8, ls="--", label="unit circle (ρ=1)")
-    ax.set_xlabel("layer ℓ"); ax.set_ylabel("spectral radius ρ(A_ℓ)")
-    ax.set_title("A_ℓ contractive at every depth"); ax.legend()
+    ax.plot(spec_df["layer"], spec_df["rho"], "-o", color="tab:red",
+            label=r"$\rho(A_\ell)$")
+    ax.axhline(1.0, color="k", lw=0.8, ls="--", label=r"unit circle ($\rho$=1)")
+    ax.set_xlabel(r"layer $\ell$"); ax.set_ylabel(r"spectral radius $\rho(A_\ell)$")
+    ax.set_title(r"$A_\ell$ contractive at every depth"); ax.legend()
+    _int_ticks(ax)
     if decay_df is not None:
         ax2 = axes[0][1]
         ax2.plot(decay_df["gap"], decay_df["mean_fro"], "-o", color="tab:purple")
-        ax2.set_xlabel("depth gap (layers)"); ax2.set_ylabel("‖state-path kernel‖_F")
-        ax2.set_title("State-path halves per layer → k*≈1")
+        ax2.set_xlabel("depth gap (layers)")
+        ax2.set_ylabel(r"$\|$state-path kernel$\|_F$")
+        ax2.set_title(r"State-path halves per layer → $k^*\approx 1$")
+        _int_ticks(ax2)
     fig.tight_layout()
     return fig
 
 
-def source_prefix(js: dict[str, Any]) -> plt.Figure:
+def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
+    """``notes=True`` adds the 410m-store dip explanations (paper fig 13):
+    the ℓ=17 answer-promotion write and the ℓ=23 final-write norm outlier."""
     rows = js["rows"]
     cut = [r["cutoff"] for r in rows]
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
     ax1.plot(cut, [r["test_r2"] for r in rows], "-o", color="tab:blue")
     ax1.axhline(0, color="k", lw=0.6)
-    ax1.set_xlabel("source-prefix cutoff ℓ_max (sources kept for ℓ≤ℓ_max)")
-    ax1.set_ylabel("held-out Δ reconstruction R²")
+    ax1.set_xlabel(r"source-prefix cutoff $\ell_{\max}$ (sources kept for "
+                   r"$\ell \leq \ell_{\max}$)")
+    ax1.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")
     ax1.set_title("Reconstruction builds up as per-layer sources are added")
     ax1.grid(alpha=0.3)
+    _int_ticks(ax1)
     # right panel: per-layer R² at the endpoints (full sources vs embedding-only).
     tpl = js.get("test_per_layer_r2_by_cutoff") or {}
     if tpl:
         keys = sorted(tpl, key=int)
         full_pl, embed_pl = tpl[keys[-1]], tpl[keys[0]]
         ax2.plot(range(len(full_pl)), full_pl, "-o", label="full (all sources)")
-        ax2.plot(range(len(embed_pl)), embed_pl, "-s", label="embedding-only (ℓ_max=0)")
+        ax2.plot(range(len(embed_pl)), embed_pl, "-s",
+                 label=r"embedding-only ($\ell_{\max}$=0)")
         ax2.axhline(0, color="k", lw=0.6)
-        ax2.set_xlabel("layer ℓ"); ax2.set_ylabel("held-out Δ_ℓ R²")
-        ax2.set_title("Per-layer R²: endpoints"); ax2.legend()
+        ax2.set_xlabel(r"layer $\ell$"); ax2.set_ylabel(r"held-out $\Delta_\ell$ $R^2$")
+        ax2.set_title(r"Per-layer $R^2$: endpoints")
+        ax2.legend(loc="lower left")  # lower-left corner is the one region no note uses
+        _int_ticks(ax2)
+        if notes:
+            i17 = int(np.argmin(full_pl[1:])) + 1  # interior minimum of the full arm
+            ax2.annotate(rf"$\ell$={i17}: answer-promotion write —"
+                         "\nhardest for both arms (cf. fig 5)",
+                         xy=(i17, full_pl[i17]), xytext=(i17 - 6, -0.85), fontsize=7,
+                         color="dimgray", ha="center", bbox=_NOTE_BBOX,
+                         arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
+            il = len(embed_pl) - 1
+            ax2.annotate(rf"final write ($\ell$={il}): 2–3× the norm of any other"
+                         "\nlayer; embed-only inputs mis-scale it",
+                         xy=(il, embed_pl[il]), xytext=(il - 8.5, embed_pl[il] + 0.55),
+                         fontsize=7, color="dimgray", ha="center", bbox=_NOTE_BBOX,
+                         arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
     fig.tight_layout()
     return fig
 
@@ -604,24 +690,29 @@ def tautology_t1(dfs: dict[str, pd.DataFrame]) -> plt.Figure:
         ax.plot(df["m_removed"], df["scramble_null_r2"], "--", color=c, alpha=0.6,
                 label=f"{name}: scramble null")
     ax.axhline(0, color="k", lw=0.6)
-    ax.set_xlabel("# top persistent state directions removed (m)")
-    ax.set_ylabel("best held-out AR R² on Δ")
+    ax.set_xlabel("# top persistent state directions removed ($m$)")
+    ax.set_ylabel(r"best held-out AR $R^2$ on $\Delta$")
     ax.set_title("T1 · predictability survives stripping state variance (not the tautology)")
     ax.legend(fontsize=8)
+    _int_ticks(ax)
     fig.tight_layout()
     return fig
 
 
 def t5_floor(df: pd.DataFrame, *, r2_full: float | None = None, label="") -> plt.Figure:
     fig, ax = plt.subplots(figsize=(6.5, 4))
-    ax.plot(df["m"], df["frac_par"], "-o", color="tab:red", label="frac_par (tautology floor)")
-    ax.plot(df["m"], df["frac_perp"], "-s", color="tab:blue", label="frac_perp (genuine)")
+    ax.plot(df["m"], df["frac_par"], "-o", color="tab:red",
+            label=r"$\mathrm{frac}_{\parallel}$ (tautology floor)")
+    ax.plot(df["m"], df["frac_perp"], "-s", color="tab:blue",
+            label=r"$\mathrm{frac}_{\perp}$ (genuine)")
     if r2_full is not None:
-        ax.axhline(r2_full, color="k", lw=0.8, ls="--", label=f"R²_full = {r2_full:.3f}")
-    ax.set_xlabel("# persistent state directions m")
-    ax.set_ylabel("share of total Δ variance (additive)")
+        ax.axhline(r2_full, color="k", lw=0.8, ls="--",
+                   label=rf"$R^2_{{\mathrm{{full}}}}$ = {r2_full:.3f}")
+    ax.set_xlabel("# persistent state directions $m$")
+    ax.set_ylabel(r"share of total $\Delta$ variance (additive)")
     ax.set_title(f"T5 · tautology floor vs genuine remainder{(' — ' + label) if label else ''}")
     ax.legend(fontsize=8)
+    _int_ticks(ax)
     fig.tight_layout()
     return fig
 
@@ -636,20 +727,21 @@ def crossclass(js: dict[str, Any]) -> plt.Figure:
     ax.set_yticks(range(len(classes)), classes)
     ax.set_xlabel("evaluated on class"); ax.set_ylabel("kernel fit on class")
     ax.set_title("Cross-class reconstruction — circuit-specific")
-    fig.colorbar(im, ax=ax, label="held-out R²")
+    fig.colorbar(im, ax=ax, label="held-out $R^2$")
     fig.tight_layout()
     return fig
 
 
 def rho_by_depth(df: pd.DataFrame) -> plt.Figure:
     fig, ax = plt.subplots(figsize=(6.5, 3.8))
-    ax.plot(df["layer"], df["rho"], "-o", color="tab:red", label="ρ(A_ℓ)")
+    ax.plot(df["layer"], df["rho"], "-o", color="tab:red", label=r"$\rho(A_\ell)$")
     if "mean_mod" in df:
         ax.plot(df["layer"], df["mean_mod"], "-s", color="tab:blue", ms=3,
-                label="mean |λ|")
-    ax.axhline(1.0, color="k", lw=0.8, ls="--", label="unit circle (ρ=1)")
-    ax.set_xlabel("layer ℓ"); ax.set_ylabel("spectral radius ρ(A_ℓ)")
-    ax.set_title("A_ℓ is contractive at every depth"); ax.legend()
+                label=r"mean $|\lambda|$")
+    ax.axhline(1.0, color="k", lw=0.8, ls="--", label=r"unit circle ($\rho$=1)")
+    ax.set_xlabel(r"layer $\ell$"); ax.set_ylabel(r"spectral radius $\rho(A_\ell)$")
+    ax.set_title(r"$A_\ell$ is contractive at every depth"); ax.legend()
+    _int_ticks(ax)
     fig.tight_layout()
     return fig
 
@@ -657,9 +749,11 @@ def rho_by_depth(df: pd.DataFrame) -> plt.Figure:
 def state_decay(df: pd.DataFrame) -> plt.Figure:
     fig, ax = plt.subplots(figsize=(6.5, 3.8))
     ax.plot(df["gap"], df["mean_fro"], "-o", color="tab:purple")
-    ax.set_xlabel("depth gap (layers)"); ax.set_ylabel("‖C(∏A)B‖_F  (state-path kernel)")
-    ax.set_title("State-path kernel halves per layer → first-order (k*≈1)")
+    ax.set_xlabel("depth gap (layers)")
+    ax.set_ylabel(r"$\|C(\prod A)B\|_F$  (state-path kernel)")
+    ax.set_title(r"State-path kernel halves per layer → first-order ($k^*\approx 1$)")
     ax.grid(alpha=0.3)
+    _int_ticks(ax)
     fig.tight_layout()
     return fig
 
@@ -673,7 +767,7 @@ def per_lag_frobenius(df: pd.DataFrame) -> plt.Figure:
         sub = df[df["pair"] == pair].sort_values("lag")
         ax.bar([x + (i - (len(pairs) - 1) / 2) * width for x in sub["lag"]],
                sub["rel_frobenius"], width=width, label=pair)
-    ax.set_xlabel("lag j"); ax.set_ylabel("relative ‖W_j^A − W_j^B‖_F")
+    ax.set_xlabel("lag $j$"); ax.set_ylabel(r"relative $\|W_j^A - W_j^B\|_F$")
     ax.set_xticks(list(lags))
     ax.set_title("Per-lag kernel-block distance between bands"); ax.legend(fontsize=8)
     fig.tight_layout()
@@ -740,7 +834,7 @@ def within_vs_cross(conf: pd.DataFrame) -> plt.Figure:
     x = np.arange(len(names))
     ax.bar(x - 0.2, within, 0.4, label="within-position (diagonal)")
     ax.bar(x + 0.2, cross, 0.4, label="mean cross-position")
-    ax.set_xticks(x, names, rotation=20, ha="right"); ax.set_ylabel("held-out R²")
+    ax.set_xticks(x, names, rotation=20, ha="right"); ax.set_ylabel("held-out $R^2$")
     ax.set_title("Within- vs cross-position reconstruction"); ax.legend(fontsize=8)
     fig.tight_layout()
     return fig
@@ -778,10 +872,10 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
                      textcoords="offset points", xytext=(-6, -2) if left else (6, -2),
                      ha="right" if left else "left", fontsize=8)
     axL.axhline(0, color="k", lw=0.8)
-    axL.set_xlabel("depth L (layers)")
+    axL.set_xlabel("depth $L$ (layers)")
     axL.set_ylabel(
-        f"SSM − per-layer-baseline R² gap at λ_L1={rows[0].get('knee_lambda', 1):g}"
-        if knee else "max SSM − per-layer-baseline R² gap")
+        rf"SSM − per-layer-baseline $R^2$ gap at $\lambda_{{L1}}$={rows[0].get('knee_lambda', 1):g}"
+        if knee else r"max SSM − per-layer-baseline $R^2$ gap")
     # Honest title (4th-pass review): monotone is a within-Pythia statement (depth is
     # confounded with width/params in-family; 12L cross-family points span 0.013–0.041).
     axL.set_title("Cross-layer propagation gain vs depth (monotone within Pythia)")
@@ -800,8 +894,13 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
                      textcoords="offset points", xytext=(-6, -4) if left else (6, -4),
                      ha="right" if left else "left", fontsize=8)
     axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
-    axR.set_xlabel("depth L (layers)"); axR.set_ylabel("seed match@0.7")
+    axR.set_xlabel("depth $L$ (layers)"); axR.set_ylabel("seed match@0.7")
     axR.set_ylim(0, 1.05); axR.set_title("Seed-stability tracks SAE source type, not depth")
     axR.legend(fontsize=8, loc="center left"); axR.grid(alpha=0.3)
+    # tick exactly the depths that exist (6/12/24) — the auto locator puts ticks
+    # at 7.5/12.5 on this axis, which reads as non-integer layer counts.
+    depth_ticks = sorted({r["L"] for r in rows})
+    for a in (axL, axR):
+        a.set_xticks(depth_ticks)
     fig.tight_layout()
     return fig

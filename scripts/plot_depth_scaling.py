@@ -27,11 +27,7 @@ import glob
 import json
 from pathlib import Path
 
-import matplotlib
 import numpy as np
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 # (label, gate3 glob [matches ALL seeds], step4 glob [single], SAE suite, family, SAE type).
 # Qwen2-0.5B's Phase-3 is on its 12-layer SAE-coverage prefix (chanind covers blocks 0..11).
@@ -133,65 +129,13 @@ def main() -> int:
     with (out / "tables" / "depth_scaling_gaps.json").open("w") as fh:
         json.dump(rows, fh, indent=2)
 
-    fig, (axL, axR) = plt.subplots(1, 2, figsize=(12, 4.6))
+    # single source of truth for the two-panel figure (paper fig06 reads the JSON
+    # dumped above through make_paper_figures; this in-place copy must match it)
+    from layer_dynamics import figures
 
-    # --- left: depth-scaling of the cross-layer-propagation gap (Pythia = mean±sd over
-    # seeds), using the robust λ-knee statistic (gap_max kept in the JSON for the record —
-    # its matched-L0 interpolation is fragile on the saturated Pareto tail; review 2026-07-02).
-    pyth = [r for r in rows if r["family"] == "Pythia"]
-    axL.errorbar([r["L"] for r in pyth], [r["knee_mean"] for r in pyth],
-                 yerr=[r["knee_sd"] for r in pyth], fmt="-o", color="tab:blue", capsize=4,
-                 label="Pythia / TopK suites (in-family, mean±sd)", zorder=3)
-    xfam_color = {"GPT-2": "tab:orange", "Qwen": "tab:green"}
-    for r in rows:
-        if r["family"] != "Pythia":
-            axL.scatter([r["L"]], [r["knee_mean"]], marker="D", s=70,
-                        color=xfam_color.get(r["family"], "tab:orange"),
-                        zorder=4, label=f"{r['family']} / {r['suite']} (cross-family)")
-    xmax = max(r["L"] for r in rows)
-    for r in rows:
-        tag = (f"+{r['knee_mean']:.3f}±{r['knee_sd']:.3f}" if r["n_seeds"] > 1
-               else f"+{r['knee_mean']:.3f}")
-        # Qwen's Phase-3 runs on the 12L SAE-coverage prefix of a 24-layer model — its
-        # x-position is modeled-prefix length, not model depth (4th-pass review).
-        if r["family"] == "Qwen":
-            tag += "\n(12L prefix of a 24L model)"
-        left = r["L"] == xmax  # rightmost point: label to the left or it clips outside
-        axL.annotate(f"{r['label']}\n{tag}", (r["L"], r["knee_mean"]),
-                     textcoords="offset points", xytext=(-6, -2) if left else (6, -2),
-                     ha="right" if left else "left", fontsize=8)
-    axL.axhline(0, color="k", lw=0.8)
-    axL.set_xlabel("depth L (number of layers)")
-    axL.set_ylabel(f"SSM − per-layer-baseline R² gap at λ_L1={KNEE_LAMBDA:g}")
-    # Honest title (4th-pass review): the monotone trend is within-Pythia, where depth is
-    # confounded with width/params; cross-family points at 12L span 0.013–0.041.
-    axL.set_title("Cross-layer propagation gain vs depth (monotone within Pythia)")
-    # lower right is the one empty region (Qwen occupies the upper left at (12, ~0.044));
-    # anchored a little up so the box clears the y=0 line
-    axL.legend(fontsize=8, loc="lower right", bbox_to_anchor=(0.98, 0.10))
-    axL.grid(alpha=0.3)
-
-    # --- right: seed-stability vs depth, grouped by SAE *type* (the actual lever) ---
-    for sae_type, color in (("TopK", "tab:blue"), ("L1", "tab:orange")):
-        pts = [r for r in rows if r["sae_type"] == sae_type]
-        axR.scatter([r["L"] for r in pts], [r["seed"] for r in pts], s=70, color=color,
-                    label=f"{sae_type} SAEs")
-    for r in rows:
-        axR.annotate(f"{r['label']}\n{r['seed']:.2f}", (r["L"], r["seed"]),
-                     textcoords="offset points",
-                     xytext=(-6, -4) if r["L"] == xmax else (6, -4),
-                     ha="right" if r["L"] == xmax else "left", fontsize=8)
-    axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
-    axR.set_xlabel("depth L (number of layers)")
-    axR.set_ylabel("seed match@0.7 (decoder-direction stability)")
-    axR.set_ylim(0, 1.05)
-    axR.set_title("Seed-stability tracks SAE source type, not depth")
-    axR.legend(fontsize=8, loc="center left")
-    axR.grid(alpha=0.3)
-
-    fig.tight_layout()
-    path = out / "figures" / "depth_scaling.svg"
-    fig.savefig(path, bbox_inches="tight")
+    figures.apply_style()
+    fig = figures.depth_scaling(rows)
+    path = figures.save_svg(fig, out / "figures" / "depth_scaling.svg")
     print(f"wrote {path}")
     for r in rows:
         tag = f"±{r['gap_sd']:.3f} (n={r['n_seeds']})" if r["n_seeds"] > 1 else "(n=1)"

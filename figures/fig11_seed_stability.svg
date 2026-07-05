@@ -1134,10 +1134,27 @@ L 812.945866 33.802148
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="768.623918" y="49.80177" transform="rotate(-0 768.623918 49.80177)">0.96</text>
    </g>
    <g id="text_39">
+    <g id="patch_100">
+     <path d="M 454.602915 87.360759 
+L 645.923853 87.360759 
+Q 647.673853 87.360759 647.673853 85.610759 
+L 647.673853 68.806931 
+Q 647.673853 67.056931 645.923853 67.056931 
+L 454.602915 67.056931 
+Q 452.852915 67.056931 452.852915 68.806931 
+L 452.852915 85.610759 
+Q 452.852915 87.360759 454.602915 87.360759 
+z
+" style="fill: #ffffff; opacity: 0.75"/>
+    </g>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(454.602915 74.826521)">NB: per-feature instability is TopK-dictionary-specific —</text>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(454.602915 83.228435)">a trained-L1 source reaches match@0.7 = 1.00 (E2)</text>
+   </g>
+   <g id="text_40">
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="630.11783" y="27.802148" transform="rotate(-0 630.11783 27.802148)">System-level invariants are seed-stable</text>
    </g>
    <g id="legend_2">
-    <g id="patch_100">
+    <g id="patch_101">
      <path d="M 452.889794 52.202773 
 L 507.024794 52.202773 
 Q 508.624794 52.202773 508.624794 50.602773 
@@ -1156,7 +1173,7 @@ L 462.489794 44.280898
 L 470.489794 44.280898 
 " style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #000000"/>
     </g>
-    <g id="text_40">
+    <g id="text_41">
      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="476.889794" y="47.080898" transform="rotate(-0 476.889794 47.080898)">0.7 bar</text>
     </g>
    </g>

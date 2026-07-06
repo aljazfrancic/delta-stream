@@ -1,0 +1,67 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{Limitation 1 --- feature novelty is structurally out of reach.}
+The pre-registered novelty test (find a feature no baseline finds) reduces to
+a structural fact here: the SSM sources from the \emph{same} SAE atoms as the
+per-layer baselines, so no feature can be novel by activation identity. The
+contribution is the cross-layer propagation structure over those atoms; no
+novelty fraction is computable or claimed.
+
+\paragraph{Limitation 2 --- cross-family coverage stops at 0.5B parameters.}
+Every experiment ran on one 3\,GB GPU (GTX 1050;
+\cref{app:repro}), which admits Pythia to 410m, GPT-2 to large, and
+Qwen2-0.5B, but not Gemma-2-2B or Llama-3.1-8B. The replication evidence is
+therefore three families at 6--36 layers; the two most architecturally
+distinct modern families are recorded future work, as is deconfounding depth
+from width within Pythia (1b/1.4b/2.8b).
+
+\paragraph{Limitation 3 --- three relation classes.}
+The primary model confidently knows too few CounterFact facts for the
+protocol's original $\ge$1{,}000-per-class target, so the study is scoped to
+geography, language, and organization. No load-bearing claim depends on class
+breadth --- the reconstruction and characterisation results are
+cross-model-replicated and the causal result is a controlled null --- but
+cross-relation generality beyond these classes is untested, and the observed
+dissociation (organization features reconstruct class-specifically yet ablate
+non-specifically; geography features are specific on both) is reported on
+three classes without a breadth claim.
+
+\paragraph{Scope of the characterisation.}
+All kernels are fit at the \emph{query position} of factual-recall prompts;
+cross-position transfer is negative (\cref{sec:phase2:scope}), so nothing
+here describes token positions in general. The generic-text replication uses
+short windows (median 9 content tokens) length-matched to the prompts. The
+attention/MLP split of \cref{sec:phase1:sublayer} is exact only for
+parallel-block architectures like Pythia. Correctness-based probe targets are
+degenerate by construction (the dataset is filtered to model-correct facts),
+which is why the probe targets answer identity.
+
+\paragraph{Methodological.}
+The held-out protocol is reconstruction-at-matched-sparsity (codes re-inferred
+on test $\Delta$ with frozen operators), standard for dictionary learning but
+not out-of-sample forecasting; all arms are treated identically and
+\cref{app:operating} tabulates the operating points. Some hyperparameter
+selection touched the test split: AR best-($k$, rank) is a max over
+symmetric real-vs-null evaluations (the contrast is the claim), and the CLT
+family's $\lambda_{\mathrm{reg}}$ was re-selected on a validation carve-out
+with the conclusion unchanged (\cref{sec:evaluation:clt}); the Granger F
+approximation is empirically calibrated rather than assumed
+(\cref{app:stats}). The CLT comparison is the residual-write variant on
+frozen shared sources with per-pair rank $\le 64$; a natively-trained,
+jointly-sourced CLT could behave differently and remains the right off-box
+follow-up. Untrained-network controls use a single random initialisation each
+(their qualitative conclusions --- never trained $\gg$ untrained for AR;
+untrained $\approx$ half for reconstruction --- are far from the decision
+boundaries). Block-Toeplitz structure was always an approximation to test,
+not a derivation from the nonlinear architecture; H2's failure retires it.
+
+\paragraph{Interpretive.}
+H1's headline numbers are partly tautological and substantially architectural
+(\cref{sec:phase1:pressure}); we consider the quantified version of that
+sentence a contribution, but it means raw AR-on-$\Delta$ levels from this or
+any similar pipeline should never be quoted as learned depth-computation. The
+causal null is a null for \emph{this} feature-ablation methodology at
+\emph{these} thresholds on \emph{this} circuit family; it constrains
+single-feature stories of recall, not all causal uses of sparse
+decompositions.

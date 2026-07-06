@@ -1,0 +1,131 @@
+\section{Introduction}
+\label{sec:intro}
+
+Mechanistic interpretability decomposes transformer activations mostly layer by
+layer. Sparse autoencoders (SAEs) recover human-legible features from a single
+layer's residual stream \citep{cunningham2023sparse,bricken2023monosemanticity,
+templeton2024scaling}, but a per-layer dictionary answers only a per-layer
+question --- \emph{what features live here?} --- and not the question that
+matters for circuit analysis and causal editing: \emph{how does what a layer
+writes relate to what earlier layers wrote?} The field has begun to attack
+this directly. Crosscoders fit one dictionary across all layers
+\citep{lindsey2024crosscoders}; multi-layer SAEs (MLSAEs) find that the same
+latent fires at different depths on different prompts \citep{lawson2024mlsae};
+and cross-layer transcoders (CLTs), the substrate of attribution-graph circuit
+tracing, give every feature a \emph{free} decoder at every downstream layer ---
+$O(L^2)$ independent decoder matrices with no prior connecting them
+\citep{ameisen2025circuit}.
+
+This paper asks whether that free-parameter budget is load-bearing or
+redundant, and it asks the question the way one asks it in signal processing:
+by modelling the \emph{increments}. Because the residual stream is additive,
+$v_{\ell+1} = \vl + \Dl$, regressing states on states trivially recovers the
+identity; the non-trivial object is the update $\Dl = v_{\ell+1} - \vl$ ---
+what the layer \emph{adds} --- exactly as differencing removes the trend in
+classical time-series analysis. We pre-registered two nested hypotheses about
+these updates on factual-recall inputs:
+
+\begin{description}
+  \item[H1 (depth-local predictability).] $\Dl$ is predictable from the
+    preceding updates $\Delta_{\ell-1}, \Delta_{\ell-2}, \dots$ by a low-rank
+    linear map, above scrambled-activation and context-perturbation nulls ---
+    residual updates form an autoregressive process along depth.
+  \item[H2 (approximate stationarity).] The prediction kernel is approximately
+    shared across depth, so that a single block-Toeplitz (convolutive) kernel
+    $\Dl \approx \sum_k W_k\, s_{\ell-k}$ over sparse per-layer sources is a
+    useful generative model. Under H2, CLT's $O(L^2)$ decoder matrices would
+    collapse to $O(K)$ shared kernel taps.
+\end{description}
+
+The hypothesis was motivated by an analogy to convolutive blind source
+separation in high-density surface electromyography, where sources mix into
+recordings through characteristic propagation kernels
+\citep{holobar2007multichannel}; the analogy generated the hypothesis and
+nothing else --- the formal models and tests are native to interpretability
+and classical statistics. Crucially, the study was \emph{pre-registered}: a
+frozen protocol fixed the diagnostics, the go/no-go gates, the null controls,
+the decomposition architecture as a function of the gate outcomes, and the
+causal-evaluation thresholds, before any data were collected. Where the data
+contradicted the more exciting branch, we took the pre-registered exit. Both
+hypotheses could have failed cheaply; what actually happened is more
+interesting than either clean outcome.
+
+\paragraph{What we found.} H1 survives every control we could construct ---
+including two nulls specified in advance and a post-hoc pressure battery
+designed to break it --- but decomposes on inspection: an exact
+(Pythagorean) split of the headline autoregressive $\Rsq$ shows that on
+factual prompts $0.65 = 0.52$ running-sum tautology $+\;0.13$ genuine
+structure, and an untrained-network control shows the genuine part is
+\emph{substantially architectural} --- a randomly initialised transformer
+exhibits it at comparable strength, on two model families
+(\cref{sec:phase1}). H2 fails decisively and non-negotiably: an AR kernel fit
+on one third of the depth axis predicts another third's updates \emph{worse
+than that band's own mean}, at every rank, with no clean segment boundary
+(\cref{sec:phase2}). The pre-registered consequence is that the generative
+model must be a first-order, fully depth-indexed state-space model (SSM) ---
+and that CLT's refusal to share parameters across depth is \emph{validated},
+not wasteful.
+
+Fitting that SSM over frozen per-layer SAE sources yields the paper's central
+positive result (\cref{sec:evaluation}): cross-layer state reconstructs
+residual updates above a matched per-layer dictionary at every sparsity
+($+0.049$ $\Rsq$ \CI{$+0.046$}{$+0.052$} at matched rank, $+0.008$
+\CI{$+0.005$}{$+0.010$} at matched total parameters), the gain grows
+monotonically with depth (6 layers $+0.008 \to$ 24 layers $+0.050$ within
+Pythia; replicated in GPT-2 and Qwen2), and about half of it is present at
+random initialisation --- so the method captures a genuinely learned signal
+roughly equal in size to the architectural one. The learned state-transition
+operator is contractive everywhere (spectral radius median $0.43$, implied
+memory $\approx 0.8$ layers), which \emph{explains} the observed first-order
+structure, and the state is functionally informative: at matched dimension it
+decodes the recalled answer at mid-depth better than PCA summaries of the
+codes it is built from.
+
+The pre-registered causal test --- find a feature no baseline finds, ablate
+it, predict the behavioural consequence --- returns a null we consider one of
+the paper's main contributions (\cref{sec:evaluation:causal}). No single
+feature clears the pre-registered effect threshold; ablating each example's
+top-100 co-firing features does clear it, but a \emph{norm-matched random
+direction} reproduces that group effect, so it is a magnitude effect, not
+evidence of a privileged code. The null is dictionary-independent: a cleaner
+L1 dictionary concentrates single-feature effects five-fold and still finds no
+bottleneck. Factual recall in this model is a distributed, mass-driven code.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item A pre-registered, gate-structured characterisation of residual-update
+    dynamics: H1 holds (with an exact accounting of how much is tautology,
+    and evidence the remainder is substantially architectural); H2 fails
+    (pervasive non-stationarity, $\kstar\!\approx\!1$, query-position-specific
+    and circuit-specific kernels); both replicate across six models, three
+    families, and on generic Pile text (\cref{sec:phase1,sec:phase2}).
+  \item A first-order, fully depth-indexed SSM decomposition of $\Dl$ over
+    sparse per-layer sources, with a reconstruction gain over matched
+    per-layer baselines that is CI-significant, depth-graded, and
+    approximately half learned / half architectural
+    (\cref{sec:decomposition,sec:evaluation}).
+  \item A three-axis comparison against the unconstrained $O(L^2)$
+    residual-write CLT parameterisation: at matched per-decoder rank the CLT
+    keeps a small significant edge; at matched \emph{total} parameters the SSM
+    Pareto-dominates up to 52M parameters; below ${\sim}1$k training examples
+    the SSM generalises better (\cref{sec:evaluation:clt}).
+  \item A clean, fully controlled causal null: recall is distributed and
+    magnitude-driven, with no privileged sparse subset --- established with
+    matched-count, matched-mass, and norm-matched random-direction controls,
+    and robust to the dictionary (\cref{sec:evaluation:causal}).
+  \item Two structural positives that survive every robustness check: the
+    contractive propagation operator (gauge-invariant spectrum, seed cosine
+    $0.999$, dictionary cosine $0.993$), and the functional informativeness of
+    the SSM state for answer identity at mid-depth
+    (\cref{sec:evaluation:operator,sec:evaluation:probe}).
+  \item A practical warning for the field: TopK dictionaries make
+    single-feature decoder directions seed-unidentifiable (match@0.7 $=0.45$)
+    where matched L1 dictionaries trained on the same activations are
+    perfectly stable ($1.00$) --- an identifiability failure that lives in the
+    sparsity mechanism, not the model or the decomposition
+    (\cref{sec:evaluation:stability}).
+\end{enumerate}
+
+Everything reproduces from tracked run tables via one script; the protocol
+documents were frozen before data collection and every deviation is logged
+(\cref{app:prereg,app:repro}).

@@ -1,0 +1,83 @@
+% =============================================================================
+% How Residual-Stream Updates Travel Through Depth
+% A Pre-Registered Study of Cross-Layer Dynamics in Transformers
+%
+% Single-column article. Build: latexmk -pdf paper.tex   (run inside paper/; the
+% .latexmkrc adds -shell-escape, which the svg package needs for Inkscape).
+%
+% Section skeleton = the pre-registered outline (docs/implementation-plan/
+% phase-4-evaluation.md, Step 4):
+%   1 Introduction · 2 Related work · 3 Phase-1 findings · 4 Phase-2 findings
+%   5 The decomposition · 6 Evaluation · 7 Limitations · 8 Discussion
+%   9 Conclusion · Appendices
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+
+% --- layout & typography -----------------------------------------------------
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% --- math --------------------------------------------------------------------
+\usepackage{amsmath,amssymb,mathtools}
+
+% --- tables & figures --------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{svg}            % \includesvg — needs -shell-escape + inkscape
+\svgpath{{../figures/}}     % curated paper figures live in the repo's figures/
+\svgsetup{inkscapelatex=false} % keep the SVGs' own (matplotlib) text rendering
+\usepackage[font=small,labelfont=bf]{caption}
+
+% --- citations & links -------------------------------------------------------
+\usepackage[round,authoryear]{natbib}
+\usepackage{xcolor}
+\definecolor{linkblue}{RGB}{40,70,140}
+\usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
+\usepackage[capitalize,noabbrev]{cleveref}
+
+% --- notation macros ---------------------------------------------------------
+\newcommand{\vl}{v_\ell}
+\newcommand{\Dl}{\Delta_\ell}
+\newcommand{\kstar}{k^{\ast}}
+\newcommand{\Rsq}{R^2}
+\newcommand{\CI}[2]{[#1,\,#2]}                    % confidence interval
+\newcommand{\pythia}{Pythia-410m-deduped}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\title{\textbf{How Residual-Stream Updates Travel Through Depth}\\[1.2ex]
+  {\large A Pre-Registered Study of Cross-Layer Dynamics in Transformers}}
+\author{Alja\v{z} Fran\v{c}i\v{c}\\
+  Independent Researcher\\
+  \texttt{aljaz.francic@gmail.com}}
+\date{Draft of \today}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/00-abstract}
+\input{sections/01-introduction}
+\input{sections/02-related-work}
+\input{sections/03-phase1}
+\input{sections/04-phase2}
+\input{sections/05-decomposition}
+\input{sections/06-evaluation}
+\input{sections/07-limitations}
+\input{sections/08-discussion}
+\input{sections/09-conclusion}
+
+\subsubsection*{Acknowledgements}
+Drafting, code review, and experiment execution were assisted by AI coding
+tools; all analyses, decisions, and text were reviewed by the author.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

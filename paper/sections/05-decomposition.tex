@@ -1,0 +1,100 @@
+\section{The decomposition: a first-order, fully depth-indexed SSM over sparse
+sources}
+\label{sec:decomposition}
+
+\subsection{Form}
+\label{sec:decomposition:form}
+
+Gate 2's decision matrix, applied to \cref{sec:phase2}, fixes the
+architecture: pervasive (not smooth, not segmented) depth dependence rules out
+shared and interpolated kernels, and $\kstar\!\approx\!1$ makes the depth
+latent first-order. The generative model is a linear state-space model with
+free per-layer operators:
+\begin{equation}
+  z_{\ell+1} = A_\ell z_\ell + B_\ell u_\ell, \qquad
+  \hat\Delta_\ell = b_\ell + C_\ell z_\ell + D_\ell u_\ell,
+  \label{eq:ssm}
+\end{equation}
+where $u_\ell \in \mathbb{R}^{M_\ell}$ are sparse per-layer source codes,
+$z_\ell \in \mathbb{R}^{d_z}$ is the cross-layer state, $b_\ell$ is an
+unpenalised per-layer bias absorbing $\bar\Delta_\ell$, and every operator is
+rank-factored ($A_\ell = A^{(1)}_\ell A^{(2)\top}_\ell$, rank $r$; likewise
+$B, C, D$). The feedthrough $D_\ell u_\ell$ is the per-layer (no-propagation)
+path; the state path $C_\ell z_\ell$ carries whatever earlier layers
+contribute. The comparison that isolates the value of cross-layer propagation
+is therefore built in: the same model with the state ablated
+($\hat\Delta_\ell = b_\ell + D_\ell u_\ell$, \code{use\_state=False}) is a
+matched per-layer sparse dictionary sharing the optimiser, sources, sparsity
+sweep, and rank. Primary setting: $r = d_z = 32$.
+
+\subsection{Sources}
+\label{sec:decomposition:sources}
+
+Source codes initialise from public per-layer SAE latents of $\vl$. On the
+primary model these are the MLSAE per-layer suite for \pythia{}
+\citep{lawson2024mlsae} ($M = 65{,}536$, TopK $k{=}32$, all 24 layers); on the
+narrow query-position distribution only 497--4{,}433 latents per layer ever
+fire, so each layer is pruned to its alive set ($M^*_\ell \le 4{,}433$) ---
+standard dead-latent removal, exact for reconstruction, and legitimate here
+because the depth-indexed form permits per-layer widths. $v_0$ has no public
+embedding SAE, so $u_0$ is zero-initialised and free. Matched SAE state
+reconstruction averages $\Rsq = 0.598$ across layers (two weak public
+checkpoints at $v_{18}/v_{19}$, 0.21/0.31, are shared by both comparison arms
+and cancel in every gap we report). Because the dictionary turned out to
+matter for identifiability (\cref{sec:evaluation:stability}), we also train
+matched \textbf{L1} and \textbf{TopK} dictionaries on the same cached
+activations --- identical architecture (per-token standardisation, tied
+decoder bias, unit-norm decoder columns), differing \emph{only} in the
+sparsity mechanism (L1 coefficient 0.5 giving $L_0 \approx 36$, matched to
+TopK $k{=}32$) --- including leakage-free variants fit on the train split
+only.
+
+\subsection{Optimisation and evaluation protocols}
+\label{sec:decomposition:opt}
+
+The loss is squared reconstruction error over depths and examples, plus an L1
+penalty on all $u^{(i)}_\ell$ and a Frobenius penalty on the operators
+($\lambda_{\mathrm{reg}} = 10^{-4}$). Optimisation alternates exactly as
+pre-registered: (i) a proximal-gradient LASSO pass over each example's stacked
+codes $(u_0,\dots,u_{L-1})^{(i)}$ with operators frozen --- FISTA with
+backtracking \citep{beck2009fista}, validated against \code{sklearn} LASSO
+and closed-form least squares, keeping the exact zeros a penalised Adam would
+lose --- and (ii) a full-batch Adam sweep over
+$\{A_\ell,B_\ell,C_\ell,D_\ell,b_\ell,z_0\}$ with codes frozen, differentiated
+through the unrolled SSM. Ten outer iterations; the method was debugged
+end-to-end on Pythia-70m before touching the primary lane.
+
+Held-out numbers in this paper come from two protocols, and conflating them
+creates apparent contradictions, so we name them here and tabulate every
+operating point in \cref{app:operating}:
+\begin{description}
+  \item[LASSO protocol (the Gate-3 protocol).] Operators frozen after
+    training; test codes re-inferred by the same LASSO against the test
+    $\Delta$. This is \emph{reconstruction at matched sparsity} --- the
+    standard dictionary-learning evaluation --- not out-of-sample forecasting;
+    both comparison arms are treated identically.
+  \item[Frozen-source protocol.] Decoders fit by Adam on the \emph{fixed}
+    cached codes, no re-inference. Used for the CLT family
+    (\cref{sec:evaluation:clt}), where it isolates the decoder
+    parameterisation; its absolute levels sit ${\sim}0.08$ below the LASSO
+    protocol for every method.
+\end{description}
+
+\subsection{Pre-registered sanity checks}
+\label{sec:decomposition:sanity}
+
+All mandatory checks pass on the primary fit: no collapse to the bias
+solution (operator norms 252 vs bias norm 11; $L_0 \approx 0.009$);
+per-example reconstruction eyeball median $\Rsq = 0.98$; top-20 features have
+mean relation-class purity 0.83 with human-legible themes (e.g.\ a
+``employed-by/manufactured-by $\to$ company'' feature at layer 9, a
+``premiered-on $\to$ TV network'' feature at layer 1, a ``European place
+$\to$ Europe'' feature at layer 22); dataset stability across disjoint halves
+top-100 Jaccard 0.89. Seed stability of decoder \emph{directions} failed its
+pre-registered bar on the TopK source (0.45 < 0.7) --- recorded at Gate 3 as
+a limitation, and subsequently traced to the dictionary type and closed, a
+story told in full in \cref{sec:evaluation:stability}.
+
+\textbf{Gate-3 verdict: GO} --- the reconstruction clause is met with margin
+(next section), and the then-open seed-stability limitation was scoped to
+single-feature decoder identifiability, which no headline claim uses.

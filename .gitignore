@@ -45,3 +45,20 @@ figures/*
 
 # Notebooks are for exploration only
 .ipynb_checkpoints/
+
+# LaTeX build artefacts (paper/) — latexmk regenerates everything; only the
+# sources (paper.tex, sections/, references.bib, .latexmkrc, README.md) are
+# tracked. paper.pdf is a build product; svg-inkscape/ is the svg package's
+# Inkscape conversion cache.
+paper/*.aux
+paper/sections/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz
+paper/paper.pdf
+paper/svg-inkscape/

@@ -1,0 +1,286 @@
+\section{Phase 1 --- is the residual update predictable across depth?}
+\label{sec:phase1}
+
+\subsection{Study design}
+\label{sec:phase1:setup}
+
+\paragraph{Pre-registration.}
+The full protocol --- four phases, per-step procedures, three go/no-go gates,
+null controls, decision matrices, and the causal-evaluation thresholds --- was
+written and frozen before any data were collected. Progress and deviations
+were recorded exclusively in a separate tracker so that no pre-registered bar
+could drift. Every deviation from the plan (all quantitative-threshold
+adjustments explicitly sanctioned by the plan's own tuning rules, plus one
+descoping decision) is enumerated in \cref{app:prereg}. The three gates:
+Gate~1 (is H1 supported above null?), Gate~2 (does H2 hold? --- this picks the
+Phase-3 architecture), Gate~3 (does the decomposition reconstruct competitively?).
+A failed gate routes to writing up the negative result, not to silent
+continuation.
+
+\paragraph{Primary model and notation.}
+The primary model is \pythia{} \citep{biderman2023pythia}: $L=24$ blocks,
+residual dimension $D=1024$, parallel attention/MLP blocks, with a public
+Tuned Lens and a public per-layer residual SAE suite. We write $\vl \in
+\mathbb{R}^{D}$ for the residual state after block $\ell$ ($v_0$ = embedding
+output; $v_L$ = final pre-unembedding state, so 25 states per example) and
+\[
+  \Dl \;=\; v_{\ell+1} - \vl, \qquad \ell \in \{0,\dots,L-1\},
+\]
+for the update block $\ell$ writes. Cross-model replications use Pythia-70m
+($L{=}6$) and Pythia-160m-deduped ($L{=}12$), GPT-2 small/medium/large
+($L{=}12/24/36$), and Qwen2-0.5B ($L{=}24$) --- six models, three families,
+depths 6--36.
+
+\paragraph{Dataset.}
+From CounterFact \citep{meng2022rome}\footnote{Via the s--r--o-ordered mirror
+\code{NeelNanda/counterfact-tracing}.} we keep triples the model actually
+knows: top-1 prediction equals the object and top-1 probability exceeds
+$0.1$. \pythia{} confidently knows only ${\sim}2{,}000$ of the 21{,}601
+CounterFact facts, so the plan's tuning rules were exercised in the sanctioned
+direction (probability threshold $0.3 \to 0.1$; per-class floor $500 \to
+300$), yielding \textbf{1{,}555 prompts in three relation classes}
+(organization 711, geography 511, language 333; occupation and religion fell
+below the floor and were dropped). Scoping to these three classes is
+Limitation~3 (\cref{sec:limitations}). For every prompt we collect the
+residual trajectory $v_0,\dots,v_{24}$ \emph{at the final prompt token} ---
+the query position, immediately before the model emits the object --- giving a
+$[1555, 25, 1024]$ store. A fixed split (1{,}244 train / 311 test, seed 0) is
+shared by all Phase-1--3 analyses. Sanity check: applying the model's final
+LayerNorm and unembedding to the collected $v_L$ recovers the model's top-1
+answer (5/5 spot checks).
+
+\paragraph{The $\pm\vl$ tautology, stated up front.}
+\label{sec:phase1:tautology}
+Consecutive updates mechanically overlap: $\Dl = v_{\ell+1} - \vl$ and
+$\Delta_{\ell-1} = \vl - v_{\ell-1}$ share the term $\mp\vl$. Because a few
+residual directions carry a large, slowly drifting share of state variance
+(the top direction alone is 32\% of state variance on the factual store, 96\%
+on generic text), a linear map can predict $\Dl$ from $\Delta_{\ell-1}$ partly
+by reading this shared persistent component --- running-sum drift, not depth
+computation. Every AR-on-$\Delta$ number in this paper is therefore reported
+twice: raw, and after the tautology accounting of
+\cref{sec:phase1:pressure}. The pre-registered scrambled null does \emph{not}
+separate the two (permuting examples independently per depth destroys genuine
+structure and tautology together), which is exactly why the pressure battery
+exists.
+
+\subsection{Cheap diagnostic: ridge from the state, against a calibrated lens}
+\label{sec:phase1:ridge}
+
+The protocol's first, cheap question: is $\Dl$ linearly predictable from
+$\vl$, better than trivial baselines \emph{and} better than what a calibrated
+per-layer lens already implies? For each layer pair we fit low-rank ridge
+$\Dl \approx W\vl$ (ranks 16--128) on the train split and score held-out
+$\Rsq$ against: zero-prediction ($\Rsq=-1.54$), per-layer mean ($\Rsq=0$ by
+construction), the identity-transparency regression of $v_{\ell+1}$ on $\vl$
+($\Rsq=0.965$; reported for transparency, dominated by the residual
+connection, not a comparator), and the \textbf{Tuned-Lens-implied update}
+$\hat\Delta^{\mathrm{TL}}_\ell = \hat r_{\ell+1} - \hat r_\ell$ from the
+public lens translators \citep{belrose2023tuned}, the pre-registered gate
+baseline for proceeding to the expensive AR tests.
+
+Layer-averaged held-out $\Rsq$ is \textbf{0.602} at the best rank (128; 0.921
+full-rank), versus \textbf{$-0.691$} for the Tuned-Lens-implied update
+(\cref{fig:h1-ridge}). The gate passes with a wide margin --- the cheap
+diagnostic separates cleanly from calibrated per-layer refinement --- so the
+AR programme is justified. A shrinkage-CCA backstop (protocol Step 4) finds
+held-out leading canonical correlations $\approx 0.9997$ at every layer,
+collapsing to $\approx 0$ under the scrambled null; we flag immediately that
+this near-1 is largely the definitional $-\vl \subset \Dl$ term amplified by
+the high-variance directions, so CCA confirms shared subspace and exposes
+nothing ridge missed --- the substantive claim rests on the ridge-vs-baselines
+comparison.
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.9\linewidth]{fig01_h1_predictability}
+  \caption{Per-layer-pair held-out $\Rsq$ of low-rank ridge predicting $\Dl$
+  from $\vl$ on \pythia{}, against the mean, zero, and Tuned-Lens-implied
+  baselines. The ridge fit (layer-averaged 0.602) clears the pre-registered
+  Tuned-Lens gate ($-0.691$) at every layer. The in-panel note ties the raw
+  level to the tautology accounting of \cref{sec:phase1:pressure}, which any
+  reader of this figure should hold alongside it. [\code{fig01}]}
+  \label{fig:h1-ridge}
+\end{figure}
+
+\subsection{H1 proper: autoregression on $\Delta$ and Granger reach}
+\label{sec:phase1:ar}
+
+We fit pooled AR($k$) models
+\[
+  \hat\Delta_\ell \;=\; \mu_\ell + \sum_{j=1}^{k} W_j\, \Delta_{\ell-j},
+  \qquad k \in \{1,2,3,5,10,15,20\},
+\]
+with per-depth intercepts $\mu_\ell$ (so the kernel cannot absorb per-depth
+mean offsets $\bar\Delta_\ell$ --- essential for the Phase-2 stationarity
+comparison) and low-rank $W_j$ shared across depth; predictors are compressed
+to the top-256 $\Delta$ principal components for tractability while the target
+stays full-$D$. Held-out $\Rsq$ reaches \textbf{0.65} at $k=20$, rank 128, and
+is $\ge 0.47$ at every $k$ in the sweep (\cref{fig:h1-ar}).
+
+How far back does depth dependence reach? At every feasible (depth $\ell$,
+lag $j$) cell we run a nested-F lag test (Wilks' $\Lambda$ with Rao's F, on a
+top-32 PCA projection since $D \gg N$ makes full-$D$ Wilks singular): does lag
+$j$ add signal beyond lags $1,\dots,j{-}1$ at depth $\ell$? All
+\textbf{112/112} feasible cells are Bonferroni-significant
+($\alpha = 4.5\times10^{-4}$ per cell), out to the longest lag tested, 20
+(\cref{fig:h1-granger}). \Cref{app:stats} verifies the F thresholds are
+calibrated with a Freedman--Lane permutation check (12/12 spot cells at the
+permutation floor; parametric and permutation tail quantiles agree within
+1\%).
+
+\paragraph{Null 1 --- scrambled activations (pre-registered).}
+Permuting the example axis independently at each depth preserves every
+per-layer marginal and destroys within-example depth structure. The AR fit
+collapses to $\Rsq \approx 0.0000$ at every $k$ and the Granger grid to
+\textbf{0/112} significant cells. The signal is example-specific cross-depth
+structure, not a marginal artefact.
+
+\paragraph{Null 2 --- context perturbation (pre-registered, the critical
+control).}
+Each prompt is wrapped in a fixed six-token neutral preamble; the perturbed
+variant replaces the preamble's content words with random function words at
+identical absolute positions. On the 863/1000 sampled examples where the
+wrapped baseline still recovers the answer, the AR fit is unchanged (0.639
+wrapped $\to$ 0.696 perturbed) and the Granger heatmaps correlate at
+\textbf{0.964} (112/112 $\to$ 109/112 significant). The cross-layer dynamics
+at the query token are a property of subject--relation processing ---
+depth-intrinsic, not leaked context.
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.72\linewidth]{fig02_h1_ar_r2_vs_k}
+  \caption{Pooled AR($k$)-on-$\Delta$ held-out $\Rsq$ versus $k$ (real vs the
+  scrambled null) on \pythia{}. Real $\ge 0.47$ everywhere, peaking at 0.65;
+  the null is indistinguishable from zero. The in-axes note points to the
+  T1/T4/T5 correction: the raw level splits into tautological and genuine
+  parts, and the genuine part is substantially architectural. [\code{fig02}]}
+  \label{fig:h1-ar}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.72\linewidth]{fig03_h1_granger_real}
+  \caption{Granger-style nested-F significance ($-\log_{10} p$) per (depth,
+  lag) cell. All 112 feasible cells are Bonferroni-significant out to lag 20;
+  the scrambled null yields 0/112 (not shown). Statistically the depth
+  dependence is long-range --- reconstruction-wise it is first-order
+  (\cref{sec:phase2:kstar}), and \cref{sec:phase1:sublayer} localises the
+  long reach to the attention write. [\code{fig03}]}
+  \label{fig:h1-granger}
+\end{figure}
+
+\subsection{Pressure-testing H1: how much is tautology, and is the rest
+learned?}
+\label{sec:phase1:pressure}
+
+Gate 1 passed on the pre-registered criteria. Before building on it, we
+attacked the headline with five post-hoc controls (T1--T5), then an
+untrained-network control (T4) --- the corrected reading below, not the raw
+0.65, is the version of H1 the rest of the paper uses.
+
+\paragraph{T5 --- exact tautology floor.}
+The held-out explained variance of the single headline AR fit splits exactly
+(orthogonally, Pythagorean) across the top-$m$ persistent state subspace and
+its complement. At $m=50$: \textbf{factual $0.65 = 0.52$ tautological
+$+\;0.13$ genuine}; the persistent subspace itself is near-trivially
+predictable ($\Rsq_{\parallel} \approx 0.90$--$0.95$), which \emph{is} the
+$\pm\vl$ drift made explicit (\cref{fig:t5}).
+
+\paragraph{T1 --- persistence-stripped refit.}
+Projecting out the top-$m$ principal directions of the \emph{states} and
+refitting: removing the single top direction (32\% of state variance) costs
+only $0.650 \to 0.637$; removing the top 50 (87\% of state variance) still
+leaves \textbf{$\Rsq = 0.436$}, roughly $4000\times$ the scramble floor
+(\cref{fig:t1}). T1 exceeds T5's genuine share because it re-optimises the
+kernel on the complement; both are reported.
+
+\paragraph{T2 --- persistence-matched surrogate.}
+A random walk with independent per-layer Gaussian steps matched to each
+$\Dl$'s mean and (rank-256) covariance --- all persistence, no cross-layer
+dependence --- scores $\Rsq = \mathbf{0.0000}$. State persistence alone
+reproduces \emph{none} of the AR-on-$\Delta$ predictability (for AR on
+increments, the $\mathrm{Var}(\vl)$ contributions to
+$\mathrm{Cov}(\Dl,\Delta_{\ell-1})$ cancel in expectation under independent
+steps), so the scramble floor was already the honest floor.
+
+\paragraph{T3 --- lag$\ge$2 Granger, tautology-free by construction.}
+The shared $\mp\vl$ term couples only lag 1 ($\Delta_{\ell-2}$ shares no
+state term with $\Dl$). Restricting the grid to lags $\ge 2$:
+\textbf{89/89} cells significant (real) versus \textbf{0/89} (null),
+identically on factual and generic stores. Depth dependence beyond the
+mechanical overlap is total.
+
+\paragraph{T4 --- untrained-network control (deflationary).}
+Running the identical battery on a \emph{randomly initialised} \pythia{}
+(same prompts, same pipeline): the persistence-stripped AR $\Rsq$ is
+\textbf{0.503 (untrained) vs 0.436 (trained)} on factual prompts (0.216 vs
+0.290 on generic text), and the untrained network passes every tautology-free
+control --- scramble $\approx 0$, surrogate $\approx 0$, lag$\ge$2 Granger
+89/89 --- exactly like the trained one. The pre-registered inference rule
+(``trained $\gg$ untrained $\Rightarrow$ learned'') returns the other branch:
+\textbf{the tautology-free AR-on-$\Delta$ structure is substantially
+architectural} --- a property of the residual stack with per-layer nonlinear
+maps and LayerNorm, not of the learned weights. What training \emph{does}
+change is the persistent/drift component (raw $\Rsq$ 0.54$\to$0.65 factual,
+0.21$\to$0.935 generic) --- the part T1/T5 already attribute to the tautology.
+This replicates on GPT-2-small (trained 0.439 vs untrained 0.420 after
+stripping; learned share ${\sim}5\%$), making the architectural reading a
+two-family statement.
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.8\linewidth]{fig14_tautology_factual_vs_generic}
+  \caption{T1 persistence-stripped AR $\Rsq$ as the top-$m$ state directions
+  are removed, factual vs generic stores. The factual headline decays
+  gradually and saturates at $0.44 \gg$ null; the generic store --- whose top
+  direction alone is 96\% of state variance --- decays steeply to $0.29$: the
+  excess of the raw generic level (0.935) over factual (0.65) was persistence,
+  the surviving structure is comparable. [\code{fig14}]}
+  \label{fig:t1}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.8\linewidth]{fig15_t5_floor}
+  \caption{T5 exact decomposition of the single headline AR fit into
+  tautological ($\Rsq_{\parallel}$, persistent-subspace) and genuine
+  ($\Rsq_{\perp}$) shares as a function of the subspace size $m$. Factual:
+  $0.65 = 0.52 + 0.13$ at $m{=}50$. Generic: $0.935 \approx 0.94 + 0$ --- the
+  generic level is persistence, not computation. [\code{fig15}]}
+  \label{fig:t5}
+\end{figure}
+
+\subsection{A tautology-free localisation: attention vs MLP writes}
+\label{sec:phase1:sublayer}
+
+Splitting each update into its two additive sublayer writes,
+$\Dl = \mathrm{attn}_\ell + \mathrm{mlp}_\ell$ (exact for Pythia's parallel
+blocks; additivity holds to $7\times10^{-8}$ relative error), gives streams
+that carry \emph{no} $\pm\vl$ term at all. Both independently reproduce H1
+(AR real$-$null: attention \textbf{0.542}, MLP \textbf{0.653}; Granger 112/112
+vs 0/112 both) --- confirming the structure is not the persistence term ---
+and they dissociate cleanly: the \textbf{MLP write is strictly first-order at
+every depth} ($\kstar=1$) while the \textbf{attention write carries the
+long-range depth memory} ($\kstar$ median 2, rising to 10 late), with MLP
+contributing 78\% of update energy. The residual stream's
+statistically-deep-but-reconstruction-shallow tension
+(\cref{fig:h1-granger} vs \cref{sec:phase2:kstar}) is therefore the
+energy-dominant memoryless MLP channel superposed on a small deep-reaching
+attention channel.
+
+\subsection{Robustness and the Gate-1 verdict}
+\label{sec:phase1:verdict}
+
+An object-disjoint split (grouping by answer object, since objects like
+``French'' recur across up to 163 prompts while subjects are nearly unique)
+leaves the result intact: AR $\Rsq = 0.561$, Granger 112/112, null $\approx
+0$. H1 also replicates on all six models (\cref{sec:phase2:crossmodel}) and on
+length-matched generic Pile text (\cref{sec:phase2:generic}).
+
+\textbf{Gate-1 verdict (pre-registered routing): H1 supported; proceed to
+Phase 2} --- with the corrected interpretation carried forward: genuine,
+above-null, depth-intrinsic cross-layer structure exists in the updates
+(T1--T3), but it is substantially a property of the architecture rather than
+of training (T4), and raw AR-on-$\Delta$ levels must never be quoted without
+the tautology split (T5).

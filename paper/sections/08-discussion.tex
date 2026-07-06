@@ -1,0 +1,78 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{What kind of thing is depth structure?}
+The composite picture is specific enough to be useful. Residual updates are
+predictable across depth, but the predictability decomposes into (i) a
+running-sum persistence term that is definitionally there, (ii) a genuine
+increment-level structure that a randomly initialised network already
+exhibits, and (iii) a learned component that only becomes visible in the
+\emph{generative} fit --- roughly half the SSM's reconstruction advantage,
+majority at sparse operating points. Meanwhile the dynamics are pervasively
+non-stationary in depth, first-order, and --- per the fitted operator ---
+contractive with a one-layer memory. A transformer, on this evidence, does
+not implement a depth-shared propagation rule; it implements a different
+small-memory rule at every layer, over features that persist via the additive
+stream itself rather than via the incremental dynamics. The Granger reach of
+20 layers coexisting with $\kstar\!\approx\!1$ stops being a paradox once
+split by sublayer: a small, deep-reaching attention channel superposed on an
+energy-dominant, memoryless MLP channel.
+
+\paragraph{Consequences for cross-layer interpretability methods.}
+H2's failure is an independent validation of CLT's design decision to give
+every (source,\,target) pair free parameters \citep{ameisen2025circuit} ---
+our attempt to compress that family along depth was the pre-registered
+falsifier, and it failed in CLT's favour. The quantitative comparison then
+adds the budget-conditional half of the story: the free decoders buy a small,
+real, data-bought margin, while a first-order state captures most of the
+cross-layer value at a sixth of the parameters and generalises better below
+$10^3$ examples. For practitioners the operational reading is: if you need
+cross-layer reconstruction under a parameter or data budget, a depth-indexed
+state is the better spend; if you need maximum fidelity and have data, free
+per-pair decoders are not redundant. Our TopK finding adds an orthogonal
+warning: single-feature decoder directions from TopK dictionaries were
+seed-unidentifiable in every configuration we tested, while matched L1
+dictionaries were perfectly stable --- any pipeline that names, steers, or
+ablates \emph{individual} TopK features should check its features survive a
+re-seed.
+
+\paragraph{Consequences for factual-recall stories.}
+The causal null is not a failure to find structure; it is a measurement of
+what kind of structure recall has. Single features move the answer by at most
+a tenth of the pre-registered threshold; the effect that does clear threshold
+is reproduced by a norm-matched random direction; and a cleaner dictionary
+concentrates but does not localise the effect. This is a controlled,
+dictionary-independent statement that recall at the query position is a
+distributed, magnitude-dominated code --- consistent with the drift in the
+editing literature away from single-component accounts
+\citep{hase2023does}, and a calibration point for ablation-based evaluation
+generally: group-ablation effects need magnitude-matched \emph{direction}
+controls before they can be read as evidence about privileged feature sets.
+
+\paragraph{Consequences for probing.}
+The state-probe result cuts the other way: trained purely to reconstruct
+updates, the 32-dimensional state retains answer-identity information that
+variance-optimal compressions of the same codes discard. Reconstruction
+objectives, at least here, learn compressions aligned with what the circuit
+is computing --- a modest but genuinely positive datum for the program of
+extracting functional summaries from decompositions, and one that pairs
+naturally with the contractive operator: a short-memory, information-dense
+running summary is exactly what a contractive state can be.
+
+\paragraph{The EMG intuition, in retrospect.}
+The convolutive-source-separation analogy \citep{holobar2007multichannel}
+supplied H2, and H2 is false: transformer depth is not a homogeneous
+propagation medium. What survives from the analogy is the discipline it
+imported --- model the increments, put sources at every position, and treat
+the mixing structure as an estimable, testable object. The estimated object
+just turned out to be depth-indexed, contractive, and circuit-specific rather
+than shared.
+
+\paragraph{Future work.}
+Three items are specified and costed in the project record: deconfounding the
+depth series from width (Pythia-1b/1.4b/2.8b with one dictionary type, three
+seeds); the two missing families (Gemma-2's sandwich normalisation,
+Llama-3.1-8B) which also enable the pre-registered $\ge$1{,}000-per-class
+relation test; and a natively-trained CLT. A fourth suggests itself from the
+results: whether the contractive-spectrum shape and the mid-depth
+functional-state window are universal across scale.

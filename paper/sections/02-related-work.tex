@@ -1,0 +1,92 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{The residual stream and superposition.}
+\citet{elhage2021mathematical} formalised the framing every cross-layer method
+inherits: attention and MLP blocks read from and write to a shared additive
+channel, so features persist through depth because the channel is a running
+sum. \citet{elhage2022superposition} explains why single neurons are not the
+unit of analysis: models encode more features than dimensions, in overlapping
+directions. Together these motivate both the object of this study, the
+per-layer write $\Dl$, and its principal statistical hazard --- consecutive
+updates mechanically share a $\mp\vl$ term (\cref{sec:phase1:tautology}),
+which we spend considerable effort separating from genuine structure.
+
+\paragraph{Per-layer sparse dictionaries.}
+SAEs trained on one layer's activations recover monosemantic features
+\citep{cunningham2023sparse,bricken2023monosemanticity} and scale to frontier
+models \citep{templeton2024scaling}. TopK SAEs replace the L1 penalty with a
+hard sparsity constraint \citep{makhzani2013ksparse,gao2024scaling}. We use
+public per-layer suites as frozen sources --- the MLSAE release for
+Pythia \citep{lawson2024mlsae}, the reformatted GPT-2-small residual suite
+\citep{bloom2024gpt2saes}, an open Qwen2 suite \citep{chanin2024qwensaes}, and
+EleutherAI's Pythia-70m suite \citep{eleutherai2024sae} --- and additionally
+train matched L1 and TopK dictionaries on our own cached activations, which
+turns out to matter: the sparsity mechanism, not the model, controls whether
+single-feature decoder directions are identifiable across seeds
+(\cref{sec:evaluation:stability}).
+
+\paragraph{Cross-layer dictionaries.}
+Crosscoders fit one dictionary with per-layer decoders across all layers at
+once \citep{lindsey2024crosscoders}. MLSAEs share the dictionary and let
+activations vary per layer; their headline observation --- a latent is often
+active at exactly one layer per token, but at \emph{different} layers across
+tokens --- already strains the picture of a feature with a fixed home depth
+\citep{lawson2024mlsae}. RouteSAE adds a router that picks which layer a
+shared SAE decodes per token \citep{shi2025route}: a \emph{where-to-read}
+mechanism, complementary to the \emph{how-updates-propagate} question here.
+Jacobian SAEs sparsify the causal sensitivities across a single MLP block
+\citep{farnik2025jacobian} --- causal rather than correlational cross-layer
+structure, but with no assumption (or test) of depth-shared form.
+
+\paragraph{Cross-layer transcoders.}
+CLTs \citep{ameisen2025circuit} are the closest prior method and this paper's
+primary conceptual baseline. A CLT feature reads at one source layer $\ell'$
+and writes into every layer $\ell \ge \ell'$ through a separate, fully free
+decoder per (source, target) pair --- $O(L^2)$ decoder matrices with no
+parameter sharing along depth. Our H2 is precisely the hypothesis that those
+matrices compress to a kernel in the depth difference $\ell-\ell'$; H2's
+failure (\cref{sec:phase2}) is therefore an independent \emph{validation} of
+CLT's unconstrained parameterisation, and our SSM-vs-CLT comparison
+(\cref{sec:evaluation:clt}) asks the surviving quantitative question: how much
+reconstruction do the free per-pair decoders buy over a first-order
+depth-indexed state at matched sources?
+
+\paragraph{Depth-wise lenses.}
+The Tuned Lens learns per-layer affine probes that decode intermediate
+residual states into the final-output distribution \citep{belrose2023tuned}.
+We use it twice: its implied per-layer update
+$\hat r_{\ell+1}-\hat r_\ell$ is the calibrated baseline our cheap H1
+diagnostic must beat before the expensive tests run (it does,
+\cref{sec:phase1:ridge}), and it reappears as an update-prediction baseline in
+the evaluation, where --- like every method not trained on $\Dl$ --- it scores
+below zero (\cref{sec:evaluation:baselines}).
+
+\paragraph{Factual recall.}
+We test on subject--relation--object recall because it is the
+best-instrumented circuit family in the literature: causal localisation to
+mid-depth MLPs \citep{meng2022rome,dai2022knowledge}, a staged
+enrich-then-extract account \citep{geva2023dissecting}, and a standing caveat
+that causal-tracing locations and editing locations dissociate
+\citep{hase2023does}. Our data derive from CounterFact \citep{meng2022rome},
+with Pararel \citep{elazar2021pararel} recorded in the protocol as the scaling
+path we ultimately did not need (\cref{app:prereg}). Our distributed-code null
+(\cref{sec:evaluation:causal}) is consistent with this literature's drift away
+from single-component stories of recall.
+
+\paragraph{Signal-processing motivation.}
+Convolution Kernel Compensation decomposes high-density surface EMG under a
+convolutive mixing model \citep{holobar2007multichannel}. The analogy ---
+sources with characteristic propagation patterns along a depth-like axis ---
+supplied H2's form (a shared kernel in the depth difference). It supplied
+nothing else: every model fit here is ridge regression, LASSO, alternating
+minimisation, or gradient descent on a linear SSM, and H2 was treated as a
+hypothesis to kill, which the data did.
+
+\paragraph{Infrastructure.}
+Activations are collected with TransformerLens \citep{nanda2022transformerlens}
+from Pythia \citep{biderman2023pythia}, GPT-2, and Qwen2 checkpoints; generic
+text is drawn from the Pile \citep{gao2020pile}. Optimisation uses FISTA
+\citep{beck2009fista} for the sparse-code updates; the Granger-style tests are
+calibrated against a Freedman--Lane permutation scheme
+\citep{freedman1983nonstochastic} in \cref{app:stats}.

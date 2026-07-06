@@ -1,0 +1,187 @@
+\section{Pre-registration and deviations}
+\label{app:prereg}
+
+The protocol was written as four frozen phase documents (diagnostic,
+characterisation, decomposition, evaluation) plus a research statement, before
+any data were collected; a separate progress tracker was the only mutable
+record, so no pre-registered bar could be edited after the fact. The gates:
+
+\begin{itemize}
+  \item \textbf{Gate 1} (H1 supported above null?) --- \emph{PASS}, all six
+    pre-registered questions answered yes; routed to Phase 2.
+  \item \textbf{Gate 2} (H2 stationarity?) --- \emph{FAIL (pervasive drift)};
+    routed, per the pre-registered decision matrix, to the state-space branch
+    with free per-layer operators.
+  \item \textbf{Gate 3} (reconstruction competitive at matched sparsity, and
+    seed-stable features?) --- \emph{GO}: reconstruction clause met with
+    margin; the seed-stability clause initially failed (0.45 < 0.7) and was
+    recorded as a limitation per the plan's ``reconstruction fine / seed
+    unstable'' branch, later closed by the dictionary-mechanism finding of
+    \cref{sec:evaluation:stability}.
+  \item \textbf{Causal existence proof} --- \emph{NULL} at all four
+    pre-registered thresholds; reported at the plan's designated honest
+    landing place, with no threshold adjusted.
+\end{itemize}
+
+\noindent Deviations from the frozen protocol, exhaustively:
+
+\begin{enumerate}
+  \item \emph{Dataset thresholds} (plan-sanctioned tuning direction):
+    CounterFact confidence threshold $0.3 \to 0.1$ and per-class floor
+    $500 \to 300$, because the primary model knows only ${\sim}2$k facts;
+    yield 1{,}555 examples / 3 classes instead of the aspirational
+    5--10k / $\ge$4 classes. Relation-class scope became Limitation~3 by an
+    explicit recorded decision (option (b) of the scale-up fork) after the
+    cross-model replications made class breadth non-load-bearing.
+  \item \emph{Primary checkpoint}: Pythia-410m $\to$ Pythia-410m-\emph{deduped}
+    (the public Tuned Lens required for the pre-registered gate baseline
+    exists only for deduped).
+  \item \emph{Stationarity-test order cap} (in-plan): $k=5$ from the plan's
+    early-band feasibility rule; working rank promoted $128 \to 256$ by the
+    plan's own $r$-vs-$2r$ spot-check.
+  \item \emph{Cross-model targets}: Gemma-2-2B / Llama-3.1-8B do not fit the
+    3\,GB study GPU; replaced by six models from three families that do
+    (Limitation~2). The plan's Tuned-Lens gate was waived-and-reported on
+    replication models without public lenses.
+  \item \emph{Statistic repair} (post-hoc, both statistics archived): the
+    depth-series gap statistic changed from max-over-$\lambda$ matched-$L_0$
+    interpolation to the raw same-$\lambda$ knee gap after per-seed forensics
+    showed the former pairs against a saturated baseline tail; the knee
+    statistic is the conservative one.
+  \item \emph{Post-hoc analyses} beyond the protocol are labelled as such
+    throughout (the T1--T5 pressure battery, untrained controls, sublayer
+    split, parameter-matched baselines, the state probe, and the review-driven
+    CI/validation-selection reruns).
+\end{enumerate}
+
+\section{Operating points and evaluation protocols}
+\label{app:operating}
+
+All held-out $\Rsq$ values are against the per-depth-mean baseline on the
+same 311-example test split. The apparent spread of ``the SSM's $\Rsq$''
+across sections is protocol, not inconsistency:
+
+\begin{table}[h]
+  \centering
+  \small
+  \caption{Every SSM operating point quoted in this paper.}
+  \label{tab:operating}
+  \begin{tabular}{llll}
+    \toprule
+    Value & Protocol & Setting & Used for \\
+    \midrule
+    0.880 & train fit & $\lambda_{L1}{=}1$, $r{=}d_z{=}32$ & convergence/sanity \\
+    0.867 & LASSO held-out & $\lambda_{L1}{=}0.3$ & Pareto top end (\cref{fig:pareto}) \\
+    0.857 & LASSO held-out & $\lambda_{L1}{=}1$ (knee) & headline gap $+0.049$ \\
+    0.849 & LASSO held-out & rank-64 \emph{baseline}, $\lambda_{L1}{=}1$ & param-matched gap $+0.008$ \\
+    0.780--0.804 & frozen-source & rank 32, best $\lambda_{\mathrm{reg}}$ & CLT family (\cref{fig:clt}) \\
+    0.816 & LASSO held-out & baseline (\code{use\_state=False}) & Pareto baseline arm \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The LASSO protocol re-infers test codes against test $\Delta$ with frozen
+operators (reconstruction at matched sparsity; identical for both arms of
+every gap). The frozen-source protocol fits decoders on fixed cached codes
+and isolates decoder parameterisation; its levels sit uniformly lower. Gaps
+are only ever computed within a protocol.
+
+\section{Statistical details}
+\label{app:stats}
+
+\paragraph{Granger-style nested-F.}
+At each (depth $\ell$, lag $j$) cell we compare nested AR models (lags
+$1..j{-}1$ vs $1..j$, per-depth intercepts included) on a top-32 PCA
+projection of $\Delta$ (full-$D$ Wilks is singular at $D \gg N$), using
+Wilks' $\Lambda$ with Rao's F approximation. Bonferroni corrects across the
+112 feasible cells ($\alpha = 4.5\times10^{-4}$ per cell); the feasibility
+count follows the plan's rule ($\ell \ge j$).
+
+\paragraph{Permutation calibration.}
+Because the rogue high-variance dimensions make errors heavy-tailed, the F
+thresholds were checked with a Freedman--Lane permutation scheme
+\citep{freedman1983nonstochastic}: fit the reduced model, permute its
+residuals, recompute F (999 permutations), at 12 spot cells spanning mid/late
+depth and lags 1--20. All 12 observed F statistics sit at the permutation
+floor ($p \le 10^{-3}$), and the permutation null's tail quantiles match the
+parametric $F(\mathrm{df}_1,\mathrm{df}_2)$ within 1\% at the 95th/99th
+percentiles --- the Bonferroni cut behaves as advertised under
+exchangeability. The scrambled-null grids (0/112 significant, both stores)
+are the complementary full-grid empirical calibration.
+
+\paragraph{Paired bootstrap CIs.}
+Every headline gap is a paired bootstrap over the 311 test examples (10k
+resamples) on per-example sums of squares, computed from saved per-example
+arrays --- pure post-processing, no refitting. Seed-level uncertainty, where
+reported (\cref{fig:depthscaling}), is mean$\pm$sd over three full refits.
+
+\paragraph{Selection.}
+AR best-($k$, rank) maximises held-out $\Rsq$ over 28 symmetric
+real-vs-null evaluations; the real$-$null contrast is the claim. The CLT
+family's $\lambda_{\mathrm{reg}}$ was originally selected on test (house
+convention, interior peaks); \cref{sec:evaluation:clt} re-derives the one
+consequential CI with validation-based selection, where every arm picks an
+interior $\lambda^{*}{=}3$ and the conclusion is unchanged (test selection had
+mildly flattered the CLT, not the SSM).
+
+\section{Cross-model inventory}
+\label{app:crossmodel}
+
+\begin{table}[h]
+  \centering
+  \small
+  \caption{Models, datasets, and source dictionaries. Confidence-filtered
+  CounterFact sizes (70m: top-1{,}000 candidates by confidence --- the
+  optimiser-debug lane, excluded from the H1/H2 replication claim); SAE
+  column gives the public suite used as frozen sources (``---'' = diagnostics
+  only). Seed-stability column is decoder match@0.7 across three fits.}
+  \label{tab:zoo}
+  \begin{tabular}{llllll}
+    \toprule
+    Model & $L$ & $D$ & $N$ & SAE source (type) & seed stab. \\
+    \midrule
+    Pythia-70m-deduped   & 6  & 512  & 1{,}000 & EleutherAI 32k (TopK $k{=}16$) & 0.99 \\
+    Pythia-160m-deduped  & 12 & 768  & 767     & MLSAE x64-k32 (TopK) & 0.38 \\
+    \pythia{}            & 24 & 1024 & 1{,}555 & MLSAE x64-k32 (TopK) / trained L1 & 0.45 / 1.00 \\
+    GPT-2-small          & 12 & 768  & 1{,}358 & res-jb (L1) & 0.95 \\
+    GPT-2-medium         & 24 & 1024 & 1{,}795 & --- & --- \\
+    GPT-2-large          & 36 & 1280 & 1{,}924 & --- & --- \\
+    Qwen2-0.5B           & 24 & 896  & 2{,}540 & chanind (L1; 12-layer prefix) / trained L1 (24L) & 0.81 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The seed-stability column is the cross-model half of the
+\cref{sec:evaluation:stability} finding: L1 sources stable on two additional
+families, TopK unstable on two Pythia models, with dataset size ruled out by
+subsampling GPT-2 to the smallest $N$ (match 0.95 unchanged).
+
+\section{Reproducibility}
+\label{app:repro}
+
+All experiments ran on a single consumer GPU (NVIDIA GTX 1050, 3\,GB, Pascal)
+with a pinned environment (Python 3.12; \code{torch} 2.5.1+cu124;
+\code{transformers} $<5$; TransformerLens 2.x); the constraint is documented
+because it shaped the design (activation caching, alive-set compression,
+fp16 loading for the larger models, and the rank-128 CLT being infeasible).
+Every run logs its resolved config, git commit, seed, and library versions
+before doing any work. Numeric intermediates (CSV/JSON tables) are tracked in
+git; heavy artefacts (activation stores, checkpoints) are regenerable from
+scripts. A single entry point --- \code{scripts/reproduce.sh} --- checks the
+environment, runs the test suite (204 tests), asserts dataset sizes, and
+regenerates all 16 paper figures byte-identically from the tracked tables;
+\code{--toy-pipeline} additionally re-runs the full Pythia-70m lane end to
+end. Code, protocol documents, and the progress tracker are released with
+the paper under a permissive license.
+
+Software: PyTorch \citep{paszke2019pytorch}, TransformerLens
+\citep{nanda2022transformerlens}, scikit-learn \citep{pedregosa2011sklearn},
+statsmodels \citep{seabold2010statsmodels}, and the SAE suites cited in
+\cref{sec:decomposition:sources}.
+
+\paragraph{Figure identifiers.}
+Each caption ends with a bracketed tag (e.g.\ [\code{fig06}]) naming the
+figure's stable identifier in the repository (\code{figures/figNN\_*.svg}).
+In-panel notes inside the figures cross-reference \emph{these} repository
+identifiers, not this paper's figure numbers, since the same artefacts are
+shared across documents.

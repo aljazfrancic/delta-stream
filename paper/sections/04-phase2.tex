@@ -1,0 +1,182 @@
+\section{Phase 2 --- what kind of structure? Stationarity, order, and scope}
+\label{sec:phase2}
+
+\subsection{H2 fails: the kernel is pervasively depth-dependent}
+\label{sec:phase2:stationarity}
+
+H2 asks whether the AR kernel is the \emph{same} kernel at every depth. The
+pre-registered test partitions depth into thirds (early $\ell$ 0--7, middle
+8--15, late 16--23), fits one band-shared AR($k$) kernel per band (per-depth
+intercepts $\mu_\ell$ absorb mean offsets, so only transition structure is
+compared; $k=5$, the plan's early-band feasibility cap
+$\lfloor L/3 \rfloor - 3$; working rank 256 after the plan's $r$-vs-$2r$
+spot-check promoted 128), and compares the kernels four ways.
+
+Every comparison rejects stationarity (\cref{fig:h2}):
+\emph{cross-band prediction} --- within-band held-out $\Rsq$ is positive
+(0.74 / 0.58 / 0.67) but \textbf{every} off-diagonal is \textbf{negative}
+(e.g.\ early$\to$middle $-1.00$, late$\to$middle $-1.89$): a kernel from one
+band predicts another band's updates \emph{worse than that band's own mean}.
+This holds at every truncation rank from 32 to 256 (worst off-diagonal
+$-0.32$ even at rank 32). \emph{Frobenius distance} between band kernels is
+1.39--1.42 $\approx \sqrt{2}$, the orthogonal-of-equal-norm ceiling;
+\emph{principal angles} between kernel output subspaces average
+57--62$^\circ$; and a \emph{bootstrap} within bands puts the between-band
+distance \textbf{80--104 standard deviations} above within-band sampling
+spread. Crucially there is \emph{no clean phase boundary}: the three pairwise
+distances are equal to within 3\%, so adjacent bands differ as much as distant
+ones --- the depth dependence is \textbf{pervasive drift}, not segmentation.
+
+Three caveats travel with this result: the cap makes it a short-horizon test
+(long-horizon stationarity is rechecked, and also fails, on the fitted
+generative model); AR-on-$\Delta$ stationarity is a proxy for H2's generative
+(MA) form --- but a proxy whose failure is decisive in the rejecting
+direction; and the $\pm\vl$ shared term biases the comparison \emph{toward}
+stationarity, so rejection is the conservative outcome.
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.62\linewidth]{fig04_h2_cross_band}
+  \caption{H2 stationarity test on \pythia{}: held-out $\Rsq$ of band-shared
+  AR(5) kernels evaluated within and across depth bands. Positive diagonal,
+  every off-diagonal negative --- a kernel from one depth band is worse than
+  the target band's mean. Rank-robust; bands bootstrap-separated by 80--104
+  SD; no segment boundary. [\code{fig04}]}
+  \label{fig:h2}
+\end{figure}
+
+\textbf{Gate-2 verdict (pre-registered decision matrix): H2 fails
+pervasively $\Rightarrow$ Phase 3 fits Branch B} --- a state-space model with
+\emph{free per-layer operators} (the smoothly-varying variant assumes exactly
+the smoothness the data reject), and --- per the proposal's own framing ---
+CLT-style unconstrained per-(source,\,target) parameterisation is
+\emph{validated}: ``shared kernel along depth'' is the wrong abstraction for
+these dynamics. The parsimony claim originally attached to H2 is off; what
+survives is a reconstruction comparison at stated parameter budgets
+(\cref{sec:evaluation:clt}).
+
+\subsection{Effective order: $\kstar \approx 1$, everywhere we looked}
+\label{sec:phase2:kstar}
+
+Per-depth AR($k$) sweeps define the effective depth $\kstar$ as the smallest
+$k$ within 95\% of the asymptotic $\Rsq$. On the factual store
+$\boldsymbol{\kstar \approx 1}$ at every depth (median 1; the single
+exception, $\kstar{=}2$ at $\ell{=}17$, coincides with the answer-promotion
+write discussed in \cref{sec:evaluation:probe}): one preceding update captures
+essentially all held-out predictable variance (per-depth best $\Rsq$
+0.83--0.94), lags $\ge 2$ add a median $+0.018$, and the scrambled null
+collapses the whole curve to 0 (\cref{fig:kstar}). The contrast with the
+Granger reach of 20 (\cref{fig:h1-granger}) is a headline in itself:
+\textbf{long-range depth structure is statistically real but
+reconstruction-negligible} --- and \cref{sec:phase1:sublayer} locates the two
+halves of that sentence in different sublayers (deep reach: attention;
+reconstruction mass: MLP). $\kstar$ inherits the lag-1 tautology caveat, but
+it is also exactly the model-order information Phase 3 needs, and the fitted
+model later supplies a mechanism for it (a contractive state operator,
+\cref{sec:evaluation:operator}). Stratifying by relation class leaves
+$\kstar=1$ in every class and every depth band (class-invariant order); on
+generic text the median is $\kstar=2$ (band pattern 1/3/1) --- stated
+explicitly since it differs from the factual 1, with per-depth generic fits
+being visibly noisier.
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.78\linewidth]{fig05_kstar_vs_depth}
+  \caption{Per-depth effective order $\kstar$ on \pythia{} (bars), with the
+  per-depth lag-1 $\Rsq$ (line) and the Granger reach (20) for contrast. The
+  one $\kstar{=}2$ depth, $\ell{=}17$, is the answer-promotion write (the R7
+  probe jumps there, cf.\ \cref{fig:probe}). [\code{fig05}]}
+  \label{fig:kstar}
+\end{figure}
+
+\subsection{Scope: the kernel is query-position-specific and circuit-specific}
+\label{sec:phase2:scope}
+
+\paragraph{Token position.}
+Re-collecting trajectories at four positions per prompt (first subject token,
+last subject token, a mid-prompt non-subject token, final prompt token) and
+refitting AR($\kstar{=}1$) per position: within-position held-out $\Rsq$ is
+positive at every position (0.28--0.55), but \textbf{every cross-position
+$\Rsq$ is negative} (mean $-0.36$; kernels near-orthogonal, Frobenius
+$\approx\sqrt{2}$, angles 57--60$^\circ$) --- the same no-transfer signature
+as the depth bands, now across positions. The scrambled null collapses the
+diagonals, and the tautology (shared by diagonal and off-diagonal) cancels in
+the retention ratio. The Phase-1/2 characterisation is therefore scoped to
+\emph{context-aggregated factual recall at the query position}; Phase 3 fits
+there, and every claim in this paper inherits that scope.
+
+\paragraph{Relation class.}
+The mirror-image test across the three relation classes (run with the fitted
+SSM of \cref{sec:decomposition}; reported here because it completes the
+scope picture): within-class held-out $\Rsq$ mean $+0.835$, \textbf{every
+cross-class transfer $\approx 0$ or negative} (mean $-0.191$;
+\cref{fig:crossclass}). The dynamics are finely tuned to each recall circuit
+--- \emph{circuit-specific kernels} --- while the \emph{order} $\kstar=1$ is
+class-invariant: same model order everywhere, different kernels per circuit.
+
+\begin{figure}[t]
+  \centering
+  \includesvg[width=0.6\linewidth]{fig10_crossclass}
+  \caption{Cross-class transfer of the fitted decomposition (train class
+  $\to$ eval class, held-out $\Rsq$). Strong diagonal, no transfer off it ---
+  the same signature as cross-band and cross-position: structured, but
+  specific. [\code{fig10}]}
+  \label{fig:crossclass}
+\end{figure}
+
+\subsection{Cross-model replication: six models, three families}
+\label{sec:phase2:crossmodel}
+
+The full H1/H2 pipeline (and, where public residual SAEs exist, the Phase-3
+fit) was replicated on five further models; Pythia-70m additionally serves as
+the optimiser-debug lane and a depth point in
+\cref{sec:evaluation:depth}. \Cref{tab:crossmodel} shows the pattern is
+universal across the models tested: AR-on-$\Delta$ predictability far above
+its null with full Granger significance, every cross-band $\Rsq$ negative,
+and $\kstar = 1$ at every band of every model.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Cross-model replication of H1/H2. AR $\Rsq$ is pooled held-out
+  real$-$null; Granger counts are Bonferroni-significant cells (real vs
+  scrambled null); H2 column reports the sign pattern of cross-band transfer.
+  Datasets are per-model confidence-filtered CounterFact (sizes 767--2{,}540).}
+  \label{tab:crossmodel}
+  \begin{tabular}{llcccc}
+    \toprule
+    Model & $L$ & AR $\Rsq$ (real$-$null) & Granger real / null &
+    cross-band $\Rsq$ & $\kstar$ \\
+    \midrule
+    GPT-2-small           & 12 & 0.625 & 43/43 \;/\; 0 & all $<0$ & 1 \\
+    Pythia-160m-deduped   & 12 & 0.894 & 43/43 \;/\; 0 & all $<0$ & 1 \\
+    GPT-2-medium          & 24 & 0.513 & 112/112 \;/\; 0 & all $<0$ & 1 \\
+    Qwen2-0.5B            & 24 & 0.462 & 112/112 \;/\; 0 & all $<0$ & 1 \\
+    \pythia{} (primary)   & 24 & 0.650 & 112/112 \;/\; 0 & all $<0$ & 1 \\
+    GPT-2-large           & 36 & 0.311 & 196/196 \;/\; 0 & all $<0$ & 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+One anomaly is recorded rather than hidden: on GPT-2-small the cheap
+\emph{low-rank} ridge diagnostic scores only 0.146 layer-averaged despite a
+full-rank 0.91 and AR 0.625 --- GPT-2's $v\!\to\!\Delta$ map is far less
+low-rank than Pythia's. It does not affect any H1/H2 verdict.
+
+\subsection{Generality beyond factual recall}
+\label{sec:phase2:generic}
+
+Re-running the identical pipelines on 1{,}555 generic Pile windows ---
+length-matched to the factual prompt multiset (content lengths 4--24 tokens,
+median 9; one window per distinct document; this narrow-window construction is
+a stated scope condition) --- replicates the \emph{entire} characterisation:
+H1's binary claim holds (null $\approx 0$, Granger 112/112 vs 0/112,
+lag$\ge$2 89/89), H2 fails even more emphatically (every cross-band $\Rsq$
+negative, worst $-144$; bands separated by 39--188 bootstrap SD), and the
+effective order is low ($\kstar$ median 2). The raw generic AR level (0.935)
+is \emph{higher} than factual (0.650), and \cref{sec:phase1:pressure} is the
+reason that must not be read as ``more computation'': T5 shows the generic
+level is $\approx 0.94$ tautological $+\;{\approx}0$ genuine, and after
+persistence-stripping generic structure (0.29) is \emph{weaker} than factual
+(0.44). The phenomenon is general to transformer depth; the \emph{kernels}
+remain position- and circuit-specific per \cref{sec:phase2:scope}.

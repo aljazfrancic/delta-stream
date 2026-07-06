@@ -22,8 +22,9 @@ limitation" branch). **Date:** 2026-06-25.
 > **(3) The gap is a matched-RANK statement; at matched total parameters it shrinks ~6×**
 > (R9/R9b, 2026-07-03/04): a rank-64 per-layer baseline (8.41M params ≈ the rank-32 SSM's
 > 8.36M) reaches +0.849 under this memo's LASSO protocol vs the SSM's +0.857 → the
-> state-path edge survives per-example code inference at **≈+0.008** (CI pending), while
-> in the frozen-source protocol the same param-matched comparison is a wash (±0.005 both
+> state-path edge survives per-example code inference at **+0.0077 [+0.0053, +0.0102]**
+> (paired CI, 2026-07-04, `runs/2026-07-04-r9b-gate3-ci-rank64`), while in the
+> frozen-source protocol the same param-matched comparison is a wash (±0.005 both
 > directions). Quote the headline gap only alongside the param-matched qualifier.
 > Full chain: progress.md (E2 · R4 · R0 · R9 · R9b) + `runs/2026-06-30-ph4-e2-*`,
 > `runs/2026-07-03-r4-*`, `runs/2026-07-03-r0-gate3-ci-{mlsae,l1}`,

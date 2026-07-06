@@ -5,8 +5,8 @@ Reads only saved ``tables/`` across run dirs — no model, no GPU — and writes
 ``figures/figNN_*.svg`` at the repo root. Unlike ``scripts/replot.py`` (which
 re-emits each run's own diagnostics in place), this driver *combines* runs into
 the figures the paper actually uses, including the cross-store views where the
-newer data changes the picture: factual-vs-generic tautology (T1), and the
-CLT-parsimony-vs-depth contrast (E3 24L tie vs E8 12L gap).
+newer data changes the picture: factual-vs-generic tautology (T1), the
+three-axis CLT comparison (R1/R2/R3), and the two-dictionary R7 state probe.
 
 Usage:  python scripts/make_paper_figures.py [--out figures]
 """
@@ -211,6 +211,27 @@ def t5_floor():
     return figures.t5_floor(df, r2_full=stats.get("r2_full"), label="factual")
 
 
+def state_probe():
+    """R7 (2026-07-04): the SSM state is functionally informative, both dictionaries."""
+    dfs, notes = {}, {}
+    majority = None
+    for suffix, title in (("r7-state-probe-mlsae", "mlsae (TopK) sources"),
+                          ("r7-state-probe-l1", "trained-L1 sources")):
+        df = tbl_csv(suffix, "state_probe.csv")
+        js = tbl_json(suffix, "state_probe.json")
+        if df is None or js is None:
+            continue
+        dfs[title] = df
+        majority = js["majority_acc"]["object"]
+        ci = js["band_contrasts"].get("object/state−code_pca/mid")
+        if ci:
+            notes[title] = (f"mid-band state−code: {ci['diff']:+.3f} "
+                            f"[{ci['ci_lo']:+.3f}, {ci['ci_hi']:+.3f}]")
+    if not dfs:
+        return None
+    return figures.state_probe(dfs, majority=majority, mid_notes=notes)
+
+
 PAPER_FIGURES = [
     ("fig01_h1_predictability", h1_predictability),
     ("fig02_h1_ar_r2_vs_k", h1_ar),
@@ -227,6 +248,7 @@ PAPER_FIGURES = [
     ("fig13_source_prefix", source_prefix),
     ("fig14_tautology_factual_vs_generic", tautology_factual_vs_generic),
     ("fig15_t5_floor", t5_floor),
+    ("fig16_state_probe", state_probe),
 ]
 
 
@@ -248,7 +270,8 @@ def main() -> int:
             continue
         path = figures.save_svg(fig, args.out / f"{stem}.svg")
         written += 1
-        print(f"  wrote {path.relative_to(ROOT)}")
+        rel = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
+        print(f"  wrote {rel}")
     print(f"\n{written}/{len(PAPER_FIGURES)} paper figures written to "
           f"{args.out.relative_to(ROOT)}/")
     for s in skipped:

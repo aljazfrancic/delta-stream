@@ -6,6 +6,28 @@ canonical Branch B SSM at the Gate-3 knee (λ_L1=1.0, r=d_z=32, seed 0), persist
 **0.857** — identical to the Gate-3 λ=1 point). **Dataset:** 1555 confidence-filtered
 CounterFact prompts (organization 711 / geography 511 / language 333), Δ at the query token.
 
+> **⚠ STATUS UPDATE (2026-07-06 — annotated after the review programme + R7; the body below
+> is the dated 2026-06-26/29 record, unedited).** Four later results qualify this memo:
+> **(1) Headline (1)'s gap now carries CIs and a param-matched qualifier.** R0 (2026-07-03):
+> SSM−baseline at the λ=1 knee = **+0.0489 [+0.0464, +0.0516]** (mlsae) / +0.0483 (L1).
+> R9/R9b (2026-07-03/04): that is a matched-**rank** number — at matched **total params** the
+> LASSO-protocol edge shrinks to **+0.0077 [+0.0053, +0.0102]** (and the frozen-source
+> protocol is a wash) → quote "+0.049 rank-matched, +0.008 param-matched" together.
+> **(2) The causal NULL is dictionary-independent (E2(ii), 2026-06-30).** On a trained-L1
+> source (pool 199/200 seed-stable) no single feature clears 0.20 (max **+0.112**, ~5× the
+> mlsae +0.024) → the distributed code is a property of the model, not TopK redundancy.
+> **(3) The Step-2 seed-stability figure (0.45) and Caveat 3 are about the mlsae-TopK
+> source only** — CLOSED by E2/R4: trained-L1 match@0.7 **1.00**, leakage-free.
+> **(4) R7 (2026-07-04) adds the missing POSITIVE functional result — the verdict's
+> "demonstrated value is reconstruction, not causal feature discovery" now has a second
+> leg: the 32-dim SSM state `z_ℓ` beats dimension-matched PCA of the codes on 205-way
+> answer identity at early/mid depth (mid-band **+0.060 mlsae / +0.139 L1**, CI-clean,
+> both dictionaries; at ℓ17 it beats even PCA-32 of the raw residual) → the decomposition
+> is NOT "reconstruction-only"; the state is a functional mid-depth summary (fig 16).**
+> R0 CIs for headline (3): k=100 top-drop +0.237 [0.213, 0.262]; feature identity
+> contributes a significant but ~5% sliver (+0.012 [+0.004, +0.021]). Full chain:
+> progress.md (E2 · R0 · R7 · R9/R9b) + `runs/2026-07-04-r7-state-probe-{mlsae,l1}`.
+
 > **Headline (three results).**
 > **(1) Reconstruction beats every baseline (Step 1).** The SSM reconstructs Δ at held-out
 > R² **+0.867**, above the matched per-layer dictionary **+0.816** (gap **+0.037…+0.066**) and

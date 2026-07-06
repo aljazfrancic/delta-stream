@@ -25,6 +25,13 @@ MLSAE TopK; **Qwen = chanind L1** (`chanind/sae-qwen2-0.5b-res`, resid_post, via
 > depth rather than modeled-prefix length. See progress.md (fig06 forensics 2026-07-02 +
 > 4th-pass review 2026-07-03); `runs/crossmodel/tables/depth_scaling_gaps.json` carries
 > both statistics (`knee_*` + legacy `gap_*`).
+> **Caveat (ii) RESOLVED 2026-07-05 (Programme C, run on-box):** a dictionary-controlled
+> coverage contrast — our own trained-L1 SAEs on the same cached Qwen rows at 24L vs the
+> first 12L, identical Gate-3 Pareto — gives **knee gap +0.072 (24L full) vs +0.043 (12L
+> prefix)**: the chanind-12L fig06 point (+0.041) was **SAE-coverage-limited**, and at
+> true depth Qwen sits *above* Pythia-410m (+0.072 vs +0.050). fig06 is deliberately
+> unchanged (the public-suite point stands; the caption quotes the contrast). Caveat (i)
+> remains off-box (Programme A). Memo: `runs/2026-07-05-progc-gate3-qwen-24l/memo.md`.
 
 > **Headline (three results, strengthened in wave 2).**
 > **(1) H1 and H2 replicate across 3 families and 4 depths.** Δ_ℓ is AR-predictable over depth

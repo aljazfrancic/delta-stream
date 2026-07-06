@@ -212,10 +212,21 @@ def em_depth_scaling(td):
     return {"depth_scaling": figures.depth_scaling(rows)} if rows else {}
 
 
+def em_state_probe(td):
+    df = _csv(td, "state_probe.csv")
+    js = _json(td, "state_probe.json")
+    if df is None or js is None:
+        return {}
+    return {"state_probe": figures.state_probe(
+        {"answer-identity probe (d=32 arms)": df},
+        majority=js["majority_acc"]["object"])}
+
+
 EMITTERS = [
     em_ridge, em_cca, em_ar, em_granger, em_stationarity, em_kstar, em_tokenpos,
     em_pareto, em_altmin, em_baseline_pareto, em_clt, em_distributed, em_gauge,
     em_aL, em_source_prefix, em_pressure, em_t5, em_crossclass, em_depth_scaling,
+    em_state_probe,
 ]
 
 

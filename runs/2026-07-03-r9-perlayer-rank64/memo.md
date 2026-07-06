@@ -49,7 +49,8 @@ ssm r32 0.7975; CLT r32 0.8117 @52.4M; CLT r64 0.8430 @105M.
 - **Decided by R9b (same night, `runs/2026-07-04-r9b-gate3-rank64-knee`):**
   under the LASSO protocol the rank-64 baseline reaches +0.849 vs the recorded
   rank-32 SSM's +0.8571 — the state-path edge **survives per-example code
-  inference at ≈+0.008** (vs +0.049 at matched rank; CI pending). So the two
+  inference at +0.0077 [+0.0053, +0.0102]** (vs +0.049 at matched rank; paired
+  CI landed 2026-07-04, `runs/2026-07-04-r9b-gate3-ci-rank64`). So the two
   protocols dissociate: matched-params wash on frozen sources (this memo),
   small surviving SSM edge under LASSO inference (R9b). See the R9b memo for
   the wording rule and the r64-SSM divergence ops note.

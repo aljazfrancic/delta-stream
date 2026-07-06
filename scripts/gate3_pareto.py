@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 3 Step 5 — Gate-3 reconstruction-vs-sparsity Pareto (70m-deduped debug lane).
+"""Phase 3 Step 5 — Gate-3 reconstruction-vs-sparsity Pareto (any lane; --sources-npz picks it).
 
 Sweeps ``λ_L1`` to trace the held-out reconstruction-R²-vs-L0 Pareto curve for the
 Branch B SSM, and against the matched **per-layer sparse-dictionary baseline** — the
@@ -9,7 +9,7 @@ L1 sweep). The only thing the full SSM adds over the baseline is the cross-layer
 term ``C_ℓ z_ℓ``, so the vertical gap between the two curves at matched L0 *is* the
 reconstruction value of structured cross-layer propagation — the Gate-3 go criterion
 (plan Step 5): "reconstruction on or above the per-layer SAE Pareto at comparable
-sparsity" (seed stability ≥ 0.7 already cleared at Step 4, match-rate 0.99).
+sparsity" (the seed-stability ≥ 0.7 clause is measured separately at Step 4).
 
     python scripts/gate3_pareto.py --config configs/pythia-70m.yaml --desc ph3-gate3-70md \
         --rank 32 --lambdas 0.1,0.3,1,3,10 --outer-iters 10 --device cuda

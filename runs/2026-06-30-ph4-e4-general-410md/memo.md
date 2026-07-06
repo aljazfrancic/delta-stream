@@ -11,6 +11,17 @@ per-(depth, lag) Granger nested-F + scrambled Null 1 — on generic **Pile** tex
 prompts. Same code (`scripts/step5_ar.py --h5 …`), same config (k∈{1,2,3,5,10,15,20}, rank sweep,
 256 predictor PCs, Granger q=32), same N and the same train/test split sizes.
 
+> **⚠ STATUS UPDATE (2026-07-06 — annotated after T1–T5/T4; the body below is the dated
+> 2026-06-30 record, unedited).** The verdict's binary claim stands, but its "*in fact
+> stronger* (0.935 vs 0.650)" reading was quantified away the same week: **the generic R²
+> level is ≈ all ±v_ℓ persistence** (T5: generic 0.935 ≈ 0.94 tautological + ≈0 genuine;
+> factual 0.65 = 0.52 + 0.13; T1: after stripping ~all state variance the genuine
+> residual is **0.29 generic vs 0.44 factual** — i.e. *weaker*, not stronger). And T4:
+> the tautology-free structure is substantially **architectural** on both stores (random
+> init matches). The task-generality conclusion itself is *reinforced* by both (E7
+> extends it to H2 + k\*), but quote the persistence-stripped numbers, not 0.935. See
+> `runs/2026-06-30-ph4-{pressure,t5-taut-floor}-410md{,-general}` + progress.md (T1–T5).
+
 > **Verdict — H1 GENERALISES. The cross-layer Δ structure is a general property of transformer
 > depth, not an artefact of factual recall.** On generic Pile text the pooled AR(k) explains
 > **R² = 0.935** of held-out Δ variance (best k=20; k=1 alone already 0.882), the scrambled null

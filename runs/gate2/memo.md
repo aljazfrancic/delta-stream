@@ -18,6 +18,15 @@ at the final prompt token → `residual_stream[1555, 25, 1024]`. **Date:** 2026-
 > does exist is E6 (k\*=1 class-invariant) and Phase-4 Step-2 (cross-class kernels
 > circuit-specific). The architecture lock below (Branch B) was never in question —
 > Q3–Q5 were scope/generality checks by design. See progress.md (C1, C2, L2, L3).
+> **Later refinements of this memo's characterisation (E7 2026-06-30 · R8 2026-07-05):**
+> the whole H2-fails + low-order-k\* signature replicates on **generic Pile text** (E7:
+> every cross-band R² negative, worst −144; k\* median **2** vs factual 1 — state the
+> discrepancy plainly), and splitting Δ into its sublayer writes localises the k\*≈1
+> (R8, tautology-free — the split streams carry no ±v_ℓ term): the energy-dominant
+> (78%) **MLP write is strictly first-order (k\*=1)** while the smaller **attention
+> write carries the deep Granger reach** (k\* median 2, to 10 late) — the residual
+> stream's k\*≈1 is the MLP channel showing through. Memos:
+> `runs/2026-06-30-ph4-e7-stationarity-general`, `runs/2026-07-05-r8-collect-streams-410md`.
 
 > Headline: **H2 (approximate stationarity across depth) is rejected.** The AR-on-Δ
 > kernel that predicts Δ_ℓ from its recent past is **strongly depth-dependent** — a

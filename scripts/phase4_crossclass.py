@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Phase 4 Step 2 — cross-class generalisation of the decomposition.
 
-Seed stability (0.45, recorded limitation) and dataset stability (Jaccard 0.89) were both
-measured at Gate 3. The third Step-2 metric is cross-class generalisation (the plan's
+Seed stability (0.45 on the mlsae-TopK source — the recorded limitation, later closed by
+E2: an L1 source gives 1.00) and dataset stability (Jaccard 0.89) were both measured at
+Gate 3. The third Step-2 metric is cross-class generalisation (the plan's
 "features trained on geography relations: how well do they reconstruct date-relation
 updates?"). With three relation classes (organization / geography / language), we fit the
 Branch B SSM on one class's examples and measure held-out Δ reconstruction R² on **each

@@ -6,6 +6,28 @@ collected at the final prompt token → `residual_stream[1555, 25, 1024]`.
 **Date:** 2026-06-22. **Seed:** 0. **Split:** 1,244 train / 311 test (shared across
 Steps 3–5). Figures in `figures/`, all numerics in `tables/`.
 
+> **⚠ STATUS UPDATE (2026-07-06 — annotated after the H1 pressure-test battery; the body
+> below is the dated 2026-06-22 record, unedited).** The Gate-1 decision and route stand,
+> but three later results correct how this memo's numbers must be *read* (D3 leads with
+> the corrected story, per the review hazards):
+> **(1) The raw AR R² levels ARE partly the ±v_ℓ tautology.** Point 7's "not explained by
+> the residual-stream tautology" was too strong: the per-depth intercept removes only the
+> *mean* persistent component, not the example-specific one. T5 (2026-06-30) splits the
+> headline exactly: **factual 0.65 = 0.52 tautological + 0.13 genuine** (generic 0.935 ≈
+> all tautological). The tautology-robust reads are T1 (R² **0.44** after stripping 87% of
+> state variance ≫ scramble ≈0), T2 (persistence-matched surrogate ≈0), and T3 (lag≥2
+> Granger **89/89** vs 0/89) — the binary H1 claim survives; quote those, not 0.65 alone.
+> **(2) The surviving structure is substantially ARCHITECTURAL, not learned** (T4
+> 2026-06-30: a random-init 410m matches the persistence-stripped R², 0.50/0.22 vs
+> 0.44/0.29; R6 2026-07-03 replicates on GPT-2, learned share ~5%) — H1's depth structure
+> is a property of the architecture, general across tasks (E4/E7) and training. The
+> *learned* content lives in the Branch-B reconstruction win (~half learned, T4-recon/R10).
+> **(3) Robustness later added:** object-disjoint split (R5: AR 0.561, Granger 112/112
+> identical), tautology-free sublayer streams (R8: attn/mlp writes carry no ±v_ℓ term,
+> both reproduce H1; k\* contrast mlp=1 vs attn→10), and a Freedman–Lane permutation check
+> calibrating the Granger F thresholds (2026-07-05). See progress.md (T1–T5 · T4 · R5 ·
+> R6 · R8) + `runs/2026-06-30-ph4-pressure-410md{,-general}`, `runs/2026-07-05-r8-*`.
+
 > Headline: **H1 (depth-local predictability of Δ_ℓ) is cleanly supported.** The
 > layer-to-layer update Δ_ℓ = v_{ℓ+1} − v_ℓ is linearly predictable far above trivial
 > and calibrated-lens baselines, has autoregressive structure over depth reaching back

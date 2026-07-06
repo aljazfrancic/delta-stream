@@ -906,3 +906,52 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
         a.set_xticks(depth_ticks)
     fig.tight_layout()
     return fig
+
+
+_PROBE_ARMS = [  # fixed order + style per arm; identity never rides on color alone
+    ("state", "tab:blue", "-o", r"SSM state $z_\ell$"),
+    ("code_pca", "tab:orange", "-s", r"PCA-32($u_\ell$) per-layer code"),
+    ("code_prefix_pca", "tab:green", "-^", r"PCA-32($u_{\leq\ell}$) prefix superset"),
+    ("resid_pca", "gray", "--", r"PCA-32($v_\ell$) raw residual (reference)"),
+]
+
+
+def state_probe(dfs: dict[str, pd.DataFrame], *, majority: float | None = None,
+                mid_notes: dict[str, str] | None = None) -> plt.Figure:
+    """R7 state-probe panels, one per source dictionary (paper fig 16).
+
+    Per-layer 205-way answer-identity top-1 accuracy of the identical linear probe
+    on four dimension-matched (d=32) arms. ``dfs``: panel title -> state_probe.csv
+    frame. ``mid_notes``: panel title -> the CI'd mid-band state−code contrast.
+    """
+    n = len(dfs)
+    fig, axes = plt.subplots(1, n, figsize=(5.6 * n, 4.2), squeeze=False, sharey=True)
+    for i, (ax, (title, df)) in enumerate(zip(axes[0], dfs.items(), strict=True)):
+        for arm, color, style, label in _PROBE_ARMS:
+            sub = df[df["arm"] == arm].sort_values("layer")
+            ax.plot(sub["layer"], sub["object_top1"], style, color=color, ms=4,
+                    lw=1.4 if arm != "resid_pca" else 1.1, label=label,
+                    alpha=1.0 if arm != "resid_pca" else 0.8)
+        if majority is not None:
+            ax.axhline(majority, color="k", lw=0.7, ls=":",
+                       label=f"majority class ({majority:.2f})")
+        ax.set_xlabel(r"layer $\ell$")
+        ax.set_title(title)
+        ax.grid(alpha=0.3)
+        _int_ticks(ax)
+        if i == 0:  # the jump is in both panels; one note is enough (clutter)
+            st = df[df["arm"] == "state"].sort_values("layer")["object_top1"].to_numpy()
+            ax.annotate(r"$\ell$=17: answer-promotion write" "\n(cf. figs 5, 13)",
+                        xy=(17, st[17]), xytext=(10.5, 0.72), fontsize=7,
+                        color="dimgray", ha="center", bbox=_NOTE_BBOX,
+                        arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
+        if mid_notes and title in mid_notes:
+            # upper-left is the one region the (low-starting) curves never reach
+            ax.text(0.02, 0.97, mid_notes[title], transform=ax.transAxes, fontsize=7,
+                    color="dimgray", ha="left", va="top", bbox=_NOTE_BBOX)
+    axes[0][0].set_ylabel("answer identity top-1 (205-way, test)")
+    axes[0][0].legend(fontsize=7, loc="lower right")  # empty in both panels
+    fig.suptitle("R7 · the 32-dim SSM state out-decodes dimension-matched code summaries "
+                 "at early/mid depth", fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    return fig

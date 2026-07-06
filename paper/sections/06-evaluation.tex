@@ -18,10 +18,10 @@ sparsity level of the $\lambda_{L1}$ sweep (\cref{fig:pareto}): held-out
 $\Rsq$ 0.867--0.698 versus 0.816--0.653 across $\lambda_{L1} \in
 \{0.3,\dots,30\}$, an interpolated matched-$L_0$ gap of \textbf{$+0.037$ to
 $+0.066$}. At the canonical $\lambda_{L1}{=}1$ knee the gap is
-\[
-  \textbf{+0.0489}\; \CI{+0.0464}{+0.0516} \text{ (MLSAE source)}, \qquad
+\begin{gather*}
+  \textbf{+0.0489}\; \CI{+0.0464}{+0.0516} \text{ (MLSAE source)},\\
   \textbf{+0.0483}\; \CI{+0.0458}{+0.0509} \text{ (trained-L1 source)},
-\]
+\end{gather*}
 --- dictionary-independent, seed-robust (every seed reaches $\Rsq = 0.880$
 train with the same gap), and it survives an object-disjoint split
 ($+0.055$/$+0.061$).

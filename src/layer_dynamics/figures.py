@@ -462,19 +462,29 @@ def clt_three_axis(
     styles = {"per_layer": ("s", "C1", "per-layer (no cross-layer)"),
               "ssm": ("o", "C0", "state-space SSM"),
               "clt_full": ("D", "C2", "free per-pair CLT")}
+    pts_all = [(fam, pm, r2) for fam, pts in budget.items() for pm, r2, _ in pts]
+    xmax = max(p[1] for p in pts_all)
+
+    def _upper_of_cluster(fam: str, pm: float, r2: float) -> bool:
+        """Is this point the upper one of a near-coincident cross-family pair?
+        (ssm/per_layer land on ~the same (params, R²) at matched budget — the R9
+        result — so same-side labels there collide with the other family's marker.)"""
+        return any(f2 != fam and abs(np.log(pm / pm2)) < 0.1 and 0 < r2 - r22 < 0.02
+                   for f2, pm2, r22 in pts_all)
+
     for fam, pts in budget.items():
         m, c, lab = styles[fam]
         pts = sorted(pts)
         axA.plot([p[0] for p in pts], [p[1] for p in pts], marker=m, color=c, label=lab)
-        # ssm labels above, others below: the ssm/per_layer curves nearly coincide
-        # at matched budget (that IS the R9 result), so same-side labels collide.
-        dy = 5 if fam == "ssm" else -10
-        xmax = max(p[0] for fam_pts in budget.values() for p in fam_pts)
         for pm, r2, rk in pts:
-            left = pm == xmax  # rightmost point: label inward, not past the axes edge
+            # All three curves rise monotonically, so below-right and above-left are
+            # the quadrants a label can occupy without sitting on a line segment.
+            # Above-left for the rightmost point (stays inside the axes) and for the
+            # upper point of a coincident pair; below-right otherwise.
+            al = pm == xmax or _upper_of_cluster(fam, pm, r2)
             axA.annotate(f"r{rk}", (pm, r2), textcoords="offset points",
-                         xytext=(-4, dy) if left else (4, dy), fontsize=7, color=c,
-                         ha="right" if left else "left")
+                         xytext=(-4, 5) if al else (4, -10), fontsize=7, color=c,
+                         ha="right" if al else "left")
     axA.set_xscale("log")
     axA.set_xlabel("total parameters (millions, log)")
     axA.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")

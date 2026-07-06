@@ -110,8 +110,9 @@ def ridge_by_layer(df: pd.DataFrame) -> plt.Figure:
     _int_ticks(ax)
     # Keep the corrected H1 interpretation attached to the raw number (D3 hazard #1):
     # T1/T4/T5 showed the level is part ±v_ℓ persistence and substantially architectural.
+    # No cross-figure numbers in panels — those live in the paper prose.
     ax.annotate(r"NB: level includes the $\pm v_\ell$ persistence share; the tautology-free"
-                "\nstructure is substantially architectural (T4, two families) — see figs 14–15",
+                "\nstructure is substantially architectural (T4, two families)",
                 xy=(0.99, 0.03), xycoords="axes fraction", ha="right", va="bottom",
                 fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     ax.legend(fontsize=8)
@@ -185,7 +186,7 @@ def ar_r2_vs_k(df: pd.DataFrame) -> plt.Figure:
     # Corrected H1 interpretation stays attached to the raw curve (D3 hazard #1);
     # lifted off the y=0 scrambled-null line, which used to strike through it.
     ax.annotate("NB: tautology-free share ≈0.44 after persistence stripping (T1),\n"
-                "and substantially architectural (T4) — see figs 14–15",
+                "and substantially architectural (T4)",
                 xy=(0.99, 0.09), xycoords="axes fraction", ha="right", va="bottom",
                 fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     fig.tight_layout()
@@ -655,7 +656,7 @@ def aL_spectrum(spec_df: pd.DataFrame, decay_df: pd.DataFrame | None = None) -> 
 
 
 def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
-    """``notes=True`` adds the 410m-store dip explanations (paper fig 13):
+    """``notes=True`` adds the 410m-store dip explanations (repo fig13):
     the ℓ=17 answer-promotion write and the ℓ=23 final-write norm outlier."""
     rows = js["rows"]
     cut = [r["cutoff"] for r in rows]
@@ -684,7 +685,7 @@ def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
         if notes:
             i17 = int(np.argmin(full_pl[1:])) + 1  # interior minimum of the full arm
             ax2.annotate(rf"$\ell$={i17}: answer-promotion write —"
-                         "\nhardest for both arms (cf. fig 5)",
+                         "\nhardest for both arms",
                          xy=(i17, full_pl[i17]), xytext=(i17 - 6, -0.85), fontsize=7,
                          color="dimgray", ha="center", bbox=_NOTE_BBOX,
                          arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
@@ -934,7 +935,7 @@ _PROBE_ARMS = [  # fixed order + style per arm; identity never rides on color al
 
 def state_probe(dfs: dict[str, pd.DataFrame], *, majority: float | None = None,
                 mid_notes: dict[str, str] | None = None) -> plt.Figure:
-    """R7 state-probe panels, one per source dictionary (paper fig 16).
+    """R7 state-probe panels, one per source dictionary (repo fig16).
 
     Per-layer 205-way answer-identity top-1 accuracy of the identical linear probe
     on four dimension-matched (d=32) arms. ``dfs``: panel title -> state_probe.csv
@@ -957,7 +958,7 @@ def state_probe(dfs: dict[str, pd.DataFrame], *, majority: float | None = None,
         _int_ticks(ax)
         if i == 0:  # the jump is in both panels; one note is enough (clutter)
             st = df[df["arm"] == "state"].sort_values("layer")["object_top1"].to_numpy()
-            ax.annotate(r"$\ell$=17: answer-promotion write" "\n(cf. figs 5, 13)",
+            ax.annotate(r"$\ell$=17: answer-promotion write",
                         xy=(17, st[17]), xytext=(10.5, 0.72), fontsize=7,
                         color="dimgray", ha="center", bbox=_NOTE_BBOX,
                         arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})

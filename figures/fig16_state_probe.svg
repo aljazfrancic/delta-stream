@@ -562,30 +562,30 @@ L 404.894556 61.469656
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="patch_7">
-    <path d="M 264.474891 96.524616 
-Q 282.113906 95.865635 298.859118 95.240045 
+    <path d="M 264.178551 98.218981 
+Q 281.966969 96.757463 298.863963 95.369186 
 " style="fill: none; stroke: #696969; stroke-width: 0.8; stroke-linecap: round"/>
-    <path d="M 296.008803 93.945554 
-L 298.859118 95.240045 
-L 296.113336 96.743602 
+    <path d="M 295.958727 94.203166 
+L 298.863963 95.369186 
+L 296.188006 96.993763 
 " style="fill: none; stroke: #696969; stroke-width: 0.8; stroke-linecap: round"/>
    </g>
    <g id="text_20">
     <g id="patch_8">
-     <path d="M 155.238134 108.787569 
-L 260.728134 108.787569 
-Q 262.478134 108.787569 262.478134 107.037569 
-L 262.478134 90.232647 
-Q 262.478134 88.482647 260.728134 88.482647 
-L 155.238134 88.482647 
-Q 153.488134 88.482647 153.488134 90.232647 
-L 153.488134 107.037569 
-Q 153.488134 108.787569 155.238134 108.787569 
+     <path d="M 155.238134 108.086885 
+L 260.728134 108.086885 
+Q 262.478134 108.086885 262.478134 106.336885 
+L 262.478134 99.335245 
+Q 262.478134 97.585245 260.728134 97.585245 
+L 155.238134 97.585245 
+Q 153.488134 97.585245 153.488134 99.335245 
+L 153.488134 106.336885 
+Q 153.488134 108.086885 155.238134 108.086885 
 z
 " style="fill: #ffffff; opacity: 0.75"/>
     </g>
     <!-- $\ell$=17: answer-promotion write -->
-    <g style="fill: #696969" transform="translate(155.238134 96.253331)">
+    <g style="fill: #696969" transform="translate(155.238134 104.655245)">
      <text>
       <tspan x="0" y="-0.6875" style="font-style: oblique; font-size: 7px; font-family: 'DejaVu Sans'; fill: #696969">ℓ</tspan>
       <tspan x="2.891602" y="-0.6875" style="font-size: 7px; font-family: 'DejaVu Sans'; fill: #696969">=</tspan>
@@ -617,7 +617,6 @@ z
       <tspan x="101.687988" y="-0.6875" style="font-size: 7px; font-family: 'DejaVu Sans'; fill: #696969">e</tspan>
      </text>
     </g>
-    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(183.858291 104.655245)">(cf. figs 5, 13)</text>
    </g>
    <g id="text_21">
     <g id="patch_9">

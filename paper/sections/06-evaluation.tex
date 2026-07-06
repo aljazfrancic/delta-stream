@@ -48,7 +48,7 @@ replicate at any budget is the \emph{structure} the state provides ---
   (\cref{sec:evaluation:baselines}); the CLT lives in the frozen-source
   protocol with no comparable $L_0$ and gets its own figure
   (\cref{fig:clt}). The SSM is above the matched baseline at every operating
-  point. [\code{fig07}]}
+  point.}
   \label{fig:pareto}
 \end{figure}
 
@@ -86,7 +86,7 @@ point \emph{understates} Qwen, and at true depth Qwen sits above
   mean$\pm$sd), replicated in sign in GPT-2 and Qwen2. Caveats in
   \cref{sec:evaluation:depth}: mixed TopK suites on the Pythia line; in-family
   depth confounded with width; the Qwen point is a 12L SAE-coverage prefix of
-  a 24L model (full-coverage value $+0.072$). [\code{fig06}]}
+  a 24L model (full-coverage value $+0.072$).}
   \label{fig:depthscaling}
 \end{figure}
 
@@ -174,7 +174,7 @@ at matched budget and in low data.
   families near one frontier; per-layer rank-64/128 points included per
   \cref{sec:evaluation:gate3}); (B) per-model rank-matched gaps with paired
   CIs; (C) sample-efficiency sign flip (crossover $\approx 10^3$ examples).
-  [\code{fig08}]}
+ }
   \label{fig:clt}
 \end{figure}
 
@@ -225,7 +225,7 @@ building on directions that need not survive a re-seed.
   system-level invariants the claims use are stable (operator spectrum,
   decoder subspace). The in-panel note carries the resolution: the
   per-feature instability is TopK-specific --- a trained-L1 source on the
-  same activations reaches match@0.7 $=1.00$. [\code{fig11}]}
+  same activations reaches match@0.7 $=1.00$.}
   \label{fig:stability}
 \end{figure}
 
@@ -279,7 +279,7 @@ No threshold was adjusted post hoc.
   $\times$ 100 examples. Top-$k$ co-firing ablation crosses the
   pre-registered 0.20 at $k{=}100$; count-matched random groups do not;
   mass-matched random groups and norm-matched random \emph{directions} do ---
-  the effect tracks removed magnitude, not feature identity. [\code{fig09}]}
+  the effect tracks removed magnitude, not feature identity.}
   \label{fig:distributed}
 \end{figure}
 
@@ -299,7 +299,8 @@ At mid-depth the state wins against both code summaries on both dictionaries
 (\cref{fig:probe}): state$-$code $+0.060$ \CI{$+0.037$}{$+0.084$} (MLSAE) /
 $+0.139$ \CI{$+0.105$}{$+0.173$} (L1); state$-$prefix $+0.080$/$+0.173$ at
 mid-depth and $+0.110$/$+0.188$ late; at $\ell{=}17$ --- the
-answer-promotion depth where $\kstar$ blips and all probe arms jump --- the
+answer-promotion depth where $\kstar$ blips (\cref{fig:kstar}), the
+source-prefix sweep dips (\cref{fig:prefix}), and all probe arms jump --- the
 state (0.759) beats even the raw-residual PCA (0.666). Peak state decoding
 reaches 0.775/0.801 top-1 from 32 dimensions. Since the SSM is linear, the
 state and the prefix-PCA are two 32-dimensional \emph{linear images of the
@@ -318,7 +319,7 @@ confidence favours the code arms --- the state's advantage is specific to
   32-dimensional summaries, both dictionaries. The $\Delta$-reconstruction-trained
   state beats dimension-matched PCA of its own codes (and their prefix
   superset) at early/mid depth, and at $\ell{=}17$ beats even raw-residual
-  PCA; the raw stream remains best late. [\code{fig16}]}
+  PCA; the raw stream remains best late.}
   \label{fig:probe}
 \end{figure}
 
@@ -352,7 +353,7 @@ immediately.}
   contractive at every depth (median $\rho = 0.43$), memory
   $\tau \approx 0.83$ layers, with the state-path kernel halving per layer of
   gap --- the operator-level mechanism for $\kstar \approx 1$. The spectrum is
-  seed-stable (0.999) and dictionary-robust (0.993). [\code{fig12}]}
+  seed-stable (0.999) and dictionary-robust (0.993).}
   \label{fig:spectrum}
 \end{figure}
 
@@ -378,6 +379,8 @@ catastrophic.
   \caption{Source-prefix sweep: held-out $\Rsq$ as sources are admitted up to
   $\ell_{\max}$ (SSM free to propagate). Reconstruction only turns positive
   past mid-depth and is still climbing at the top of the stack --- late-layer
-  sources are load-bearing and non-propagable. [\code{fig13}]}
+  sources are load-bearing and non-propagable. The annotated interior dip at
+  $\ell{=}17$ is the answer-promotion write, the same depth where $\kstar$
+  blips (\cref{fig:kstar}) and the probe arms jump (\cref{fig:probe}).}
   \label{fig:prefix}
 \end{figure}

@@ -74,9 +74,11 @@ def kstar():
         return None
     # The one k*>1 bar: Δ_17's lag-1 R² collapses to 0.64 (≈0.86 elsewhere), so the
     # 95%-of-best rule needs a second lag. Store-specific: ℓ=17 is the 410m
-    # answer-promotion depth (R7 probe jumps 0.57→0.76 there; fig 13 dips there too).
+    # answer-promotion depth (R7 probe jumps 0.57→0.76 there; the source-prefix
+    # sweep dips there too). Cross-figure pointers live in the paper prose, not
+    # in the panels (figure numbers differ between the repo and the paper).
     note = (17, "$\\ell$=17: lag-1 $R^2$ dips to 0.64 —\nthe answer-promotion write"
-                "\n(R7 probe jump; cf. fig 13)")
+                "\n(R7 probe jump)")
     return figures.kstar_vs_depth(df, granger_reach=20, spike_note=note)
 
 

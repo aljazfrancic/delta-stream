@@ -485,6 +485,9 @@ def clt_three_axis(
             axA.annotate(f"r{rk}", (pm, r2), textcoords="offset points",
                          xytext=(-4, 5) if al else (4, -10), fontsize=7, color=c,
                          ha="right" if al else "left")
+    # annotations don't autoscale: widen the y-margins so the labels hanging off
+    # the extreme points (green r64 above, orange r16 below) stay inside the axes
+    axA.margins(y=0.12)
     axA.set_xscale("log")
     axA.set_xlabel("total parameters (millions, log)")
     axA.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")

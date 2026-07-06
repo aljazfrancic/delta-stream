@@ -469,9 +469,12 @@ def clt_three_axis(
         # ssm labels above, others below: the ssm/per_layer curves nearly coincide
         # at matched budget (that IS the R9 result), so same-side labels collide.
         dy = 5 if fam == "ssm" else -10
+        xmax = max(p[0] for fam_pts in budget.values() for p in fam_pts)
         for pm, r2, rk in pts:
+            left = pm == xmax  # rightmost point: label inward, not past the axes edge
             axA.annotate(f"r{rk}", (pm, r2), textcoords="offset points",
-                         xytext=(4, dy), fontsize=7, color=c)
+                         xytext=(-4, dy) if left else (4, dy), fontsize=7, color=c,
+                         ha="right" if left else "left")
     axA.set_xscale("log")
     axA.set_xlabel("total parameters (millions, log)")
     axA.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")

@@ -95,7 +95,12 @@ $1..j{-}1$ vs $1..j$, per-depth intercepts included) on a top-32 PCA
 projection of $\Delta$ (full-$D$ Wilks is singular at $D \gg N$), using
 Wilks' $\Lambda$ with Rao's F approximation. Bonferroni corrects across the
 112 feasible cells ($\alpha = 4.5\times10^{-4}$ per cell); the feasibility
-count follows the plan's rule ($\ell \ge j$).
+count follows the plan's rule ($\ell \ge j$), i.e.\ $\sum_j (L - j)$ over the
+lag grid. With the full grid $\{1,2,3,5,10,15,20\}$ this gives 112 cells at
+$L{=}24$ and 196 at $L{=}36$; the 12-layer replications
+(\cref{tab:crossmodel}) cap the grid at $\{1,2,3,5,8,10\}$ because lags 15
+and 20 are infeasible at $L{=}12$, giving 43 cells, with Bonferroni taken
+over the per-model feasible count.
 
 \paragraph{Permutation calibration.}
 Because the rogue high-variance dimensions make errors heavy-tailed, the F

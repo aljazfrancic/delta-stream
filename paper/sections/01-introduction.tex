@@ -48,7 +48,13 @@ the decomposition architecture as a function of the gate outcomes, and the
 causal-evaluation thresholds, before any data were collected. Where the data
 contradicted the more exciting branch, we took the pre-registered exit. Both
 hypotheses could have failed cheaply; what actually happened is more
-interesting than either clean outcome.
+interesting than either clean outcome. Scope, stated up front: all kernels
+are fit at the \emph{query position} of factual-recall prompts drawn from
+three CounterFact relation classes. The binary characterisation replicates on
+generic text, but cross-position and cross-class kernel transfer are both
+negative (\cref{sec:phase2:scope}) --- the kernels are hyper-local to their
+circuit, itself a finding --- so every claim below is a claim about that
+regime.
 
 \paragraph{What we found.} H1 survives every control we could construct ---
 including two nulls specified in advance and a post-hoc pressure battery
@@ -76,10 +82,21 @@ Pythia; replicated in GPT-2 and Qwen2), and about half of it is present at
 random initialisation --- so the method captures a genuinely learned signal
 roughly equal in size to the architectural one. The learned state-transition
 operator is contractive everywhere (spectral radius median $0.43$, implied
-memory $\approx 0.8$ layers), which \emph{explains} the observed first-order
-structure, and the state is functionally informative: at matched dimension it
-decodes the recalled answer at mid-depth better than PCA summaries of the
-codes it is built from.
+memory $\approx 0.8$ layers), consistent with --- and supplying a candidate
+mechanism for --- the observed first-order structure, and the state is
+functionally informative: at matched dimension it decodes the recalled answer
+at mid-depth better than PCA summaries of the codes it is built from.
+
+To be direct about the framing: this is a \emph{characterisation} paper, not
+a method paper. We do not advance the SSM as a better decomposition tool on
+the strength of the $+0.008$ parameter-matched margin --- read alone, that
+number says most of the rank-matched gap is parameter count. The case that
+the cross-layer state captures real structure rests on what decoder width
+cannot buy at any budget: the monotone growth of the gain with depth, its
+roughly-half-learned split against untrained controls, the contractive
+operator spectrum, and the state's functional informativeness for the
+recalled answer. Those structural results, not the headline gap, carry the
+paper's positive claims.
 
 The pre-registered causal test --- find a feature no baseline finds, ablate
 it, predict the behavioural consequence --- returns a null we consider one of

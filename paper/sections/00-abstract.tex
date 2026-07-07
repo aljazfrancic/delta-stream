@@ -1,45 +1,30 @@
 \begin{abstract}
-Transformer components communicate through an additive residual stream, so the
-update a layer writes, $\Dl = v_{\ell+1} - \vl$, is the natural unit of
-cross-layer computation. We pre-registered a two-part hypothesis about these
-updates on factual-recall inputs --- (H1) they are predictable across depth,
-and (H2) the prediction kernel is approximately stationary in depth --- and ran
-the frozen protocol to completion on \pythia{}, with replications on six models
-from three architecture families (Pythia, GPT-2, Qwen2). Four findings survive
-an adversarial battery of pre-registered nulls and post-hoc pressure tests.
-\textbf{(1)}~H1 holds --- $\Dl$ is autoregressively predictable far above
-scrambled and context-perturbation nulls --- but an exact variance
-decomposition shows the raw score (held-out $\Rsq=0.65$) is part running-sum
-tautology (0.52) and part genuine structure (0.13, rising to 0.44 when
-refitted on the persistence-stripped stream), and an untrained-network control
-shows the genuine part is \emph{substantially architectural rather than
-learned}, on two families. \textbf{(2)}~H2 fails decisively: kernels fit on
-one depth band predict another band's updates worse than that band's mean, so
-depth dynamics are pervasively non-stationary, the effective AR order is
-$\kstar\!\approx\!1$, and the right abstraction is a first-order, fully
-depth-indexed state-space model (SSM) --- validating the unconstrained
-per-layer-pair parameterisation of cross-layer transcoders. \textbf{(3)}~Fitted
-over frozen sparse-autoencoder sources, the SSM reconstructs $\Dl$ above a
-matched per-layer dictionary at every sparsity ($+0.049$
-\CI{$+0.046$}{$+0.052$} $\Rsq$ at matched rank; $+0.008$
-\CI{$+0.005$}{$+0.010$} at matched total parameters), with the gain growing
-monotonically with depth within the Pythia family and replicating in sign in
-GPT-2 and Qwen2; roughly half of it is already present at random
-initialisation. The learned state is contractive at every layer
-(spectral radius median $0.43$, memory $\approx0.8$ layers) --- the mechanism
-behind $\kstar\!\approx\!1$ --- and is \emph{functionally informative}: a
-32-dimensional state decodes the recalled answer at mid-depth better than
-dimension-matched PCA summaries of the very codes it is built from.
-\textbf{(4)}~The pre-registered causal existence proof returns a clean null:
-no single feature's ablation moves the answer probability by the
-pre-registered threshold, and the group-ablation effect that does is
-magnitude-driven --- a norm-matched \emph{random direction} reproduces it ---
-so factual recall is a distributed, mass-driven code with no privileged sparse
-subset, a conclusion that survives swapping the dictionary. As a by-product we
-isolate a practical failure mode: TopK dictionaries make single-feature
-attributions seed-unidentifiable (decoder match $0.45$) where L1 dictionaries
-on the same activations are perfectly stable ($1.00$). All gates, thresholds,
-and fallback branches were written down before data collection; every headline
-carries a paired bootstrap confidence interval; and every figure regenerates
-from tracked tables with one script.
+Transformer components communicate through an additive residual stream, so
+the update a layer writes, $\Dl = v_{\ell+1} - \vl$, is the natural unit of
+cross-layer computation. We pre-registered two hypotheses about these updates
+on factual-recall inputs --- (H1) they are predictable across depth; (H2) the
+prediction kernel is approximately depth-stationary --- and ran the frozen
+protocol on \pythia{}, replicating on six models from three families.
+\textbf{(1)}~H1 holds far above pre-registered nulls but decomposes exactly:
+the headline held-out $\Rsq = 0.65$ is $0.52$ running-sum tautology
+$+\;0.13$ genuine structure, and the genuine part is substantially
+architectural --- an untrained network shows it at comparable strength.
+\textbf{(2)}~H2 fails decisively: kernels fit on one depth band predict
+another band's updates worse than that band's mean, so the right abstraction
+is a first-order ($\kstar\!\approx\!1$), fully depth-indexed state-space
+model (SSM), validating the unconstrained parameterisation of cross-layer
+transcoders. \textbf{(3)}~Fitted over frozen sparse sources, the SSM
+reconstructs $\Dl$ above a matched per-layer dictionary ($+0.049$ $\Rsq$
+rank-matched, $+0.008$ parameter-matched), with a depth-graded, roughly
+half-learned gain; the learned state is contractive (median spectral radius
+$0.43$, consistent with $\kstar\!\approx\!1$) and decodes the recalled
+answer at mid-depth better than dimension-matched PCA of its own codes.
+\textbf{(4)}~The pre-registered causal test returns a controlled null: no
+single feature's ablation clears threshold, and the group effect that does is
+reproduced by a norm-matched \emph{random direction} --- recall is a
+distributed, magnitude-driven code --- while, as a by-product, TopK
+dictionaries make single-feature directions seed-unidentifiable where matched
+L1 dictionaries on the same activations are perfectly stable. All gates were
+frozen before data collection, every headline carries a paired bootstrap
+confidence interval, and every figure regenerates from tracked tables.
 \end{abstract}

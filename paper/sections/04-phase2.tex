@@ -141,8 +141,13 @@ and $\kstar = 1$ at every band of every model.
   \small
   \caption{Cross-model replication of H1/H2. AR $\Rsq$ is pooled held-out
   real$-$null; Granger counts are Bonferroni-significant cells (real vs
-  scrambled null); H2 column reports the sign pattern of cross-band transfer.
-  Datasets are per-model confidence-filtered CounterFact (sizes 767--2{,}540).}
+  scrambled null) out of all feasible (depth, lag) cells --- $\sum_j (L - j)$
+  over the lag grid: $\{1,2,3,5,10,15,20\}$ for $L \ge 24$ (112 cells at
+  $L{=}24$, 196 at $L{=}36$); the 12-layer models use the capped grid
+  $\{1,2,3,5,8,10\}$ since lags 15 and 20 are infeasible at $L{=}12$, giving
+  43 cells (\cref{app:stats}). H2 column reports the sign pattern of
+  cross-band transfer. Datasets are per-model confidence-filtered CounterFact
+  (sizes 767--2{,}540).}
   \label{tab:crossmodel}
   \begin{tabular}{llcccc}
     \toprule

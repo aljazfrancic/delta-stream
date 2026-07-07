@@ -332,11 +332,17 @@ equivalence class, not of a seed. Three results (\cref{fig:spectrum}):
 \textbf{(i)} the operator is \textbf{contractive at every layer}: spectral
 radius median 0.43, maximum 0.88, \textbf{0/23 layers} $\ge 1$; implied
 spectral memory $\tau = -1/\ln \rho_{\mathrm{geo}} \approx \mathbf{0.83}$
-layers. \textbf{(ii)} This is the \emph{mechanism} behind
+layers. \textbf{(ii)} This supplies a \emph{mechanism} for
 $\kstar\!\approx\!1$: the state-path kernel norm halves per layer of gap
 ($1 \to 0.485 \to 0.211 \to 0.089$), so a source two layers back contributes
 half, three back a fifth --- first-order reads capture essentially all
-state value. \textbf{(iii)} The spectrum is seed-stable (sorted-modulus
+state value. The epistemic status deserves one explicit sentence:
+contractivity is a property of the \emph{fitted} operator, estimated on the
+same data on which $\kstar$ was measured, so it is a mechanism
+\emph{consistent with} the first-order structure --- an explanation within
+the model class --- not an independent confirmation of it; the model-free
+evidence for $\kstar\!\approx\!1$ remains the AR sweeps of
+\cref{sec:phase2:kstar}. \textbf{(iii)} The spectrum is seed-stable (sorted-modulus
 cosine \textbf{0.999} across seeds) and dictionary-robust (L1 vs MLSAE
 \textbf{0.993}); honestly scoped, the per-layer $\rho$ \emph{profile} is only
 moderately shared across dictionaries (correlation 0.54) --- the modulus
@@ -352,7 +358,8 @@ immediately.}
   \caption{Spectrum of the learned state-transition operators $A_\ell$:
   contractive at every depth (median $\rho = 0.43$), memory
   $\tau \approx 0.83$ layers, with the state-path kernel halving per layer of
-  gap --- the operator-level mechanism for $\kstar \approx 1$. The spectrum is
+  gap --- an operator-level mechanism consistent with $\kstar \approx 1$
+  (a property of the fit; \cref{sec:evaluation:operator}). The spectrum is
   seed-stable (0.999) and dictionary-robust (0.993).}
   \label{fig:spectrum}
 \end{figure}

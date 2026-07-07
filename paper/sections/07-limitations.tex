@@ -12,9 +12,22 @@ novelty fraction is computable or claimed.
 Every experiment ran on one 3\,GB GPU (GTX 1050;
 \cref{app:repro}), which admits Pythia to 410m, GPT-2 to large, and
 Qwen2-0.5B, but not Gemma-2-2B or Llama-3.1-8B. The replication evidence is
-therefore three families at 6--36 layers; the two most architecturally
-distinct modern families are recorded future work, as is deconfounding depth
-from width within Pythia (1b/1.4b/2.8b).
+therefore three families at 6--36 layers, and the two questions this leaves
+open are exactly the ones a reader should ask. First, \emph{does any of this
+hold at 7B?} We do not know, and we state the expectation as a falsifiable
+prediction: the sign pattern (H1 above null, H2 cross-band negative,
+$\kstar\!\approx\!1$, contractive spectrum) should persist at scale, since it
+held without exception across a 60$\times$ parameter range and three
+families; the magnitudes (in particular the depth-graded reconstruction gain)
+we make no prediction for. Second, \emph{within a family, depth is confounded
+with width and parameter count} on the depth-scaling series
+(\cref{sec:evaluation:depth}). One contrast partially deconfounds it: the
+Qwen2 prefix comparison holds the model, the activations, and the dictionary
+type fixed and varies only how many layers the fit covers (24 vs 12), and the
+gain rises with covered depth ($+0.072$ vs $+0.043$) --- depth doing work at
+constant width. A clean in-family resolution (Pythia 1b/1.4b/2.8b, one
+dictionary type, three seeds) is specified and costed as future work, along
+with the two missing families.
 
 \paragraph{Limitation 3 --- three relation classes.}
 The primary model confidently knows too few CounterFact facts for the

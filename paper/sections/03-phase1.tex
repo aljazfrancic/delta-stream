@@ -26,17 +26,23 @@ output; $v_L$ = final pre-unembedding state, so 25 states per example) and
 \[
   \Dl \;=\; v_{\ell+1} - \vl, \qquad \ell \in \{0,\dots,L-1\},
 \]
-for the update block $\ell$ writes. Cross-model replications use Pythia-70m
-($L{=}6$) and Pythia-160m-deduped ($L{=}12$), GPT-2 small/medium/large
-($L{=}12/24/36$), and Qwen2-0.5B ($L{=}24$) --- six models, three families,
-depths 6--36.
+for the update block $\ell$ writes. Cross-model replications use
+Pythia-160m-deduped ($L{=}12$), GPT-2 small/medium/large
+\citep{radford2019language} ($L{=}12/24/36$), and Qwen2-0.5B
+\citep{yang2024qwen2} ($L{=}24$) --- with the primary, six models, three
+families, depths 12--36. Pythia-70m ($L{=}6$) is a seventh, debug-only lane:
+it serves as the optimiser-development model and the six-layer point of the
+depth-scaling series (\cref{sec:evaluation:depth}), but its differently
+constructed dataset keeps it outside the H1/H2 replication claim
+(\cref{app:crossmodel}).
 
 \paragraph{Dataset.}
 From CounterFact \citep{meng2022rome}\footnote{Via the s--r--o-ordered mirror
-\code{NeelNanda/counterfact-tracing}.} we keep triples the model actually
+\code{NeelNanda/counterfact-tracing}; its 21{,}919 records deduplicate to
+21{,}601 unique (subject, relation, prompt) triples.} we keep triples the model actually
 knows: top-1 prediction equals the object and top-1 probability exceeds
 $0.1$. \pythia{} confidently knows only ${\sim}2{,}000$ of the 21{,}601
-CounterFact facts, so the plan's tuning rules were exercised in the sanctioned
+CounterFact triples, so the plan's tuning rules were exercised in the sanctioned
 direction (probability threshold $0.3 \to 0.1$; per-class floor $500 \to
 300$), yielding \textbf{1{,}555 prompts in three relation classes}
 (organization 711, geography 511, language 333; occupation and religion fell
@@ -104,7 +110,8 @@ comparison.
   \label{fig:h1-ridge}
 \end{figure}
 
-\subsection{H1 proper: autoregression on $\Delta$ and Granger reach}
+\subsection{H1 proper: autoregression on \texorpdfstring{$\Delta$}{Delta} and
+Granger reach}
 \label{sec:phase1:ar}
 
 We fit pooled AR($k$) models
@@ -142,7 +149,7 @@ control).}
 Each prompt is wrapped in a fixed six-token neutral preamble; the perturbed
 variant replaces the preamble's content words with random function words at
 identical absolute positions. On the 863/1000 sampled examples where the
-wrapped baseline still recovers the answer, the AR fit is unchanged (0.639
+wrapped baseline still recovers the answer, the AR fit does not degrade (0.639
 wrapped $\to$ 0.696 perturbed) and the Granger heatmaps correlate at
 \textbf{0.964} (112/112 $\to$ 109/112 significant). The cross-layer dynamics
 at the query token are a property of subject--relation processing ---
@@ -277,7 +284,8 @@ attention channel.
 An object-disjoint split (grouping by answer object, since objects like
 ``French'' recur across up to 163 prompts while subjects are nearly unique)
 leaves the result intact: AR $\Rsq = 0.561$, Granger 112/112, null $\approx
-0$. H1 also replicates on all six models (\cref{sec:phase2:crossmodel}) and on
+0$. H1 also replicates on all five replication models
+(\cref{sec:phase2:crossmodel}) and on
 length-matched generic Pile text (\cref{sec:phase2:generic}).
 
 \textbf{Gate-1 verdict (pre-registered routing): H1 supported; proceed to

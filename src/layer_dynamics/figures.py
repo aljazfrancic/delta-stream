@@ -250,7 +250,17 @@ def kstar_vs_depth(kdf: pd.DataFrame, *, granger_reach: int | None = None,
     ax.set_xlabel(r"target depth $\ell$"); ax.set_ylabel("$k$")
     ax.set_title(r"Effective depth $k^*(\ell)$: reconstruction ($\approx$1) vs Granger reach")
     _int_ticks(ax, y=True)
-    ax.legend(loc="upper left", bbox_to_anchor=(0.01, 0.88))
+    handles, labels = ax.get_legend_handles_labels()
+    if "r2_lag1" in kdf:  # the per-depth lag-1 R² the k* rule keys off (right axis)
+        ax2 = ax.twinx()
+        ax2.plot(kdf["depth"], kdf["r2_lag1"], ".-", color="tab:purple", lw=1.1,
+                 ms=4, alpha=0.85, label="lag-1 held-out $R^2$ (right)")
+        ax2.set_ylabel("lag-1 held-out $R^2$", color="tab:purple")
+        ax2.tick_params(axis="y", labelcolor="tab:purple")
+        ax2.set_ylim(0, 1.0)
+        h2, l2 = ax2.get_legend_handles_labels()
+        handles, labels = handles + h2, labels + l2
+    ax.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.01, 0.88))
     fig.tight_layout()
     return fig
 
@@ -417,7 +427,7 @@ def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
                    label=r"dominated $\lambda$ point (off frontier)")
     ssm_f, base_f = _pareto_frontier(ssm), _pareto_frontier(base)
     ax.plot([r["l0"] for r in ssm_f], [r["r2"] for r in ssm_f], "o-", color="C0",
-            label="Branch B SSM (my method)")
+            label="SSM (ours)")
     ax.plot([r["l0"] for r in base_f], [r["r2"] for r in base_f], "s--", color="C1",
             label=r"Baseline A: per-layer dict on $\Delta$")
     mlsae = js.get("baseline_B_mlsae_implied_delta")
@@ -427,18 +437,18 @@ def baseline_pareto(js: dict[str, Any]) -> plt.Figure:
     ax.axhline(0.0, color="gray", lw=0.8, ls=":")
     ax.annotate("$R^2$ = 0 (per-depth mean)", (0.02, 0.0), xycoords=("axes fraction", "data"),
                 va="bottom", fontsize=7, color="gray")
-    # Baseline D (CLT) has numbers since E3/R2, but under the FROZEN-SOURCE protocol
+    # The CLT has numbers since E3/R2, but under the FROZEN-SOURCE protocol
     # (no LASSO input inference), so it has no L0 coordinate on these axes — the
-    # footnote says why the enumerated fourth baseline is absent and where it lives.
+    # footnote says why that baseline is absent and where it lives.
     # Placed under the legend so it reads as a footnote, not an axis-line label.
-    ax.annotate("Baseline D (CLT): frozen-source protocol,\nno comparable L0 — "
+    ax.annotate("CLT: frozen-source protocol,\nno comparable L0 — "
                 "see the three-axis CLT figure",
                 (0.97, 0.34), xycoords="axes fraction", ha="right", va="top",
                 fontsize=7, color="gray")
     ax.set_xscale("log")
     ax.set_xlabel("held-out input density (L0 fraction)")
     ax.set_ylabel(r"held-out $\Delta$ reconstruction $R^2$")
-    ax.set_title(r"Phase 4 Step 1 — $\Delta$ reconstruction vs sparsity")
+    ax.set_title(r"$\Delta$ reconstruction vs sparsity (LASSO protocol)")
     ax.legend(loc="center right"); ax.grid(True, alpha=0.3)
     fig.tight_layout()
     return fig
@@ -602,7 +612,7 @@ def _gauge_bar_ax(ax, summary: dict[str, float]) -> None:
     # E2 (2026-06-30) closed the per-feature story: instability is a property of the
     # TopK dictionary, not the model — keep that scope attached to the low red/blue bars.
     ax.annotate("NB: per-feature instability is TopK-dictionary-specific —\n"
-                "a trained-L1 source reaches match@0.7 = 1.00 (E2)",
+                "a trained-L1 source reaches match@0.7 = 1.00",
                 xy=(0.02, 0.845), xycoords="axes fraction", ha="left", va="top",
                 fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     ax.legend()
@@ -968,7 +978,7 @@ def state_probe(dfs: dict[str, pd.DataFrame], *, majority: float | None = None,
                     color="dimgray", ha="left", va="top", bbox=_NOTE_BBOX)
     axes[0][0].set_ylabel("answer identity top-1 (205-way, test)")
     axes[0][0].legend(fontsize=7, loc="lower right")  # empty in both panels
-    fig.suptitle("R7 · the 32-dim SSM state out-decodes dimension-matched code summaries "
+    fig.suptitle("The 32-dim SSM state out-decodes dimension-matched code summaries "
                  "at early/mid depth", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     return fig

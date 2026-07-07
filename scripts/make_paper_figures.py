@@ -78,7 +78,7 @@ def kstar():
     # sweep dips there too). Cross-figure pointers live in the paper prose, not
     # in the panels (figure numbers differ between the repo and the paper).
     note = (17, "$\\ell$=17: lag-1 $R^2$ dips to 0.64 —\nthe answer-promotion write"
-                "\n(R7 probe jump)")
+                "\n(the probe accuracy jumps here)")
     return figures.kstar_vs_depth(df, granger_reach=20, spike_note=note)
 
 
@@ -144,7 +144,7 @@ def clt_three_axis():
     e8 = run_json("e8-clt-qwen")
     if e8 and "ssm_vs_clt_test_r2_gap" in e8:
         g = e8["ssm_vs_clt_test_r2_gap"]
-        model_gaps.append(("Qwen2-0.5B (12L)\n(pre-review grid)", g, g, g, False))
+        model_gaps.append(("Qwen2-0.5B (12L)\n(coarse $\\lambda$ grid, no CI)", g, g, g, False))
 
     # Panel C: sample-efficiency (410m rank 32, consistent λ≤1 grid across N)
     n_curve = []
@@ -163,7 +163,7 @@ def clt_three_axis():
 def distributed_code():
     js = tbl_json("e1-distributed", "distributed_control.json")
     return figures.distributed_control(
-        js, title="Causal null: group effect is magnitude-driven (E1)") if js else None
+        js, title="Causal null: group effect is magnitude-driven") if js else None
 
 
 def crossclass():

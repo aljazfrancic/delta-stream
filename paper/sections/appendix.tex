@@ -61,10 +61,11 @@ All held-out $\Rsq$ values are against the per-depth-mean baseline on the
 same 311-example test split. The apparent spread of ``the SSM's $\Rsq$''
 across sections is protocol, not inconsistency:
 
-\begin{table}[h]
+\begin{table}[t]
   \centering
   \small
-  \caption{Every SSM operating point quoted in this paper.}
+  \caption{Every SSM (and matched-baseline) operating point quoted in this
+  paper.}
   \label{tab:operating}
   \begin{tabular}{llll}
     \toprule
@@ -73,9 +74,12 @@ across sections is protocol, not inconsistency:
     0.880 & train fit & $\lambda_{L1}{=}1$, $r{=}d_z{=}32$ & convergence/sanity \\
     0.867 & LASSO held-out & $\lambda_{L1}{=}0.3$ & Pareto top end (\cref{fig:pareto}) \\
     0.857 & LASSO held-out & $\lambda_{L1}{=}1$ (knee) & headline gap $+0.049$ \\
+    0.698 & LASSO held-out & $\lambda_{L1}{=}30$ & Pareto bottom end (\cref{fig:pareto}) \\
     0.849 & LASSO held-out & rank-64 \emph{baseline}, $\lambda_{L1}{=}1$ & param-matched gap $+0.008$ \\
-    0.780--0.804 & frozen-source & rank 32, best $\lambda_{\mathrm{reg}}$ & CLT family (\cref{fig:clt}) \\
     0.816 & LASSO held-out & baseline (\code{use\_state=False}) & Pareto baseline arm \\
+    0.780--0.804 & frozen-source & rank 32, best $\lambda_{\mathrm{reg}}$ & CLT family (\cref{fig:clt}) \\
+    0.8155 & frozen-source & rank 64 & CLT budget axis (\cref{sec:evaluation:clt}) \\
+    0.770 & frozen-source & rank 32, $\ell_{\max}{=}23$ & prefix sweep (\cref{fig:prefix}) \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -132,7 +136,9 @@ mildly flattered the CLT, not the SSM).
 \section{Cross-model inventory}
 \label{app:crossmodel}
 
-\begin{table}[h]
+\Cref{tab:zoo} lists the models, datasets, and source dictionaries.
+
+\begin{table}[t]
   \centering
   \small
   \caption{Models, datasets, and source dictionaries. Confidence-filtered
@@ -156,7 +162,7 @@ mildly flattered the CLT, not the SSM).
   \end{tabular}
 \end{table}
 
-The seed-stability column is the cross-model half of the
+Its seed-stability column is the cross-model half of the
 \cref{sec:evaluation:stability} finding: L1 sources stable on two additional
 families, TopK unstable on two Pythia models, with dataset size ruled out by
 subsampling GPT-2 to the smallest $N$ (match 0.95 unchanged).

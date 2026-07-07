@@ -8,7 +8,7 @@ per-layer baselines, so no feature can be novel by activation identity. The
 contribution is the cross-layer propagation structure over those atoms; no
 novelty fraction is computable or claimed.
 
-\paragraph{Limitation 2 --- cross-family coverage stops at 0.5B parameters.}
+\paragraph{Limitation 2 --- cross-family coverage stops below 1B parameters.}
 Every experiment ran on one 3\,GB GPU (GTX 1050;
 \cref{app:repro}), which admits Pythia to 410m, GPT-2 to large, and
 Qwen2-0.5B, but not Gemma-2-2B or Llama-3.1-8B. The replication evidence is
@@ -17,7 +17,8 @@ open are exactly the ones a reader should ask. First, \emph{does any of this
 hold at 7B?} We do not know, and we state the expectation as a falsifiable
 prediction: the sign pattern (H1 above null, H2 cross-band negative,
 $\kstar\!\approx\!1$, contractive spectrum) should persist at scale, since it
-held without exception across a 60$\times$ parameter range and three
+held without exception across models spanning 70M--774M parameters and depths
+6--36 in three
 families; the magnitudes (in particular the depth-graded reconstruction gain)
 we make no prediction for. Second, \emph{within a family, depth is confounded
 with width and parameter count} on the depth-scaling series

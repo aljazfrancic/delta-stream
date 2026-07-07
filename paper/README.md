@@ -2,7 +2,7 @@
 
 Venue-agnostic single-column paper
 **"How Residual-Stream Updates Travel Through Depth: A Pre-Registered Study of
-Cross-Layer Dynamics in Transformers"** 
+Cross-Layer Dynamics in Transformer Factual Recall"** 
 
 ## Build
 

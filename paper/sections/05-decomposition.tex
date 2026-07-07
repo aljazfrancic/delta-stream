@@ -59,7 +59,7 @@ pre-registered: (i) a proximal-gradient LASSO pass over each example's stacked
 codes $(u_0,\dots,u_{L-1})^{(i)}$ with operators frozen --- FISTA with
 backtracking \citep{beck2009fista}, validated against \code{sklearn} LASSO
 and closed-form least squares, keeping the exact zeros a penalised Adam would
-lose --- and (ii) a full-batch Adam sweep over
+lose --- and (ii) a full-batch Adam \citep{kingma2015adam} sweep over
 $\{A_\ell,B_\ell,C_\ell,D_\ell,b_\ell,z_0\}$ with codes frozen, differentiated
 through the unrolled SSM. Ten outer iterations; the method was debugged
 end-to-end on Pythia-70m before touching the primary lane.
@@ -85,8 +85,8 @@ operating point in \cref{app:operating}:
 
 All mandatory checks pass on the primary fit: no collapse to the bias
 solution (operator norms 252 vs bias norm 11; $L_0 \approx 0.009$);
-per-example reconstruction eyeball median $\Rsq = 0.98$; top-20 features have
-mean relation-class purity 0.83 with human-legible themes (e.g.\ a
+per-example reconstruction spot-check median $\Rsq = 0.98$; top-20 features have
+mean relation-class purity 0.83 with human-legible themes (e.g.\ an
 ``employed-by/manufactured-by $\to$ company'' feature at layer 9, a
 ``premiered-on $\to$ TV network'' feature at layer 1, a ``European place
 $\to$ Europe'' feature at layer 22); dataset stability across disjoint halves

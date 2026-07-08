@@ -924,7 +924,10 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
                      ha="right" if left else "left", fontsize=8)
     axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
     axR.set_xlabel("depth $L$ (layers)"); axR.set_ylabel("seed match@0.7")
-    axR.set_ylim(0, 1.05); axR.set_title("Seed-stability tracks SAE source type, not depth")
+    # "not depth" is the honest half; "source type" would overclaim — the 6L
+    # EleutherAI TopK point sits at 0.99 (stable), so stability tracks the
+    # specific source dictionary, not TopK-vs-L1 as a class (7th-pass review).
+    axR.set_ylim(0, 1.05); axR.set_title("Seed stability tracks the source dictionary, not depth")
     axR.legend(fontsize=8, loc="center left"); axR.grid(alpha=0.3)
     # tick exactly the depths that exist (6/12/24) — the auto locator puts ticks
     # at 7.5/12.5 on this axis, which reads as non-integer layer counts.

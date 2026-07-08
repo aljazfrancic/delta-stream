@@ -30,7 +30,8 @@ for the update block $\ell$ writes. Cross-model replications use
 Pythia-160m-deduped ($L{=}12$), GPT-2 small/medium/large
 \citep{radford2019language} ($L{=}12/24/36$), and Qwen2-0.5B
 \citep{yang2024qwen2} ($L{=}24$) --- with the primary, six models, three
-families, depths 12--36. Pythia-70m ($L{=}6$) is a seventh, debug-only lane:
+families, depths 12--36. Pythia-70m-deduped ($L{=}6$) is a seventh,
+debug-only lane:
 it serves as the optimiser-development model and the six-layer point of the
 depth-scaling series (\cref{sec:evaluation:depth}), but its differently
 constructed dataset keeps it outside the H1/H2 replication claim
@@ -102,8 +103,8 @@ comparison.
   \includesvg[width=0.9\linewidth]{fig01_h1_predictability}
   \caption{Per-layer-pair held-out $\Rsq$ of low-rank ridge predicting $\Dl$
   from $\vl$ on \pythia{}, against the mean, zero, and Tuned-Lens-implied
-  baselines. The ridge fit (layer-averaged 0.602) clears the pre-registered
-  Tuned-Lens gate ($-0.691$) at every layer. The in-panel note ties the raw
+  baselines. The ridge fit clears the pre-registered Tuned-Lens gate at every
+  layer (layer-averaged $0.602$ vs $-0.691$). The in-panel note ties the raw
   level to the tautology accounting of \cref{sec:phase1:pressure}
   (\cref{fig:t1,fig:t5}), which any reader of this figure should hold
   alongside it.}
@@ -184,9 +185,9 @@ learned?}
 \label{sec:phase1:pressure}
 
 Gate 1 passed on the pre-registered criteria. Before building on it, we
-attacked the headline with five post-hoc controls (T1--T5), then an
-untrained-network control (T4) --- the corrected reading below, not the raw
-0.65, is the version of H1 the rest of the paper uses.
+attacked the headline with five post-hoc controls (T1--T5): four tautology
+accountings and an untrained-network control (T4). The corrected reading
+below, not the raw 0.65, is the version of H1 the rest of the paper uses.
 
 \paragraph{T5 --- exact tautology floor.}
 The held-out explained variance of the single headline AR fit splits exactly
@@ -200,7 +201,8 @@ $\pm\vl$ drift made explicit (\cref{fig:t5}).
 Projecting out the top-$m$ principal directions of the \emph{states} and
 refitting: removing the single top direction (32\% of state variance) costs
 only $0.650 \to 0.637$; removing the top 50 (87\% of state variance) still
-leaves \textbf{$\Rsq = 0.436$}, roughly $4000\times$ the scramble floor
+leaves \textbf{$\Rsq = 0.436$}, roughly $4000\times$ the scramble floor,
+whose magnitude is ${\sim}10^{-4}$
 (\cref{fig:t1}). T1 exceeds T5's genuine share because it re-optimises the
 kernel on the complement; both are reported.
 
@@ -254,8 +256,9 @@ two-family statement.
   \includesvg[width=0.8\linewidth]{fig15_t5_floor}
   \caption{T5 exact decomposition of the single headline AR fit into
   tautological ($\Rsq_{\parallel}$, persistent-subspace) and genuine
-  ($\Rsq_{\perp}$) shares as a function of the subspace size $m$. Factual:
-  $0.65 = 0.52 + 0.13$ at $m{=}50$. Generic: $0.935 \approx 0.94 + 0$ --- the
+  ($\Rsq_{\perp}$) shares as a function of the subspace size $m$. Factual
+  (shown): $0.65 = 0.52 + 0.13$ at $m{=}50$. Generic (not shown):
+  $0.935 = 0.937 - 0.002$, a marginally \emph{negative} genuine share --- the
   generic level is persistence, not computation.}
   \label{fig:t5}
 \end{figure}

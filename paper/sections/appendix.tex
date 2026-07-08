@@ -49,7 +49,8 @@ record, so no pre-registered bar could be edited after the fact. The gates:
     showed the former pairs against a saturated baseline tail; the knee
     statistic is the conservative one.
   \item \emph{Post-hoc analyses} beyond the protocol are labelled as such
-    throughout (the T1--T5 pressure battery, untrained controls, sublayer
+    throughout (the T1--T5 pressure battery --- T4 is its untrained-network
+    AR control --- and the untrained reconstruction analogue, the sublayer
     split, parameter-matched baselines, the state probe, and the review-driven
     CI/validation-selection reruns).
 \end{enumerate}
@@ -65,7 +66,8 @@ across sections is protocol, not inconsistency:
   \centering
   \small
   \caption{Every SSM (and matched-baseline) operating point quoted in this
-  paper.}
+  paper; ``baseline'' rows are the state-ablated twin
+  (\code{use\_state=False}).}
   \label{tab:operating}
   \begin{tabular}{llll}
     \toprule
@@ -75,8 +77,9 @@ across sections is protocol, not inconsistency:
     0.867 & LASSO held-out & $\lambda_{L1}{=}0.3$ & Pareto top end (\cref{fig:pareto}) \\
     0.857 & LASSO held-out & $\lambda_{L1}{=}1$ (knee) & headline gap $+0.049$ \\
     0.698 & LASSO held-out & $\lambda_{L1}{=}30$ & Pareto bottom end (\cref{fig:pareto}) \\
-    0.849 & LASSO held-out & rank-64 \emph{baseline}, $\lambda_{L1}{=}1$ & param-matched gap $+0.008$ \\
-    0.816 & LASSO held-out & baseline (\code{use\_state=False}) & Pareto baseline arm \\
+    0.849 & LASSO held-out & rank-64 baseline, $\lambda_{L1}{=}1$ & param-matched gap $+0.008$ \\
+    0.816 & LASSO held-out & baseline, $\lambda_{L1}{=}0.3$ & baseline Pareto top end \\
+    0.808 & LASSO held-out & baseline, $\lambda_{L1}{=}1$ (knee) & knee baseline of the $+0.049$ gap \\
     0.780--0.804 & frozen-source & rank 32, best $\lambda_{\mathrm{reg}}$ & CLT family (\cref{fig:clt}) \\
     0.8155 & frozen-source & rank 64 & CLT budget axis (\cref{sec:evaluation:clt}) \\
     0.770 & frozen-source & rank 32, $\ell_{\max}{=}23$ & prefix sweep (\cref{fig:prefix}) \\
@@ -165,7 +168,12 @@ mildly flattered the CLT, not the SSM).
 Its seed-stability column is the cross-model half of the
 \cref{sec:evaluation:stability} finding: L1 sources stable on two additional
 families, TopK unstable on two Pythia models, with dataset size ruled out by
-subsampling GPT-2 to the smallest $N$ (match 0.95 unchanged).
+subsampling GPT-2 to the smallest $N$ (match 0.95 unchanged). The debug
+lane's EleutherAI TopK suite is nonetheless stable (0.99): TopK instability
+is not universal --- every TopK source tested at $\ge$12 layers was unstable
+and every L1 source stable --- which is why the controlled within-model
+contrast of \cref{sec:evaluation:stability}, not the zoo, carries the
+mechanism claim.
 
 \section{Reproducibility}
 \label{app:repro}
@@ -183,7 +191,7 @@ environment, runs the test suite (204 tests), asserts dataset sizes, and
 regenerates all 16 paper figures byte-identically from the tracked tables;
 \code{--toy-pipeline} additionally re-runs the full Pythia-70m lane end to
 end. Code, protocol documents, and the progress tracker are released with
-the paper under a permissive license.
+the paper under a permissive licence.
 
 Software: PyTorch \citep{paszke2019pytorch}, TransformerLens
 \citep{nanda2022transformerlens}, scikit-learn \citep{pedregosa2011sklearn},

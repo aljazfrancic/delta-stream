@@ -32,7 +32,7 @@ sweep, and rank. Primary setting: $r = d_z = 32$.
 
 Source codes initialise from public per-layer SAE latents of $\vl$. On the
 primary model these are the MLSAE per-layer suite for \pythia{}
-\citep{lawson2024mlsae} ($M = 65{,}536$, TopK $k{=}32$, all 24 layers); on the
+\citep{lawson2025mlsae} ($M = 65{,}536$, TopK $k{=}32$, all 24 layers); on the
 narrow query-position distribution only 497--4{,}433 latents per layer ever
 fire, so each layer is pruned to its alive set ($M^*_\ell \le 4{,}433$) ---
 standard dead-latent removal, exact for reconstruction, and legitimate here
@@ -62,7 +62,7 @@ and closed-form least squares, keeping the exact zeros a penalised Adam would
 lose --- and (ii) a full-batch Adam \citep{kingma2015adam} sweep over
 $\{A_\ell,B_\ell,C_\ell,D_\ell,b_\ell,z_0\}$ with codes frozen, differentiated
 through the unrolled SSM. Ten outer iterations; the method was debugged
-end-to-end on Pythia-70m before touching the primary lane.
+end-to-end on Pythia-70m-deduped before touching the primary lane.
 
 Held-out numbers in this paper come from two protocols, and conflating them
 creates apparent contradictions, so we name them here and tabulate every
@@ -84,7 +84,9 @@ operating point in \cref{app:operating}:
 \label{sec:decomposition:sanity}
 
 All mandatory checks pass on the primary fit: no collapse to the bias
-solution (operator norms 252 vs bias norm 11; $L_0 \approx 0.009$);
+solution (operator norms 252 vs bias norm 11; code density $L_0 \approx
+0.009$ as a fraction of alive atoms --- source-SAE $L_0$s are quoted as
+per-token counts);
 per-example reconstruction spot-check median $\Rsq = 0.98$; top-20 features have
 mean relation-class purity 0.83 with human-legible themes (e.g.\ an
 ``employed-by/manufactured-by $\to$ company'' feature at layer 9, a

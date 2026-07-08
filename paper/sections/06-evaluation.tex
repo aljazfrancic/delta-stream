@@ -24,7 +24,7 @@ $+0.066$}. At the canonical $\lambda_{L1}{=}1$ knee the gap is
 \end{gather*}
 --- dictionary-independent, seed-robust (every seed reaches $\Rsq = 0.880$
 train with the same gap), and it survives an object-disjoint split
-($+0.055$/$+0.061$).
+($+0.055$/$+0.061$ matched-$L_0$ at the two central sparsities).
 
 \paragraph{Matched parameters, not just matched rank.}
 The gap above compares arms at equal rank, giving the SSM roughly twice the
@@ -142,7 +142,8 @@ CLT (limitation). The honest summary is three axes (\cref{fig:clt}):
     re-selecting $\lambda_{\mathrm{reg}}$ on a train-internal validation split
     (never test) reproduces it at \textbf{$-0.0090$ \CI{$-0.0136$}{$-0.0045$}}.
     The edge exists at every depth tested (6L $-0.009$; 12L $-0.050$ GPT-2,
-    $-0.023$ Pythia-160m; 24L $-0.011$) and is \emph{not} monotone in depth
+    $-0.023$ Pythia-160m; 24L $-0.011$; Qwen2's coarse-grid point, $-0.021$,
+    agrees in sign but carries no CI) and is \emph{not} monotone in depth
     --- it tracks model and dictionary. (An earlier apparent tie was an
     artefact of a too-short regularisation grid; we report the corrected
     numbers.)
@@ -154,7 +155,10 @@ CLT (limitation). The honest summary is three axes (\cref{fig:clt}):
   \item \textbf{Sample efficiency: the CLT edge is data-bought.} Subsampling
     the train set flips the sign: at $N{=}300$ the SSM leads by $+0.0204$
     \CI{$+0.0163$}{$+0.0248$}, at $N{=}600$ by $+0.0128$, at $N{=}1{,}244$
-    the CLT leads by $0.0105$ --- crossover at roughly $10^3$ examples for
+    the CLT leads by $0.0105$ (the $N$-series holds one shared regularisation
+    grid fixed at every $N$; the extended-grid and validation-selected
+    full-$N$ gaps are axis 1's $-0.0142$/$-0.0090$) --- crossover at roughly
+    $10^3$ examples for
     52M free parameters versus 8.4M shared ones.
 \end{enumerate}
 
@@ -199,7 +203,11 @@ findings close the story (\cref{fig:stability}):
     reconstruction win ($+0.041$--$+0.047$). Not a width effect (the L1
     dictionary is wider). Cross-model, L1 sources are stable on two further
     families (GPT-2-small 0.95, Qwen2 0.81) while TopK is unstable on two
-    Pythia models (0.38, 0.45), with $N$ ruled out by subsampling. Retraining
+    Pythia models (0.38, 0.45), with $N$ ruled out by subsampling; the zoo's
+    one \emph{stable} TopK point is the six-layer debug lane's EleutherAI
+    $k{=}16$ suite (0.99, \cref{app:crossmodel}), so the failure is not
+    TopK-universal --- but every TopK source we tested at $\ge$12 layers was
+    unstable and every L1 source stable. Retraining
     the L1 dictionary on the train split only (no test leakage) changes
     nothing (match 1.00; gaps $+0.037$--$+0.070$).
   \item \textbf{It is not a gauge artefact.} Gauge-invariant per-feature
@@ -249,8 +257,8 @@ and a symmetric $\ge 1.0$-nat injection effect on 70\% of silent examples.
 
 \textbf{The test fails, cleanly.} Across the six strongest candidates (from a
 pool of 53 seed-stable features with purity 1.00 and legible themes), the
-largest ablation effect is \textbf{$+0.024$} --- roughly a tenth of the 0.20
-threshold ---
+largest ablation effect is \textbf{$+0.024$} --- roughly an eighth of the
+0.20 threshold ---
 and the injection test returns $-0.02$ nats; controls and magnitude-matched
 random features are $\approx 0$, so the splice mechanism is clean. This is
 the pre-registered honest landing place, and we report it as such.
@@ -340,7 +348,9 @@ The state-transition operators $A_\ell$ are the decomposition's structural
 readout, and their eigenvalues are gauge-invariant --- a property of the fit's
 equivalence class, not of a seed. Three results (\cref{fig:spectrum}):
 \textbf{(i)} the operator is \textbf{contractive at every layer}: spectral
-radius median 0.43, maximum 0.88, \textbf{0/23 layers} $\ge 1$; implied
+radius median 0.43, maximum 0.88, \textbf{0/23 transitions} $\ge 1$ (the fit
+uses $A_0,\dots,A_{22}$; the transition out of the last state would feed no
+update); implied
 spectral memory $\tau = -1/\ln \rho_{\mathrm{geo}} \approx \mathbf{0.83}$
 layers ($\rho_{\mathrm{geo}} = 0.30$, the geometric-mean radius).
 \textbf{(ii)} This supplies a \emph{mechanism} for

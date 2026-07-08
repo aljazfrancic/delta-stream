@@ -16,11 +16,12 @@ which we spend considerable effort separating from genuine structure.
 SAEs trained on one layer's activations recover monosemantic features
 \citep{cunningham2023sparse,bricken2023monosemanticity} and scale to frontier
 models \citep{templeton2024scaling}. TopK SAEs replace the L1 penalty with a
-hard sparsity constraint \citep{makhzani2013ksparse,gao2024scaling}. We use
+hard sparsity constraint \citep{makhzani2013ksparse,gao2025scaling}. We use
 public per-layer suites as frozen sources --- the MLSAE release for
-Pythia \citep{lawson2024mlsae}, the reformatted GPT-2-small residual suite
+Pythia \citep{lawson2025mlsae}, the reformatted GPT-2-small residual suite
 \citep{bloom2024gpt2saes}, an open Qwen2 suite \citep{chanin2024qwensaes}, and
-EleutherAI's Pythia-70m suite \citep{eleutherai2024sae} --- and additionally
+EleutherAI's Pythia-70m-deduped suite \citep{eleutherai2024sae} --- and
+additionally
 train matched L1 and TopK dictionaries on our own cached activations, which
 turns out to matter: the sparsity mechanism, not the model, controls whether
 single-feature decoder directions are identifiable across seeds
@@ -32,7 +33,7 @@ once \citep{lindsey2024crosscoders}. MLSAEs share the dictionary and let
 activations vary per layer; their headline observation --- a latent is often
 active at exactly one layer per token, but at \emph{different} layers across
 tokens --- already strains the picture of a feature with a fixed home depth
-\citep{lawson2024mlsae}. RouteSAE adds a router that picks which layer a
+\citep{lawson2025mlsae}. RouteSAE adds a router that picks which layer a
 shared SAE decodes per token \citep{shi2025route}: a \emph{where-to-read}
 mechanism, complementary to the \emph{how-updates-propagate} question here.
 Jacobian SAEs sparsify the causal sensitivities across a single MLP block

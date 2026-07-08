@@ -31,16 +31,20 @@ cross-layer reconstruction under a parameter or data budget, a depth-indexed
 state is the better spend; if you need maximum fidelity and have data, free
 per-pair decoders are not redundant. Our TopK finding adds an orthogonal
 warning: single-feature decoder directions from TopK dictionaries were
-seed-unidentifiable in every configuration we tested, while matched L1
-dictionaries were perfectly stable --- any pipeline that names, steers, or
+seed-unidentifiable in every configuration we tested beyond the six-layer
+debug lane, while matched L1
+dictionaries were stable everywhere (perfectly so on the primary model) ---
+any pipeline that names, steers, or
 ablates \emph{individual} TopK features should check its features survive a
 re-seed.
 
 \paragraph{Consequences for factual-recall stories.}
 The causal null is not a failure to find structure; it is a measurement of
 what kind of structure recall has. Single features move the answer by at most
-a tenth of the pre-registered threshold; the effect that does clear threshold
-is reproduced by a norm-matched random direction; and a cleaner dictionary
+an eighth of the pre-registered threshold under the TopK dictionary, and by
+about half of it under the cleaner L1 dictionary; the effect that does clear
+threshold
+is reproduced by a norm-matched random direction; and the cleaner dictionary
 concentrates but does not localise the effect. This is a controlled,
 dictionary-independent statement that recall at the query position is a
 distributed, magnitude-dominated code --- consistent with the drift in the

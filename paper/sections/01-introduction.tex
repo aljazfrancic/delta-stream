@@ -10,7 +10,7 @@ matters for circuit analysis and causal editing: \emph{how does what a layer
 writes relate to what earlier layers wrote?} The field has begun to attack
 this directly. Crosscoders fit one dictionary across all layers
 \citep{lindsey2024crosscoders}; multi-layer SAEs (MLSAEs) find that the same
-latent fires at different depths on different prompts \citep{lawson2024mlsae};
+latent fires at different depths on different prompts \citep{lawson2025mlsae};
 and cross-layer transcoders (CLTs), the substrate of attribution-graph circuit
 tracing, give every feature a \emph{free} decoder at every downstream layer ---
 $O(L^2)$ independent decoder matrices with no prior connecting them
@@ -51,8 +51,9 @@ hypotheses could have failed cheaply; what actually happened is more
 interesting than either clean outcome. Scope, stated up front: all kernels
 are fit at the \emph{query position} of factual-recall prompts drawn from
 three CounterFact relation classes. The binary characterisation replicates on
-generic text, but cross-position and cross-class kernel transfer are both
-negative (\cref{sec:phase2:scope}) --- the kernels are hyper-local to their
+generic text, but kernel transfer fails across both token positions (every
+cross-position $\Rsq$ negative) and relation classes (transfer $\approx 0$ or
+negative; \cref{sec:phase2:scope}) --- the kernels are hyper-local to their
 circuit, itself a finding --- so every claim below is a claim about that
 regime.
 
@@ -135,9 +136,11 @@ bottleneck. Factual recall in this model is a distributed, mass-driven code.
     $0.999$, dictionary cosine $0.993$), and the functional informativeness of
     the SSM state for answer identity at mid-depth
     (\cref{sec:evaluation:operator,sec:evaluation:probe}).
-  \item A practical warning for the field: TopK dictionaries make
-    single-feature decoder directions seed-unidentifiable (match@0.7 $=0.45$)
-    where matched L1 dictionaries trained on the same activations are
+  \item A practical warning for the field: on the primary model, TopK
+    dictionaries make
+    single-feature decoder directions seed-unidentifiable (match@0.7 $=0.08$
+    trained on the same activations, $0.45$ for the public suite)
+    where a matched L1 dictionary trained on those activations is
     perfectly stable ($1.00$) --- an identifiability failure that lives in the
     sparsity mechanism, not the model or the decomposition
     (\cref{sec:evaluation:stability}).

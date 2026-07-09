@@ -62,9 +62,10 @@ regime.
 including two nulls specified in advance and a post-hoc pressure battery
 designed to break it --- but decomposes on inspection: an exact
 (Pythagorean) split of the headline autoregressive $\Rsq$ shows that on
-factual prompts the running-sum tautology takes the majority share
-($0.65 = 0.52 + 0.13$ for the pre-registered headline fit, which scores the
-four deepest updates; $0.52 = 0.27 + 0.25$ for the whole-stack fit), and an
+factual prompts the running-sum tautology takes the majority share on the
+pre-registered headline fit ($0.65 = 0.52 + 0.13$, scored on the four deepest
+updates) and roughly half on the whole-stack fit
+($0.52 = 0.27 + 0.25$), and an
 untrained-network control shows the tautology-free remainder is, on the
 primary model, \emph{substantially architectural} --- a randomly initialised
 transformer exceeds it. Scored at a common lag order the same control makes
@@ -125,7 +126,8 @@ bottleneck. Factual recall in this model is a distributed, mass-driven code.
     control run on two of the six models); H2 fails
     (pervasive non-stationarity, $\kstar\!\approx\!1$, query-position-specific
     and circuit-specific kernels). The sign pattern replicates across six
-    models, three families, and on generic Pile text, where the effective
+    models, three families, and --- on the primary model --- on generic Pile
+    text, where the effective
     order is $\kstar$ median 2 rather than 1
     (\cref{sec:phase1,sec:phase2}).
   \item A first-order, fully depth-indexed SSM decomposition of $\Dl$ over

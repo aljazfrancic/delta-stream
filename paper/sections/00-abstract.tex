@@ -6,9 +6,10 @@ on factual-recall inputs --- (H1) they are predictable across depth; (H2) the
 prediction kernel is approximately depth-stationary --- and ran the frozen
 protocol on \pythia{}, replicating on five further models from three families.
 \textbf{(1)}~H1 holds far above pre-registered nulls but decomposes exactly:
-an orthogonal split of the held-out explained variance attributes the majority
-of it to the running-sum tautology ($0.65 = 0.52 + 0.13$ on the four deepest
-updates, $0.52 = 0.27 + 0.25$ on the whole stack), and on the primary model
+an orthogonal split of the held-out explained variance attributes most of it
+to the running-sum tautology on the four deepest updates
+($0.65 = 0.52 + 0.13$) and roughly half on the whole stack
+($0.52 = 0.27 + 0.25$), and on the primary model
 what survives is substantially architectural --- an untrained network exceeds
 it (though on GPT-2 it is about half learned).
 \textbf{(2)}~H2 fails decisively: kernels fit on one depth band predict

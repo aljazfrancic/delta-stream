@@ -4,7 +4,12 @@
 The protocol was written as four frozen phase documents (diagnostic,
 characterisation, decomposition, evaluation) plus a research statement, before
 any data were collected; a separate progress tracker was the only mutable
-record, so no pre-registered bar could be edited after the fact. The gates:
+record, so no pre-registered bar could be edited after the fact. The
+registration is internal rather than platform-hosted, but it is auditable:
+the four phase documents are plain files in the released repository, present
+in its initial commit and untouched thereafter (a single later edit removed
+one process line, no quantitative content), so their state at every analysis
+step is verifiable from the public git history. The gates:
 
 \begin{itemize}
   \item \textbf{Gate 1} (H1 supported above null?) --- \emph{PASS}, all six
@@ -74,11 +79,12 @@ across sections is protocol, not inconsistency:
 
 \begin{table}[t]
   \centering
-  \small
+  \footnotesize
   \caption{Every SSM (and matched-baseline) operating point quoted in this
   paper; ``baseline'' rows are the state-ablated twin
   (\code{use\_state=False}).}
   \label{tab:operating}
+  \setlength{\tabcolsep}{4pt}
   \begin{tabular}{llll}
     \toprule
     Value & Protocol & Setting & Used for \\
@@ -90,6 +96,7 @@ across sections is protocol, not inconsistency:
     0.849 & LASSO held-out & rank-64 baseline, $\lambda_{L1}{=}1$ & param-matched gap $+0.008$ \\
     0.816 & LASSO held-out & baseline, $\lambda_{L1}{=}0.3$ & baseline Pareto top end \\
     0.808 & LASSO held-out & baseline, $\lambda_{L1}{=}1$ (knee) & knee baseline of the $+0.049$ gap \\
+    0.653 & LASSO held-out & baseline, $\lambda_{L1}{=}30$ & baseline Pareto bottom end \\
     0.7934 & frozen-source & SSM rank 32, shared grid $\lambda_{\mathrm{reg}}{=}1$ & CLT depth list, $N$ series \\
     0.8038 & frozen-source & CLT rank 32, shared grid & the $-0.0105$ gap \\
     0.7975 / 0.8117 & frozen-source & SSM / CLT rank 32, extended grid & the $-0.0142$ gap (axis 1) \\
@@ -228,7 +235,7 @@ SSM$-$baseline gap at $\lambda_{L1}{=}1$.
 
 \begin{table}[t]
   \centering
-  \small
+  \footnotesize
   \caption{Models, datasets, and source dictionaries. Confidence-filtered
   CounterFact sizes (70m: top-1{,}000 candidates by confidence --- the
   optimiser-debug lane, excluded from the H1/H2 replication claim); SAE

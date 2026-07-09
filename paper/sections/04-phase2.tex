@@ -157,7 +157,7 @@ and $\kstar = 1$ at every band of every model.
 
 \begin{table}[t]
   \centering
-  \small
+  \footnotesize
   \caption{Cross-model replication of H1/H2. AR $\Rsq$ is pooled held-out
   real$-$null at the sweep's best lag order $k^{\mathrm{sel}}$, which is
   reported alongside because a pooled AR($k$) fit scores only depths
@@ -175,6 +175,7 @@ and $\kstar = 1$ at every band of every model.
   \cref{sec:phase1:pressure} was run on two of these models
   (\pythia{}, GPT-2-small), not all six; these AR levels are raw.}
   \label{tab:crossmodel}
+  \setlength{\tabcolsep}{5pt}
   \begin{tabular}{llccccc}
     \toprule
     Model & $L$ & AR $\Rsq$ (real$-$null) & $k^{\mathrm{sel}}$ &
@@ -198,7 +199,8 @@ low-rank than Pythia's. It does not affect any H1/H2 verdict.
 \subsection{Generality beyond factual recall}
 \label{sec:phase2:generic}
 
-Re-running the identical pipelines on 1{,}555 generic Pile windows ---
+Re-running the identical pipelines, on the primary model, on 1{,}555 generic
+Pile windows ---
 length-matched to the factual prompt multiset (content lengths 4--24 tokens,
 median 9; one window per distinct document; this narrow-window construction is
 a stated scope condition) --- replicates the \emph{entire} characterisation:

@@ -199,7 +199,7 @@ context'', and not as ``perturbation improves the model''.
   the null is indistinguishable from zero. Two corrections travel with this
   panel. Each $k$ is scored on the depths $\ell \ge k$, so the curve is not a
   lag effect: fixing the depth set at $\ell \in [20,23]$ makes $k{=}1$ the
-  \emph{best} fit (0.684), with longer lags costing up to $0.034$
+  \emph{best} fit (0.684), with longer lags costing up to $0.037$
   (\cref{sec:phase1:ar}). And the raw level splits into tautological and
   genuine parts (\cref{fig:t1,fig:t5}), the genuine part being substantially
   architectural on this model.}
@@ -238,7 +238,9 @@ predictable ($\Rsq_{\parallel} = 0.90$--$0.95$ over the $m$ sweep), which
 updates are where the stream drifts most, so this is the tautology at its
 worst; repeating the decomposition on the whole-stack $k{=}1$ fit gives
 $0.52 = 0.27$ tautological $+\;0.25$ genuine (\cref{tab:commondepth}). The
-tautological share is the majority either way, and we quote both because the
+tautological share is the clear majority on the headline fit; on the whole
+stack it is a bare majority ($0.272$ vs $0.248$, a margin that carries no
+interval), which we round to ``roughly half''. We quote both because the
 pre-registered headline is the four-depth number.
 
 \paragraph{T1 --- persistence-stripped refit.}
@@ -276,7 +278,8 @@ cross-layer dependence scores zero. The two controls are complements.)
 
 \paragraph{T4 --- untrained-network control (deflationary, and one-family).}
 Running the identical battery on a \emph{randomly initialised} \pythia{}
-(same prompts, same pipeline), at a common $k{=}1$ so that trained and
+(same prompts, same pipeline; a single initialisation,
+\cref{sec:limitations}), at a common $k{=}1$ so that trained and
 untrained are scored on the same 23 depths: the persistence-stripped ($m{=}50$)
 AR $\Rsq$ is \textbf{0.503 (untrained) vs 0.436 (trained)} on factual prompts,
 and the untrained network passes every tautology-free

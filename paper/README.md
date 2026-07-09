@@ -60,6 +60,11 @@ regenerate byte-identically from the tracked run tables:
 uv run python scripts/make_paper_figures.py   # from the repo root
 ```
 
+Note on numbering: the SVG file names (`fig01`…`fig16`) are stable pipeline
+IDs and do **not** match the figure numbers LaTeX assigns in the PDF (floats
+are numbered by order of appearance; e.g. `fig14`/`fig15` render as Figures
+4–5). Match files to figures by caption/`\label`, not by number.
+
 ## Numbers
 
 Every quantitative claim traces to a run memo under [`../runs/`](../runs/)

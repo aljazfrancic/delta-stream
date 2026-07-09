@@ -78,8 +78,8 @@ operating point in \cref{app:operating}:
   \item[Frozen-source protocol.] Decoders fit by Adam on the \emph{fixed}
     cached codes, no re-inference. Used for the CLT family
     (\cref{sec:evaluation:clt}), where it isolates the decoder
-    parameterisation; its absolute levels sit ${\sim}0.08$ below the LASSO
-    protocol for every method.
+    parameterisation; its absolute levels sit ${\sim}0.06$--$0.08$ below the
+    LASSO protocol for every method (\cref{tab:operating}).
 \end{description}
 
 \subsection{Pre-registered sanity checks}
@@ -87,7 +87,9 @@ operating point in \cref{app:operating}:
 
 All mandatory checks pass on the primary fit: no collapse to the bias
 solution (operator norms 252 vs bias norm 11; code density $L_0 \approx
-0.009$ as a fraction of alive atoms --- source-SAE $L_0$s are quoted as
+0.009$ as a fraction of alive atoms on the train fit --- held-out
+re-inference at the knee runs denser, $L_0 = 0.0149$
+(\cref{sec:evaluation:gate3}), and source-SAE $L_0$s are quoted as
 per-token counts);
 per-example reconstruction spot-check median $\Rsq = 0.98$; top-20 features have
 mean relation-class purity 0.83 with human-legible themes (e.g.\ an

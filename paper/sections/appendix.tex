@@ -53,6 +53,16 @@ record, so no pre-registered bar could be edited after the fact. The gates:
     AR control --- and the untrained reconstruction analogue, the sublayer
     split, parameter-matched baselines, the state probe, and the review-driven
     CI/validation-selection reruns).
+  \item \emph{Two self-corrections}, made after the draft was written and
+    reported in the open because both had propagated into headline sentences.
+    (a) The fitted state operator's spectral radius was described as
+    gauge-invariant; in a depth-indexed SSM it is not, and the mechanism claim
+    now rests on the invariant state-path decay
+    (\cref{sec:evaluation:operator}). (b) The pooled AR($k$) sweep scores a
+    depth set that shrinks with $k$, so ``best over $k$'' silently changed the
+    evaluation set; the affected contrasts are re-derived at a common $k$ in
+    \cref{tab:commondepth}, and the pre-registered headline is reported as the
+    four-depth number it is. Neither correction changes a gate outcome.
 \end{enumerate}
 
 \section{Operating points and evaluation protocols}
@@ -80,8 +90,11 @@ across sections is protocol, not inconsistency:
     0.849 & LASSO held-out & rank-64 baseline, $\lambda_{L1}{=}1$ & param-matched gap $+0.008$ \\
     0.816 & LASSO held-out & baseline, $\lambda_{L1}{=}0.3$ & baseline Pareto top end \\
     0.808 & LASSO held-out & baseline, $\lambda_{L1}{=}1$ (knee) & knee baseline of the $+0.049$ gap \\
-    0.780--0.804 & frozen-source & rank 32, best $\lambda_{\mathrm{reg}}$ & CLT family (\cref{fig:clt}) \\
-    0.8155 & frozen-source & rank 64 & CLT budget axis (\cref{sec:evaluation:clt}) \\
+    0.7934 & frozen-source & SSM rank 32, shared grid $\lambda_{\mathrm{reg}}{=}1$ & CLT depth list, $N$ series \\
+    0.8038 & frozen-source & CLT rank 32, shared grid & the $-0.0105$ gap \\
+    0.7975 / 0.8117 & frozen-source & SSM / CLT rank 32, extended grid & the $-0.0142$ gap (axis 1) \\
+    0.7879 / 0.7969 & frozen-source & SSM / CLT rank 32, validation-selected & the $-0.0090$ gap ($N{=}1{,}057$) \\
+    0.8155 / 0.843 & frozen-source & SSM rank 64 / CLT rank 64 & CLT budget axis (\cref{sec:evaluation:clt}) \\
     0.770 & frozen-source & rank 32, $\ell_{\max}{=}23$ & prefix sweep (\cref{fig:prefix}) \\
     \bottomrule
   \end{tabular}
@@ -127,14 +140,86 @@ resamples) on per-example sums of squares, computed from saved per-example
 arrays --- pure post-processing, no refitting. Seed-level uncertainty, where
 reported (\cref{fig:depthscaling}), is mean$\pm$sd over three full refits.
 
-\paragraph{Selection.}
+\paragraph{Selection, and the AR depth-set confound.}
 AR best-($k$, rank) maximises held-out $\Rsq$ over 28 symmetric
-real-vs-null evaluations; the real$-$null contrast is the claim. The CLT
+real-vs-null evaluations; the real$-$null contrast is the claim. But a pooled
+AR($k$) fit scores only depths $\ell \ge k$, so the seven $k$ values are
+evaluated on seven different depth sets (23, 22, 21, 19, 14, 9 and 4 target
+depths at $L{=}24$). Selecting $k$ by held-out $\Rsq$ therefore partly selects
+the easiest depth subset, and the pre-registered headline ($\Rsq = 0.65$ at
+$k{=}20$) is an average over $\ell \in [20,23]$, not over the stack. Two
+consequences we correct rather than hide:
+
+\begin{itemize}
+  \item \emph{Isolating the lag effect.} Re-running the $k$ sweep with the
+    depth set held fixed at $\ell \in [20,23]$ separates lag order from depth
+    subset, and agrees with the per-depth verdict of \cref{sec:phase2:kstar}:
+    order, not reach, is what reconstruction sees.
+  \item \emph{Like-for-like contrasts.} The T1 $m$ sweep and the T5 split are
+    re-run at fixed $k{=}1$ (all feasible depths) on every store the pressure
+    battery uses. \Cref{tab:commondepth} is that table; all trained-vs-untrained
+    and factual-vs-generic comparisons in \cref{sec:phase1:pressure} are taken
+    from it. The pre-registered headline numbers are reported unchanged
+    alongside. One conclusion changed: at a common $k$, GPT-2-small's
+    tautology-free AR structure is about half learned, not ${\sim}5\%$, so the
+    ``architectural'' reading of T4 is specific to \pythia{}.
+\end{itemize}
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{The T1/T5 pressure battery re-run at a \emph{common} lag order
+  ($k{=}1$, every feasible depth), so trained/untrained and factual/generic are
+  scored on the same targets. $\Rsq_{m=0}$ is the raw pooled AR(1) level;
+  $\Rsq_{m=50}$ strips the top-50 persistent state directions (T1); the last two
+  columns are T5's exact orthogonal split of $\Rsq_{m=0}$ at $m{=}50$
+  (tautological $+$ genuine $=$ raw). Scrambled nulls are $\le 7\times10^{-3}$
+  in every row. Run \code{r13-common-depth-pressure}.}
+  \label{tab:commondepth}
+  \begin{tabular}{lccccc}
+    \toprule
+    Store & depths & $\Rsq_{m=0}$ & $\Rsq_{m=50}$ (T1) &
+    T5 taut. & T5 genuine \\
+    \midrule
+    \pythia{} factual, trained    & 23 & 0.521 & \textbf{0.436} & 0.272 & 0.248 \\
+    \pythia{} factual, untrained  & 23 & 0.543 & \textbf{0.503} & 0.116 & 0.427 \\
+    \pythia{} generic, trained    & 23 & 0.882 & \textbf{0.069} & 0.879 & 0.003 \\
+    \pythia{} generic, untrained  & 23 & 0.063 & \textbf{0.061} & 0.007 & 0.056 \\
+    GPT-2-small factual, trained   & 11 & 0.626 & \textbf{0.439} & 0.490 & 0.136 \\
+    GPT-2-small factual, untrained & 11 & 0.246 & \textbf{0.233} & 0.046 & 0.200 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\noindent Three readings follow. (i) On \pythia{} the untrained network's
+persistence-stripped $\Rsq$ \emph{exceeds} the trained network's
+($0.503 > 0.436$), so T4's architectural verdict stands on the primary model.
+(ii) On GPT-2-small it does not ($0.439$ trained vs $0.233$ untrained; learned
+share $47\%$). (iii) Generic text, compared at the same $k$, retains an order
+of magnitude less tautology-free structure than factual text ($0.069$ vs
+$0.436$) --- the raw generic level of $0.88$ is $99.7\%$ drift.
+
+The CLT
 family's $\lambda_{\mathrm{reg}}$ was originally selected on test (house
 convention, interior peaks); \cref{sec:evaluation:clt} re-derives the one
 consequential CI with validation-based selection, where every arm picks an
 interior $\lambda^{*}{=}3$ and the conclusion is unchanged (test selection had
-mildly flattered the CLT, not the SSM).
+mildly flattered the CLT, not the SSM). The four CLT gap numbers in
+\cref{sec:evaluation:clt} map to protocols as follows: $-0.0105$ is the shared
+grid ($\lambda_{\mathrm{reg}}{=}1$, the grid every cross-model point uses);
+$-0.0142$ is the extended grid, best-of-grid per arm; $-0.0090$ is
+validation-selected on a 1{,}057-example train carve-out; $-0.011$ in the
+depth list is the shared-grid primary-model point, i.e.\ $-0.0105$ rounded.
+
+\paragraph{Statistics defined once.}
+\emph{match@0.7} is the fraction of a run's top-$n$ features (by activation
+mass; $n = 100$ at Gate 3, $n = 200$ in the gauge analysis) whose decoder
+direction has cosine $\ge 0.7$ with its best match in a re-seeded fit.
+\emph{Purity} is the largest relation class's share of a feature's top-100
+activating examples. \emph{Retention ratio} is a cross-condition $\Rsq$
+divided by the target condition's within-condition $\Rsq$; the tautology,
+being common to both, cancels. \emph{Knee gap} is the raw same-$\lambda$
+SSM$-$baseline gap at $\lambda_{L1}{=}1$.
 
 \section{Cross-model inventory}
 \label{app:crossmodel}
@@ -160,7 +245,7 @@ mildly flattered the CLT, not the SSM).
     GPT-2-small          & 12 & 768  & 1{,}358 & res-jb (L1) & 0.95 \\
     GPT-2-medium         & 24 & 1024 & 1{,}795 & --- & --- \\
     GPT-2-large          & 36 & 1280 & 1{,}924 & --- & --- \\
-    Qwen2-0.5B           & 24 & 896  & 2{,}540 & chanind (L1, 12L prefix) / trained L1 & 0.81 \\
+    Qwen2-0.5B           & 24 & 896  & 2{,}540 & \citet{chanin2024qwensaes} (L1, 12L prefix) / trained L1 & 0.81 \\
     \bottomrule
   \end{tabular}
 \end{table}

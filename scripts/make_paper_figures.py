@@ -74,9 +74,10 @@ def kstar():
         return None
     # The one k*>1 bar: Δ_17's lag-1 R² collapses to 0.64 (≈0.86 elsewhere), so the
     # 95%-of-best rule needs a second lag. Store-specific: ℓ=17 is the 410m
-    # answer-promotion depth (R7 probe jumps 0.57→0.76 there; the source-prefix
-    # sweep dips there too). Cross-figure pointers live in the paper prose, not
-    # in the panels (figure numbers differ between the repo and the paper).
+    # answer-promotion depth (the R7 state probe jumps 0.57→0.76 there, and the SSM's
+    # per-layer reconstruction R² dips to 0.46 there — NOT the source-prefix sweep,
+    # which is monotone). Cross-figure pointers live in the paper prose, not in the
+    # panels (figure numbers differ between the repo and the paper).
     note = (17, "$\\ell$=17: lag-1 $R^2$ dips to 0.64 —\nthe answer-promotion write"
                 "\n(the probe accuracy jumps here)")
     return figures.kstar_vs_depth(df, granger_reach=20, spike_note=note)
@@ -194,15 +195,23 @@ def source_prefix():
 
 
 def tautology_factual_vs_generic():
-    """T1 persistence-stratified AR: factual + generic overlaid (the 'additional data' view)."""
+    """T1 persistence-stratified AR: factual + generic overlaid, at a common k.
+
+    The per-store `t1_persistence_sweep.csv` takes a max over the k sweep, and the
+    winning k sets how many depths get scored (ℓ ≥ k), so overlaying two stores that
+    selected different k compares different depth sets. R13 recomputes the sweep at
+    k=1 (all feasible depths) for every store; that is what this figure plots.
+    """
+    df = tbl_csv("r13-common-depth-pressure", "t1_common_depth.csv")
+    if df is None:
+        return None
     dfs = {}
-    fac = tbl_csv("pressure-410md", "t1_persistence_sweep.csv")
-    gen = tbl_csv("pressure-410md", "t1_persistence_sweep.csv", general=True)
-    if fac is not None:
-        dfs["factual"] = fac
-    if gen is not None:
-        dfs["generic"] = gen
-    return figures.tautology_t1(dfs) if dfs else None
+    for name, store in (("factual", "410m-factual-trained"),
+                        ("generic", "410m-generic-trained")):
+        sub = df[df["store"] == store]
+        if not sub.empty:
+            dfs[name] = sub
+    return figures.tautology_t1(dfs, r2_col="real_r2", fixed_k=True) if dfs else None
 
 
 def t5_floor():

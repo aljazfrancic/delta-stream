@@ -6,9 +6,11 @@ on factual-recall inputs --- (H1) they are predictable across depth; (H2) the
 prediction kernel is approximately depth-stationary --- and ran the frozen
 protocol on \pythia{}, replicating on five further models from three families.
 \textbf{(1)}~H1 holds far above pre-registered nulls but decomposes exactly:
-the headline held-out $\Rsq = 0.65$ is $0.52$ running-sum tautology
-$+\;0.13$ genuine structure, and the genuine part is substantially
-architectural --- an untrained network shows it at comparable strength.
+an orthogonal split of the held-out explained variance attributes the majority
+of it to the running-sum tautology ($0.65 = 0.52 + 0.13$ on the four deepest
+updates, $0.52 = 0.27 + 0.25$ on the whole stack), and on the primary model
+what survives is substantially architectural --- an untrained network exceeds
+it (though on GPT-2 it is about half learned).
 \textbf{(2)}~H2 fails decisively: kernels fit on one depth band predict
 another band's updates worse than that band's mean, so the right abstraction
 is a first-order ($\kstar\!\approx\!1$), fully depth-indexed state-space
@@ -16,9 +18,9 @@ model (SSM), validating the unconstrained parameterisation of cross-layer
 transcoders. \textbf{(3)}~Fitted over frozen sparse sources, the SSM
 reconstructs $\Dl$ above a matched per-layer dictionary ($+0.049$ $\Rsq$
 rank-matched, $+0.008$ parameter-matched), with a depth-graded, roughly
-half-learned gain; the learned state-transition operator is contractive
-(median spectral radius $0.43$, consistent with $\kstar\!\approx\!1$) and the
-state decodes the recalled
+half-learned gain; its gauge-invariant state path attenuates by half per layer
+of depth gap (memory ${\approx}1.2$ layers, consistent with
+$\kstar\!\approx\!1$) and the state decodes the recalled
 answer at mid-depth better than dimension-matched PCA of its own codes.
 \textbf{(4)}~The pre-registered causal test returns a controlled null: no
 single feature's ablation clears threshold, and the group effect that does is
@@ -27,6 +29,7 @@ distributed, magnitude-driven code. As a by-product, on the primary model
 TopK dictionaries make
 single-feature directions seed-unidentifiable where matched L1 dictionaries
 on the same activations are perfectly stable. All gates were
-frozen before data collection, every headline gap carries a paired bootstrap
-confidence interval, and every figure regenerates from tracked tables.
+frozen before data collection, every reconstruction gap carries a paired
+bootstrap confidence interval, and every figure regenerates from tracked
+tables.
 \end{abstract}

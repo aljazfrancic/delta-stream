@@ -7,9 +7,12 @@ import torch
 
 from layer_dynamics.diagnostics.operator_spectrum import (
     a_operators,
+    apply_scalar_gauge,
     spectrum_by_depth,
     spectrum_cosine,
+    spectrum_rel_diff,
     state_path_decay,
+    state_path_tau,
 )
 from layer_dynamics.ssm import LowRankSSM, SSMDims
 
@@ -70,3 +73,50 @@ def test_spectrum_cosine_bounds():
     assert np.isclose(spectrum_cosine(a, a), 1.0)
     assert np.isclose(spectrum_cosine(a, np.zeros_like(a)), 0.0)
     assert 0.0 <= spectrum_cosine(a, a[::-1]) <= 1.0
+
+
+# --- gauge (corrected 2026-07-09) ------------------------------------------------
+# The depth-indexed SSM's symmetry is a *per-layer* T_ℓ, so ρ(A_ℓ) is not a property
+# of the fit's equivalence class; the state-path kernel is. These tests pin both.
+
+def _gauge_fixture():
+    dims = SSMDims(n_layers=6, d_model=7, d_input=9, d_state=4, rank=4)
+    m = LowRankSSM(dims, seed=3)
+    with torch.no_grad():  # make A_ℓ contractive so the "0 non-contractive" side is real
+        m.A1 *= 0.35 / max(float(np.max(np.abs(np.linalg.eigvals(a_operators(m))))), 1e-9)
+    torch.manual_seed(0)
+    return m, torch.randn(5, dims.n_layers, dims.d_input)
+
+
+def test_scalar_gauge_preserves_the_model_output():
+    m, u = _gauge_fixture()
+    before = m(u).detach().clone()
+    apply_scalar_gauge(m, np.exp(np.linspace(-1.5, 1.5, m.dims.n_layers)))
+    torch.testing.assert_close(before, m(u).detach(), atol=1e-4, rtol=1e-4)
+
+
+def test_rho_is_not_gauge_invariant_but_state_path_is():
+    m, _ = _gauge_fixture()
+    spec0, decay0 = spectrum_by_depth(m), state_path_decay(m, max_gap=3)
+    apply_scalar_gauge(m, np.exp(np.linspace(0.0, -4.0, m.dims.n_layers)))
+    spec1, decay1 = spectrum_by_depth(m), state_path_decay(m, max_gap=3)
+
+    assert not np.allclose(spec0["rho"], spec1["rho"], atol=1e-3), (
+        "ρ(A_ℓ) must move under an output-preserving per-layer gauge — if this "
+        "assertion ever passes, the gauge helper is broken, not the physics"
+    )
+    np.testing.assert_allclose(decay0["ratio_to_gap1"], decay1["ratio_to_gap1"], atol=1e-4)
+
+
+def test_spectrum_cosine_is_near_vacuous_on_random_spectra():
+    """Why spectrum_rel_diff exists: sorted non-negative vectors always correlate."""
+    rng = np.random.default_rng(0)
+    a = np.sort(np.abs(rng.normal(size=512)))[::-1]
+    b = np.sort(np.abs(rng.normal(size=512)))[::-1]
+    assert spectrum_cosine(a, b) > 0.99          # two *independent* spectra
+    assert spectrum_rel_diff(a, b) > 0.02        # and the honest statistic sees it
+
+
+def test_state_path_tau_recovers_a_known_e_folding():
+    decay = {"gaps": [1, 2, 3, 4], "ratio_to_gap1": np.exp(-np.arange(4) / 2.0)}
+    np.testing.assert_allclose(state_path_tau(decay), 2.0, rtol=1e-6)

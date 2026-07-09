@@ -645,6 +645,8 @@ def gauge_full(summary: dict[str, float], raw_cos: np.ndarray,
 
 
 def aL_spectrum(spec_df: pd.DataFrame, decay_df: pd.DataFrame | None = None) -> plt.Figure:
+    """Left panel is gauge-dependent, right panel is invariant — the titles say so,
+    because the depth-indexed SSM's per-layer gauge rescales ρ(A_ℓ) freely."""
     n = 1 if decay_df is None else 2
     fig, axes = plt.subplots(1, n, figsize=(5.5 * n, 3.8), squeeze=False)
     ax = axes[0][0]
@@ -652,22 +654,29 @@ def aL_spectrum(spec_df: pd.DataFrame, decay_df: pd.DataFrame | None = None) -> 
             label=r"$\rho(A_\ell)$")
     ax.axhline(1.0, color="k", lw=0.8, ls="--", label=r"unit circle ($\rho$=1)")
     ax.set_xlabel(r"layer $\ell$"); ax.set_ylabel(r"spectral radius $\rho(A_\ell)$")
-    ax.set_title(r"$A_\ell$ contractive at every depth"); ax.legend()
+    ax.set_title(r"$\rho(A_\ell)<1$ everywhere" "\n" r"(fitted gauge — not invariant)")
+    ax.legend()
     _int_ticks(ax)
     if decay_df is not None:
         ax2 = axes[0][1]
         ax2.plot(decay_df["gap"], decay_df["mean_fro"], "-o", color="tab:purple")
         ax2.set_xlabel("depth gap (layers)")
         ax2.set_ylabel(r"$\|$state-path kernel$\|_F$")
-        ax2.set_title(r"State-path halves per layer → $k^*\approx 1$")
+        ax2.set_title("State path halves per layer of gap\n"
+                      r"(gauge-invariant) $\to k^*\approx 1$")
         _int_ticks(ax2)
     fig.tight_layout()
     return fig
 
 
 def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
-    """``notes=True`` adds the 410m-store dip explanations (repo fig13):
-    the ℓ=17 answer-promotion write and the ℓ=23 final-write norm outlier."""
+    """Left: the prefix sweep (monotone). Right: per-layer R² at the sweep's endpoints.
+
+    ``notes=True`` annotates the two *right-panel* features (repo fig13): the ℓ=17
+    answer-promotion write, where per-layer reconstruction dips, and the ℓ=23
+    final-write norm outlier. Neither is a feature of the left panel's prefix curve,
+    which is monotone and sampled only at ℓ_max ∈ {0,3,7,11,15,19,23}.
+    """
     rows = js["rows"]
     cut = [r["cutoff"] for r in rows]
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
@@ -695,7 +704,7 @@ def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
         if notes:
             i17 = int(np.argmin(full_pl[1:])) + 1  # interior minimum of the full arm
             ax2.annotate(rf"$\ell$={i17}: answer-promotion write —"
-                         "\nhardest for both arms",
+                         "\nper-layer $R^2$ dips here",
                          xy=(i17, full_pl[i17]), xytext=(i17 - 6, -0.85), fontsize=7,
                          color="dimgray", ha="center", bbox=_NOTE_BBOX,
                          arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
@@ -709,18 +718,26 @@ def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
     return fig
 
 
-def tautology_t1(dfs: dict[str, pd.DataFrame]) -> plt.Figure:
-    """T1 persistence-stratified AR R² vs #state-dirs removed; overlay any stores."""
+def tautology_t1(dfs: dict[str, pd.DataFrame], *, r2_col: str = "real_best_r2",
+                 fixed_k: bool = False) -> plt.Figure:
+    """T1 persistence-stratified AR R² vs #state-dirs removed; overlay any stores.
+
+    ``fixed_k=True`` marks the like-for-like variant: every point is an AR(1) fit over
+    all feasible depths. The default (``best over k``) is NOT comparable across
+    curves, because the selected k determines how many depths are scored — which is
+    why the paper plots the fixed-k version.
+    """
     fig, ax = plt.subplots(figsize=(6.8, 4.2))
     colors = {"factual": "tab:blue", "generic": "tab:green"}
     for name, df in dfs.items():
         c = colors.get(name, None)
-        ax.plot(df["m_removed"], df["real_best_r2"], "-o", color=c, label=f"{name}: real")
+        ax.plot(df["m_removed"], df[r2_col], "-o", color=c, label=f"{name}: real")
         ax.plot(df["m_removed"], df["scramble_null_r2"], "--", color=c, alpha=0.6,
                 label=f"{name}: scramble null")
     ax.axhline(0, color="k", lw=0.6)
     ax.set_xlabel("# top persistent state directions removed ($m$)")
-    ax.set_ylabel(r"best held-out AR $R^2$ on $\Delta$")
+    suffix = " (AR(1), all depths)" if fixed_k else " (best over $k$)"
+    ax.set_ylabel(r"held-out AR $R^2$ on $\Delta$" + suffix)
     ax.set_title("T1 · predictability survives stripping state variance (not the tautology)")
     ax.legend(fontsize=8)
     _int_ticks(ax)

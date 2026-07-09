@@ -1,0 +1,71 @@
+{
+  "cross_seed_modulus_cosine_mean": 0.99865244945345,
+  "cross_seed_modulus_cosine_pairs": [
+    0.9988701729421264,
+    0.9984515143147382,
+    0.9986356611034857
+  ],
+  "cross_seed_modulus_cosine_random_null": 0.9991555646889252,
+  "cross_seed_modulus_rel_diff_mean": 0.08609896441080471,
+  "d_state": 32,
+  "frac_complex_mean": 0.7065217391304348,
+  "gauge_audit": {
+    "noncontractive_layers": [
+      0,
+      5
+    ],
+    "rho_max": [
+      0.8808445334434509,
+      4.909273147583008
+    ],
+    "rho_median": [
+      0.42952844500541687,
+      0.25927630066871643
+    ],
+    "state_path_ratio_max_abs_change": 1.3449573843526963e-08,
+    "tau_inv": [
+      1.1539012403191897,
+      1.1539012438382732
+    ]
+  },
+  "interpretation": "The gauge-invariant result: the realised state path \u2016C(\u220fA)B\u2016_F falls by ~2\u00d7 per layer of depth gap (gap2/gap1 \u2248 0.42\u20130.49 across seeds and both dictionaries), an e-folding memory of \u03c4_inv \u2248 1.1\u20131.2 layers \u2014 the operator-level mechanism consistent with the reconstruction k*\u22481 (Step 2). \u03c1(A_\u2113)<1 at every layer is ALSO true, but only of the min-Frobenius representative the \u03bb_reg penalty selects: the depth-indexed SSM's gauge is per-layer (A_\u2113 \u2192 T_{\u2113+1} A_\u2113 T_\u2113\u207b\u00b9), and the gauge audit above turns 0/23 non-contractive layers into 5/23 without changing a single prediction. Likewise the 0.999 sorted-modulus cosine is near-vacuous (random spectra score the same); the honest cross-seed statistic is the ~10% median relative difference.",
+  "l1_ckpt": "runs/2026-06-30-ph4-e2-checkpoint-l1-410md/checkpoints/ssm_seed0.pt",
+  "l1_vs_mlsae_modulus_cosine": 0.9927960656891982,
+  "l1_vs_mlsae_modulus_rel_diff": 0.11058146305352998,
+  "l1_vs_mlsae_rho_corr": 0.5432886855114005,
+  "layers_noncontractive": 0.0,
+  "mean_mod_median": 0.08378282189369202,
+  "mlsae_ckpts": [
+    "runs/2026-06-26-ph4-checkpoint-410md/checkpoints/ssm_seed0.pt",
+    "runs/2026-06-29-ph4-gauge-410md/checkpoints/ssm_seed1.pt",
+    "runs/2026-06-29-ph4-gauge-410md/checkpoints/ssm_seed2.pt"
+  ],
+  "n_transitions": 23,
+  "rho_geomean": 0.29985958337783813,
+  "rho_max": 0.8808445334434509,
+  "rho_median": 0.42952844500541687,
+  "state_path_gap2_all_fits": [
+    0.4405463977566444,
+    0.41816533252177923,
+    0.45008216996850875,
+    0.48544302988158305
+  ],
+  "state_path_gap2_over_gap1": 0.48544302988158305,
+  "state_path_ratio_to_gap1": [
+    1.0,
+    0.48544302988158305,
+    0.21057788761904225,
+    0.08943540493235057,
+    0.03591581224143306,
+    0.014701551050473247,
+    0.005847971296824104,
+    0.0025492683446278496
+  ],
+  "state_path_tau_all_fits": [
+    1.2095316370044675,
+    1.174890525204812,
+    1.1967638520567445,
+    1.1539012403191897
+  ],
+  "state_path_tau_layers_invariant": 1.1539012403191897
+}

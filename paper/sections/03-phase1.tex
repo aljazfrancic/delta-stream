@@ -86,9 +86,13 @@ $\hat\Delta^{\mathrm{TL}}_\ell = \hat r_{\ell+1} - \hat r_\ell$ from the
 public lens translators \citep{belrose2023tuned}, the pre-registered gate
 baseline for proceeding to the expensive AR tests.
 
-Layer-averaged held-out $\Rsq$ is \textbf{0.602} at the best rank (128; 0.921
-full-rank), versus \textbf{$-0.691$} for the Tuned-Lens-implied update
-(\cref{fig:h1-ridge}). The gate passes with a wide margin --- the cheap
+Layer-averaged held-out $\Rsq$ is \textbf{0.602} at the sweep's top rank (128;
+the untruncated ridge reaches 0.921), versus \textbf{$-0.691$} for the
+Tuned-Lens-implied update
+(\cref{fig:h1-ridge}). Both are averages of per-layer $\Rsq$; the
+variance-weighted pooled version of the same Tuned-Lens baseline is $-0.309$
+and is the number quoted in \cref{sec:evaluation:baselines}. The gate passes
+with a wide margin --- the cheap
 diagnostic separates cleanly from calibrated per-layer refinement --- so the
 AR programme is justified. A shrinkage-CCA backstop (protocol Step 4) finds
 held-out leading canonical correlations $\approx 0.9997$ at every layer,
@@ -124,8 +128,26 @@ with per-depth intercepts $\mu_\ell$ (so the kernel cannot absorb per-depth
 mean offsets $\bar\Delta_\ell$ --- essential for the Phase-2 stationarity
 comparison) and low-rank $W_j$ shared across depth; predictors are compressed
 to the top-256 $\Delta$ principal components for tractability while the target
-stays full-$D$. Held-out $\Rsq$ reaches \textbf{0.65} at $k=20$, rank 128, and
-is $\ge 0.47$ at every $k$ in the sweep (\cref{fig:h1-ar}).
+stays full-$D$. Held-out $\Rsq$ is $\ge 0.47$ at every $k$ in the sweep and
+peaks at \textbf{0.65} at $k=20$, rank 128 (\cref{fig:h1-ar}).
+
+\paragraph{A depth-subset caveat that governs every number below.}
+A pooled AR($k$) fit can only score target depths $\ell \ge k$, so the
+evaluation set \emph{shrinks with $k$}: at $L=24$, the $k{=}1$ fit averages
+over 23 depths and the $k{=}20$ fit over the four deepest updates
+($\ell = 20$--23), which happen to be the most predictable. The rise from
+$\Rsq = 0.52$ ($k{=}1$) to $0.65$ ($k{=}20$) is therefore \emph{not} evidence
+that long lags buy reconstruction. Holding the depth set fixed at
+$\ell \in [20,23]$ and re-sweeping $k$ reverses it: AR(1) is the \emph{best}
+fit there ($\Rsq = 0.684$), and every longer lag order is worse ($0.647$ to
+$0.655$; $k{=}20$ gives $0.650$). The confounded sweep gains $+0.129$ from
+$k{=}1$ to $k{=}20$; the depth-controlled one \emph{loses} $0.034$. This
+agrees with the per-depth sweeps of \cref{sec:phase2:kstar} (lags $\ge 2$ add
+a median $+0.018$ at a single depth) and it makes the ``statistically deep,
+reconstruction-shallow'' reading stronger, not weaker. We keep the
+pre-registered ``best-$(k,\text{rank})$'' headline for continuity with the
+frozen protocol, but from here on we say which depth set a number is scored
+on, and the $\kstar$ verdict rests on the per-depth fits alone.
 
 How far back does depth dependence reach? At every feasible (depth $\ell$,
 lag $j$) cell we run a nested-F lag test (Wilks' $\Lambda$ with Rao's F, on a
@@ -150,21 +172,37 @@ control).}
 Each prompt is wrapped in a fixed six-token neutral preamble; the perturbed
 variant replaces the preamble's content words with random function words at
 identical absolute positions. On the 863/1000 sampled examples where the
-wrapped baseline still recovers the answer, the AR fit does not degrade (0.639
-wrapped $\to$ 0.696 perturbed) and the Granger heatmaps correlate at
+wrapped baseline still recovers the answer, the AR fit does not degrade
+($k{=}20$: 0.639 wrapped $\to$ 0.696 perturbed; $k{=}1$, the whole-stack fit:
+0.515 $\to$ 0.496) and the Granger heatmaps correlate at
 \textbf{0.964} (112/112 $\to$ 109/112 significant). The cross-layer dynamics
 at the query token are a property of subject--relation processing ---
 depth-intrinsic, not leaked context.
+
+Two honesty notes, because this is the control the whole programme leans on.
+First, these are \emph{raw} AR levels, and \cref{sec:phase1:pressure} shows raw
+levels are dominated by the running-sum tautology; the control's force comes
+from the Granger heatmap correlation and the lag-$\ge$2 grid (both
+tautology-light), not from the $\Rsq$ agreement. Second, the $k{=}20$ level
+\emph{rises} under perturbation. On this store that is the persistence
+signature --- less informative context makes the residual stream drift more
+smoothly, and \cref{sec:phase1:pressure} shows generic text scores
+\emph{higher} raw ($0.935$) while carrying $\approx0$ genuine structure. We
+therefore read Null 2 as ``the depth structure is not inherited from the
+context'', and not as ``perturbation improves the model''.
 
 \begin{figure}[t]
   \centering
   \includesvg[width=0.72\linewidth]{fig02_h1_ar_r2_vs_k}
   \caption{Pooled AR($k$)-on-$\Delta$ held-out $\Rsq$ versus $k$ (real vs the
   scrambled null) on \pythia{}. Real $\ge 0.47$ everywhere, peaking at 0.65;
-  the null is indistinguishable from zero. The in-axes note carries the
-  T1/T4/T5 correction: the raw level splits into tautological and genuine
-  parts (\cref{fig:t1,fig:t5}), and the genuine part is substantially
-  architectural.}
+  the null is indistinguishable from zero. Two corrections travel with this
+  panel. Each $k$ is scored on the depths $\ell \ge k$, so the curve is not a
+  lag effect: fixing the depth set at $\ell \in [20,23]$ makes $k{=}1$ the
+  \emph{best} fit (0.684), with longer lags costing up to $0.034$
+  (\cref{sec:phase1:ar}). And the raw level splits into tautological and
+  genuine parts (\cref{fig:t1,fig:t5}), the genuine part being substantially
+  architectural on this model.}
   \label{fig:h1-ar}
 \end{figure}
 
@@ -190,12 +228,18 @@ accountings and an untrained-network control (T4). The corrected reading
 below, not the raw 0.65, is the version of H1 the rest of the paper uses.
 
 \paragraph{T5 --- exact tautology floor.}
-The held-out explained variance of the single headline AR fit splits exactly
+The held-out explained variance of the single headline AR fit ($k{=}20$, so
+scored on $\ell \in [20,23]$) splits exactly
 (orthogonally, Pythagorean) across the top-$m$ persistent state subspace and
 its complement. At $m=50$: \textbf{factual $0.65 = 0.52$ tautological
 $+\;0.13$ genuine}; the persistent subspace itself is near-trivially
-predictable ($\Rsq_{\parallel} \approx 0.90$--$0.95$), which \emph{is} the
-$\pm\vl$ drift made explicit (\cref{fig:t5}).
+predictable ($\Rsq_{\parallel} = 0.90$--$0.95$ over the $m$ sweep), which
+\emph{is} the $\pm\vl$ drift made explicit (\cref{fig:t5}). The four deepest
+updates are where the stream drifts most, so this is the tautology at its
+worst; repeating the decomposition on the whole-stack $k{=}1$ fit gives
+$0.52 = 0.27$ tautological $+\;0.25$ genuine (\cref{tab:commondepth}). The
+tautological share is the majority either way, and we quote both because the
+pre-registered headline is the four-depth number.
 
 \paragraph{T1 --- persistence-stripped refit.}
 Projecting out the top-$m$ principal directions of the \emph{states} and
@@ -203,8 +247,13 @@ refitting: removing the single top direction (32\% of state variance) costs
 only $0.650 \to 0.637$; removing the top 50 (87\% of state variance) still
 leaves \textbf{$\Rsq = 0.436$}, roughly $4000\times$ the scramble floor,
 whose magnitude is ${\sim}10^{-4}$
-(\cref{fig:t1}). T1 exceeds T5's genuine share because it re-optimises the
-kernel on the complement; both are reported.
+(\cref{fig:t1}). Two reasons T1 exceeds T5's genuine share: it re-optimises
+the kernel on the complement, and --- since each point is a max over the $k$
+sweep --- stripping flips the selected order from $k{=}20$ to $k{=}1$, i.e.\
+onto the 23-depth evaluation set. \Cref{app:stats} therefore repeats the whole
+$m$ sweep at fixed $k{=}1$ for every store used below, and all
+trained-vs-untrained and factual-vs-generic contrasts we quote are taken from
+that like-for-like table.
 
 \paragraph{T2 --- persistence-matched surrogate.}
 A random walk with independent per-layer Gaussian steps matched to each
@@ -215,71 +264,107 @@ increments, the $\mathrm{Var}(\vl)$ contributions to
 $\mathrm{Cov}(\Dl,\Delta_{\ell-1})$ cancel in expectation under independent
 steps), so the scramble floor was already the honest floor.
 
-\paragraph{T3 --- lag$\ge$2 Granger, tautology-free by construction.}
+\paragraph{T3 --- lag$\ge$2 Granger, free of the shared term by construction.}
 The shared $\mp\vl$ term couples only lag 1 ($\Delta_{\ell-2}$ shares no
 state term with $\Dl$). Restricting the grid to lags $\ge 2$:
 \textbf{89/89} cells significant (real) versus \textbf{0/89} (null),
 identically on factual and generic stores. Depth dependence beyond the
-mechanical overlap is total.
+mechanical overlap is total. (Strictly, T3 removes the algebraic overlap, not
+the correlation that persistence induces between $\Dl$ and $\Delta_{\ell-2}$;
+T2 is what rules the latter out, by showing that persistence with no
+cross-layer dependence scores zero. The two controls are complements.)
 
-\paragraph{T4 --- untrained-network control (deflationary).}
+\paragraph{T4 --- untrained-network control (deflationary, and one-family).}
 Running the identical battery on a \emph{randomly initialised} \pythia{}
-(same prompts, same pipeline): the persistence-stripped AR $\Rsq$ is
-\textbf{0.503 (untrained) vs 0.436 (trained)} on factual prompts (0.216 vs
-0.290 on generic text), and the untrained network passes every tautology-free
+(same prompts, same pipeline), at a common $k{=}1$ so that trained and
+untrained are scored on the same 23 depths: the persistence-stripped ($m{=}50$)
+AR $\Rsq$ is \textbf{0.503 (untrained) vs 0.436 (trained)} on factual prompts,
+and the untrained network passes every tautology-free
 control --- scramble $\approx 0$, surrogate $\approx 0$, lag$\ge$2 Granger
 89/89 --- exactly like the trained one. The pre-registered inference rule
 (``trained $\gg$ untrained $\Rightarrow$ learned'') returns the other branch:
-\textbf{the tautology-free AR-on-$\Delta$ structure is substantially
-architectural} --- a property of the residual stack with per-layer nonlinear
+on the primary model, \textbf{the tautology-free AR-on-$\Delta$ structure is
+substantially architectural} --- a property of the residual stack with
+per-layer nonlinear
 maps and LayerNorm, not of the learned weights. What training \emph{does}
-change is the persistent/drift component (raw $\Rsq$ 0.54$\to$0.65 factual,
-0.21$\to$0.935 generic) --- the part T1/T5 already attribute to the tautology.
-This replicates on GPT-2-small (trained 0.439 vs untrained 0.420 after
-stripping; learned share ${\sim}5\%$), making the architectural reading a
-two-family statement.
+change is the persistent/drift component (raw $\Rsq$ 0.543$\to$0.521 factual,
+where the tautological share rises 0.12$\to$0.27; 0.063$\to$0.882 generic,
+almost all of it tautology) --- the part T1/T5 already attribute to drift.
+
+\textbf{It does not replicate on GPT-2-small}, and the earlier claim that it
+did was an artefact of the depth-subset confound. Compared at the same
+$k{=}1$ over the same 11 depths, GPT-2's persistence-stripped $\Rsq$ is
+\textbf{0.439 trained vs 0.233 untrained} --- a learned share of $47\%$, not
+the ${\sim}5\%$ we obtain if the untrained arm is allowed to select $k{=}10$
+and thereby score only its two deepest updates. So the honest statement is
+narrower than we first drew it: \emph{on Pythia-410m the tautology-free
+AR structure is architectural (the untrained network exceeds the trained one);
+on GPT-2-small it is about half learned.} We have no account of why the two
+families differ, and we flag it as the most interesting loose end in
+\cref{sec:phase1}. \Cref{tab:commondepth} carries every number.
 
 \begin{figure}[t]
   \centering
   \includesvg[width=0.8\linewidth]{fig14_tautology_factual_vs_generic}
   \caption{T1 persistence-stripped AR $\Rsq$ as the top-$m$ state directions
-  are removed, factual vs generic stores. The factual headline decays
+  are removed, factual vs generic stores. Both curves are AR(1) fits over all
+  23 feasible depths, so they are directly comparable (the max-over-$k$
+  version used elsewhere is not: it selects different depth sets for the two
+  stores; \cref{app:stats}). The factual curve decays
   gradually and saturates at $0.44 \gg$ null; the generic store --- whose top
-  direction alone is 96\% of state variance --- decays steeply to $0.29$: the
-  excess of the raw generic level (0.935) over factual (0.65) was persistence,
-  the surviving structure is comparable.}
+  direction alone is 96\% of state variance --- collapses on the very first
+  direction and reaches $0.07$ by $m{=}50$. Nearly all of the raw generic
+  level was persistence, and what survives is an order of magnitude weaker
+  than the factual store's.}
   \label{fig:t1}
 \end{figure}
 
 \begin{figure}[t]
   \centering
   \includesvg[width=0.8\linewidth]{fig15_t5_floor}
-  \caption{T5 exact decomposition of the single headline AR fit into
+  \caption{T5 exact decomposition of the single headline AR fit ($k{=}20$,
+  scored on $\ell \in [20,23]$) into
   tautological ($\Rsq_{\parallel}$, persistent-subspace) and genuine
   ($\Rsq_{\perp}$) shares as a function of the subspace size $m$. Factual
   (shown): $0.65 = 0.52 + 0.13$ at $m{=}50$. Generic (not shown):
   $0.935 = 0.937 - 0.002$, a marginally \emph{negative} genuine share --- the
-  generic level is persistence, not computation.}
+  generic level is persistence, not computation. At $k{=}1$, over all 23
+  depths, the same split gives $0.52 = 0.27 + 0.25$ (factual) and
+  $0.88 = 0.88 + 0.003$ (generic); \cref{tab:commondepth}.}
   \label{fig:t5}
 \end{figure}
 
-\subsection{A tautology-free localisation: attention vs MLP writes}
+\subsection{Localising the depth reach: attention vs MLP writes}
 \label{sec:phase1:sublayer}
 
 Splitting each update into its two additive sublayer writes,
 $\Dl = \mathrm{attn}_\ell + \mathrm{mlp}_\ell$ (exact for Pythia's parallel
 blocks; additivity holds to $7\times10^{-8}$ relative error), gives streams
-that carry \emph{no} $\pm\vl$ term at all. Both independently reproduce H1
-(AR real$-$null: attention \textbf{0.542}, MLP \textbf{0.653}; Granger 112/112
-vs 0/112 both) --- confirming the structure is not the persistence term ---
-and they dissociate cleanly: the \textbf{MLP write is strictly first-order at
+that carry \emph{no} $\pm\vl$ term. Both independently reproduce H1
+(AR real$-$null on the four deepest updates: attention \textbf{0.542}, MLP
+\textbf{0.653}; Granger 112/112 vs 0/112 both), and they dissociate cleanly:
+the \textbf{MLP write is strictly first-order at
 every depth} ($\kstar=1$) while the \textbf{attention write carries the
-long-range depth memory} ($\kstar$ median 2, rising to 10 late), with MLP
-contributing 78\% of update energy. The residual stream's
+long-range depth memory} ($\kstar$ median 2, rising to 10 at $\ell{=}22$),
+with MLP contributing 78\% of update energy. The residual stream's
 statistically-deep-but-reconstruction-shallow tension
 (\cref{fig:h1-granger} vs \cref{sec:phase2:kstar}) is therefore the
 energy-dominant memoryless MLP channel superposed on a small deep-reaching
 attention channel.
+
+\paragraph{What this split does and does not establish.} It removes the
+\emph{mechanical} $\pm\vl$ overlap, and that is all. In Pythia's parallel
+block both writes are deterministic functions of the same state,
+$\mathrm{attn}_\ell = f_\ell(\mathrm{LN}(\vl))$ and
+$\mathrm{mlp}_\ell = g_\ell(\mathrm{LN}(\vl))$, and $\vl$ is strongly
+persistent, so consecutive sublayer writes remain correlated \emph{through}
+that shared, slowly drifting argument. The split is therefore a
+tautology-free \emph{localisation} of where the depth reach lives, not an
+independent demonstration that the AR structure is persistence-free. The
+persistence-free evidence remains T1--T3 below, and T4 shows the surviving
+structure is largely architectural --- exactly what a smooth per-layer map of
+a persistent state would produce. We did not run the T2 surrogate or the
+untrained control on the sublayer streams; doing so is the natural next check.
 
 \subsection{Robustness and the Gate-1 verdict}
 \label{sec:phase1:verdict}
@@ -294,6 +379,8 @@ length-matched generic Pile text (\cref{sec:phase2:generic}).
 \textbf{Gate-1 verdict (pre-registered routing): H1 supported; proceed to
 Phase 2} --- with the corrected interpretation carried forward: genuine,
 above-null, depth-intrinsic cross-layer structure exists in the updates
-(T1--T3), but it is substantially a property of the architecture rather than
-of training (T4), and raw AR-on-$\Delta$ levels must never be quoted without
-the tautology split (T5).
+(T1--T3); on the primary model it is substantially a property of the
+architecture rather than of training, though that reading is Pythia-specific
+(T4); and raw AR-on-$\Delta$ levels must never be quoted without the tautology
+split (T5) or without the depth set they were scored on
+(\cref{sec:phase1:ar}).

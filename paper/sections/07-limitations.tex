@@ -11,26 +11,31 @@ novelty fraction is computable or claimed.
 \paragraph{Limitation 2 --- cross-family coverage stops below 1B parameters.}
 Every experiment ran on one 3\,GB GPU (GTX 1050;
 \cref{app:repro}), which admits Pythia to 410m, GPT-2 to large, and
-Qwen2-0.5B, but not Gemma-2-2B or Llama-3.1-8B. The replication evidence is
-therefore three families at 6--36 layers, and the two questions this leaves
+Qwen2-0.5B, but not Gemma-2-2B or Llama-3.1-8B. The H1/H2 replication evidence
+is therefore three families at 12--36 layers (the six-layer Pythia-70m lane is
+a depth point for the Phase-3 fit only; its differently constructed dataset
+keeps it outside the H1/H2 claim, \cref{sec:phase1:setup}), and the two
+questions this leaves
 open are exactly the ones a reader should ask. First, \emph{does any of this
 hold at 7B?} We do not know, and we state the expectation as a falsifiable
 prediction: the sign pattern (H1 above null, H2 cross-band negative,
 $\kstar\!\approx\!1$) should persist at scale, since it
-held without exception across the six replication models spanning 124M--774M
+held without exception across the six models spanning 124M--774M
 parameters and depths 12--36 in three
-families; we expect the contractive spectrum to persist as well, though it is
-measured on the primary model only (\cref{sec:evaluation:operator}); the
+families; we expect the fast-attenuating state path to persist as well, though
+it is measured on the primary model only (\cref{sec:evaluation:operator}); the
 magnitudes (in particular the depth-graded reconstruction gain)
 we make no prediction for. Second, \emph{within a family, depth is confounded
-with width and parameter count} on the depth-scaling series
+with width, parameter count and training-set size} on the depth-scaling series
 (\cref{sec:evaluation:depth}). One contrast partially deconfounds it: the
-Qwen2 prefix comparison holds the model, the activations, and the dictionary
+Qwen2 prefix comparison holds the model, the activations, the dataset and the
+dictionary
 type fixed and varies only how many layers the fit covers (24 vs 12), and the
 gain rises with covered depth ($+0.072$ vs $+0.043$) --- depth doing work at
-constant width. A clean in-family resolution (Pythia 1b/1.4b/2.8b, one
-dictionary type, three seeds) is specified and costed as future work, along
-with the two missing families.
+constant width. It is one contrast, on one model, without an interval. A clean
+in-family resolution (Pythia 1b/1.4b/2.8b, one
+dictionary type, matched $N$, three seeds) is specified and costed as future
+work, along with the two missing families.
 
 \paragraph{Limitation 3 --- three relation classes.}
 The primary model confidently knows too few CounterFact facts for the
@@ -63,7 +68,18 @@ symmetric real-vs-null evaluations (the contrast is the claim), and the CLT
 family's $\lambda_{\mathrm{reg}}$ was re-selected on a validation carve-out
 with the conclusion unchanged (\cref{sec:evaluation:clt}); the Granger F
 approximation is empirically calibrated rather than assumed
-(\cref{app:stats}). The CLT comparison is the residual-write variant on
+(\cref{app:stats}). Worse, that AR max ranges over fits scored on
+\emph{different depth sets} ($\ell \ge k$), so a larger $k$ can win by landing
+on an easier subset; \cref{sec:phase1:ar} states the confound and
+\cref{app:stats} re-derives every trained-vs-untrained and factual-vs-generic
+contrast at a common $k{=}1$. The pre-registered headline number is left as
+first reported. Finally, the fitted state operator's spectral radius is
+\emph{not} a gauge-invariant quantity in a depth-indexed SSM
+(\cref{sec:evaluation:operator}); we report it as a property of the
+minimum-Frobenius representative the regulariser selects, and rest the
+mechanism claim on the invariant state-path decay instead. An earlier version
+of this work asserted the invariance, and the correction is one of the reasons
+the operator section is phrased the way it is. The CLT comparison is the residual-write variant on
 frozen shared sources with per-pair rank $\le 64$; a natively-trained,
 jointly-sourced CLT could behave differently and remains the right off-box
 follow-up. Untrained-network controls use a single random initialisation each

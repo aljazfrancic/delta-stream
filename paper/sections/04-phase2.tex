@@ -7,9 +7,11 @@
 H2 asks whether the AR kernel is the \emph{same} kernel at every depth. The
 pre-registered test partitions depth into thirds (early $\ell$ 0--7, middle
 8--15, late 16--23), fits one band-shared AR($k$) kernel per band (per-depth
-intercepts $\mu_\ell$ absorb mean offsets, so only transition structure is
-compared; $k=5$, the plan's early-band feasibility cap
-$\lfloor L/3 \rfloor - 3$; working rank 256 after the plan's $r$-vs-$2r$
+intercepts $\mu_\ell$ absorb mean offsets, and are \emph{refit from the train
+split at the evaluation depths} whenever a kernel is transferred, so only
+transition structure is compared; $k=5$, the plan's early-band feasibility cap
+$\lfloor L/3 \rfloor - 3$, which leaves the early band three scorable target
+depths, $\ell = 5$--7; working rank 256 after the plan's $r$-vs-$2r$
 spot-check promoted 128), and compares the kernels four ways.
 
 Every comparison rejects stationarity (\cref{fig:h2}):
@@ -17,11 +19,17 @@ Every comparison rejects stationarity (\cref{fig:h2}):
 (0.74 / 0.58 / 0.67) but \textbf{every} off-diagonal is \textbf{negative}
 (e.g.\ early$\to$middle $-1.00$, late$\to$middle $-1.89$): a kernel from one
 band predicts another band's updates \emph{worse than that band's own mean}.
-This holds at every truncation rank from 32 to 256 (worst off-diagonal
-$-0.32$ even at rank 32). \emph{Frobenius distance} between band kernels is
-1.39--1.42 $\approx \sqrt{2}$, the orthogonal-of-equal-norm ceiling;
+This holds at every truncation rank from 32 to 256; the statistic that carries
+the claim is the \emph{least} negative off-diagonal, which is still $-0.15$ at
+rank 32 (rank truncation shrinks every cell toward zero, so low rank is the
+hard case). \emph{Relative Frobenius distance}
+$\|W_a - W_b\|_F / \tfrac12(\|W_a\|_F + \|W_b\|_F)$ between band kernels is
+1.39--1.42, straddling the value $\sqrt 2$ that two orthogonal equal-norm
+kernels would take (the metric's ceiling is 2, at $W_a = -W_b$);
 \emph{principal angles} between kernel output subspaces average
-57--62$^\circ$; and a \emph{bootstrap} within bands puts the between-band
+57--62$^\circ$ --- well short of the 90$^\circ$ two random subspaces would give,
+so the kernels share structure even as their transfer collapses; and a
+\emph{bootstrap} within bands puts the between-band
 distance \textbf{80--104 standard deviations} above within-band sampling
 spread. Crucially there is \emph{no clean phase boundary}: the three pairwise
 distances are equal to within 3\%, so adjacent bands differ as much as distant
@@ -60,25 +68,28 @@ survives is a reconstruction comparison at stated parameter budgets
 everywhere we looked}
 \label{sec:phase2:kstar}
 
-Per-depth AR($k$) sweeps define the effective depth $\kstar$ as the smallest
-$k$ within 95\% of the asymptotic $\Rsq$. On the factual store
+Per-depth AR($k$) sweeps --- one fit per target depth, so no depth-subset
+confound (\cref{sec:phase1:ar}) --- define the effective depth $\kstar$ as the
+smallest $k$ within 95\% of the asymptotic $\Rsq$. On the factual store
 $\boldsymbol{\kstar \approx 1}$ at every depth (median 1; the single
 exception, $\kstar{=}2$ at $\ell{=}17$, coincides with the answer-promotion
 write discussed in \cref{sec:evaluation:probe}): one preceding update captures
 essentially all held-out predictable variance (per-depth best $\Rsq$
-0.83--0.94), lags $\ge 2$ add a median $+0.018$, and the scrambled null
-collapses the whole curve to 0 (\cref{fig:kstar}). The contrast with the
-Granger reach of 20 (\cref{fig:h1-granger}) is a headline in itself:
+0.83--0.94 away from $\ell{=}17$, where it falls to 0.69), lags $\ge 2$ add a
+median $+0.018$ (maximum $+0.050$, at $\ell{=}17$), and the scrambled null
+collapses the whole curve to 0 (\cref{fig:kstar}). This per-depth measurement,
+not the pooled sweep of \cref{sec:phase1:ar}, is what licenses the contrast
+with the Granger reach of 20 (\cref{fig:h1-granger}):
 \textbf{long-range depth structure is statistically real but
 reconstruction-negligible} --- and \cref{sec:phase1:sublayer} locates the two
 halves of that sentence in different sublayers (deep reach: attention;
 reconstruction mass: MLP). $\kstar$ inherits the lag-1 tautology caveat, but
 it is also exactly the model-order information Phase 3 needs, and the fitted
-model later supplies a mechanism for it (a contractive state operator,
-\cref{sec:evaluation:operator}). Stratifying by relation class leaves
+model later supplies a candidate mechanism for it (a fast-attenuating state
+path, \cref{sec:evaluation:operator}). Stratifying by relation class leaves
 $\kstar=1$ in every class and every depth band (class-invariant order); on
 generic text the per-depth median is $\kstar=2$ (pooled band-level fits give
-1/3/1) --- stated
+1/3/1, and lags $\ge 2$ add a median $+0.039$) --- stated
 explicitly since it differs from the factual 1, with per-depth generic fits
 being visibly noisier.
 
@@ -89,8 +100,8 @@ being visibly noisier.
   per-depth lag-1 $\Rsq$ (purple line, right axis) and the Granger reach (20)
   for contrast. The
   one $\kstar{=}2$ depth, $\ell{=}17$, is the answer-promotion write: the state
-  probe jumps there (\cref{fig:probe}) and the source-prefix sweep dips there
-  (\cref{fig:prefix}).}
+  probe jumps there (\cref{fig:probe}) and the SSM's per-layer reconstruction
+  $\Rsq$ dips there (\cref{fig:prefix}, right panel).}
   \label{fig:kstar}
 \end{figure}
 
@@ -101,12 +112,16 @@ being visibly noisier.
 Re-collecting trajectories at four positions per prompt (first subject token,
 last subject token, a mid-prompt non-subject token, final prompt token) and
 refitting AR($\kstar{=}1$) per position: within-position held-out $\Rsq$ is
-positive at every position (0.28--0.55), but \textbf{every cross-position
-$\Rsq$ is negative} (mean $-0.36$; kernels near-orthogonal, Frobenius
-$\approx\sqrt{2}$, angles 57--60$^\circ$) --- the same no-transfer signature
-as the depth bands, now across positions. The scrambled null collapses the
-diagonals, and the tautology (shared by diagonal and off-diagonal) cancels in
-the retention ratio. The Phase-1/2 characterisation is therefore scoped to
+positive at every position (0.28--0.55), while \textbf{eleven of the twelve
+cross-position transfers are negative} (mean $-0.36$; the lone exception,
+last-subject-token $\to$ mid-prompt, reaches $+0.024$, i.e.\ it recovers
+$5\%$ of that position's own $\Rsq$). Kernels are near-orthogonal (relative
+Frobenius 1.25--1.46, mean principal angles 57--60$^\circ$) --- the same
+no-transfer signature as the depth bands, now across positions. The scrambled
+null collapses the diagonals, and the tautology, being shared by the diagonal
+and the off-diagonal alike, cancels in the \emph{retention ratio}
+(cross-position $\Rsq$ divided by the target position's within-position
+$\Rsq$; worst $-2.88$). The Phase-1/2 characterisation is therefore scoped to
 \emph{context-aggregated factual recall at the query position}; Phase 3 fits
 there, and every claim in this paper inherits that scope.
 
@@ -144,26 +159,33 @@ and $\kstar = 1$ at every band of every model.
   \centering
   \small
   \caption{Cross-model replication of H1/H2. AR $\Rsq$ is pooled held-out
-  real$-$null; Granger counts are Bonferroni-significant cells (real vs
+  real$-$null at the sweep's best lag order $k^{\mathrm{sel}}$, which is
+  reported alongside because a pooled AR($k$) fit scores only depths
+  $\ell \ge k$ (\cref{sec:phase1:ar}): the levels are comparable \emph{within}
+  a row against its null, not \emph{across} rows with different
+  $k^{\mathrm{sel}}$. What replicates is the sign pattern, not the level.
+  Granger counts are Bonferroni-significant cells (real vs
   scrambled null) out of all feasible (depth, lag) cells --- $\sum_j (L - j)$
   over the lag grid: $\{1,2,3,5,10,15,20\}$ for $L \ge 24$ (112 cells at
   $L{=}24$, 196 at $L{=}36$); the 12-layer models use the capped grid
   $\{1,2,3,5,8,10\}$ since lags 15 and 20 are infeasible at $L{=}12$, giving
   43 cells (\cref{app:stats}). The cross-band column reports the sign pattern
   of the H2 transfer test. Datasets are per-model confidence-filtered
-  CounterFact (sizes 767--2{,}540).}
+  CounterFact (sizes 767--2{,}540). The tautology accounting of
+  \cref{sec:phase1:pressure} was run on two of these models
+  (\pythia{}, GPT-2-small), not all six; these AR levels are raw.}
   \label{tab:crossmodel}
-  \begin{tabular}{llcccc}
+  \begin{tabular}{llccccc}
     \toprule
-    Model & $L$ & AR $\Rsq$ (real$-$null) & Granger real / null &
-    cross-band $\Rsq$ & $\kstar$ \\
+    Model & $L$ & AR $\Rsq$ (real$-$null) & $k^{\mathrm{sel}}$ &
+    Granger real / null & cross-band $\Rsq$ & $\kstar$ \\
     \midrule
-    GPT-2-small           & 12 & 0.625 & 43/43 \;/\; 0 & all $<0$ & 1 \\
-    Pythia-160m-deduped   & 12 & 0.894 & 43/43 \;/\; 0 & all $<0$ & 1 \\
-    GPT-2-medium          & 24 & 0.513 & 112/112 \;/\; 0 & all $<0$ & 1 \\
-    Qwen2-0.5B            & 24 & 0.462 & 112/112 \;/\; 0 & all $<0$ & 1 \\
-    \pythia{} (primary)   & 24 & 0.650 & 112/112 \;/\; 0 & all $<0$ & 1 \\
-    GPT-2-large           & 36 & 0.311 & 196/196 \;/\; 0 & all $<0$ & 1 \\
+    GPT-2-small           & 12 & 0.625 & 1  & 43/43 \;/\; 0 & all $<0$ & 1 \\
+    Pythia-160m-deduped   & 12 & 0.894 & 10 & 43/43 \;/\; 0 & all $<0$ & 1 \\
+    GPT-2-medium          & 24 & 0.513 & 20 & 112/112 \;/\; 0 & all $<0$ & 1 \\
+    Qwen2-0.5B            & 24 & 0.462 & 1  & 112/112 \;/\; 0 & all $<0$ & 1 \\
+    \pythia{} (primary)   & 24 & 0.650 & 20 & 112/112 \;/\; 0 & all $<0$ & 1 \\
+    GPT-2-large           & 36 & 0.311 & 1  & 196/196 \;/\; 0 & all $<0$ & 1 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -186,7 +208,11 @@ negative, worst $-144$; bands separated by 39--188 bootstrap SD), and the
 effective order is low ($\kstar$ median 2). The raw generic AR level (0.935)
 is \emph{higher} than factual (0.650), and \cref{sec:phase1:pressure} is the
 reason that must not be read as ``more computation'': T5 shows the generic
-level is $\approx 0.94$ tautological $+\;{\approx}0$ genuine, and after
-persistence-stripping generic structure (0.29) is \emph{weaker} than factual
-(0.44). The phenomenon is general to transformer depth; the \emph{kernels}
+level is $\approx 0.94$ tautological $+\;{\approx}0$ genuine, and at a common
+lag order the persistence-stripped generic structure (0.07) is an order of
+magnitude \emph{weaker} than factual (0.44). So what generalises is H1's
+binary claim --- above-null, example-specific, depth-intrinsic structure
+exists in the updates of generic text too --- and emphatically not its
+magnitude, which on generic text is almost entirely running-sum drift. The
+phenomenon is general to transformer depth; the \emph{kernels}
 remain position- and circuit-specific per \cref{sec:phase2:scope}.

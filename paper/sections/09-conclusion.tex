@@ -5,13 +5,17 @@ We pre-registered a hypothesis about how residual-stream updates travel
 through transformer depth, and the data answered with unusual precision:
 structured, yes --- but the structure is substantially architectural where it
 is predictive, pervasively depth-indexed where we hoped it was shared,
-first-order and contractive where it is generative, distributed and
+first-order and fast-forgetting where it is generative, distributed and
 magnitude-driven where we tested it causally, and genuinely learned exactly
 where the decomposition adds value over per-layer baselines. Both
 pre-registered hypotheses did real work: H1 by surviving controls designed to
 kill it, H2 by failing and thereby validating the unconstrained
 parameterisation the field already uses. Every gate decision, threshold, and
-fallback was written down in advance; every headline number carries a
-confidence interval; and the full pipeline --- from cached activation tables
+fallback was written down in advance; every reconstruction gap carries a
+confidence interval; the two places where our own analysis misled us --- a
+spectral radius we wrongly called gauge-invariant, and an autoregressive sweep
+whose depth set moved with the lag order --- are corrected in the open, with
+the statistics that survive them; and the full pipeline --- from cached
+activation tables
 to every figure in this paper --- regenerates with one script. We offer the
 results, the nulls, and the protocol in equal measure.

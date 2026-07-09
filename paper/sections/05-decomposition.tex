@@ -31,8 +31,10 @@ sweep, and rank. Primary setting: $r = d_z = 32$.
 \label{sec:decomposition:sources}
 
 Source codes initialise from public per-layer SAE latents of $\vl$. On the
-primary model these are the MLSAE per-layer suite for \pythia{}
-\citep{lawson2025mlsae} ($M = 65{,}536$, TopK $k{=}32$, all 24 layers); on the
+primary model these are the 24 \emph{independent single-layer} TopK SAEs
+released alongside the MLSAE work for \pythia{}
+\citep{lawson2025mlsae} --- one checkpoint per block, not the paper's shared
+multi-layer dictionary ($M = 65{,}536$, TopK $k{=}32$, all 24 layers); on the
 narrow query-position distribution only 497--4{,}433 latents per layer ever
 fire, so each layer is pruned to its alive set ($M^*_\ell \le 4{,}433$) ---
 standard dead-latent removal, exact for reconstruction, and legitimate here

@@ -2,18 +2,34 @@
 
 The reconstruction win (Gate 3 / Step 1) and the non-stationarity result (H2) say the
 cross-layer *state* is load-bearing but depth-varying; this module describes the
-operator that carries it. ``A_ℓ = A1_ℓ A2_ℓᵀ`` maps ``z_ℓ → z_{ℓ+1}``. Its
-**eigenvalues are gauge-invariant** — Symmetry A (``A → T A T⁻¹``) leaves the spectrum
-fixed — which is why S1 found the modulus spectrum seed-stable, so the spectrum is the
-robust object to report. Two readouts:
+operator that carries it. ``A_ℓ = A1_ℓ A2_ℓᵀ`` maps ``z_ℓ → z_{ℓ+1}``.
+
+**Gauge warning (corrected 2026-07-09; the earlier docstring was wrong).** Because the
+SSM is *depth-indexed* — every ``A_ℓ, B_ℓ, C_ℓ`` is a free per-layer parameter — the
+symmetry group is a per-layer ``T_ℓ ∈ GL(d_z)``:
+
+    A_ℓ → T_{ℓ+1} A_ℓ T_ℓ⁻¹,   B_ℓ → T_{ℓ+1} B_ℓ,   C_ℓ → C_ℓ T_ℓ⁻¹,   z_0 → T_0 z_0
+
+which leaves every ``Δ̂_ℓ`` bit-identical. Only a *global* ``T_ℓ ≡ T`` acts on ``A_ℓ``
+by similarity, so **the eigenvalues of ``A_ℓ`` are NOT gauge-invariant**: even the
+scalar subgroup ``T_ℓ = c_ℓ I`` rescales ``ρ(A_ℓ)`` by ``c_{ℓ+1}/c_ℓ``, and a random
+choice of ``c`` turns the fitted ``0/23`` non-contractive layers into ``5/23``
+(:func:`apply_scalar_gauge`, ``tests/test_operator_spectrum.py``). What pins the
+reported spectrum is the Frobenius penalty ``λ_reg`` in the loss, which selects the
+minimum-operator-norm representative of the equivalence class — so ``ρ(A_ℓ)`` is a
+reproducible property *of the regularised fit*, not of the model.
+
+The gauge-invariant object is the input→output map. Readouts:
 
   * :func:`spectrum_by_depth` — per-layer eigenvalues and summaries (spectral radius
-    ``ρ``, mean ``|λ|``, fraction complex). ``ρ < 1`` everywhere ⇒ a contractive
-    (stable) state that forgets with depth.
+    ``ρ``, mean ``|λ|``, fraction complex) **in the fitted min-Frobenius gauge**.
+    Reproducible across seeds and dictionaries, but report it as such.
   * :func:`state_path_decay` — the operator-level memory kernel
-    ``‖C_ℓ (∏A) B_j‖_F`` by depth gap ``g = ℓ − j``. A fast decay is the SSM-native
-    explanation of the reconstruction ``k*≈1``: a contractive ``A`` means a source
-    injected ≥2 layers back barely reaches ``Δ_ℓ`` through the state.
+    ``‖C_ℓ (∏A) B_j‖_F`` by depth gap ``g = ℓ − j``. This *is* gauge-invariant (the
+    ``T_ℓ`` telescope out of ``C_ℓ (A…A) B_j``), and it is the SSM-native explanation
+    of the reconstruction ``k*≈1``: a source injected ≥2 layers back barely reaches
+    ``Δ_ℓ`` through the state. :func:`state_path_tau` turns it into an invariant
+    memory constant in layers — quote *this*, not ``−1/ln ρ_geomean``.
 
 Everything is computed in the tiny ``d_z×d_z`` latent space (the ``D×M`` operators are
 never formed): ``‖C P B‖_F² = tr( (CᵀC) P (BBᵀ) Pᵀ )`` collapses to a 32×32 trace.
@@ -32,7 +48,7 @@ def a_operators(model) -> np.ndarray:
 
 
 def spectrum_by_depth(model) -> dict:
-    """Per-layer eigenvalues of ``A_ℓ`` and gauge-invariant summaries.
+    """Per-layer eigenvalues of ``A_ℓ`` in the fitted (min-Frobenius) gauge.
 
     Returns ``rho`` (spectral radius per layer), ``mean_mod`` (mean ``|λ|``),
     ``frac_complex`` (share of eigenvalues with non-negligible imaginary part),
@@ -100,8 +116,61 @@ def state_path_decay(model, *, max_gap: int = 8) -> dict:
             "decay_gap2_over_gap1": float(ratio[1]) if ratio.size > 1 else float("nan")}
 
 
+def state_path_tau(decay: dict) -> float:
+    """Gauge-invariant memory constant, in layers, from the state-path kernel decay.
+
+    Least-squares slope of ``log ‖C(∏A)B‖_F`` against the depth gap; ``τ = −1/slope``
+    is the e-folding length of the *realised* propagation. Unlike ``−1/ln ρ_geomean``
+    this is invariant under the per-layer gauge (see the module docstring), so it is
+    the number to quote next to ``k*≈1``.
+    """
+    ratio = np.asarray(decay["ratio_to_gap1"], float)
+    gaps = np.asarray(decay["gaps"], float)
+    keep = ratio > 0
+    if keep.sum() < 2:
+        return float("nan")
+    slope = np.polyfit(gaps[keep], np.log(ratio[keep]), 1)[0]
+    return float(-1.0 / slope) if slope < 0 else float("inf")
+
+
+def apply_scalar_gauge(model, c: np.ndarray):
+    """In-place per-layer scalar gauge ``z_ℓ → c_ℓ z_ℓ``; the model's output is unchanged.
+
+    Used to demonstrate that ``ρ(A_ℓ)`` is *not* a property of the fit's equivalence
+    class while :func:`state_path_decay` is. ``c`` is ``[L]``, strictly positive.
+    """
+    import torch
+
+    c_t = torch.as_tensor(np.asarray(c, np.float32))
+    L = model.dims.n_layers
+    if c_t.shape != (L,) or bool((c_t <= 0).any()):
+        raise ValueError(f"c must be {L} positive scalars, got {tuple(c_t.shape)}")
+    with torch.no_grad():
+        for ell in range(L - 1):
+            model.A1[ell] *= c_t[ell + 1] / c_t[ell]
+            model.B1[ell] *= c_t[ell + 1]
+        for ell in range(L):
+            model.C1[ell] /= c_t[ell]
+        if model.z0 is not None:
+            model.z0 *= c_t[0]
+    return model
+
+
 def spectrum_cosine(a: np.ndarray, b: np.ndarray) -> float:
-    """Cosine similarity of two equal-length sorted-modulus spectra (cross-seed metric)."""
+    """Cosine similarity of two equal-length sorted-modulus spectra (cross-seed metric).
+
+    **Weak statistic — do not quote alone.** Both inputs are sorted non-negative
+    vectors, so the cosine is ≈0.999 even for two *independent* random spectra; it
+    cannot distinguish agreement from the shared monotone shape. Kept for continuity
+    with the S1 gauge run; report :func:`spectrum_rel_diff` beside it.
+    """
     a = np.asarray(a, float); b = np.asarray(b, float)
     na, nb = np.linalg.norm(a), np.linalg.norm(b)
     return float(a @ b / (na * nb)) if na > 0 and nb > 0 else 0.0
+
+
+def spectrum_rel_diff(a: np.ndarray, b: np.ndarray) -> float:
+    """Median relative difference of two sorted-modulus spectra — the honest cross-seed
+    statistic that :func:`spectrum_cosine` cannot provide (0 = identical)."""
+    a = np.asarray(a, float); b = np.asarray(b, float)
+    return float(np.median(np.abs(a - b) / np.maximum((a + b) / 2.0, 1e-12)))

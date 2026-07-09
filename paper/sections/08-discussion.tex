@@ -6,17 +6,21 @@ The composite picture is specific enough to be useful. Residual updates are
 predictable across depth, but the predictability decomposes into (i) a
 running-sum persistence term that is definitionally there, (ii) a genuine
 increment-level structure that a randomly initialised network already
-exhibits, and (iii) a learned component that only becomes visible in the
+exhibits --- fully so on Pythia-410m, about half of it on GPT-2-small ---
+and (iii) a learned component that only becomes visible in the
 \emph{generative} fit --- roughly half the SSM's reconstruction advantage,
 majority at sparse operating points. Meanwhile the dynamics are pervasively
-non-stationary in depth, first-order, and --- per the fitted operator ---
-contractive with a one-layer memory. A transformer, on this evidence, does
+non-stationary in depth, first-order, and --- per the fitted model's
+gauge-invariant state path --- attenuating by half per layer of gap, a
+one-layer memory. A transformer, on this evidence, does
 not implement a depth-shared propagation rule; it implements a different
 small-memory rule at every layer, over features that persist via the additive
 stream itself rather than via the incremental dynamics. The Granger reach of
 20 layers coexisting with $\kstar\!\approx\!1$ stops being a paradox once
 split by sublayer: a small, deep-reaching attention channel superposed on an
-energy-dominant, memoryless MLP channel.
+energy-dominant, memoryless MLP channel. (That split localises the reach; it
+does not by itself certify the AR structure as persistence-free, since both
+sublayer writes read the same drifting state --- \cref{sec:phase1:sublayer}.)
 
 \paragraph{Consequences for cross-layer interpretability methods.}
 H2's failure is an independent validation of CLT's design decision to give
@@ -61,7 +65,7 @@ objectives, at least here, learn compressions aligned with what the circuit
 is computing --- a modest but genuinely positive datum for the program of
 extracting functional summaries from decompositions, and one that pairs
 naturally with the contractive operator: a short-memory, information-dense
-running summary is exactly what a contractive state can be.
+running summary is exactly what a fast-forgetting state can be.
 
 \paragraph{The EMG intuition, in retrospect.}
 The convolutive-source-separation analogy \citep{holobar2007multichannel}
@@ -77,6 +81,8 @@ Three items are specified and costed in the project record: deconfounding the
 depth series from width (Pythia-1b/1.4b/2.8b with one dictionary type, three
 seeds); the two missing families (Gemma-2's sandwich normalisation,
 Llama-3.1-8B) which also enable the pre-registered $\ge$1{,}000-per-class
-relation test; and a natively-trained CLT. A fourth suggests itself from the
-results: whether the contractive-spectrum shape and the mid-depth
-functional-state window are universal across scale.
+relation test; and a natively-trained CLT. Two more suggest themselves from
+the results: whether the state-path decay rate and the mid-depth
+functional-state window are universal across scale, and whether the sublayer
+AR structure survives the T2 surrogate and the untrained control that
+\cref{sec:phase1:sublayer} did not run.

@@ -22,7 +22,15 @@ point and which claim uses which.
 Under the LASSO protocol, the SSM sits above its state-ablated twin at every
 sparsity level of the $\lambda_{L1}$ sweep (\cref{fig:pareto}): held-out
 $\Rsq$ 0.867--0.698 versus 0.816--0.653 across $\lambda_{L1} \in
-\{0.3,\dots,30\}$. At the canonical $\lambda_{L1}{=}1$ knee the gap is
+\{0.3,\dots,30\}$. At the canonical $\lambda_{L1}{=}1$
+knee\footnote{``Knee'' is the sweep's sparsity--reconstruction bend, visible
+in \cref{fig:pareto}: relative to $\lambda_{L1}{=}0.3$, $\lambda_{L1}{=}1$
+buys a ${\sim}3\times$ lower $L_0$ for $-0.010$ $\Rsq$, while beyond it $L_0$
+saturates and $\Rsq$ only falls. The same bend appears on the Pythia-70m
+debug lane, and $\lambda_{L1}{=}1$ was frozen as the canonical operating
+point when the Phase-4 checkpoint was persisted --- before the knee gap
+became a reported statistic --- so the operating point was not selected on
+the gap it now reports.} the gap is
 \begin{gather*}
   \textbf{+0.0489}\; \CI{+0.0464}{+0.0516} \text{ (MLSAE source)},\\
   \textbf{+0.0483}\; \CI{+0.0458}{+0.0509} \text{ (trained-L1 source)},
@@ -323,7 +331,8 @@ each example's top-$k$ \emph{co-firing} features --- pooled over eight
 seed-stable candidates, a superset of the six screened above --- crosses
 threshold at $k{=}100$ ($+0.237$, CI \CI{0.213}{0.262}, bootstrapped over the
 eight candidates, which are the independent unit here, not over test
-examples); a
+examples; the per-candidate means span $0.185$--$0.301$, seven of the eight
+individually above threshold); a
 \emph{count-matched} random group does not ($+0.034$) --- but a
 \emph{mass-matched} random group reproduces it ($+0.244$, i.e.\ slightly
 \emph{exceeding} the real group), and, decisively, a
@@ -436,7 +445,8 @@ $C_\ell\,(A_{\ell-1}\cdots A_{j+1})\,B_j$ from source layer $j$ to update
 $\ell$. Under the same gauge it is unchanged to $1\times10^{-8}$.
 
 \paragraph{The invariant result.}
-The state-path kernel norm \textbf{halves per layer of depth gap}: normalised
+The state-path kernel norm \textbf{halves per layer of depth gap}
+(\cref{fig:spectrum}, right): normalised
 to gap 1, $1 \to \mathbf{0.485} \to 0.211 \to 0.089$ across gaps $1..4$, an
 $e$-folding memory of $\tau = \mathbf{1.15}$ layers ($\tau$ is the
 least-squares log-linear fit over gaps 1--8; the per-gap ratio tightens from
@@ -455,7 +465,8 @@ $\kstar\!\approx\!1$ remains the per-depth AR sweeps of
 
 \paragraph{The gauge-dependent result, reported as such.}
 In the minimum-Frobenius representative that the $\lambda_{\mathrm{reg}}$
-penalty selects, the operator is contractive at every layer (spectral radius
+penalty selects, the operator is contractive at every layer
+(\cref{fig:spectrum}, left; spectral radius
 median $0.43$, maximum $0.88$, $0/23$ transitions $\ge 1$; the fit uses
 $A_0,\dots,A_{22}$, since the transition out of the last state would feed no
 update). That is a reproducible property of \emph{the regularised fit} --- it

@@ -6,7 +6,8 @@ The composite picture is specific enough to be useful. Residual updates are
 predictable across depth, but the predictability decomposes into (i) a
 running-sum persistence term that is definitionally there, (ii) a genuine
 increment-level structure that a randomly initialised network already
-exhibits --- fully so on Pythia-410m, about half of it on GPT-2-small ---
+exhibits --- substantially so on Pythia-410m, where the untrained network in
+fact exceeds the trained one; about half of it on GPT-2-small ---
 and (iii) a learned component that only becomes visible in the
 \emph{generative} fit --- roughly half the SSM's reconstruction advantage,
 majority at sparse operating points. Meanwhile the dynamics are pervasively

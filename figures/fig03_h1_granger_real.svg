@@ -248,8 +248,8 @@ L 485.03424 20.8
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_17">
-    <!-- Granger nested-F ($-\log_{10}\, p$): depth structure to lag 20 -->
-    <g transform="translate(124.758175 14.8)">
+    <!-- Granger nested-F ($-\log_{10}\, p$): depth structure to lag 20  [Bonferroni thr=3.4] -->
+    <g transform="translate(70.758175 14.8)">
      <text>
       <tspan x="0" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">G</tspan>
       <tspan x="7.749023" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">r</tspan>
@@ -301,6 +301,28 @@ L 485.03424 20.8
       <tspan x="257.157292" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'"> </tspan>
       <tspan x="260.336002" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">2</tspan>
       <tspan x="266.698307" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">0</tspan>
+      <tspan x="273.060612" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'"> </tspan>
+      <tspan x="276.239323" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'"> </tspan>
+      <tspan x="279.418034" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">[</tspan>
+      <tspan x="283.319401" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">B</tspan>
+      <tspan x="290.179752" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">o</tspan>
+      <tspan x="296.297917" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">n</tspan>
+      <tspan x="302.635807" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">f</tspan>
+      <tspan x="306.156315" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">e</tspan>
+      <tspan x="312.308659" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">r</tspan>
+      <tspan x="316.419987" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">r</tspan>
+      <tspan x="320.531315" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">o</tspan>
+      <tspan x="326.649479" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">n</tspan>
+      <tspan x="332.98737" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">i</tspan>
+      <tspan x="335.76569" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'"> </tspan>
+      <tspan x="338.944401" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">t</tspan>
+      <tspan x="342.865299" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">h</tspan>
+      <tspan x="349.20319" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">r</tspan>
+      <tspan x="353.314518" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">=</tspan>
+      <tspan x="361.693424" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">3</tspan>
+      <tspan x="368.055729" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">.</tspan>
+      <tspan x="371.23444" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">4</tspan>
+      <tspan x="377.596745" y="-0.40625" style="font-size: 10px; font-family: 'DejaVu Sans'">]</tspan>
       <tspan x="118.396484" y="1.093745" style="font-size: 7px; font-family: 'DejaVu Sans'">1</tspan>
       <tspan x="122.850098" y="1.093745" style="font-size: 7px; font-family: 'DejaVu Sans'">0</tspan>
       <tspan x="130.824284" y="-0.40625" style="font-style: oblique; font-size: 10px; font-family: 'DejaVu Sans'">p</tspan>
@@ -412,6 +434,11 @@ L 3.5 0
     </g>
    </g>
    <g id="LineCollection_1"/>
+   <g id="line2d_22">
+    <path d="M 513.012498 171.283839 
+L 520.621665 171.283839 
+" clip-path="url(#p871bf177aa)" style="fill: none; stroke: #17becf; stroke-width: 1.4; stroke-linecap: square"/>
+   </g>
    <g id="patch_8">
     <path d="M 513.012498 172.983345 
 L 516.817082 172.983345 
@@ -428,6 +455,9 @@ z
  <defs>
   <clipPath id="p21022c99f1">
    <rect x="37.382109" y="20.8" width="447.652131" height="152.183345"/>
+  </clipPath>
+  <clipPath id="p871bf177aa">
+   <rect x="513.012498" y="20.8" width="7.609167" height="152.183345"/>
   </clipPath>
  </defs>
 </svg>

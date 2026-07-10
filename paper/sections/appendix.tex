@@ -35,7 +35,9 @@ step is verifiable from the public git history. The gates:
     CounterFact confidence threshold $0.3 \to 0.1$ and per-class floor
     $500 \to 300$, because the primary model knows only ${\sim}2$k facts;
     yield 1{,}555 examples / 3 classes instead of the aspirational
-    5--10k / $\ge$4 classes. Relation-class scope became Limitation~3 by an
+    5--10k / $\ge$4 classes (whose ${\ge}1{,}000$-per-class \emph{target} is
+    the figure \cref{sec:limitations} cites; the 500 was the per-class
+    inclusion \emph{floor}). Relation-class scope became Limitation~3 by an
     explicit recorded decision (option (b) of the scale-up fork) after the
     cross-model replications made class breadth non-load-bearing.
   \item \emph{Primary checkpoint}: Pythia-410m $\to$ Pythia-410m-\emph{deduped}
@@ -127,8 +129,9 @@ Wilks' $\Lambda$ with Rao's F approximation. Bonferroni corrects across the
 count follows the plan's rule ($\ell \ge j$), i.e.\ $\sum_j (L - j)$ over the
 lag grid. With the full grid $\{1,2,3,5,10,15,20\}$ this gives 112 cells at
 $L{=}24$ and 196 at $L{=}36$; the 12-layer replications
-(\cref{tab:crossmodel}) cap the grid at $\{1,2,3,5,8,10\}$ because lags 15
-and 20 are infeasible at $L{=}12$, giving 43 cells, with Bonferroni taken
+(\cref{tab:crossmodel}) cap the grid at $\{1,2,3,5,8,10\}$ --- lags 15 and
+20 are infeasible at $L{=}12$, with lag 8 substituted to keep six grid
+points --- giving 43 cells, with Bonferroni taken
 over the per-model feasible count.
 
 \paragraph{Permutation calibration.}
@@ -227,7 +230,8 @@ direction has cosine $\ge 0.7$ with its best match in a re-seeded fit.
 \emph{Purity} is the largest relation class's share of a feature's top-100
 activating examples. \emph{Retention ratio} is a cross-condition $\Rsq$
 divided by the target condition's within-condition $\Rsq$; the tautology,
-being common to both, cancels. \emph{Knee gap} is the raw same-$\lambda$
+being common to both, is largely normalised out (it enters additively, so
+the cancellation is approximate, not exact). \emph{Knee gap} is the raw same-$\lambda$
 SSM$-$baseline gap at $\lambda_{L1}{=}1$.
 
 \section{Cross-model inventory}
@@ -283,7 +287,7 @@ Every run logs its resolved config, git commit, seed, and library versions
 before doing any work. Numeric intermediates (CSV/JSON tables) are tracked in
 git; heavy artefacts (activation stores, checkpoints) are regenerable from
 scripts. A single entry point --- \code{scripts/reproduce.sh} --- checks the
-environment, runs the test suite (204 tests), asserts dataset sizes, and
+environment, runs the test suite (208 tests), asserts dataset sizes, and
 regenerates all 16 paper figures byte-identically from the tracked tables;
 \code{--toy-pipeline} additionally re-runs the full Pythia-70m lane end to
 end. Code, protocol documents, and the progress tracker are released with

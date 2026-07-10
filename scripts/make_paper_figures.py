@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -57,8 +58,13 @@ def h1_granger():
     df = tbl_csv("ph1-step5-410md", "granger_real.csv")
     if df is None:
         return None
+    # 10th-pass review: mark the Bonferroni cut on the colour bar — on the 0–300
+    # −log10 p scale the deepest lag-20 cells render near-black, visually
+    # indistinguishable from "not significant" without the reference line.
+    thr = -math.log10(0.05 / len(df))
     return figures.granger_heatmap(
-        df, title=r"Granger nested-F ($-\log_{10}\, p$): depth structure to lag 20")
+        df, title=r"Granger nested-F ($-\log_{10}\, p$): depth structure to lag 20",
+        thr=thr)
 
 
 def h2_cross_band():
@@ -85,7 +91,21 @@ def kstar():
 
 def depth_scaling():
     js = tbl_json("crossmodel", "depth_scaling_gaps.json")
-    return figures.depth_scaling(js if isinstance(js, list) else js["rows"]) if js else None
+    if not js:
+        return None
+    rows = js if isinstance(js, list) else js["rows"]
+    # 10th-pass review: the zoo alone confounds dictionary type with model family
+    # (both unstable TopK points are Pythia), so the right panel also carries E2's
+    # controlled within-model contrast — trained L1 vs trained TopK on the same
+    # 410m activations (match@0.7 means over the three seed pairs: 1.00 vs 0.08).
+    extra = []
+    for pat, label, sae_type in (("e2-step4-l1-410md", "410m trained L1", "L1"),
+                                 ("e2-step4-topk-410md", "410m trained TopK", "TopK")):
+        pairs = tbl_csv(pat, "seed_pairs.csv")
+        if pairs is not None:
+            extra.append({"label": label, "L": 24, "sae_type": sae_type,
+                          "seed": float(pairs["match_rate_0.7"].mean())})
+    return figures.depth_scaling(rows, extra_seed_pts=extra or None)
 
 
 def baseline_pareto():
@@ -132,12 +152,17 @@ def clt_three_axis():
         for fam, row in fam_rows.items():
             budget.setdefault(fam, []).append((row["n_params"] / 1e6, row["test_r2"], rk))
 
-    # Panel B: SSM−CLT per model at rank 32 (paired CIs; Qwen = pre-review grid, open)
+    # Panel B: SSM−CLT per model at rank 32 (paired CIs; Qwen = pre-review grid, open).
+    # The 410m point is the extended-grid (lamprobe) best-of-grid gap −0.0142 — the
+    # paper's axis-1 headline — while the other models sit on the shared λ_reg=1
+    # grid, so the panel says so per point (10th-pass review; the shared-grid 410m
+    # value is −0.0105, the "24L −0.011" of the paper's depth list).
     model_gaps = []
     for label, suf in (("Pythia-70m (6L)", "r1-clt-p70"),
                        ("GPT-2-small (12L)", "r1-clt-gpt2"),
                        ("Pythia-160m (12L)", "r1-clt-p160"),
-                       ("Pythia-410m (24L)", "r2-clt-410md-rank32-lamprobe")):
+                       ("Pythia-410m (24L)\n(extended $\\lambda$ grid)",
+                        "r2-clt-410md-rank32-lamprobe")):
         js = run_json(suf)
         ci = (js or {}).get("paired_bootstrap_cis", {}).get("ssm_minus_clt_full")
         if ci:
@@ -176,11 +201,18 @@ def seed_stability():
     js = tbl_json("gauge", "gauge_stability.json")
     if not js or "summary" not in js:
         return None
+    # R12 retired cosine-of-sorted-spectrum statistics as near-vacuous (random
+    # spectra score 0.999), so the bar panel no longer plots the gauge run's
+    # eig_spectrum_mean_cos; the honest cross-seed agreement is 1 − the median
+    # relative modulus difference, which lives in R12's aL_stats.json.
+    r12 = tbl_json("r12-aL-operator-invariance", "aL_stats.json") or {}
+    reldiff = r12.get("cross_seed_modulus_rel_diff_mean")
     pf = tbl_csv("gauge", "gauge_perfeature_cos.csv")  # persisted by reproduce_full_figs.py
     if pf is not None:
         return figures.gauge_full(js["summary"], pf["raw_D_cos"].to_numpy(),
-                                  pf["impulse_cos"].to_numpy())
-    return figures.gauge_bars(js["summary"])
+                                  pf["impulse_cos"].to_numpy(),
+                                  spectrum_reldiff=reldiff)
+    return figures.gauge_bars(js["summary"], spectrum_reldiff=reldiff)
 
 
 def aL_spectrum():

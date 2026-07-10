@@ -100,8 +100,10 @@ figure. (ii) Within a family, depth is
 confounded with width and parameter count (deconfounding via Pythia-1b/1.4b is
 recorded future work). (iii) Training-set size also varies along the Pythia
 line ($N = 1{,}000 \to 767 \to 1{,}555$ at 6/12/24 layers), and
-\cref{sec:evaluation:clt} shows cross-layer advantage is strongly $N$-dependent
-in exactly this range, so $N$ is a live confound for the depth trend.
+\cref{sec:evaluation:clt} shows the relative value of cross-layer
+parameterisations moving strongly with $N$ in exactly this range (the
+SSM$-$CLT gap flips sign); we did not measure the knee gap's own
+$N$-dependence, so $N$ stays a live confound for the depth trend.
 (iv) The 6-layer point is the Pythia-70m debug lane, whose dataset is built
 differently (top-1{,}000 candidates by confidence rather than
 threshold-filtered; \cref{app:crossmodel}). (v) The plotted Qwen point is the
@@ -121,7 +123,12 @@ read the two against each other.
   caveats in \cref{sec:evaluation:depth} --- mixed dictionary types; in-family
   depth confounded with width, parameter count and training-set size; a
   differently-constructed dataset at the 6-layer point; and a Qwen point that
-  is a 12L SAE-coverage prefix of a 24L model (full-coverage value $+0.072$).}
+  is a 12L SAE-coverage prefix of a 24L model (full-coverage value $+0.072$).
+  The right panel plots decoder-direction seed stability (match@0.7) across
+  the zoo, with the controlled within-model contrast starred: on the same
+  \pythia{} activations a trained L1 dictionary is perfectly stable ($1.00$)
+  where trained TopK is not ($0.08$) --- the dictionary, not the model or the
+  depth, is what moves (\cref{sec:evaluation:stability}).}
   \label{fig:depthscaling}
 \end{figure}
 
@@ -232,8 +239,10 @@ at matched budget and in low data.
   parameters $\to$ held-out $\Rsq$ at matched total budget (all decoder
   families near one frontier; per-layer rank-64/128 points included per
   \cref{sec:evaluation:gate3}); (B) per-model rank-matched gaps with paired
-  CIs (Qwen2's coarse-grid point carries none,
-  \cref{sec:evaluation:clt}); (C) sample-efficiency sign flip (crossover
+  CIs --- the primary-model point is axis 1's extended-grid $-0.0142$, the
+  other models sit on the shared $\lambda_{\mathrm{reg}}{=}1$ grid, and
+  Qwen2's coarse-grid point carries no CI
+  (\cref{sec:evaluation:clt}); (C) sample-efficiency sign flip (crossover
   $\approx 10^3$ examples).
  }
   \label{fig:clt}
@@ -297,8 +306,12 @@ building on directions that need not survive a re-seed.
   source. Left: cross-seed cosine of raw decoder columns (match@0.7 $=0.36$)
   and of gauge-invariant per-feature $\Delta$-contributions ($0.29$) ---
   gauge-invariance does not rescue single-feature identifiability. Right: the
-  system-level invariants the claims use are stable (operator spectrum,
-  decoder subspace). The in-panel note carries the resolution: the
+  system-level statistics the claims use are seed-stable (decoder subspaces;
+  the spectrum bar plots the $A_\ell$ modulus agreement as $1-{}$median
+  relative difference $=0.91$ --- the honest statistic of
+  \cref{sec:evaluation:operator}, not the vacuous sorted-spectrum cosine ---
+  and is a property of the fitted gauge, not a gauge invariant). The
+  in-panel note carries the resolution: the
   per-feature instability is TopK-specific --- a trained-L1 source on the
   same activations reaches match@0.7 $=1.00$.}
   \label{fig:stability}
@@ -345,9 +358,11 @@ $+0.033$ \CI{$+0.020$}{$+0.047$}; against the mass-matched \emph{feature}
 group, $-0.008$. We quote the isotropic contrast because it is the control
 that isolates direction alone, and note that no control leaves feature
 identity with more than a seventh of the effect.
-Off-target specificity is weak and class-dependent (pooled on-target $+2.89$
-vs off-target $+2.45$ nats; geography features answer-specific, organization
-features not). The group effect is therefore \emph{magnitude-driven}: it
+Off-target specificity of the group ablation is weak and class-dependent: at
+the threshold-crossing group size it lowers the example's \emph{own} answer's
+log-probability by $2.89$ nats (pooled over candidates) against $2.45$ nats
+for a basket of \emph{other} classes' answer tokens (geography features
+answer-specific, organization features not). The group effect is therefore \emph{magnitude-driven}: it
 demonstrates the query position's generic sensitivity to perturbations of
 that size, not a causally privileged code.
 
@@ -514,9 +529,9 @@ construction --- $v_0$ has no SAE, and this sweep runs under the frozen-source
 protocol, which does not re-infer codes, so here $u_0 \equiv 0$ and the state
 trajectory is example-independent (under the LASSO protocol $u_0$ is re-inferred
 like every other layer's code, \cref{sec:decomposition:sources}) --- and its
-$-0.44$ is almost entirely one layer: the
-per-layer $\Rsq$ is ${\approx}0$ at 23 of 24 depths and $-2.4$ at the
-final write, whose norm is 2--3$\times$ any other's. Late-layer sources carry
+$-0.44$ is almost entirely one layer: the per-layer $\Rsq$ stays small at 23
+of 24 depths (within $\pm 0.05$ at 19 of them, never below $-0.31$) and
+falls to $-2.4$ at the final write, whose norm is 2--3$\times$ any other's. Late-layer sources carry
 reconstruction value that
 propagation \emph{cannot} substitute --- the features are genuinely new at
 depth, matching the staged-recall picture of \citet{geva2023dissecting} ---

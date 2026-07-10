@@ -820,7 +820,29 @@ L 693.089264 125.897223
       </g>
      </g>
      <g id="text_38">
-      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: end" x="416.525118" y="128.936598" transform="rotate(-0 416.525118 128.936598)">Pythia-410m (24L)</text>
+      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(342.263868 124.53527)">Pythia-410m (24L)</text>
+      <!-- (extended $\lambda$ grid) -->
+      <g transform="translate(347.085118 134.138708)">
+       <text>
+        <tspan x="0" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">(</tspan>
+        <tspan x="3.121094" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">e</tspan>
+        <tspan x="8.042969" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">x</tspan>
+        <tspan x="12.777344" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">t</tspan>
+        <tspan x="15.914062" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">e</tspan>
+        <tspan x="20.835938" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">n</tspan>
+        <tspan x="25.90625" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">d</tspan>
+        <tspan x="30.984375" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">e</tspan>
+        <tspan x="35.90625" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">d</tspan>
+        <tspan x="40.984375" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'"> </tspan>
+        <tspan x="48.261719" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'"> </tspan>
+        <tspan x="50.804688" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">g</tspan>
+        <tspan x="55.882812" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">r</tspan>
+        <tspan x="59.171875" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">i</tspan>
+        <tspan x="61.394531" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">d</tspan>
+        <tspan x="66.472656" y="-0.921875" style="font-size: 8px; font-family: 'DejaVu Sans'">)</tspan>
+        <tspan x="43.527344" y="-0.921875" style="font-style: oblique; font-size: 8px; font-family: 'DejaVu Sans'">λ</tspan>
+       </text>
+      </g>
      </g>
     </g>
     <g id="ytick_13">

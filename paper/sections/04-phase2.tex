@@ -121,7 +121,8 @@ orthogonality, with mean principal angles 57--60$^\circ$ that (as in
 \cref{sec:phase2:stationarity}) stay well inside the 90$^\circ$ of independent
 subspaces: shared structure, no transfer, now across positions. The scrambled
 null collapses the diagonals, and the tautology, being shared by the diagonal
-and the off-diagonal alike, cancels in the \emph{retention ratio}
+and the off-diagonal alike, is discounted --- though, entering additively,
+not exactly cancelled --- by the \emph{retention ratio}
 (cross-position $\Rsq$ divided by the target position's within-position
 $\Rsq$; worst $-2.88$). The Phase-1/2 characterisation is therefore scoped to
 \emph{context-aggregated factual recall at the query position}; Phase 3 fits
@@ -140,9 +141,10 @@ class-invariant: same model order everywhere, different kernels per circuit.
   \centering
   \includesvg[width=0.6\linewidth]{fig10_crossclass}
   \caption{Cross-class transfer of the fitted decomposition (train class
-  $\to$ eval class, held-out $\Rsq$). Strong diagonal, no transfer off it ---
-  the same signature as cross-band and cross-position: structured, but
-  specific.}
+  $\to$ eval class, held-out $\Rsq$). Strong diagonal, at most weak transfer
+  off it (largest off-diagonal $+0.12$, 15\% of that column's within-class
+  value) --- the same signature as cross-band and cross-position: structured,
+  but specific.}
   \label{fig:crossclass}
 \end{figure}
 
@@ -170,7 +172,8 @@ and $\kstar = 1$ at every band of every model.
   scrambled null) out of all feasible (depth, lag) cells --- $\sum_j (L - j)$
   over the lag grid: $\{1,2,3,5,10,15,20\}$ for $L \ge 24$ (112 cells at
   $L{=}24$, 196 at $L{=}36$); the 12-layer models use the capped grid
-  $\{1,2,3,5,8,10\}$ since lags 15 and 20 are infeasible at $L{=}12$, giving
+  $\{1,2,3,5,8,10\}$ --- lags 15 and 20 are infeasible at $L{=}12$, and lag 8
+  is added to keep a six-point grid --- giving
   43 cells (\cref{app:stats}). The cross-band column reports the sign pattern
   of the H2 transfer test. Datasets are per-model confidence-filtered
   CounterFact (sizes 767--2{,}540). The tautology accounting of

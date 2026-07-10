@@ -214,7 +214,10 @@ context'', and not as ``perturbation improves the model''.
   \includesvg[width=0.72\linewidth]{fig03_h1_granger_real}
   \caption{Granger-style nested-F significance ($-\log_{10} p$) per (depth,
   lag) cell. All 112 feasible cells are Bonferroni-significant out to lag 20;
-  the scrambled null yields 0/112 (not shown). Statistically the depth
+  the scrambled null yields 0/112 (not shown). The Bonferroni cut
+  ($-\log_{10} p \approx 3.4$) is marked on the colour bar: the deepest
+  lag-20 cells render dark on this 0--300 scale yet still clear it.
+  Statistically the depth
   dependence is long-range --- reconstruction-wise it is first-order
   (\cref{sec:phase2:kstar}), and \cref{sec:phase1:sublayer} localises the
   long reach to the attention write.}
@@ -305,7 +308,7 @@ $k{=}1$ over the same 11 depths, GPT-2's persistence-stripped $\Rsq$ is
 \textbf{0.439 trained vs 0.233 untrained} --- a learned share of $47\%$, not
 the ${\sim}5\%$ we obtain if the untrained arm is allowed to select $k{=}10$
 and thereby score only its two deepest updates. So the honest statement is
-narrower than we first drew it: \emph{on Pythia-410m the tautology-free
+narrower than we first drew it: \emph{on \pythia{} the tautology-free
 AR structure is architectural (the untrained network exceeds the trained one);
 on GPT-2-small it is about half learned.} We have no account of why the two
 families differ, and we flag it as the most interesting loose end in

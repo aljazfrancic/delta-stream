@@ -109,10 +109,13 @@ def ridge_by_layer(df: pd.DataFrame) -> plt.Figure:
     ax.set_title(r"Depth-local predictability of $\Delta_\ell$ (ridge vs Tuned Lens)")
     _int_ticks(ax)
     # Keep the corrected H1 interpretation attached to the raw number (D3 hazard #1):
-    # T1/T4/T5 showed the level is part ±v_ℓ persistence and substantially architectural.
+    # T1/T4/T5 showed the level is part ±v_ℓ persistence and, on THIS model,
+    # substantially architectural. R13 (2026-07-09): the earlier "two families"
+    # phrasing was the depth-subset artifact — GPT-2-small is ≈half learned at a
+    # common k, so T4's architectural verdict is Pythia-scoped (10th-pass review).
     # No cross-figure numbers in panels — those live in the paper prose.
     ax.annotate(r"NB: level includes the $\pm v_\ell$ persistence share; the tautology-free"
-                "\nstructure is substantially architectural (T4, two families)",
+                "\nstructure is substantially architectural on this model (T4)",
                 xy=(0.99, 0.03), xycoords="axes fraction", ha="right", va="bottom",
                 fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     ax.legend(fontsize=8)
@@ -186,7 +189,7 @@ def ar_r2_vs_k(df: pd.DataFrame) -> plt.Figure:
     # Corrected H1 interpretation stays attached to the raw curve (D3 hazard #1);
     # lifted off the y=0 scrambled-null line, which used to strike through it.
     ax.annotate("NB: tautology-free share ≈0.44 after persistence stripping (T1),\n"
-                "and substantially architectural (T4)",
+                "and substantially architectural on this model (T4)",
                 xy=(0.99, 0.09), xycoords="axes fraction", ha="right", va="bottom",
                 fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     fig.tight_layout()
@@ -206,7 +209,11 @@ def granger_heatmap(df: pd.DataFrame, *, title: str, vmax: float | None = None,
     ttl = title + (f"  [Bonferroni thr={thr:.1f}]" if thr else "")
     ax.set_title(ttl)
     _int_ticks(ax)
-    fig.colorbar(im, ax=ax, label=r"$-\log_{10}\, p$")
+    cb = fig.colorbar(im, ax=ax, label=r"$-\log_{10}\, p$")
+    if thr:
+        # Mark the significance cut on the colour bar: the deepest lag-20 cells are
+        # near-black on this scale, and without the line "dark" reads as "null".
+        cb.ax.axhline(thr, color="tab:cyan", lw=1.4)
     fig.tight_layout()
     return fig
 
@@ -596,17 +603,30 @@ def distributed_control(js: dict[str, Any], *, title="Distributed-code control")
     return fig
 
 
-def _gauge_bar_ax(ax, summary: dict[str, float]) -> None:
+def _gauge_bar_ax(ax, summary: dict[str, float], *,
+                  spectrum_reldiff: float | None = None) -> None:
+    # The gauge run's own eig_spectrum_mean_cos (0.96) is NOT plotted: R12 showed
+    # cosine-of-sorted-spectrum statistics are near-vacuous (random spectra score
+    # 0.999), and the paper retires them. The honest cross-seed agreement is
+    # 1 − the median relative modulus difference (R12 aL_stats.json), passed in
+    # by the caller; with no value the spectrum bar is omitted rather than faked.
     labels = ["raw-D\nper-dir", "Δ-contrib\nper-dir", "raw-D\nsubspace",
-              "Δ-contrib\nsubspace", "A-eig\nspectrum"]
+              "Δ-contrib\nsubspace"]
     keys = ["raw_D_match@0.7", "impulse_match@0.7", "raw_D_subspace_overlap_mean",
-            "impulse_subspace_overlap_mean", "eig_spectrum_mean_cos"]
+            "impulse_subspace_overlap_mean"]
     vals = [summary[k] for k in keys]
-    colors = ["tab:red", "tab:blue", "tab:red", "tab:blue", "tab:green"]
+    colors = ["tab:red", "tab:blue", "tab:red", "tab:blue"]
+    if spectrum_reldiff is not None:
+        labels.append("A-modulus\n(1 − rel.diff.)")
+        vals.append(1.0 - spectrum_reldiff)
+        colors.append("tab:green")
     ax.bar(labels, vals, color=colors, alpha=0.8)
     ax.axhline(0.7, color="k", ls=":", lw=1, label="0.7 bar")
-    ax.set_ylim(0, 1.05); ax.set_ylabel("stability (match@0.7 / overlap / cos)")
-    ax.set_title("System-level invariants are seed-stable")
+    ax.set_ylim(0, 1.05)
+    ax.set_ylabel("stability (match@0.7 / overlap / 1 − rel. diff.)")
+    # "statistics", not "invariants": the modulus spectrum is seed-stable but
+    # gauge-dependent (R12), so only the fitted-gauge property is claimed here.
+    ax.set_title("System-level statistics are seed-stable")
     for i, v in enumerate(vals):
         ax.text(i, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
     # E2 (2026-06-30) closed the per-feature story: instability is a property of the
@@ -618,17 +638,19 @@ def _gauge_bar_ax(ax, summary: dict[str, float]) -> None:
     ax.legend()
 
 
-def gauge_bars(summary: dict[str, float]) -> plt.Figure:
+def gauge_bars(summary: dict[str, float], *,
+               spectrum_reldiff: float | None = None) -> plt.Figure:
     """Summary-only (1-panel) — used when per-feature cosine arrays aren't on disk."""
     fig, ax = plt.subplots(figsize=(6.5, 4))
-    _gauge_bar_ax(ax, summary)
+    _gauge_bar_ax(ax, summary, spectrum_reldiff=spectrum_reldiff)
     fig.tight_layout()
     return fig
 
 
 def gauge_full(summary: dict[str, float], raw_cos: np.ndarray,
-               imp_cos: np.ndarray) -> plt.Figure:
-    """Full 2-panel: per-feature cosine histogram + the system-invariant bars."""
+               imp_cos: np.ndarray, *,
+               spectrum_reldiff: float | None = None) -> plt.Figure:
+    """Full 2-panel: per-feature cosine histogram + the system-level bars."""
     fig, axes = plt.subplots(1, 2, figsize=(11.5, 4.2))
     ax, bins = axes[0], np.linspace(-1, 1, 41)
     ax.hist(raw_cos, bins=bins, alpha=0.6, color="tab:red",
@@ -639,7 +661,7 @@ def gauge_full(summary: dict[str, float], raw_cos: np.ndarray,
     ax.set_xlabel("cross-seed cosine"); ax.set_ylabel("# features")
     ax.set_title("Per-feature seed stability:\nraw decoder column vs gauge-invariant contribution")
     ax.legend(fontsize=8)
-    _gauge_bar_ax(axes[1], summary)
+    _gauge_bar_ax(axes[1], summary, spectrum_reldiff=spectrum_reldiff)
     fig.tight_layout()
     return fig
 
@@ -886,7 +908,8 @@ def within_vs_cross(conf: pd.DataFrame) -> plt.Figure:
     return fig
 
 
-def depth_scaling(rows: list[dict]) -> plt.Figure:
+def depth_scaling(rows: list[dict],
+                  extra_seed_pts: list[dict] | None = None) -> plt.Figure:
     # Prefer the robust λ-knee gap (raw same-λ SSM−baseline difference; review
     # 2026-07-02: gap_max's matched-L0 interpolation is fragile on the saturated
     # Pareto tail — the 160m ±0.015 error bar was that artifact, not seed noise).
@@ -939,6 +962,19 @@ def depth_scaling(rows: list[dict]) -> plt.Figure:
         axR.annotate(f"{r['label']}\n{r['seed']:.2f}", (r["L"], r["seed"]),
                      textcoords="offset points", xytext=(-6, -4) if left else (6, -4),
                      ha="right" if left else "left", fontsize=8)
+    if extra_seed_pts:
+        # E2's within-model contrast (trained dictionaries on the primary model's own
+        # activations): the zoo suites alone confound dictionary type with model
+        # family, so the controlled pair is starred in (10th-pass review).
+        for r in extra_seed_pts:
+            color = {"TopK": "tab:blue", "L1": "tab:orange"}[r["sae_type"]]
+            axR.scatter([r["L"]], [r["seed"]], marker="*", s=170, color=color,
+                        edgecolor="k", linewidth=0.6, zorder=4)
+            axR.annotate(f"{r['label']}\n{r['seed']:.2f}", (r["L"], r["seed"]),
+                         textcoords="offset points", xytext=(-9, -4),
+                         ha="right", fontsize=8)
+        axR.scatter([], [], marker="*", s=110, color="lightgray", edgecolor="k",
+                    linewidth=0.6, label="trained on own acts (E2)")
     axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
     axR.set_xlabel("depth $L$ (layers)"); axR.set_ylabel("seed match@0.7")
     # "not depth" is the honest half; "source type" would overclaim — the 6L
@@ -998,7 +1034,9 @@ def state_probe(dfs: dict[str, pd.DataFrame], *, majority: float | None = None,
                     color="dimgray", ha="left", va="top", bbox=_NOTE_BBOX)
     axes[0][0].set_ylabel("answer identity top-1 (205-way, test)")
     axes[0][0].legend(fontsize=7, loc="lower right")  # empty in both panels
+    # "mid-depth", not "early/mid": the early-band edge is significant only under
+    # the L1 source (null under MLSAE) — the caption carries the split (10th pass).
     fig.suptitle("The 32-dim SSM state out-decodes dimension-matched code summaries "
-                 "at early/mid depth", fontsize=10)
+                 "at mid-depth", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     return fig

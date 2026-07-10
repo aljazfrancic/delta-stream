@@ -966,8 +966,8 @@ z
    <g id="patch_95">
     <path d="M 740.922701 259.639453 
 L 796.325136 259.639453 
-L 796.325136 54.103433 
-L 740.922701 54.103433 
+L 796.325136 63.074742 
+L 740.922701 63.074742 
 z
 " clip-path="url(#p30d218e72e)" style="fill: #2ca02c; opacity: 0.8"/>
    </g>
@@ -1023,8 +1023,8 @@ z
       </g>
      </g>
      <g id="text_26">
-      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(758.420793 273.518984)">A-eig</text>
-      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(749.696418 283.120547)">spectrum</text>
+      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(747.384543 273.518984)">A-modulus</text>
+      <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(742.985793 283.121172)">(1 − rel.diff.)</text>
      </g>
     </g>
    </g>
@@ -1090,7 +1090,7 @@ z
      </g>
     </g>
     <g id="text_33">
-     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="421.405185" y="146.720801" transform="rotate(-90 421.405185 146.720801)">stability (match@0.7 / overlap / cos)</text>
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="421.405185" y="146.720801" transform="rotate(-90 421.405185 146.720801)">stability (match@0.7 / overlap / 1 − rel. diff.)</text>
     </g>
    </g>
    <g id="line2d_29">
@@ -1131,7 +1131,7 @@ L 812.945866 33.802148
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="699.370874" y="131.269765" transform="rotate(-0 699.370874 131.269765)">0.58</text>
    </g>
    <g id="text_38">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="768.623918" y="49.80177" transform="rotate(-0 768.623918 49.80177)">0.96</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="768.623918" y="58.773079" transform="rotate(-0 768.623918 58.773079)">0.91</text>
    </g>
    <g id="text_39">
     <g id="patch_100">
@@ -1151,30 +1151,30 @@ z
     <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(454.602915 83.228435)">a trained-L1 source reaches match@0.7 = 1.00</text>
    </g>
    <g id="text_40">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="630.11783" y="27.802148" transform="rotate(-0 630.11783 27.802148)">System-level invariants are seed-stable</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="630.11783" y="27.802148" transform="rotate(-0 630.11783 27.802148)">System-level statistics are seed-stable</text>
    </g>
    <g id="legend_2">
     <g id="patch_101">
-     <path d="M 452.889794 52.202773 
-L 507.024794 52.202773 
-Q 508.624794 52.202773 508.624794 50.602773 
-L 508.624794 39.402148 
-Q 508.624794 37.802148 507.024794 37.802148 
-L 452.889794 37.802148 
-Q 451.289794 37.802148 451.289794 39.402148 
-L 451.289794 50.602773 
-Q 451.289794 52.202773 452.889794 52.202773 
+     <path d="M 753.210866 52.202773 
+L 807.345866 52.202773 
+Q 808.945866 52.202773 808.945866 50.602773 
+L 808.945866 39.402148 
+Q 808.945866 37.802148 807.345866 37.802148 
+L 753.210866 37.802148 
+Q 751.610866 37.802148 751.610866 39.402148 
+L 751.610866 50.602773 
+Q 751.610866 52.202773 753.210866 52.202773 
 z
 " style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
     <g id="line2d_30">
-     <path d="M 454.489794 44.280898 
-L 462.489794 44.280898 
-L 470.489794 44.280898 
+     <path d="M 754.810866 44.280898 
+L 762.810866 44.280898 
+L 770.810866 44.280898 
 " style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #000000"/>
     </g>
     <g id="text_41">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="476.889794" y="47.080898" transform="rotate(-0 476.889794 47.080898)">0.7 bar</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="777.210866" y="47.080898" transform="rotate(-0 777.210866 47.080898)">0.7 bar</text>
     </g>
    </g>
   </g>

@@ -82,10 +82,13 @@ of this work asserted the invariance, and the correction is one of the reasons
 the operator section is phrased the way it is. The CLT comparison is the residual-write variant on
 frozen shared sources with per-pair rank $\le 64$; a natively-trained,
 jointly-sourced CLT could behave differently and remains the right off-box
-follow-up. Untrained-network controls use a single random initialisation each
-(their qualitative conclusions --- never trained $\gg$ untrained for AR;
-untrained $\approx$ half for reconstruction --- are far from the decision
-boundaries). Block-Toeplitz structure was always an approximation to test,
+follow-up. Untrained-network controls use a single random initialisation each.
+Pythia's AR conclusion is far from any decision boundary (the untrained
+network \emph{exceeds} the trained one), but the quantified shares ---
+GPT-2-small's 47\% learned AR structure and the ${\approx}$half-learned
+reconstruction gains --- are single-initialisation point estimates with no
+seed-level spread attached, so we hold them at ``about half'' and claim
+nothing finer. Block-Toeplitz structure was always an approximation to test,
 not a derivation from the nonlinear architecture; H2's failure retires it.
 
 \paragraph{Interpretive.}

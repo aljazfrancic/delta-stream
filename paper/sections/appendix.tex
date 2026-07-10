@@ -7,8 +7,8 @@ any data were collected; a separate progress tracker was the only mutable
 record, so no pre-registered bar could be edited after the fact. The
 registration is internal rather than platform-hosted, but it is auditable:
 the four phase documents are plain files in the released repository, present
-in its initial commit and untouched thereafter (a single later edit removed
-one process line, no quantitative content), so their state at every analysis
+in its initial commit and thereafter edited exactly once, to remove a process
+line (no quantitative content), so their state at every analysis
 step is verifiable from the public git history. The gates:
 
 \begin{itemize}
@@ -82,7 +82,8 @@ across sections is protocol, not inconsistency:
   \footnotesize
   \caption{Every SSM (and matched-baseline) operating point quoted in this
   paper; ``baseline'' rows are the state-ablated twin
-  (\code{use\_state=False}).}
+  (\code{use\_state=False}). Gaps are differenced at full precision and then
+  rounded, so a row pair is quoted to as many decimals as its gap needs.}
   \label{tab:operating}
   \setlength{\tabcolsep}{4pt}
   \begin{tabular}{llll}
@@ -97,8 +98,8 @@ across sections is protocol, not inconsistency:
     0.816 & LASSO held-out & baseline, $\lambda_{L1}{=}0.3$ & baseline Pareto top end \\
     0.808 & LASSO held-out & baseline, $\lambda_{L1}{=}1$ (knee) & knee baseline of the $+0.049$ gap \\
     0.653 & LASSO held-out & baseline, $\lambda_{L1}{=}30$ & baseline Pareto bottom end \\
-    0.7934 & frozen-source & SSM rank 32, shared grid $\lambda_{\mathrm{reg}}{=}1$ & CLT depth list, $N$ series \\
-    0.8038 & frozen-source & CLT rank 32, shared grid & the $-0.0105$ gap \\
+    0.79335 & frozen-source & SSM rank 32, shared grid $\lambda_{\mathrm{reg}}{=}1$ & CLT depth list, $N$ series \\
+    0.80383 & frozen-source & CLT rank 32, shared grid & the $-0.0105$ gap \\
     0.7975 / 0.8117 & frozen-source & SSM / CLT rank 32, extended grid & the $-0.0142$ gap (axis 1) \\
     0.7879 / 0.7969 & frozen-source & SSM / CLT rank 32, validation-selected & the $-0.0090$ gap ($N{=}1{,}057$) \\
     0.8155 / 0.843 & frozen-source & SSM rank 64 / CLT rank 64 & CLT budget axis (\cref{sec:evaluation:clt}) \\
@@ -240,7 +241,9 @@ SSM$-$baseline gap at $\lambda_{L1}{=}1$.
   CounterFact sizes (70m: top-1{,}000 candidates by confidence --- the
   optimiser-debug lane, excluded from the H1/H2 replication claim); SAE
   column gives the public suite used as frozen sources (``---'' = diagnostics
-  only). Seed-stability column is decoder match@0.7 across three fits.}
+  only). Seed-stability column is decoder match@0.7 across three fits; where a
+  row names two dictionaries it lists them in the same order, and ``---'' means
+  not measured (the Qwen2 trained-L1 fit is single-seed).}
   \label{tab:zoo}
   \begin{tabular}{llllll}
     \toprule
@@ -252,7 +255,7 @@ SSM$-$baseline gap at $\lambda_{L1}{=}1$.
     GPT-2-small          & 12 & 768  & 1{,}358 & res-jb (L1) & 0.95 \\
     GPT-2-medium         & 24 & 1024 & 1{,}795 & --- & --- \\
     GPT-2-large          & 36 & 1280 & 1{,}924 & --- & --- \\
-    Qwen2-0.5B           & 24 & 896  & 2{,}540 & \citet{chanin2024qwensaes} (L1, 12L prefix) / trained L1 & 0.81 \\
+    Qwen2-0.5B           & 24 & 896  & 2{,}540 & \citet{chanin2024qwensaes} (L1, 12L prefix) / trained L1 & 0.81 / --- \\
     \bottomrule
   \end{tabular}
 \end{table}

@@ -21,8 +21,10 @@ continuation.
 The primary model is \pythia{} \citep{biderman2023pythia}: $L=24$ blocks,
 residual dimension $D=1024$, parallel attention/MLP blocks, with a public
 Tuned Lens and a public per-layer residual SAE suite. We write $\vl \in
-\mathbb{R}^{D}$ for the residual state after block $\ell$ ($v_0$ = embedding
-output; $v_L$ = final pre-unembedding state, so 25 states per example) and
+\mathbb{R}^{D}$ for the residual state \emph{entering} block $\ell$ ---
+equivalently, the running sum after the first $\ell$ blocks, with blocks
+indexed $0,\dots,L-1$ ($v_0$ = embedding
+output; $v_L$ = final pre-unembedding state, so 25 states per example) --- and
 \[
   \Dl \;=\; v_{\ell+1} - \vl, \qquad \ell \in \{0,\dots,L-1\},
 \]
@@ -128,7 +130,8 @@ with per-depth intercepts $\mu_\ell$ (so the kernel cannot absorb per-depth
 mean offsets $\bar\Delta_\ell$ --- essential for the Phase-2 stationarity
 comparison) and low-rank $W_j$ shared across depth; predictors are compressed
 to the top-256 $\Delta$ principal components for tractability while the target
-stays full-$D$. Held-out $\Rsq$ is $\ge 0.47$ at every $k$ in the sweep and
+stays full-$D$. Held-out $\Rsq$ is $\ge 0.46$ at every $k$ in the sweep
+(minimum $0.467$ at $k{=}5$) and
 peaks at \textbf{0.65} at $k=20$, rank 128 (\cref{fig:h1-ar}).
 
 \paragraph{A depth-subset caveat that governs every number below.}
@@ -195,7 +198,7 @@ context'', and not as ``perturbation improves the model''.
   \centering
   \includesvg[width=0.72\linewidth]{fig02_h1_ar_r2_vs_k}
   \caption{Pooled AR($k$)-on-$\Delta$ held-out $\Rsq$ versus $k$ (real vs the
-  scrambled null) on \pythia{}. Real $\ge 0.47$ everywhere, peaking at 0.65;
+  scrambled null) on \pythia{}. Real $\ge 0.46$ everywhere, peaking at 0.65;
   the null is indistinguishable from zero. Two corrections travel with this
   panel. Each $k$ is scored on the depths $\ell \ge k$, so the curve is not a
   lag effect: fixing the depth set at $\ell \in [20,23]$ makes $k{=}1$ the
@@ -247,8 +250,10 @@ pre-registered headline is the four-depth number.
 Projecting out the top-$m$ principal directions of the \emph{states} and
 refitting: removing the single top direction (32\% of state variance) costs
 only $0.650 \to 0.637$; removing the top 50 (87\% of state variance) still
-leaves \textbf{$\Rsq = 0.436$}, roughly $4000\times$ the scramble floor,
-whose magnitude is ${\sim}10^{-4}$
+leaves \textbf{$\Rsq = 0.436$}, roughly $4000\times$ this sweep's own scramble
+floor (${\sim}1\times10^{-4}$ on the primary factual store; the floor is
+store-dependent, and \cref{tab:commondepth} reports the largest we saw,
+$7\times10^{-3}$ on GPT-2)
 (\cref{fig:t1}). Two reasons T1 exceeds T5's genuine share: it re-optimises
 the kernel on the complement, and --- since each point is a max over the $k$
 sweep --- stripping flips the selected order from $k{=}20$ to $k{=}1$, i.e.\
@@ -332,8 +337,8 @@ families differ, and we flag it as the most interesting loose end in
   (shown): $0.65 = 0.52 + 0.13$ at $m{=}50$. Generic (not shown):
   $0.935 = 0.937 - 0.002$, a marginally \emph{negative} genuine share --- the
   generic level is persistence, not computation. At $k{=}1$, over all 23
-  depths, the same split gives $0.52 = 0.27 + 0.25$ (factual) and
-  $0.88 = 0.88 + 0.003$ (generic); \cref{tab:commondepth}.}
+  depths, the same split gives $0.521 = 0.272 + 0.248$ (factual) and
+  $0.882 = 0.879 + 0.003$ (generic); \cref{tab:commondepth}.}
   \label{fig:t5}
 \end{figure}
 

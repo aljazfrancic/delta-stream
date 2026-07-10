@@ -499,8 +499,11 @@ cutoffs $\ell_{\max} \in \{0,3,7,11,15,19,23\}$, from $-0.44$
 $+0.20$ ($\ell_{\max}{=}11$) and $+0.58$ ($\ell_{\max}{=}19$) to $+0.77$
 (full), still gaining $+0.19$ over the last four layers
 (\cref{fig:prefix}, left). The embedding-only floor is degenerate by
-construction --- $v_0$ has no SAE, so $u_0 \equiv 0$ and the state trajectory
-is example-independent --- and its $-0.44$ is almost entirely one layer: the
+construction --- $v_0$ has no SAE, and this sweep runs under the frozen-source
+protocol, which does not re-infer codes, so here $u_0 \equiv 0$ and the state
+trajectory is example-independent (under the LASSO protocol $u_0$ is re-inferred
+like every other layer's code, \cref{sec:decomposition:sources}) --- and its
+$-0.44$ is almost entirely one layer: the
 per-layer $\Rsq$ is ${\approx}0$ at 23 of 24 depths and $-2.4$ at the
 final write, whose norm is 2--3$\times$ any other's. Late-layer sources carry
 reconstruction value that

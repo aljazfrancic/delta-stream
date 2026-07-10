@@ -30,6 +30,9 @@
 \usepackage{svg}            % \includesvg — needs -shell-escape + inkscape
 \svgpath{{../figures/}}     % curated paper figures live in the repo's figures/
 \svgsetup{inkscapelatex=false} % keep the SVGs' own (matplotlib) text rendering
+% Inkscape emits a page group per converted figure; harmless when several land
+% on one page, and pdfTeX warns about it anyway.
+\pdfsuppresswarningpagegroup=1
 \usepackage[font=small,labelfont=bf]{caption}
 
 % --- citations & links -------------------------------------------------------

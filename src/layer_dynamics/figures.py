@@ -178,9 +178,16 @@ def ar_r2_vs_k(df: pd.DataFrame) -> plt.Figure:
     lab = df["label"].fillna("null")
     real = df[lab == "real"]; null = df[lab == "null"]
     fig, ax = plt.subplots(figsize=(7, 4))
+    # A rank curve equal to the best-rank envelope at every k (r128 here) is fully
+    # overplotted by the bold line, leaving a legend entry that points at nothing —
+    # fold the winning rank into the bold label instead (11th-pass review).
+    hidden = [c for c in _rank_cols(df) if real[c].equals(real["best_r2"])]
     for c in _rank_cols(df):
+        if c in hidden:
+            continue
         ax.plot(real["k"], real[c], "-", lw=0.8, alpha=0.5, label=f"real {c}")
-    ax.plot(real["k"], real["best_r2"], "-o", color="tab:blue", lw=2, label="real (best rank)")
+    best_label = "real (best rank" + (f" = {hidden[0]}" if len(hidden) == 1 else "") + ")"
+    ax.plot(real["k"], real["best_r2"], "-o", color="tab:blue", lw=2, label=best_label)
     ax.plot(null["k"], null["best_r2"], "--s", color="tab:red", lw=1.5, label="scrambled null")
     ax.axhline(0, color="k", lw=0.6)
     ax.set_xlabel("AR order $k$"); ax.set_ylabel(r"held-out pooled $R^2$ on $\Delta_\ell$")
@@ -621,12 +628,18 @@ def _gauge_bar_ax(ax, summary: dict[str, float], *,
         vals.append(1.0 - spectrum_reldiff)
         colors.append("tab:green")
     ax.bar(labels, vals, color=colors, alpha=0.8)
-    ax.axhline(0.7, color="k", ls=":", lw=1, label="0.7 bar")
+    # The pre-registered 0.7 bar is defined on the match@0.7 statistics only;
+    # spanning the whole axis made the overlap and 1−rel.diff. bars read as
+    # "failing" a threshold that does not apply to them (11th-pass review).
+    ax.plot([-0.5, 1.5], [0.7, 0.7], color="k", ls=":", lw=1,
+            label="0.7 bar (match@0.7)")
     ax.set_ylim(0, 1.05)
     ax.set_ylabel("stability (match@0.7 / overlap / 1 − rel. diff.)")
     # "statistics", not "invariants": the modulus spectrum is seed-stable but
     # gauge-dependent (R12), so only the fitted-gauge property is claimed here.
-    ax.set_title("System-level statistics are seed-stable")
+    # Neutral title: the first two bars are the per-feature statistics shown for
+    # contrast, so "system-level ... are seed-stable" overtitled the panel.
+    ax.set_title("Per-feature vs system-level seed stability")
     for i, v in enumerate(vals):
         ax.text(i, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
     # E2 (2026-06-30) closed the per-feature story: instability is a property of the
@@ -684,8 +697,11 @@ def aL_spectrum(spec_df: pd.DataFrame, decay_df: pd.DataFrame | None = None) -> 
         ax2.plot(decay_df["gap"], decay_df["mean_fro"], "-o", color="tab:purple")
         ax2.set_xlabel("depth gap (layers)")
         ax2.set_ylabel(r"$\|$state-path kernel$\|_F$")
+        # "consistent with", not "→": the decay is estimated on the same data k*
+        # was measured on, so it is a mechanism consistent with first-order reads,
+        # not an independent derivation of them (11th-pass review).
         ax2.set_title("State path halves per layer of gap\n"
-                      r"(gauge-invariant) $\to k^*\approx 1$")
+                      r"(gauge-invariant; consistent with $k^*\approx 1$)")
         _int_ticks(ax2)
     fig.tight_layout()
     return fig
@@ -973,8 +989,10 @@ def depth_scaling(rows: list[dict],
             axR.annotate(f"{r['label']}\n{r['seed']:.2f}", (r["L"], r["seed"]),
                          textcoords="offset points", xytext=(-9, -4),
                          ha="right", fontsize=8)
+        # No run codenames in figure text ("E2" is defined nowhere in the paper);
+        # the E2 provenance lives in this comment and the tracker (11th-pass review).
         axR.scatter([], [], marker="*", s=110, color="lightgray", edgecolor="k",
-                    linewidth=0.6, label="trained on own acts (E2)")
+                    linewidth=0.6, label="trained on own activations")
     axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
     axR.set_xlabel("depth $L$ (layers)"); axR.set_ylabel("seed match@0.7")
     # "not depth" is the honest half; "source type" would overclaim — the 6L

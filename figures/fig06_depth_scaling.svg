@@ -755,10 +755,10 @@ z
    <g id="legend_2">
     <g id="patch_13">
      <path d="M 475.561882 179.819805 
-L 599.418132 179.819805 
-Q 601.018132 179.819805 601.018132 178.219805 
-L 601.018132 131.017305 
-Q 601.018132 129.417305 599.418132 129.417305 
+L 607.671882 179.819805 
+Q 609.271882 179.819805 609.271882 178.219805 
+L 609.271882 131.017305 
+Q 609.271882 129.417305 607.671882 129.417305 
 L 475.561882 129.417305 
 Q 473.961882 129.417305 473.961882 131.017305 
 L 473.961882 178.219805 
@@ -802,7 +802,7 @@ z
      </g>
     </g>
     <g id="text_42">
-     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="499.561882" y="162.697305" transform="rotate(-0 499.561882 162.697305)">trained on own acts (E2)</text>
+     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: start" x="499.561882" y="162.697305" transform="rotate(-0 499.561882 162.697305)">trained on own activations</text>
     </g>
     <g id="line2d_46">
      <path d="M 477.161882 171.89793 

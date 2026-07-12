@@ -93,7 +93,12 @@ the untruncated ridge reaches 0.921), versus \textbf{$-0.691$} for the
 Tuned-Lens-implied update
 (\cref{fig:h1-ridge}). Both are averages of per-layer $\Rsq$; the
 variance-weighted pooled version of the same Tuned-Lens baseline is $-0.309$
-and is the number quoted in \cref{sec:evaluation:baselines}. The gate passes
+and is the number quoted in \cref{sec:evaluation:baselines}. The comparison
+is not uniform in depth: the lens-implied update is ahead at six mid-stack
+pairs ($\ell \in \{6$--$9, 12, 14\}$, where its per-layer $\Rsq$ is positive)
+and the ridge at the other eighteen, whose catastrophic lens failures
+dominate the average. The pre-registered gate is the layer-averaged
+contrast, and it passes
 with a wide margin --- the cheap
 diagnostic separates cleanly from calibrated per-layer refinement --- so the
 AR programme is justified. A shrinkage-CCA backstop (protocol Step 4) finds
@@ -109,8 +114,10 @@ comparison.
   \includesvg[width=0.9\linewidth]{fig01_h1_predictability}
   \caption{Per-layer-pair held-out $\Rsq$ of low-rank ridge predicting $\Dl$
   from $\vl$ on \pythia{}, against the mean, zero, and Tuned-Lens-implied
-  baselines. The ridge fit clears the pre-registered Tuned-Lens gate at every
-  layer (layer-averaged $0.602$ vs $-0.691$). The in-panel note ties the raw
+  baselines. The ridge fit clears the pre-registered (layer-averaged)
+  Tuned-Lens gate with a wide margin ($0.602$ vs $-0.691$); per layer the
+  ridge leads at 18 of the 24 pairs, the lens-implied update at six mid-stack
+  ones (\cref{sec:phase1:ridge}). The in-panel note ties the raw
   level to the tautology accounting of \cref{sec:phase1:pressure}
   (\cref{fig:t1,fig:t5}), which any reader of this figure should hold
   alongside it.}

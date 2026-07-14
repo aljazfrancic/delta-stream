@@ -32,7 +32,8 @@ these updates on factual-recall inputs:
     residual updates form an autoregressive process along depth.
   \item[H2 (approximate stationarity).] The prediction kernel is approximately
     shared across depth, so that a single block-Toeplitz (convolutive) kernel
-    $\Dl \approx \sum_k W_k\, s_{\ell-k}$ over sparse per-layer sources is a
+    $\Dl \approx \sum_k W_k\, u_{\ell-k}$ over sparse per-layer sources
+    $u_\ell$ (the codes of \cref{sec:decomposition}) is a
     useful generative model. Under H2, CLT's $O(L^2)$ decoder matrices would
     collapse to $O(K)$ shared kernel taps.
 \end{description}
@@ -53,8 +54,8 @@ are fit at the \emph{query position} of factual-recall prompts drawn from
 three CounterFact relation classes. The binary characterisation replicates on
 generic text, but kernel transfer fails across both token positions (eleven of
 twelve cross-position transfers negative) and relation classes (transfer
-$\approx 0$ or
-negative; \cref{sec:phase2:scope}) --- the kernels are hyper-local to their
+negative or at
+most weakly positive; \cref{sec:phase2:scope}) --- the kernels are hyper-local to their
 circuit, itself a finding --- so every claim below is a claim about that
 regime.
 

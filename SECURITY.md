@@ -59,6 +59,28 @@ this project. The pins are an intentional risk acceptance, not an oversight.
   (#13 uv.lock, #14 pyproject.toml — same CVE, two manifests) dismissed as
   tolerable risk with a comment linking this file.
 
+#### CVE-2026-5241 / GHSA-fgcw-684q-jj6r (reviewed 2026-07-14) — accepted
+
+- **What it is:** arbitrary code execution via a *malicious model repository*,
+  through the **LightGlue** (keypoint-matching vision model) loading path —
+  `LightGlueConfig.__init__` reads `trust_remote_code` from the untrusted
+  `config.json` and forwards it into a nested
+  `AutoConfig.from_pretrained(keypoint_detector_config["_name_or_path"], ...)`,
+  so a crafted repo can execute attacker code even when the caller passed
+  `trust_remote_code=False` (CWE-829; CVSS 8.0). Verified present in the
+  locked 4.57.6 (`models/lightglue/configuration_lightglue.py`). Fixed only in
+  **5.5.0**, which the `<5` pin cannot reach (every 4.x with LightGlue is in
+  the vulnerable range, so an in-range bump does not help).
+- **Exposure:** same vector class as CVE-2026-4372 above — exploitation
+  requires loading an **attacker-controlled model repo**, and specifically one
+  routed through the LightGlue config path. This pipeline loads only the
+  fixed, code-pinned set of trusted text-LM and SAE repositories listed at the
+  top of this file and never instantiates LightGlue (or any vision model); no
+  repo ID is derived from user input or external data. The vector has no entry
+  point here. Accepted; both Dependabot alerts (#15 uv.lock, #16
+  pyproject.toml — same CVE, two manifests) dismissed as tolerable risk with a
+  comment linking this file.
+
 ## Re-review triggers
 
 Revisit this acceptance if any of the following change:

@@ -182,9 +182,9 @@ control).}
 Each prompt is wrapped in a fixed six-token neutral preamble; the perturbed
 variant replaces the preamble's content words with random function words at
 identical absolute positions. On the 863/1000 sampled examples where the
-wrapped baseline still recovers the answer, the AR fit does not degrade
-($k{=}20$: 0.639 wrapped $\to$ 0.696 perturbed; $k{=}1$, the whole-stack fit:
-0.515 $\to$ 0.496) and the Granger heatmaps correlate at
+wrapped baseline still recovers the answer, the AR fit barely moves
+($k{=}20$: 0.639 wrapped $\to$ 0.696 perturbed; $k{=}1$, the whole-stack fit,
+dips slightly: 0.515 $\to$ 0.496) and the Granger heatmaps correlate at
 \textbf{0.964} (112/112 $\to$ 109/112 significant). The cross-layer dynamics
 at the query token are a property of subject--relation processing ---
 depth-intrinsic, not leaked context.

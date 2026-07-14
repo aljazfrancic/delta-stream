@@ -805,8 +805,11 @@ def crossclass(js: dict[str, Any]) -> plt.Figure:
     classes = js["classes"]; m = js["matrix"]
     mat = np.array([[m[a][b] for b in classes] for a in classes])
     fig, ax = plt.subplots(figsize=(0.95 * len(classes) + 2.6, 0.95 * len(classes) + 2))
+    # 3 decimals so the displayed cells recompute to the quoted means
+    # (within-class +0.835, cross-class -0.191); at 2 dp the diagonal
+    # averages to 0.833 and near-misses the text.
     im = _annot_heatmap(ax, mat, cmap="viridis", vmin=min(0.0, float(mat.min())),
-                        vmax=float(mat.max()), fmt="{:.2f}")
+                        vmax=float(mat.max()), fmt="{:.3f}")
     ax.set_xticks(range(len(classes)), classes, rotation=25, ha="right")
     ax.set_yticks(range(len(classes)), classes)
     ax.set_xlabel("evaluated on class"); ax.set_ylabel("kernel fit on class")

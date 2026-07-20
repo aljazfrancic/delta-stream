@@ -66,7 +66,26 @@ uv run layer-dynamics      # or: python -m layer_dynamics.cli
 
 ## Status
 
-**Research complete (on-box programme closed 2026-07-05); write-up in progress.** Gate 1 PASS (H1 holds, both
+**Research complete (on-box programme closed 2026-07-05); write-up in progress.**
+
+Four headline findings (pre-registered gates, frozen before data collection):
+
+1. **Structure is real but mostly architectural.** H1 (predictable-across-depth) holds
+   far above both nulls — but the tautology-free residual is substantially *architectural*:
+   an untrained network matches it on the primary model (about half learned on GPT-2-small).
+2. **The dynamics are non-stationary.** H2 (depth-stationary kernel) **fails** decisively, so
+   the right abstraction is a first-order (k\*≈1), fully depth-indexed state-space model (SSM).
+3. **The SSM buys real value where it counts.** It beats the matched per-layer baseline
+   (+0.049 [+0.046, +0.052] R² rank-matched, +0.008 param-matched), lands within ~0.01 R²
+   of a rank-matched cross-layer transcoder (CLT) at ~6× fewer params, and leads below ~1k
+   examples; its state is functionally informative (R7 probe beats dim-matched PCA at mid-depth).
+4. **The causal test returns a clean null.** No single feature's ablation clears threshold; the
+   group effect is reproduced by a norm-matched random direction — recall is a distributed,
+   magnitude-driven code.
+
+<details><summary>Full gate-by-gate record</summary>
+
+Gate 1 PASS (H1 holds, both
 nulls survive — but T4: the tautology-free AR-on-Δ structure is substantially
 *architectural*, two-family); Gate 2: H2 **fails** (non-stationary) → Branch B
 first-order state-space model, k\*≈1; Gate 3 **GO** (SSM beats the matched per-layer
@@ -90,3 +109,5 @@ via `scripts/make_paper_figures.py`, verified end-to-end by `scripts/reproduce.s
 Only off-box items remain (bigger-Pythia depth deconfound, Gemma/Llama diagnostics, a
 natively-trained CLT) plus the D3 draft. See [progress.md](progress.md) for the full
 record, the remaining write-up items (D1–D3), and the cloud plan.
+
+</details>

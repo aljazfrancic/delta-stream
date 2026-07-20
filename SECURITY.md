@@ -31,6 +31,18 @@ this project. The pins are an intentional risk acceptance, not an oversight.
   untrusted checkpoint; this project does not call `torch.load` and loads only
   trusted EleutherAI weights via safetensors. No realistic exposure.
 
+#### CVE-2025-3000 / GHSA-rrmf-rvhw-rf47 (reviewed 2026-07-20) — accepted
+
+- **What it is:** local memory corruption in `torch.jit.script` (CWE-787;
+  severity *low*). Vulnerable range `<= 2.12.1`, fixed in **2.13.0** — far
+  beyond the 2.6.0 line that already drops Pascal, so the torch pin cannot
+  reach it for the same hardware reason above.
+- **Exposure:** exploitation requires calling `torch.jit.script` on
+  attacker-influenced code; this pipeline never uses TorchScript
+  (`grep -rn torch.jit src scripts tests` is empty) and takes no untrusted
+  input. No entry point. Accepted; Dependabot alert #17 (uv.lock) dismissed as
+  tolerable risk with a comment linking this file.
+
 ### `transformers == 4.57.6` (held at `>=4.44,<5`)
 
 - **Why pinned:** `transformer-lens` 2.x (the residual-stream hook layer this

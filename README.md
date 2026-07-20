@@ -111,3 +111,16 @@ natively-trained CLT) plus the D3 draft. See [progress.md](progress.md) for the 
 record, the remaining write-up items (D1–D3), and the cloud plan.
 
 </details>
+
+## License
+
+Dual-licensed:
+
+- **Code** — `src/`, `scripts/`, `tests/`, `configs/` — under the
+  [MIT License](LICENSE).
+- **Prose & research content** — `paper/`, `docs/`, `figures/`, and this
+  README's narrative — under
+  [CC BY 4.0](LICENSE-docs) ([legal code](https://creativecommons.org/licenses/by/4.0/legalcode)).
+
+When citing or building on the research, please use the attribution line in
+[LICENSE-docs](LICENSE-docs).

@@ -112,6 +112,26 @@ record, the remaining write-up items (D1–D3), and the cloud plan.
 
 </details>
 
+## Citation
+
+If you use this work, please cite:
+
+> Frančič, A. (2026). *How Residual-Stream Updates Travel Through Depth:
+> A Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual
+> Recall.* delta-stream repository.
+
+```bibtex
+@misc{francic2026residualstream,
+  author       = {Alja\v{z} Fran\v{c}i\v{c}},
+  title        = {How Residual-Stream Updates Travel Through Depth:
+                  A Pre-Registered Study of Cross-Layer Dynamics in
+                  Transformer Factual Recall},
+  year         = {2026},
+  howpublished = {\url{https://github.com/aljazfrancic/delta-stream}},
+  note         = {Manuscript in preparation}
+}
+```
+
 ## License
 
 Dual-licensed:

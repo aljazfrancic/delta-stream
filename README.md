@@ -1,10 +1,20 @@
 # delta-stream
 
-Code for **[Structured Cross-Layer Propagation of Features in Transformers](docs/README.md)** —
-an empirical study of whether the layer-to-layer residual-stream update
-`Δ_ℓ = v_{ℓ+1} − v_ℓ` has structured, predictable, approximately stationary dynamics across depth.
+Code and paper for **How Residual-Stream Updates Travel Through Depth: A
+Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual Recall**.
 
-- **Research proposal:** [docs/README.md](docs/README.md)
+Because transformer components communicate through an additive residual stream,
+the update a layer writes — `Δ_ℓ = v_{ℓ+1} − v_ℓ` — is the natural unit of
+cross-layer computation. We pre-registered two hypotheses about these updates on
+factual-recall inputs — that they are **predictable** across depth (H1) and that
+the prediction kernel is **depth-stationary** (H2) — froze the protocol, and ran
+it on Pythia-410m with replication on five further models from three families.
+H1 holds but is largely architectural; H2 fails, which points to a first-order,
+depth-indexed state-space model. See [Status](#status) for the four headline
+findings.
+
+- **Paper:** [paper/paper.pdf](paper/paper.pdf) (source under [paper/](paper/))
+- **Original research proposal:** [docs/README.md](docs/README.md)
 - **Pre-registered protocol (frozen):** [docs/implementation-plan/](docs/implementation-plan/README.md)
 - **Glossary:** [docs/glossary.md](docs/glossary.md)
 - **Live progress tracker:** [progress.md](progress.md) — the only mutable record of progress.

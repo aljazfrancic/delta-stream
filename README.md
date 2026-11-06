@@ -13,11 +13,13 @@ H1 holds but is largely architectural; H2 fails, which points to a first-order,
 depth-indexed state-space model. See [Status](#status) for the four headline
 findings.
 
-- **Paper:** [paper/paper.pdf](paper/paper.pdf) (source under [paper/](paper/))
+- **Paper (v1.0, 6 November 2026):** [paper/paper.pdf](paper/paper.pdf) (LaTeX source under [paper/](paper/))
 - **Original research proposal:** [docs/README.md](docs/README.md)
 - **Pre-registered protocol (frozen):** [docs/implementation-plan/](docs/implementation-plan/README.md)
 - **Glossary:** [docs/glossary.md](docs/glossary.md)
-- **Live progress tracker:** [progress.md](progress.md) — the only mutable record of progress.
+- **Research log:** [progress.md](progress.md) — the dated record of every run and decision; the
+  protocol documents were never edited to record progress.
+- **How to cite:** [Citation](#citation) (or GitHub's *Cite this repository* button, from [CITATION.cff](CITATION.cff))
 
 ## Layout
 
@@ -57,6 +59,20 @@ diagnostic. Decisions baked into [pyproject.toml](pyproject.toml) / [src/layer_d
 - **Gemma-2-2B / Llama-3.1-8B don't fit in 3 GB** — the Phase 2 Step 5 cross-model replication
   and Phase 4 cross-model baselines are deferred to a larger/cloud GPU.
 
+## Reproducing the paper
+
+Every paper figure regenerates byte-identically from the run tables tracked in `runs/`,
+so no GPU or model download is needed for this step:
+
+```bash
+bash scripts/reproduce.sh                 # env check -> tests -> size guards -> all 16 figures
+cd paper && latexmk -pdf paper.tex        # rebuild the PDF (needs TeX Live + Inkscape; see paper/README.md)
+```
+
+`scripts/reproduce.sh --toy-pipeline` additionally re-runs the full Pythia-70m lane end to end
+(needs a GPU and Hugging Face downloads).
+Each run memo under `runs/` carries the command that produced it.
+
 ## Run contract
 
 Every experiment is a script, never a notebook. Each one records full provenance
@@ -76,7 +92,7 @@ uv run layer-dynamics      # or: python -m layer_dynamics.cli
 
 ## Status
 
-**Research complete (on-box programme closed 2026-07-05); write-up in progress.**
+**Complete.** Paper v1.0 released 2026-11-06; the on-box research programme closed 2026-07-05.
 
 Four headline findings (pre-registered gates, frozen before data collection):
 
@@ -116,19 +132,19 @@ the deep Granger reach) and **Programme C** (full-depth Qwen: the SSM's gain rou
 doubles from the 12-layer SAE prefix to full 24-layer coverage, +0.043→+0.072). All 16
 paper figures (fig16 = the R7 state-probe panel) reproduce from the tracked run tables
 via `scripts/make_paper_figures.py`, verified end-to-end by `scripts/reproduce.sh`.
-Only off-box items remain (bigger-Pythia depth deconfound, Gemma/Llama diagnostics, a
-natively-trained CLT) plus the D3 draft. See [progress.md](progress.md) for the full
-record, the remaining write-up items (D1–D3), and the cloud plan.
+Natural follow-ups that need a larger GPU (a bigger-Pythia depth deconfound,
+Gemma/Llama diagnostics, a natively-trained CLT) are left as future work. See
+[progress.md](progress.md) for the full record.
 
 </details>
 
 ## Citation
 
-If you use this work, please cite:
+If you use this work, please cite the paper:
 
 > Frančič, A. (2026). *How Residual-Stream Updates Travel Through Depth:
 > A Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual
-> Recall.* delta-stream repository.
+> Recall.* Version 1.0. https://github.com/aljazfrancic/delta-stream
 
 ```bibtex
 @misc{francic2026residualstream,
@@ -137,20 +153,30 @@ If you use this work, please cite:
                   A Pre-Registered Study of Cross-Layer Dynamics in
                   Transformer Factual Recall},
   year         = {2026},
+  month        = nov,
   howpublished = {\url{https://github.com/aljazfrancic/delta-stream}},
-  note         = {Manuscript in preparation}
+  note         = {Version 1.0}
 }
 ```
+
+The same metadata is in [CITATION.cff](CITATION.cff), so GitHub's *Cite this repository*
+button (repository sidebar) gives APA and BibTeX directly. To cite the exact
+snapshot you used, add the release tag (e.g. `v1.0.0`) or commit hash.
 
 ## License
 
 Dual-licensed:
 
-- **Code** — `src/`, `scripts/`, `tests/`, `configs/` — under the
-  [MIT License](LICENSE).
-- **Prose & research content** — `paper/`, `docs/`, `figures/`, and this
-  README's narrative — under
+- **Code** — `src/`, `scripts/`, `tests/`, `configs/` (and the build/packaging files) —
+  under the [MIT License](LICENSE).
+- **Research content** — the paper (`paper/`), the proposal, protocol and glossary
+  (`docs/`), the figures (`figures/`), the run records (`runs/`: memos and numeric
+  tables), the research log (`progress.md`), and the Markdown narrative — under
   [CC BY 4.0](LICENSE-docs) ([legal code](https://creativecommons.org/licenses/by/4.0/legalcode)).
+
+Third-party models, SAE dictionaries, and datasets (Pythia, GPT-2, Qwen2, the public SAE
+suites, CounterFact) are **not** redistributed here; the scripts download them from their
+original sources, where their own licences apply.
 
 When citing or building on the research, please use the attribution line in
 [LICENSE-docs](LICENSE-docs).

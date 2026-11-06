@@ -1,10 +1,11 @@
 Copyright (c) 2026 Aljaž Frančič
 
-The PROSE and research content of this repository — the paper under paper/,
-the documentation under docs/ (research proposal, implementation plan,
-glossary), the curated figures under figures/, and the README/Markdown
-narrative — is licensed under the Creative Commons Attribution 4.0
-International License (CC BY 4.0). The software (src/, scripts/, tests/,
+The PROSE and research content of this repository — the paper under paper/
+(LaTeX source and built PDF), the documentation under docs/ (research
+proposal, implementation plan, glossary), the curated figures under figures/,
+the run records under runs/ (memos and numeric CSV/JSON tables), the research
+log progress.md, and the README/Markdown narrative — is licensed under the
+Creative Commons Attribution 4.0 International License (CC BY 4.0). The software (src/, scripts/, tests/,
 configs/) is licensed separately under MIT; see LICENSE.
 
 SPDX-License-Identifier: CC-BY-4.0
@@ -66,7 +67,10 @@ When citing or building on this work, please use a line of the form:
 
   Frančič, A. (2026). How Residual-Stream Updates Travel Through Depth:
   A Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual
-  Recall. delta-stream repository. Licensed under CC BY 4.0.
+  Recall. Version 1.0. https://github.com/aljazfrancic/delta-stream
+  Licensed under CC BY 4.0.
+
+A BibTeX entry is in the README (section "Citation") and in CITATION.cff.
 
 If you publish a derivative work, please indicate what you changed relative
 to the original.
@@ -76,6 +80,9 @@ SCOPE NOTE
 ================================================================================
 
 This license covers the prose and research content of the repository (paper,
-proposal, implementation plan, glossary, curated figures, and other
-documentation). The source code (src/, scripts/, tests/, configs/) is
-licensed separately under the MIT License; see LICENSE.
+proposal, implementation plan, glossary, curated figures, run records,
+research log, and other documentation). The source code (src/, scripts/,
+tests/, configs/, and the build/packaging files) is licensed separately under
+the MIT License; see LICENSE. Third-party models, SAE dictionaries, and
+datasets are not included in this repository and remain under their own
+licences.

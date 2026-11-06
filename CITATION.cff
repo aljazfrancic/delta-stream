@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the paper using the preferred citation below."
+title: "delta-stream: code, data and paper for 'How Residual-Stream Updates Travel Through Depth'"
+type: software
+authors:
+  - family-names: "Frančič"
+    given-names: "Aljaž"
+    affiliation: "Independent Researcher"
+version: "1.0.0"
+date-released: "2026-11-06"
+repository-code: "https://github.com/aljazfrancic/delta-stream"
+url: "https://github.com/aljazfrancic/delta-stream"
+license:
+  - MIT
+  - CC-BY-4.0
+keywords:
+  - mechanistic interpretability
+  - residual stream
+  - transformers
+  - sparse autoencoders
+  - state-space model
+  - pre-registration
+abstract: >-
+  Pre-registered study of how residual-stream updates travel through depth in
+  transformer factual recall. Cross-layer updates are predictable (largely an
+  architectural property) but not depth-stationary, which points to a
+  first-order, depth-indexed state-space model; the causal test returns a clean
+  null. Code is MIT-licensed; the paper, protocol, figures and run records are
+  CC BY 4.0.
+preferred-citation:
+  type: generic
+  title: "How Residual-Stream Updates Travel Through Depth: A Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual Recall"
+  authors:
+    - family-names: "Frančič"
+      given-names: "Aljaž"
+      affiliation: "Independent Researcher"
+  year: 2026
+  month: 11
+  version: "1.0"
+  url: "https://github.com/aljazfrancic/delta-stream"
+  repository-code: "https://github.com/aljazfrancic/delta-stream"

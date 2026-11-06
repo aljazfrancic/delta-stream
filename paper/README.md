@@ -1,8 +1,10 @@
-# Paper — D3 draft
+# Paper
 
-Venue-agnostic single-column paper
+LaTeX source of
 **"How Residual-Stream Updates Travel Through Depth: A Pre-Registered Study of
-Cross-Layer Dynamics in Transformer Factual Recall"** 
+Cross-Layer Dynamics in Transformer Factual Recall"** (v1.0, 6 November 2026).
+The built PDF is committed as [`paper.pdf`](paper.pdf); for how to cite it, see the
+[root README](../README.md#citation).
 
 ## Build
 

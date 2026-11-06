@@ -19,21 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
---------------------------------------------------------------------------------
-SCOPE
---------------------------------------------------------------------------------
-
-The MIT terms above cover the SOFTWARE in this repository: the importable
-package under src/, the run scripts under scripts/, the tests under tests/,
-the run configs under configs/, and the build/packaging files
-(pyproject.toml, uv.lock, paper/.latexmkrc).
-
-The PROSE and research content — the paper under paper/, the documentation
-under docs/, the curated figures under figures/, the run records under runs/
-(memos and numeric tables), the research log progress.md, and the
-README/Markdown narrative — is licensed separately under the Creative Commons
-Attribution 4.0 International License (CC BY 4.0); see LICENSE-docs.
-
-Third-party models, SAE dictionaries, and datasets used by the scripts are not
-included in this repository and remain under their own licences.

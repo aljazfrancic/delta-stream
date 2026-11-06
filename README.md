@@ -165,18 +165,21 @@ snapshot you used, add the release tag (e.g. `v1.0.0`) or commit hash.
 
 ## License
 
-Dual-licensed:
+Dual-licensed, © 2026 Aljaž Frančič:
 
-- **Code** — `src/`, `scripts/`, `tests/`, `configs/` (and the build/packaging files) —
-  under the [MIT License](LICENSE).
-- **Research content** — the paper (`paper/`), the proposal, protocol and glossary
-  (`docs/`), the figures (`figures/`), the run records (`runs/`: memos and numeric
-  tables), the research log (`progress.md`), and the Markdown narrative — under
-  [CC BY 4.0](LICENSE-docs) ([legal code](https://creativecommons.org/licenses/by/4.0/legalcode)).
+| What | Licence | Text |
+|---|---|---|
+| **Code** — `src/`, `scripts/`, `tests/`, `configs/`, and the build/packaging files (`pyproject.toml`, `uv.lock`, `paper/.latexmkrc`) | MIT | [LICENSE](LICENSE) |
+| **Research content** — the paper (`paper/`: LaTeX source and PDF), the proposal, protocol and glossary (`docs/`), the figures (`figures/`), the run records (`runs/`: memos and CSV/JSON tables), the research log (`progress.md`), and the Markdown narrative | CC BY 4.0 | [LICENSE-docs](LICENSE-docs) ([deed](https://creativecommons.org/licenses/by/4.0/)) |
 
 Third-party models, SAE dictionaries, and datasets (Pythia, GPT-2, Qwen2, the public SAE
 suites, CounterFact) are **not** redistributed here; the scripts download them from their
 original sources, where their own licences apply.
 
-When citing or building on the research, please use the attribution line in
-[LICENSE-docs](LICENSE-docs).
+When you reuse the research content, CC BY 4.0 asks for attribution, a link to the
+licence, and a note of any changes, for example:
+
+> Frančič, A. (2026). *How Residual-Stream Updates Travel Through Depth: A Pre-Registered
+> Study of Cross-Layer Dynamics in Transformer Factual Recall.* Version 1.0.
+> https://github.com/aljazfrancic/delta-stream — licensed under
+> [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

@@ -27,7 +27,7 @@ dependencies = [
     # transformer-lens 2.x uses transformers.TRANSFORMERS_CACHE, removed in
     # transformers 5.0 — hold transformers on the 4.x line. (Also blocks the
     # transformers>=5 advisories — accepted, unused paths; see SECURITY.md.)
-    "transformers>=4.44,<5",
+    "transformers>=4.44,<6",
     "datasets~=3.2",         # CounterFact / Pararel / T-REx loading
     "numpy~=2.1",
     "scipy~=1.14",

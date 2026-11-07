@@ -1,5 +1,7 @@
 # delta-stream
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036211.svg)](https://doi.org/10.5281/zenodo.24036211)
+
 Code and paper for **How Residual-Stream Updates Travel Through Depth: A
 Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual Recall**.
 
@@ -159,9 +161,25 @@ If you use this work, please cite the paper:
 }
 ```
 
+To cite the **code and data** (the archived repository), use its Zenodo DOI
+[10.5281/zenodo.24036211](https://doi.org/10.5281/zenodo.24036211). It always resolves
+to the latest release; each release also has its own version DOI, listed on the Zenodo page.
+
+```bibtex
+@software{francic2026deltastream,
+  author    = {Alja\v{z} Fran\v{c}i\v{c}},
+  title     = {How Residual-Stream Updates Travel Through Depth: A Pre-Registered
+               Study of Cross-Layer Dynamics in Transformer Factual Recall
+               (code, data and paper)},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.24036211},
+  url       = {https://doi.org/10.5281/zenodo.24036211}
+}
+```
+
 The same metadata is in [CITATION.cff](CITATION.cff), so GitHub's *Cite this repository*
-button (repository sidebar) gives APA and BibTeX directly. To cite the exact
-snapshot you used, add the release tag (e.g. `v1.0.0`) or commit hash.
+button (repository sidebar) gives APA and BibTeX directly.
 
 ## License
 

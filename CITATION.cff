@@ -8,8 +8,9 @@ authors:
     affiliation: "Independent Researcher"
 version: "1.0.1"
 date-released: "2026-11-07"
+doi: "10.5281/zenodo.24036211"
 repository-code: "https://github.com/aljazfrancic/delta-stream"
-url: "https://github.com/aljazfrancic/delta-stream"
+url: "https://doi.org/10.5281/zenodo.24036211"
 license:
   - MIT
   - CC-BY-4.0

@@ -1,7 +1,9 @@
 # delta-stream
 
-**Paper:** [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036253.svg)](https://doi.org/10.5281/zenodo.24036253)
-&nbsp; **Code & data:** [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036211.svg)](https://doi.org/10.5281/zenodo.24036211)
+**Paper:**<br>
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036253.svg)](https://doi.org/10.5281/zenodo.24036253)<br>
+**Code & data:**<br>
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036211.svg)](https://doi.org/10.5281/zenodo.24036211)
 
 Code and paper for **How Residual-Stream Updates Travel Through Depth: A
 Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual Recall**.

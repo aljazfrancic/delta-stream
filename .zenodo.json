@@ -18,5 +18,13 @@
     "state-space model",
     "pre-registration"
   ],
-  "notes": "Dual-licensed: code under MIT, research content under CC BY 4.0 (Zenodo records a single licence; the per-directory scope is in the README). Third-party models, SAE dictionaries and datasets are not redistributed."
+  "notes": "Dual-licensed: code under MIT, research content under CC BY 4.0 (Zenodo records a single licence; the per-directory scope is in the README). Third-party models, SAE dictionaries and datasets are not redistributed.",
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.24036253",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    }
+  ]
 }

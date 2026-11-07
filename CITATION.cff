@@ -38,5 +38,8 @@ preferred-citation:
   year: 2026
   month: 11
   version: "1.0"
-  url: "https://github.com/aljazfrancic/delta-stream"
+  doi: "10.5281/zenodo.24036253"
+  url: "https://doi.org/10.5281/zenodo.24036253"
+  publisher:
+    name: "Zenodo"
   repository-code: "https://github.com/aljazfrancic/delta-stream"

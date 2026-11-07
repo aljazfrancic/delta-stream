@@ -1,6 +1,7 @@
 # delta-stream
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036211.svg)](https://doi.org/10.5281/zenodo.24036211)
+**Paper:** [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036253.svg)](https://doi.org/10.5281/zenodo.24036253)
+&nbsp; **Code & data:** [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24036211.svg)](https://doi.org/10.5281/zenodo.24036211)
 
 Code and paper for **How Residual-Stream Updates Travel Through Depth: A
 Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual Recall**.
@@ -15,7 +16,7 @@ H1 holds but is largely architectural; H2 fails, which points to a first-order,
 depth-indexed state-space model. See [Status](#status) for the four headline
 findings.
 
-- **Paper (v1.0, 6 November 2026):** [paper/paper.pdf](paper/paper.pdf) (LaTeX source under [paper/](paper/))
+- **Paper (v1.0, 6 November 2026):** [paper/paper.pdf](paper/paper.pdf) · DOI [10.5281/zenodo.24036253](https://doi.org/10.5281/zenodo.24036253) (LaTeX source under [paper/](paper/))
 - **Original research proposal:** [docs/README.md](docs/README.md)
 - **Pre-registered protocol (frozen):** [docs/implementation-plan/](docs/implementation-plan/README.md)
 - **Glossary:** [docs/glossary.md](docs/glossary.md)
@@ -146,7 +147,7 @@ If you use this work, please cite the paper:
 
 > Frančič, A. (2026). *How Residual-Stream Updates Travel Through Depth:
 > A Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual
-> Recall.* Version 1.0. https://github.com/aljazfrancic/delta-stream
+> Recall* (Version 1.0). Zenodo. https://doi.org/10.5281/zenodo.24036253
 
 ```bibtex
 @misc{francic2026residualstream,
@@ -156,8 +157,10 @@ If you use this work, please cite the paper:
                   Transformer Factual Recall},
   year         = {2026},
   month        = nov,
-  howpublished = {\url{https://github.com/aljazfrancic/delta-stream}},
-  note         = {Version 1.0}
+  publisher    = {Zenodo},
+  note         = {Preprint, version 1.0},
+  doi          = {10.5281/zenodo.24036253},
+  url          = {https://doi.org/10.5281/zenodo.24036253}
 }
 ```
 
@@ -198,6 +201,6 @@ When you reuse the research content, CC BY 4.0 asks for attribution, a link to t
 licence, and a note of any changes, for example:
 
 > Frančič, A. (2026). *How Residual-Stream Updates Travel Through Depth: A Pre-Registered
-> Study of Cross-Layer Dynamics in Transformer Factual Recall.* Version 1.0.
-> https://github.com/aljazfrancic/delta-stream — licensed under
+> Study of Cross-Layer Dynamics in Transformer Factual Recall* (Version 1.0). Zenodo.
+> https://doi.org/10.5281/zenodo.24036253 — licensed under
 > [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

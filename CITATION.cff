@@ -6,6 +6,7 @@ authors:
   - family-names: "Frančič"
     given-names: "Aljaž"
     affiliation: "Independent Researcher"
+    orcid: "https://orcid.org/0000-0003-4431-2869"
 version: "1.0.2"
 date-released: "2026-11-07"
 doi: "10.5281/zenodo.24036211"
@@ -35,6 +36,7 @@ preferred-citation:
     - family-names: "Frančič"
       given-names: "Aljaž"
       affiliation: "Independent Researcher"
+      orcid: "https://orcid.org/0000-0003-4431-2869"
   year: 2026
   month: 11
   version: "1.0"

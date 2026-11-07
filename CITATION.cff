@@ -6,7 +6,7 @@ authors:
   - family-names: "Frančič"
     given-names: "Aljaž"
     affiliation: "Independent Researcher"
-version: "1.0.1"
+version: "1.0.2"
 date-released: "2026-11-07"
 doi: "10.5281/zenodo.24036211"
 repository-code: "https://github.com/aljazfrancic/delta-stream"

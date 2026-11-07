@@ -6,8 +6,8 @@ authors:
   - family-names: "Frančič"
     given-names: "Aljaž"
     affiliation: "Independent Researcher"
-version: "1.0.0"
-date-released: "2026-11-06"
+version: "1.0.1"
+date-released: "2026-11-07"
 repository-code: "https://github.com/aljazfrancic/delta-stream"
 url: "https://github.com/aljazfrancic/delta-stream"
 license:

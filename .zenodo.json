@@ -1,0 +1,22 @@
+{
+  "title": "How Residual-Stream Updates Travel Through Depth: A Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual Recall",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Frančič, Aljaž",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "description": "<p>Paper, code, frozen pre-registration protocol, figures and run records for <em>How Residual-Stream Updates Travel Through Depth: A Pre-Registered Study of Cross-Layer Dynamics in Transformer Factual Recall</em> (paper v1.0, 6 November 2026; PDF at <code>paper/paper.pdf</code>).</p><p>Because transformer components communicate through an additive residual stream, the update a layer writes is the natural unit of cross-layer computation. Two hypotheses about these updates on factual-recall inputs were pre-registered and the frozen protocol was run on Pythia-410m-deduped, with replication on five further models from three families. The updates are predictable across depth (H1), but that predictability is largely architectural; the prediction kernel is not depth-stationary (H2 fails), which points to a first-order, depth-indexed state-space model. That model beats a matched per-layer baseline, lands within ~0.01 R² of a rank-matched cross-layer transcoder at ~6× fewer parameters, and leads below ~1k examples; the pre-registered causal test returns a clean null (recall is a distributed, magnitude-driven code).</p><p>Every paper figure regenerates byte-identically from the tracked run tables via <code>scripts/reproduce.sh</code> (no GPU or model download needed).</p><p><strong>Licences:</strong> code (<code>src/</code>, <code>scripts/</code>, <code>tests/</code>, <code>configs/</code>, build files) under the MIT License; research content (paper, protocol and docs, figures, run records, research log) under CC BY 4.0. See <code>LICENSE</code>, <code>LICENSE-docs</code> and the README.</p>",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "keywords": [
+    "mechanistic interpretability",
+    "residual stream",
+    "transformers",
+    "sparse autoencoders",
+    "state-space model",
+    "pre-registration"
+  ],
+  "notes": "Dual-licensed: code under MIT, research content under CC BY 4.0 (Zenodo records a single licence; the per-directory scope is in the README). Third-party models, SAE dictionaries and datasets are not redistributed."
+}

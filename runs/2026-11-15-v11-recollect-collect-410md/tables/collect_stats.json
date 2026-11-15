@@ -1,0 +1,13 @@
+{
+  "d_model": 1024,
+  "hdf5": "data/pythia-410m-deduped/residual_stream.h5",
+  "mib": 151.9,
+  "n_examples": 1555,
+  "n_layers": 24,
+  "sanity_ok": "5/5",
+  "shape": [
+    1555,
+    25,
+    1024
+  ]
+}

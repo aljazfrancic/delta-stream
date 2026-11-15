@@ -1,0 +1,161 @@
+{
+  "checks": {
+    "dataset": {
+      "fields": {
+        "dropped_classes": {
+          "match": true,
+          "rebuilt": {
+            "occupation": 32,
+            "religion": 62
+          },
+          "recorded": {
+            "occupation": 32,
+            "religion": 62
+          }
+        },
+        "kept_per_class": {
+          "match": true,
+          "rebuilt": {
+            "geography": 511,
+            "language": 333,
+            "organization": 711
+          },
+          "recorded": {
+            "geography": 511,
+            "language": 333,
+            "organization": 711
+          }
+        },
+        "kept_per_relation": {
+          "match": true,
+          "rebuilt": {
+            "P103": 210,
+            "P108": 6,
+            "P127": 21,
+            "P131": 9,
+            "P138": 3,
+            "P159": 97,
+            "P17": 33,
+            "P176": 408,
+            "P178": 237,
+            "P19": 14,
+            "P190": 2,
+            "P20": 7,
+            "P27": 149,
+            "P276": 44,
+            "P30": 112,
+            "P36": 17,
+            "P364": 9,
+            "P37": 103,
+            "P407": 11,
+            "P449": 39,
+            "P495": 10,
+            "P937": 14
+          },
+          "recorded": {
+            "P103": 210,
+            "P108": 6,
+            "P127": 21,
+            "P131": 9,
+            "P138": 3,
+            "P159": 97,
+            "P17": 33,
+            "P176": 408,
+            "P178": 237,
+            "P19": 14,
+            "P190": 2,
+            "P20": 7,
+            "P27": 149,
+            "P276": 44,
+            "P30": 112,
+            "P36": 17,
+            "P364": 9,
+            "P37": 103,
+            "P407": 11,
+            "P449": 39,
+            "P495": 10,
+            "P937": 14
+          }
+        },
+        "min_examples_per_relation": {
+          "match": true,
+          "rebuilt": 300,
+          "recorded": 300
+        },
+        "n_candidates": {
+          "match": true,
+          "rebuilt": 21601,
+          "recorded": 21601
+        },
+        "n_correct_top1": {
+          "match": true,
+          "rebuilt": 1819,
+          "recorded": 1819
+        },
+        "n_kept": {
+          "match": true,
+          "rebuilt": 1555,
+          "recorded": 1555
+        },
+        "threshold": {
+          "match": true,
+          "rebuilt": 0.1,
+          "recorded": 0.1
+        }
+      },
+      "ok": true
+    },
+    "fingerprint": {
+      "bit_level": true,
+      "columns": [
+        "r16",
+        "r32",
+        "r64",
+        "r128",
+        "full",
+        "zero",
+        "identity",
+        "alpha"
+      ],
+      "max_abs_diff": {
+        "alpha": 3.552713678800501e-15,
+        "full": 1.1102230246251565e-16,
+        "identity": 1.1102230246251565e-16,
+        "r128": 1.1102230246251565e-16,
+        "r16": 8.326672684688674e-17,
+        "r32": 9.71445146547012e-17,
+        "r64": 9.71445146547012e-17,
+        "zero": 2.220446049250313e-16
+      },
+      "ok": true,
+      "ridge_alpha_same": true,
+      "tol": 0.001,
+      "worst_r2_abs_diff": 2.220446049250313e-16
+    },
+    "store_shape": {
+      "ok": true,
+      "rebuilt": [
+        1555,
+        25,
+        1024
+      ],
+      "recorded": [
+        1555,
+        25,
+        1024
+      ],
+      "rows_aligned_to_parquet": true
+    }
+  },
+  "hashes": {
+    "prompts_sha256": "7a3f936c0a03fb2d7479bd3edeff8126f12b95dcc8a4c7fbcbde6e3dadbc5851",
+    "residual_stream_float32_sha256": "6b5bcfb7b14b1ffbd2d6bfa6fdddc26a0e3d1516d9a46ebfd3c2ea6a04da2fdc"
+  },
+  "model": "pythia-410m-deduped",
+  "ok": true,
+  "references": {
+    "collect": "runs/2026-06-21-ph1-collect-410md/tables/collect_stats.json",
+    "dataset": "runs/2026-06-21-ph1-dataset-410md/tables/stats.json",
+    "ridge": "runs/2026-06-21-ph1-step3-410md/tables/ridge_r2.csv"
+  }
+}

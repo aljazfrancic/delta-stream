@@ -105,13 +105,20 @@ step4_dir() { rundir "e2-step4-${1}-s${2}-410md"; }          # <mode> <seed>
 
 train() {  # <mode> <seed> <mode args...>
   local mode="$1" s="$2"; shift 2
-  if [ -e "$(npz "$mode" "$s")" ]; then
-    note "SKIP  train $mode seed=$s ($(npz "$mode" "$s") exists; reused, never overwritten)"
+  local out; out="$(npz "$mode" "$s")"
+  local done_marker; done_marker="$(rundir "train-${mode}-s${s}-410md")/tables/sources_trained_${mode}.json"
+  # A dictionary counts as finished only if the trainer got to its last line: the npz,
+  # the weights AND the run table (written after both) all exist. Anything less is the
+  # debris of a killed run and is retrained (the trainer replaces it atomically).
+  if [ -e "$out" ] && [ -e "${out%.npz}.weights.pkl" ] && [ -e "$done_marker" ]; then
+    note "SKIP  train $mode seed=$s ($out is complete; reused, never overwritten)"
     return
   fi
+  [ -e "$out" ] || [ -e "${out%.npz}.weights.pkl" ] && \
+    note "incomplete dictionary for $mode seed=$s from an interrupted run — retraining"
   step "train $mode seed=$s" uv run python scripts/train_410m_saes.py --config "$CFG" \
     --mode "$mode" "$@" "${TRAIN_EXTRA[@]}" --lr 1e-3 --seed "$s" \
-    --out-npz "$(npz "$mode" "$s")" --out "$(rundir "train-${mode}-s${s}-410md")"
+    --out-npz "$out" --out "$(rundir "train-${mode}-s${s}-410md")"
 }
 
 step4() {  # <mode> <dictionary seed> — the exact recorded E2 arguments (scripts/run_e2.sh)
@@ -224,7 +231,8 @@ if [ "$SMOKE" = 1 ]; then
   for mode in l1 topk; do
     p="$OUT/sources_trained_${mode}_s0_gatepreview.npz"
     margs=(--l1-coeff 0.5); [ "$mode" = topk ] && margs=(--k 32)
-    [ -e "$p" ] || step "gate preview: $mode seed 0, 1000 epochs, layers 1-2" \
+    [ -e "$(rundir "gatepreview-${mode}-s0-410md")/tables/sources_trained_${mode}.json" ] \
+      || step "gate preview: $mode seed 0, 1000 epochs, layers 1-2" \
       uv run python scripts/train_410m_saes.py --config "$CFG" --mode "$mode" "${margs[@]}" \
         --max-layers 3 --epochs 1000 --lr 1e-3 --seed 0 --out-npz "$p" \
         --out "$(rundir "gatepreview-${mode}-s0-410md")"

@@ -24,6 +24,7 @@ npz so the dictionaries can be reloaded for interpretation / the causal re-run.
 from __future__ import annotations
 
 import argparse
+import os
 import pickle
 from pathlib import Path
 
@@ -103,15 +104,23 @@ def main(argv: list[str] | None = None) -> int:
     out_npz = args.out_npz or (
         Path("data") / mcfg["name"] / f"sources_trained_{args.mode}{suffix}.npz")
     out_npz.parent.mkdir(parents=True, exist_ok=True)
-    np.savez(out_npz, u=cs.u, feat_index=cs.feat_index, alive_count=cs.alive_count,
-             recon_r2=cs.recon_r2, n_latents_full=cs.n_latents_full,
-             sae_template=f"trained-{args.mode}")
-    run.log(f"cached sources -> {out_npz}")
+    # Both artefacts are written to a temporary name and renamed into place, so a run
+    # killed mid-write never leaves a truncated file under the final name (a resumed
+    # sweep would otherwise take it for a finished dictionary).
     weights_path = out_npz.with_suffix(".weights.pkl")
-    with open(weights_path, "wb") as f:
+    tmp_npz, tmp_pkl = out_npz.with_name(out_npz.name + ".tmp"), weights_path.with_name(
+        weights_path.name + ".tmp")
+    with open(tmp_npz, "wb") as f:
+        np.savez(f, u=cs.u, feat_index=cs.feat_index, alive_count=cs.alive_count,
+                 recon_r2=cs.recon_r2, n_latents_full=cs.n_latents_full,
+                 sae_template=f"trained-{args.mode}")
+    with open(tmp_pkl, "wb") as f:
         pickle.dump({"mode": args.mode, "k": args.k, "n_latents": args.n_latents,
                      "standardize": not args.no_standardize, "seed": int(args.seed),
                      "state_dicts": state_dicts}, f)
+    os.replace(tmp_npz, out_npz)
+    os.replace(tmp_pkl, weights_path)
+    run.log(f"cached sources -> {out_npz}")
     run.log(f"saved SAE weights -> {weights_path}")
 
     stats = {

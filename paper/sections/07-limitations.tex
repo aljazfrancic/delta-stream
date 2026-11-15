@@ -25,7 +25,14 @@ parameters and depths 12--36 in three
 families; we expect the fast-attenuating state path to persist as well, though
 it is measured on the primary model only (\cref{sec:evaluation:operator}); the
 magnitudes (in particular the depth-graded reconstruction gain)
-we make no prediction for. Second, \emph{within a family, depth is confounded
+we make no prediction for. Independent evidence at that scale exists for the
+qualitative picture, though not for our statistics: per-layer Jacobian
+spectra of three production-scale models (Llama~3.1~8B, OLMo~3~7B,
+Gemma~4~E4B) change systematically with depth, and an untrained checkpoint
+separates what training installs from what the architecture supplies
+\citep{fernando2026dynamics}. That is consistent in kind with depth-indexed
+dynamics, but it is a different measurement: it neither tests H1/H2 nor
+estimates a reconstruction gain. Second, \emph{within a family, depth is confounded
 with width, parameter count and training-set size} on the depth-scaling series
 (\cref{sec:evaluation:depth}). One contrast partially deconfounds it: the
 Qwen2 prefix comparison holds the model, the activations, the dataset and the
@@ -88,7 +95,16 @@ network \emph{exceeds} the trained one), but the quantified shares ---
 GPT-2-small's 47\% learned AR structure and the ${\approx}$half-learned
 reconstruction gains --- are single-initialisation point estimates with no
 seed-level spread attached, so we hold them at ``about half'' and claim
-nothing finer. Block-Toeplitz structure was always an approximation to test,
+nothing finer. The stability statistic of \cref{sec:evaluation:stability}
+re-initialises the SSM over a fixed dictionary; it does not retrain the
+dictionary. We trained one L1 and one TopK dictionary on the primary model,
+one seed each, in a regime with more latents than training vectors per layer
+($M = 8{,}192 > N = 1{,}555$), full-batch and without an auxiliary
+dead-latent loss (\cref{sec:decomposition:sources}). The within-model
+L1-versus-TopK contrast is therefore a single matched pair, and it says
+nothing about whether SAEs trained at scale reproduce across seeds --- a
+question with its own literature \citep{paulo2026seeds,song2026consistency}
+that we did not test. Block-Toeplitz structure was always an approximation to test,
 not a derivation from the nonlinear architecture; H2's failure retires it.
 
 \paragraph{Interpretive.}

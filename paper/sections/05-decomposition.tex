@@ -43,13 +43,24 @@ embedding SAE, so $u_0$ is zero-initialised and free. Matched SAE state
 reconstruction averages $\Rsq = 0.598$ across layers (two weak public
 checkpoints at $v_{18}/v_{19}$, 0.21/0.31, are shared by both comparison arms
 and cancel in every gap we report). Because the dictionary turned out to
-matter for identifiability (\cref{sec:evaluation:stability}), we also train
+matter for whether the SSM's per-feature write directions are reproduced
+across refits (\cref{sec:evaluation:stability}), we also train
 matched \textbf{L1} and \textbf{TopK} dictionaries on the same cached
 activations --- identical architecture (per-token standardisation, tied
 decoder bias, unit-norm decoder columns), differing \emph{only} in the
 sparsity mechanism (L1 coefficient 0.5 giving $L_0 \approx 36$, matched to
 TopK $k{=}32$) --- including leakage-free variants fit on the train split
 only.
+
+These trained dictionaries sit in an unusual regime, which bounds what they
+can support. Each layer's $M = 8{,}192$ latents are fit full-batch (Adam,
+1{,}000 steps) on that layer's $N = 1{,}555$ cached vectors --- more latents
+than training examples --- with no auxiliary loss to revive dead latents, so
+at most 1{,}178 (L1) and 660 (TopK) latents per layer are alive. We trained
+\emph{one} dictionary per mechanism, from a single random seed; the
+train-only L1 variant on the primary model shares that seed, so it is a
+leakage check, not a second draw. Nothing here licenses a claim about SAEs
+trained at scale on streaming activations.
 
 \subsection{Optimisation and evaluation protocols}
 \label{sec:decomposition:opt}
@@ -96,11 +107,12 @@ mean relation-class purity 0.83 with human-legible themes (e.g.\ an
 ``employed-by/manufactured-by $\to$ company'' feature at layer 9, a
 ``premiered-on $\to$ TV network'' feature at layer 1, a ``European place
 $\to$ Europe'' feature at layer 22); dataset stability across disjoint halves
-top-100 Jaccard 0.89. Seed stability of decoder \emph{directions} failed its
+top-100 Jaccard 0.89. The stability of per-feature write \emph{directions}
+across refits of the SSM from different initialisations failed its
 pre-registered bar on the TopK source (0.45 < 0.7) --- recorded at Gate 3 as
-a limitation, and subsequently traced to the dictionary type and closed, a
+a limitation, and subsequently traced to the source dictionary, a
 story told in full in \cref{sec:evaluation:stability}.
 
 \textbf{Gate-3 verdict: GO} --- the reconstruction clause is met with margin
-(next section), and the then-open seed-stability limitation was scoped to
-single-feature decoder identifiability, which no headline claim uses.
+(next section), and the then-open stability limitation was scoped to
+the SSM's single-feature write directions, which no headline claim uses.

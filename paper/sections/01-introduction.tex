@@ -152,14 +152,16 @@ bottleneck. Factual recall in this model is a distributed, mass-driven code.
     of this work reported as gauge-invariant, is not) --- and the functional
     informativeness of the SSM state for answer identity at mid-depth
     (\cref{sec:evaluation:operator,sec:evaluation:probe}).
-  \item A practical warning for the field: on the primary model, TopK
-    dictionaries make
-    single-feature decoder directions seed-unidentifiable (match@0.7 $=0.08$
-    trained on the same activations, $0.45$ for the public suite)
-    where a matched L1 dictionary trained on those activations is
-    perfectly stable ($1.00$) --- an identifiability failure that lives in the
-    sparsity mechanism, not the model or the decomposition
-    (\cref{sec:evaluation:stability}).
+  \item A stability finding with a practical edge: on the primary model, the
+    SSM's per-feature write directions are not reproduced when the SSM is
+    refit from a different initialisation over a TopK dictionary (match@0.7
+    $=0.08$ for one trained on the same activations, $0.45$ for the public
+    suite), but are over a matched L1 dictionary trained on those activations
+    ($1.00$). The model, the activations and the decomposition are held
+    fixed, so the contrast follows the dictionary. What is re-initialised is
+    the SSM, over one dictionary per mechanism; whether independently
+    \emph{trained} dictionaries agree with each other is a separate question,
+    which we do not measure (\cref{sec:evaluation:stability}).
 \end{enumerate}
 
 Everything reproduces from tracked run tables via one script; the protocol

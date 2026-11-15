@@ -23,9 +23,28 @@ Pythia \citep{lawson2025mlsae}, the reformatted GPT-2-small residual suite
 EleutherAI's Pythia-70m-deduped suite \citep{eleutherai2024sae} --- and
 additionally
 train matched L1 and TopK dictionaries on our own cached activations, which
-turns out to matter: the sparsity mechanism, not the model, controls whether
-single-feature decoder directions are identifiable across seeds
-(\cref{sec:evaluation:stability}).
+turns out to matter: the dictionary the SSM is fit over, not the model,
+determines whether its per-feature write directions are reproduced when it is
+refit from a different initialisation (\cref{sec:evaluation:stability}).
+
+That is not the question a growing literature asks of SAEs themselves, namely
+whether dictionaries \emph{trained} on the same activations from different
+random seeds agree. \citet{paulo2026seeds} match the latents of such pairs
+one-to-one (Hungarian assignment on encoder and decoder cosines, a latent
+counting as shared at cosine $\ge 0.7$ on both) and find only about 30\%
+shared for a 131k-latent SAE on Llama~3~8B, with ReLU SAEs trained under an
+L1 penalty more stable across seeds than TopK SAEs at matched sparsity.
+\citet{song2026consistency} propose the pairwise dictionary mean correlation
+coefficient (PW-MCC: the mean absolute decoder cosine under the optimal
+one-to-one matching) as a routine consistency metric, and report that values
+around 0.80 are attainable for TopK SAEs on LLM activations with appropriate
+architectural and training choices. Both compare \emph{independently trained}
+dictionaries, whose latents permute freely, so both must search for a
+matching. Our match@0.7 does neither: every refit shares one frozen
+dictionary, feature $j$ is the same atom in each, and the statistic asks
+whether a \emph{downstream} model's learned write direction for that atom is
+reproduced (\cref{app:stats}). We train one dictionary per mechanism, so the
+dictionary-level question is one this paper does not answer.
 
 \paragraph{Cross-layer dictionaries.}
 Crosscoders fit one dictionary with per-layer decoders across all layers at
@@ -62,6 +81,29 @@ diagnostic must beat before the expensive tests run (it does,
 \cref{sec:phase1:ridge}), and it reappears as an update-prediction baseline in
 the evaluation, where --- like every method not trained on $\Dl$ --- it scores
 below zero (\cref{sec:evaluation:baselines}).
+
+\paragraph{Depth as a dynamical system.}
+A parallel line treats the residual stream itself as a dynamical system
+evolving across layers. \citet{fernando2025transformer} describe last-token
+trajectories in Llama~3.1~8B: individual residual-stream units stay strongly
+correlated from layer to layer, activations accelerate and grow denser with
+depth, and reduced-dimensional trajectories show attractor-like dynamics in
+the lower layers. \citet{fernando2026dynamics} compute full per-layer Jacobian
+eigendecompositions on Llama~3.1~8B, OLMo~3~7B and Gemma~4~E4B and find a
+spectral gradient through depth --- non-normal, rotation-dominated early
+layers giving way to near-symmetric late ones --- together with a cumulative
+low-rank bottleneck; against OLMo's step-0 (randomly initialised) checkpoint
+as a null, they attribute the gradient and the dimensional collapse to
+training rather than architecture. We read this as convergent evidence from a
+different instrument at larger scale, on two points: layers play distinct
+dynamical roles, which is what the failure of H2 says in our vocabulary
+(\cref{sec:phase2}), and an untrained network is the right null for
+separating architectural from learned depth structure, which is how we use it
+(\cref{sec:phase1:pressure}). It is not a replication. Their object is the
+local Jacobian spectrum; ours is the cross-layer predictability and
+reconstruction of $\Dl$; and the two need not apportion structure the same
+way --- their spectral gradient is learned, while our autoregressive
+structure is substantially architectural on the primary model.
 
 \paragraph{Factual recall.}
 We test on subject--relation--object recall because it is the

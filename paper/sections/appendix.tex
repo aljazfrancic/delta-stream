@@ -21,8 +21,9 @@ step is verifiable from the public git history. The gates:
     seed-stable features?) --- \emph{GO}: reconstruction clause met with
     margin; the seed-stability clause initially failed (0.45 < 0.7) and was
     recorded as a limitation per the plan's ``reconstruction fine / seed
-    unstable'' branch, later closed by the dictionary-mechanism finding of
-    \cref{sec:evaluation:stability}.
+    unstable'' branch, later traced to the source dictionary
+    (\cref{sec:evaluation:stability}). The clause was evaluated on refits of
+    the SSM over a fixed dictionary (deviation~8 below).
   \item \textbf{Causal existence proof} --- \emph{NULL} at all four
     pre-registered thresholds; reported at the plan's designated honest
     landing place, with no threshold adjusted.
@@ -71,6 +72,17 @@ step is verifiable from the public git history. The gates:
     evaluation set; the affected contrasts are re-derived at a common $k$ in
     \cref{tab:commondepth}, and the pre-registered headline is reported as the
     four-depth number it is. Neither correction changes a gate outcome.
+  \item \emph{Seed-stability check as implemented} (identified in the v1.1
+    revision; \cref{app:changes}). The plan's Phase-3 sanity step asked for
+    the whole pipeline to be re-run under three seeds ``for the SAE init and
+    the optimiser'', scoring features by the maximum cosine of their decoder
+    directions across seeds. The sources are frozen public SAEs, so the check
+    was implemented on the SSM alone: it is refit from three initialisations
+    over one fixed dictionary and features are paired by index
+    (\cref{app:stats}). Version 1.0 neither listed this narrowing nor
+    described the statistic accurately; no dictionary was ever retrained
+    under a second seed, and the Gate-3 stability clause should be read
+    accordingly.
 \end{enumerate}
 
 \section{Operating points and evaluation protocols}
@@ -227,9 +239,16 @@ validation-selected on a 1{,}057-example train carve-out; $-0.011$ in the
 depth list is the shared-grid primary-model point, i.e.\ $-0.0105$ rounded.
 
 \paragraph{Statistics defined once.}
-\emph{match@0.7} is the fraction of a run's top-$n$ features (by activation
-mass; $n = 100$ at Gate 3, $n = 200$ in the gauge analysis) whose decoder
-direction has cosine $\ge 0.7$ with its best match in a re-seeded fit.
+\emph{match@0.7} is a statistic of the SSM, not of the dictionary. The SSM is
+refit from different random initialisations over one fixed dictionary (three
+refits, so three pairs, averaged). For each of the top-$n$ features by
+activation mass in the first fit ($n = 100$ at Gate 3, $n = 200$ in the gauge
+analysis), the feature's write direction $D_\ell[:, j]$ at its home layer is
+compared between two refits, pairing features \emph{by index}: every refit
+shares the same frozen dictionary, so feature $j$ is the same atom in each
+and there is no permutation to search over. match@0.7 is the fraction of
+those features with cosine $\ge 0.7$. It is silent on whether two
+independently trained dictionaries would contain the same atoms.
 \emph{Purity} is the largest relation class's share of a feature's top-100
 activating examples. \emph{Retention ratio} is a cross-condition $\Rsq$
 divided by the target condition's within-condition $\Rsq$; the tautology,
@@ -249,13 +268,15 @@ SSM$-$baseline gap at $\lambda_{L1}{=}1$.
   CounterFact sizes (70m: top-1{,}000 candidates by confidence --- the
   optimiser-debug lane, excluded from the H1/H2 replication claim); SAE
   column gives the public suite used as frozen sources (``---'' = diagnostics
-  only). Seed-stability column is decoder match@0.7 across three fits; where a
+  only). The stability column is match@0.7 of the SSM's per-feature write
+  directions across three refits of the SSM over the listed dictionary (the
+  dictionary is fixed; \cref{app:stats}); where a
   row names two dictionaries it lists them in the same order, and ``---'' means
-  not measured (the Qwen2 trained-L1 fit is single-seed).}
+  not measured (the SSM over the Qwen2 trained-L1 dictionary was fit once).}
   \label{tab:zoo}
   \begin{tabular}{llllll}
     \toprule
-    Model & $L$ & $D$ & $N$ & SAE source (type) & seed stab. \\
+    Model & $L$ & $D$ & $N$ & SAE source (type) & refit stab. \\
     \midrule
     Pythia-70m-deduped   & 6  & 512  & 1{,}000 & EleutherAI 32k (TopK $k{=}16$) & 0.99 \\
     Pythia-160m-deduped  & 12 & 768  & 767     & MLSAE x64-k32 (TopK) & 0.38 \\
@@ -268,15 +289,16 @@ SSM$-$baseline gap at $\lambda_{L1}{=}1$.
   \end{tabular}
 \end{table}
 
-Its seed-stability column is the cross-model half of the
-\cref{sec:evaluation:stability} finding: L1 sources stable on two additional
-families, TopK unstable on two Pythia models, with dataset size ruled out by
+Its stability column is the cross-model half of the
+\cref{sec:evaluation:stability} finding: over L1 sources the SSM's write
+directions are reproduced across refits on two additional families, over
+TopK sources they are not on two Pythia models, with dataset size ruled out by
 subsampling GPT-2 to the smallest $N$ (match 0.95 unchanged). The debug
-lane's EleutherAI TopK suite is nonetheless stable (0.99): TopK instability
-is not universal --- every TopK source tested at $\ge$12 layers was unstable
-and every L1 source stable --- which is why the controlled within-model
-contrast of \cref{sec:evaluation:stability}, not the zoo, carries the
-mechanism claim.
+lane's EleutherAI TopK suite is nonetheless stable (0.99): the instability
+is not universal over TopK sources --- every TopK source tested at $\ge$12
+layers was unstable and every L1 source stable --- which is why the
+controlled within-model contrast of \cref{sec:evaluation:stability}, not the
+zoo, carries the mechanism claim.
 
 \section{Reproducibility}
 \label{app:repro}
@@ -290,7 +312,7 @@ Every run logs its resolved config, git commit, seed, and library versions
 before doing any work. Numeric intermediates (CSV/JSON tables) are tracked in
 git; heavy artefacts (activation stores, checkpoints) are regenerable from
 scripts. A single entry point --- \code{scripts/reproduce.sh} --- checks the
-environment, runs the test suite (208 tests), asserts dataset sizes, and
+environment, runs the test suite (229 tests), asserts dataset sizes, and
 regenerates all 16 paper figures byte-identically from the tracked tables;
 \code{--toy-pipeline} additionally re-runs the full Pythia-70m lane end to
 end. Code, protocol documents, and the progress tracker are released with
@@ -302,4 +324,39 @@ Software: PyTorch \citep{paszke2019pytorch}, TransformerLens
 \citep{nanda2022transformerlens}, scikit-learn \citep{pedregosa2011sklearn},
 statsmodels \citep{seabold2010statsmodels}, and the SAE suites cited in
 \cref{sec:decomposition:sources}.
+
+\section{Changes since version 1.0}
+\label{app:changes}
+
+Version 1.1 changes no result and re-runs nothing from the pre-registered
+protocol. Everything below is post-hoc and concerns how one finding is
+worded and what the paper is compared against.
+
+\begin{itemize}
+  \item \emph{What ``seed'' means in the stability finding.} Version 1.0
+    said that TopK dictionaries make single-feature directions
+    ``seed-unidentifiable'', that matched L1 dictionaries are ``perfectly
+    stable'', and that TopK features should be checked to ``survive a
+    re-seed''. The statistic behind those sentences re-initialises the SSM
+    over one fixed dictionary and pairs features by index; no dictionary was
+    retrained. Every statement of the finding --- abstract, contributions,
+    \cref{sec:related,sec:decomposition:sources,sec:evaluation:stability,sec:discussion},
+    the captions of \cref{fig:depthscaling,fig:stability}, and
+    \cref{tab:zoo} --- now says what is refit, and the practitioner caution
+    is restricted to models fit downstream of a dictionary. The numbers are
+    unchanged.
+  \item \emph{Definition corrected.} \Cref{app:stats} defined match@0.7 by a
+    feature's ``best match in a re-seeded fit''. The code pairs features by
+    index; the text was wrong and is fixed.
+  \item \emph{Deviation added.} The SSM-only implementation of the plan's
+    seed-stability step is now listed in \cref{app:prereg} (deviation~8).
+  \item \emph{Regime stated.} The trained dictionaries have more latents
+    than training vectors per layer, are fit full-batch without an auxiliary
+    loss, and exist as one draw per mechanism
+    (\cref{sec:decomposition:sources,sec:limitations}).
+  \item \emph{Related work added.} SAE seed consistency
+    \citep{paulo2026seeds,song2026consistency}, depth as a dynamical system
+    \citep{fernando2025transformer,fernando2026dynamics}, and random-baseline
+    sanity checks for SAEs \citep{korznikov2026sanity}.
+\end{itemize}
 

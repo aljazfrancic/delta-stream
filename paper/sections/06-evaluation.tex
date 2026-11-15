@@ -125,11 +125,14 @@ read the two against each other.
   depth confounded with width, parameter count and training-set size; a
   differently-constructed dataset at the 6-layer point; and a Qwen point that
   is a 12L SAE-coverage prefix of a 24L model (full-coverage value $+0.072$).
-  The right panel plots decoder-direction seed stability (match@0.7) across
-  the zoo, with the controlled within-model contrast starred: on the same
-  \pythia{} activations a trained L1 dictionary is perfectly stable ($1.00$)
-  where trained TopK is not ($0.08$) --- the dictionary, not the model or the
-  depth, is what moves (\cref{sec:evaluation:stability}).}
+  The right panel plots, across the zoo, how well the SSM's per-feature write
+  directions are reproduced when the SSM is refit from a different
+  initialisation over the same dictionary (match@0.7; the panel's ``seed'' is
+  the SSM's, not the dictionary's), with the controlled within-model contrast
+  starred: on the same \pythia{} activations the refits agree over a trained
+  L1 dictionary ($1.00$) and not over a trained TopK one ($0.08$) --- the
+  dictionary, not the model or the depth, is what moves
+  (\cref{sec:evaluation:stability}).}
   \label{fig:depthscaling}
 \end{figure}
 
@@ -252,21 +255,36 @@ at matched budget and in low data.
 \subsection{Stability: the dictionary, not the model, controls identifiability}
 \label{sec:evaluation:stability}
 
-Gate 3 recorded one failed clause: top-100 decoder-direction stability across
-re-initialisations was 0.45 (match@0.7), below the pre-registered 0.7, while
-reconstruction was seed-identical --- an equivalent-minima degeneracy, unmoved
+Gate 3 recorded one failed clause, and what that clause measures needs
+stating exactly. The statistic, match@0.7, refits the SSM from three
+different random initialisations over the \emph{same} frozen dictionary and
+asks, for each of the top-100 features, whether its \emph{write direction}
+--- the feedthrough column $D_\ell[:, j]$, what the SSM learns a unit of
+source $j$ writes into $\Dl$ --- has cosine $\ge 0.7$ between refits.
+Features are paired by index, because atom $j$ is the same atom in every
+refit (\cref{app:stats}). What is re-seeded is therefore the SSM, never the
+dictionary: the statistic says whether a downstream model's per-feature
+readout is pinned down over a given dictionary, not whether independently
+trained SAEs agree on the dictionary itself, the question studied by
+\citet{paulo2026seeds} and \citet{song2026consistency}. (The protocol's
+wording also re-seeded the SAE; with frozen public dictionaries the check
+was implemented on the SSM alone, a deviation recorded in
+\cref{app:prereg}.) On the public TopK source the statistic was 0.45, below
+the pre-registered 0.7, while reconstruction was identical across refits ---
+an equivalent-minima degeneracy, unmoved
 by $100\times$ stronger operator regularisation and by shrinking $d_z$. Three
-findings close the story (\cref{fig:stability}):
+findings locate it (\cref{fig:stability}):
 
 \begin{enumerate}
   \item \textbf{It is the TopK sparsity mechanism.} Training matched L1 and
     TopK dictionaries on the \emph{same} cached activations --- identical
     architecture, matched $L_0$, differing only in the sparsity operator ---
-    and refitting: decoder match@0.7 --- the fraction of the top-100 features
-    whose decoder direction has cross-seed cosine $\ge 0.7$ --- is
+    and refitting the SSM over each: match@0.7 is
     \textbf{1.00 (L1)} versus \textbf{0.08
     (trained TopK)} versus 0.45 (pretrained MLSAE TopK), at the same
-    reconstruction win ($+0.041$--$+0.047$). Not a width effect: the two
+    reconstruction win ($+0.041$--$+0.047$). One dictionary was trained per
+    mechanism, from one seed (\cref{sec:decomposition:sources}), so this
+    within-model contrast is a single matched pair. Not a width effect: the two
     trained dictionaries have identical nominal width (8{,}192) and it is the
     \emph{stable} one whose alive set is larger (1{,}178 L1 vs 660 TopK), so
     stability is not bought by narrowness. Cross-model, L1 sources are stable on two further
@@ -276,52 +294,63 @@ findings close the story (\cref{fig:stability}):
     $k{=}16$ suite (0.99, \cref{app:crossmodel}), so the failure is not
     TopK-universal --- but every TopK source we tested at $\ge$12 layers was
     unstable and every L1 source stable. Retraining
-    the L1 dictionary on the train split only (no test leakage) changes
+    the L1 dictionary on the train split only (no test leakage; the same
+    seed, so a leakage check rather than a second draw) changes
     nothing (match 1.00; gaps $+0.037$--$+0.070$).
   \item \textbf{It is not a gauge artefact.} Gauge-invariant per-feature
     impulse responses (feedthrough plus downstream state path) are as unstable
-    (0.29) as raw decoder columns (0.36 over the gauge analysis's 200-feature
+    (0.29) as raw write directions (0.36 over the gauge analysis's 200-feature
     candidate set; the Gate-3 top-100 statistic quoted above is 0.45), so the
-    instability is genuine
-    single-feature non-identifiability over redundant TopK atoms --- expected
+    instability is a genuine non-identifiability of the SSM's
+    single-feature readout over redundant TopK atoms --- expected
     for a distributed code where the fit only constrains realised
     combinations.
   \item \textbf{Everything the claims use is stable.} Reconstruction (0.880
-    every seed), the state-operator spectrum (median relative difference of
-    the sorted moduli 0.086 across seeds --- \emph{not} the sorted-modulus
+    in every refit), the state-operator spectrum (median relative difference of
+    the sorted moduli 0.086 across refits --- \emph{not} the sorted-modulus
     cosine of 0.999, which random spectra also achieve;
     \cref{sec:evaluation:operator}), the gauge-invariant state-path decay
-    (gap-2 ratio 0.42--0.49 across seeds and dictionaries), the top-feature
-    decoder \emph{subspace} ($\sim$0.6 overlap), and
+    (gap-2 ratio 0.42--0.49 across refits and dictionaries), the top-feature
+    write-direction \emph{subspace} ($\sim$0.6 overlap), and
     the feature \emph{set} across data halves (Jaccard 0.89).
 \end{enumerate}
 
-We flag the first finding as independently useful: pipelines that interpret
-\emph{individual} SAE features while sourcing from TopK dictionaries are
-building on directions that need not survive a re-seed.
+We flag the first finding as independently useful, with its scope stated
+plainly. A model fit \emph{downstream} of a TopK dictionary --- here the SSM
+--- can assign individual features write directions that a refit from a
+different initialisation does not reproduce, so a pipeline that names, steers
+or ablates features through such a fit should check that they survive a
+refit. Whether the TopK dictionaries themselves are reproducible across
+training seeds is a different question, with mixed evidence in the literature
+\citep{paulo2026seeds,song2026consistency}, and one we did not measure.
 
 \begin{figure}[t]
   \centering
   \includesvg[width=0.85\linewidth]{fig11_seed_stability}
-  \caption{Per-feature vs system-level seed stability on the TopK (MLSAE)
-  source. Left: cross-seed cosine of raw decoder columns (match@0.7 $=0.36$)
+  \caption{Per-feature vs system-level stability of the SSM across refits
+  from different initialisations, on the TopK (MLSAE) source; ``seed'' in the
+  panel labels is the SSM's, and the dictionary is fixed. Left: cross-refit
+  cosine of raw write directions (match@0.7 $=0.36$)
   and of gauge-invariant per-feature $\Delta$-contributions ($0.29$) ---
   gauge-invariance does not rescue single-feature identifiability. Right: the
-  system-level statistics the claims use are seed-stable (decoder subspaces;
+  system-level statistics the claims use are stable across refits (decoder subspaces;
   the spectrum bar plots the $A_\ell$ modulus agreement as $1-{}$median
   relative difference $=0.91$ --- the honest statistic of
   \cref{sec:evaluation:operator}, not the vacuous sorted-spectrum cosine ---
   and is a property of the fitted gauge, not a gauge invariant). The
   in-panel note carries the resolution: the
-  per-feature instability is TopK-specific --- a trained-L1 source on the
-  same activations reaches match@0.7 $=1.00$.}
+  per-feature instability is specific to the TopK source --- over a
+  trained-L1 source on the same activations the refits agree (match@0.7
+  $=1.00$).}
   \label{fig:stability}
 \end{figure}
 
 \subsection{The causal existence proof: a clean, fully controlled null}
 \label{sec:evaluation:causal}
 
-The pre-registered critical test: find a seed-stable, interpretable feature,
+The pre-registered critical test: find a seed-stable, interpretable feature
+(seed-stable in the sense of \cref{sec:evaluation:stability}: its write
+direction is reproduced across SSM refits),
 subtract its estimated contribution $\delta_\ell$ from the residual stream
 during the real forward pass (re-solving the LASSO with the frozen decoder,
 so reconstruction error stays untouched), and require --- all four
@@ -365,7 +394,11 @@ log-probability by $2.89$ nats (pooled over candidates) against $2.45$ nats
 for a basket of \emph{other} classes' answer tokens (geography features
 answer-specific, organization features not). The group effect is therefore \emph{magnitude-driven}: it
 demonstrates the query position's generic sensitivity to perturbations of
-that size, not a causally privileged code.
+that size, not a causally privileged code. The lesson has a counterpart at
+the level of the dictionary itself: SAE baselines whose feature directions or
+activation patterns are constrained to random values match fully trained
+SAEs on interpretability, sparse probing and causal editing
+\citep{korznikov2026sanity}.
 
 Swapping to the clean L1 dictionary strengthens rather than rescues the null:
 the candidate pool becomes 199/200 seed-stable, the maximum single-feature

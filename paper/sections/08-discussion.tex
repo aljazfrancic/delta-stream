@@ -34,14 +34,17 @@ cross-layer value at a sixth of the parameters and generalises better below
 $10^3$ examples. For practitioners the operational reading is: if you need
 cross-layer reconstruction under a parameter or data budget, a depth-indexed
 state is the better spend; if you need maximum fidelity and have data, free
-per-pair decoders are not redundant. Our TopK finding adds an orthogonal
-warning: single-feature decoder directions from TopK dictionaries were
-seed-unidentifiable in every configuration we tested beyond the six-layer
-debug lane, while matched L1
-dictionaries were stable everywhere (perfectly so on the primary model) ---
-any pipeline that names, steers, or
-ablates \emph{individual} TopK features should check its features survive a
-re-seed.
+per-pair decoders are not redundant. Our stability finding adds an orthogonal
+caution: the SSM's write directions for individual features were not
+reproduced across refits over TopK dictionaries in any configuration we
+tested beyond the six-layer debug lane, while over L1
+dictionaries they were reproduced everywhere (perfectly so on the primary
+model). What we re-initialised is the downstream model, not the SAE, so the
+caution we can support is about downstream fits: a pipeline that learns
+per-feature readouts over a TopK dictionary and then names, steers, or
+ablates \emph{individual} features should check those readouts survive a
+refit. Whether the dictionaries themselves survive retraining is a separate
+question \citep{paulo2026seeds,song2026consistency}, untested here.
 
 \paragraph{Consequences for factual-recall stories.}
 The causal null is not a failure to find structure; it is a measurement of
@@ -56,7 +59,9 @@ distributed, magnitude-dominated code --- consistent with the drift in the
 editing literature away from single-component accounts
 \citep{hase2023does}, and a calibration point for ablation-based evaluation
 generally: group-ablation effects need magnitude-matched \emph{direction}
-controls before they can be read as evidence about privileged feature sets.
+controls before they can be read as evidence about privileged feature sets
+--- the intervention-level analogue of the random-baseline sanity checks
+\citet{korznikov2026sanity} argue SAE evaluations need.
 
 \paragraph{Consequences for probing.}
 The state-probe result cuts the other way: trained purely to reconstruct

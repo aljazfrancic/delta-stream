@@ -56,8 +56,10 @@ layer 1..23 and each of the three seed pairs, on **alive latents only**, signed 
 
 - **best-match**: each latent's max cosine against every alive latent of the other
   seed, both directions, averaged with equal weight;
-- **one-to-one**: optimal assignment (`scipy.optimize.linear_sum_assignment`), mean
-  matched cosine — the PW-MCC construction on decoder directions.
+- **one-to-one (PW-MCC)**: optimal assignment (`scipy.optimize.linear_sum_assignment`)
+  on **absolute** decoder cosines, mean over matched pairs, `n` = the smaller alive
+  count — Song et al.'s PW-MCC restricted to alive latents. (Best-match cosines stay
+  signed: SAE codes are non-negative, so `d` and `−d` are different features.)
 
 **Primary statistic (fixed here):** match@0.7 over the **top-100 latents by activation
 mass per layer**, best-match, averaged over layers, then over the three seed pairs.
@@ -169,6 +171,11 @@ per-seed file is reused, not overwritten.
    reproducing the tracked tables, as above.
 3. The trainer now writes `lr` and `seed` into its tracked table and `seed` into the
    weights pickle (v1.0 recorded neither).
+4. **PW-MCC takes absolute cosines** (amended the same day, still before any run, after
+   reading Song et al.'s definition): the one-to-one statistic was first written with
+   signed cosines, which is not the published metric it is reported "for comparability"
+   with. The primary statistic and the verdict table are unaffected — both use the
+   signed best-match cosine.
 
 ## Results
 

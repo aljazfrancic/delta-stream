@@ -14,12 +14,14 @@ permutation to search over. Per layer and per seed pair, on **alive** latents on
 
 * **best-match** — each latent's maximum cosine against every alive latent of the other
   seed (many-to-one allowed), computed in both directions and averaged;
-* **one-to-one** — the optimal assignment (Hungarian) between the two alive sets, mean
-  cosine of the matched pairs. This is the pairwise mean-correlation-coefficient
-  construction (PW-MCC) applied to decoder directions, reported for comparability.
+* **one-to-one (PW-MCC)** — the optimal assignment (Hungarian) between the two alive
+  sets on **absolute** decoder cosines, mean over the matched pairs. This is the
+  pairwise dictionary mean correlation coefficient of Song et al. (ACL 2026), restricted
+  to alive latents (``n = min`` of the two alive counts), reported for comparability
+  with that literature.
 
-Cosines are **signed**: SAE activations are non-negative, so ``d`` and ``−d`` are
-different features.
+Best-match cosines are **signed**: SAE activations are non-negative, so ``d`` and ``−d``
+are different features. PW-MCC takes absolute values because its definition does.
 
 **Primary statistic (fixed before any run).** ``match@0.7`` over the top-100 latents by
 activation mass per layer, best-match, averaged over layers and then over seed pairs.
@@ -56,7 +58,7 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 
 STAT_KEYS = (
-    "match_top", "match_all", "mean_maxcos_top", "mean_maxcos_all", "onetoone_mean_cos",
+    "match_top", "match_all", "mean_maxcos_top", "mean_maxcos_all", "pw_mcc",
 )
 PRIMARY = "match_top"
 STABLE_BAR = 0.7
@@ -182,16 +184,18 @@ def top_by_mass(mass: np.ndarray, top_n: int) -> np.ndarray:
     return order[: min(int(top_n), len(order))]
 
 
-def one_to_one_mean_cosine(cos: np.ndarray) -> tuple[float, int]:
-    """Mean cosine under the optimal one-to-one matching, and the number of pairs.
+def pw_mcc(cos: np.ndarray) -> tuple[float, int]:
+    """PW-MCC: mean **absolute** cosine under the optimal one-to-one matching, and ``n``.
 
-    Rectangular inputs match ``min(n_a, n_b)`` pairs; the surplus latents of the larger
-    dictionary are left unmatched (and are visible in the alive counts).
+    The matching maximises the summed absolute cosine (Song et al.'s definition).
+    Rectangular inputs match ``n = min(n_a, n_b)`` pairs; the surplus latents of the
+    larger dictionary are left unmatched (and are visible in the alive counts).
     """
     if cos.size == 0:
         return 0.0, 0
-    rows, cols = linear_sum_assignment(cos, maximize=True)
-    return float(cos[rows, cols].mean()), int(len(rows))
+    absolute = np.abs(cos)
+    rows, cols = linear_sum_assignment(absolute, maximize=True)
+    return float(absolute[rows, cols].mean()), int(len(rows))
 
 
 def pair_statistics(
@@ -207,7 +211,7 @@ def pair_statistics(
     cos = cosine_matrix(da.directions, db.directions)
     a_best, b_best = cos.max(axis=1), cos.max(axis=0)
     a_top, b_top = a_best[top_by_mass(da.mass, top_n)], b_best[top_by_mass(db.mass, top_n)]
-    one_mean, one_n = one_to_one_mean_cosine(cos)
+    mcc, mcc_n = pw_mcc(cos)
 
     def both(x: np.ndarray, y: np.ndarray, fn) -> float:
         return float(0.5 * (fn(x) + fn(y)))
@@ -222,7 +226,7 @@ def pair_statistics(
         "match_all": both(a_best, b_best, rate),
         "mean_maxcos_top": both(a_top, b_top, np.mean),
         "mean_maxcos_all": both(a_best, b_best, np.mean),
-        "onetoone_mean_cos": one_mean, "onetoone_n": one_n,
+        "pw_mcc": mcc, "pw_mcc_n": mcc_n,
     }
 
 

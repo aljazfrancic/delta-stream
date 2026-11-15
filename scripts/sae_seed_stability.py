@@ -9,7 +9,7 @@ artefacts ``scripts/train_410m_saes.py`` writes (one ``sources_*.npz`` +
 ``.weights.pkl`` per seed), so it needs no GPU and no activation store.
 
 Per mechanism (``--l1`` / ``--topk``, each a list of ≥2 per-seed npz files), per layer
-and per seed pair, on alive latents: best-match and one-to-one decoder cosines, with a
+and per seed pair, on alive latents: best-match decoder cosines and PW-MCC, with a
 random-dictionary null, a cross-seed cross-layer null, and two initialisation
 diagnostics — the same seed's dictionary at a distant layer, and each latent's cosine
 with its own initial decoder column (see
@@ -164,8 +164,8 @@ def main(argv: list[str] | None = None) -> int:
               f"{b['primary']:.3f}  ({'STABLE' if b['stable'] else 'unstable'}; "
               f"{s['real']['n_pairs']} seed pair(s))")
         print(f"         all-alive match {s['real']['match_all']:.3f} | mean max-cos "
-              f"{s['real']['mean_maxcos_all']:.3f} | one-to-one mean cos "
-              f"{s['real']['onetoone_mean_cos']:.3f}")
+              f"{s['real']['mean_maxcos_all']:.3f} | PW-MCC (alive, one-to-one |cos|) "
+              f"{s['real']['pw_mcc']:.3f}")
         print("         nulls (primary): " + ", ".join(
             f"{k.removeprefix('null_')} {v:.3f}" for k, v in ns["nulls"].items())
             + ("" if ns["informative"] else "   <-- STATISTIC UNINFORMATIVE vs nulls"))

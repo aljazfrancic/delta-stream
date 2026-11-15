@@ -17,8 +17,8 @@ from layer_dynamics.diagnostics.sae_seed_stability import (
     layer_dictionary,
     load_dictionaries,
     null_status,
-    one_to_one_mean_cosine,
     pair_statistics,
+    pw_mcc,
     random_dictionary_like,
     reproduction_check,
     summarise,
@@ -57,15 +57,25 @@ def test_top_by_mass_orders_descending_and_truncates():
 def test_one_to_one_is_a_permutation_not_a_best_match():
     # both rows prefer column 0; a one-to-one matching must give one of them column 1
     cos = np.array([[0.9, 0.1], [0.8, 0.2]])
-    mean, n = one_to_one_mean_cosine(cos)
+    mean, n = pw_mcc(cos)
     assert n == 2 and mean == pytest.approx((0.9 + 0.2) / 2)
     assert cos.max(axis=1).mean() == pytest.approx(0.85)  # best-match is the looser number
 
 
 def test_one_to_one_rectangular_and_empty():
-    assert one_to_one_mean_cosine(np.zeros((0, 3))) == (0.0, 0)
-    mean, n = one_to_one_mean_cosine(np.array([[1.0, 0.0, 0.5]]))
+    assert pw_mcc(np.zeros((0, 3))) == (0.0, 0)
+    mean, n = pw_mcc(np.array([[1.0, 0.0, 0.5]]))
     assert n == 1 and mean == pytest.approx(1.0)
+
+
+def test_pw_mcc_takes_absolute_cosines_as_in_its_definition():
+    """A sign-flipped copy scores 1 on PW-MCC but 0 on the signed best-match statistic."""
+    d = _dict()
+    flipped = LayerDictionary(layer=d.layer, directions=-d.directions, mass=d.mass,
+                              latent_index=d.latent_index)
+    s = pair_statistics(d, flipped, top_n=10)
+    assert s["pw_mcc"] == pytest.approx(1.0)
+    assert s["match_top"] == 0.0 and s["match_all"] == 0.0
 
 
 # --- the statistic on known cases ---
@@ -76,7 +86,7 @@ def test_permuted_copy_is_perfectly_stable():
     s = pair_statistics(d, _permuted(d), top_n=10)
     assert s["match_top"] == 1.0 and s["match_all"] == 1.0
     assert s["mean_maxcos_all"] == pytest.approx(1.0)
-    assert s["onetoone_mean_cos"] == pytest.approx(1.0) and s["onetoone_n"] == d.n_alive
+    assert s["pw_mcc"] == pytest.approx(1.0) and s["pw_mcc_n"] == d.n_alive
 
 
 def test_independent_random_dictionaries_are_unstable():
@@ -111,9 +121,9 @@ def test_statistics_are_symmetric_in_the_pair():
     a, b = _dict(seed=0), _dict(n=30, seed=4)
     s, t = pair_statistics(a, b, top_n=10), pair_statistics(b, a, top_n=10)
     for k in ("match_top", "match_all", "mean_maxcos_top", "mean_maxcos_all",
-              "onetoone_mean_cos"):
+              "pw_mcc"):
         assert s[k] == pytest.approx(t[k])
-    assert s["onetoone_n"] == 30  # min(n_a, n_b)
+    assert s["pw_mcc_n"] == 30  # min(n_a, n_b)
 
 
 # --- nulls ---
@@ -159,7 +169,7 @@ def test_compare_pair_single_layer_skips_cross_layer_nulls():
 
 def test_summarise_averages_layers_then_pairs():
     base = dict.fromkeys(("match_all", "mean_maxcos_top", "mean_maxcos_all",
-                          "onetoone_mean_cos"), 0.0)
+                          "pw_mcc"), 0.0)
     rows = [  # pair A has 1 layer at 1.0; pair B has 3 layers at 0.0 → mean of means 0.5
         {"pair": "A", "kind": "real", "match_top": 1.0, **base},
         *[{"pair": "B", "kind": "real", "match_top": 0.0, **base} for _ in range(3)],

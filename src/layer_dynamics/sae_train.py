@@ -46,6 +46,20 @@ def _standardize_t(x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.T
     return xc / (std + 1e-5), mu, std
 
 
+def initial_decoder(d_in: int, n_latents: int, seed: int) -> torch.Tensor:
+    """The decoder ``W_dec[D, M]`` a :class:`TrainableSAE` starts from (unit-norm columns).
+
+    A pure function of ``(d_in, n_latents, seed)`` on a CPU generator, so it can be
+    regenerated after the fact — the v1.1 seed-stability analysis uses it to measure how
+    far trained latents moved from their initialisation. Note it does not depend on the
+    layer: every layer's SAE for a given seed starts from the same matrix.
+    """
+    g = torch.Generator().manual_seed(seed)
+    w = torch.randn(d_in, n_latents, generator=g)
+    w /= w.norm(dim=0, keepdim=True).clamp_min(1e-8)
+    return w
+
+
 class TrainableSAE(torch.nn.Module):
     """A residual SAE trainable in **topk** or **l1** mode (shared architecture).
 
@@ -64,9 +78,7 @@ class TrainableSAE(torch.nn.Module):
         self.mode = mode
         self.k = int(k)
         self.standardize = bool(standardize)
-        g = torch.Generator().manual_seed(seed)
-        w = torch.randn(d_in, n_latents, generator=g)
-        w /= w.norm(dim=0, keepdim=True).clamp_min(1e-8)
+        w = initial_decoder(d_in, n_latents, seed)
         self.W_dec = torch.nn.Parameter(w)                 # [D, M] unit-norm cols
         self.W_enc = torch.nn.Parameter(w.t().clone())     # [M, D] tied init
         self.pre_bias = torch.nn.Parameter(torch.zeros(d_in))

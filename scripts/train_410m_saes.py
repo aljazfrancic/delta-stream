@@ -110,13 +110,15 @@ def main(argv: list[str] | None = None) -> int:
     weights_path = out_npz.with_suffix(".weights.pkl")
     with open(weights_path, "wb") as f:
         pickle.dump({"mode": args.mode, "k": args.k, "n_latents": args.n_latents,
-                     "standardize": not args.no_standardize, "state_dicts": state_dicts}, f)
+                     "standardize": not args.no_standardize, "seed": int(args.seed),
+                     "state_dicts": state_dicts}, f)
     run.log(f"saved SAE weights -> {weights_path}")
 
     stats = {
         "model": mcfg["name"], "mode": args.mode, "n_latents": int(args.n_latents),
         "k": int(args.k), "l1_coeff": float(args.l1_coeff),
         "standardize": not args.no_standardize, "epochs": int(args.epochs),
+        "lr": float(args.lr), "seed": int(args.seed),
         "exclude_test": bool(args.exclude_test),
         "n_train_rows": int(len(train_rows)) if train_rows is not None else int(n),
         "n_examples": int(n), "n_source_layers": int(n_states - 1), "d_model": int(d),

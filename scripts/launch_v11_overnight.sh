@@ -3,6 +3,7 @@
 # systemd user unit, so it survives closing the terminal, the editor or an assistant
 # session — a plain background job dies with whatever started it.
 #
+#   scripts/launch_v11_overnight.sh check     # seconds: is everything in place? starts nothing
 #   scripts/launch_v11_overnight.sh           # start the full sweep (overnight)
 #   scripts/launch_v11_overnight.sh smoke     # start the few-minute smoke test instead
 #   scripts/launch_v11_overnight.sh status    # is it running? + the step log so far
@@ -23,7 +24,8 @@ case "$CMD" in
   start) UNIT=v11-seed-sweep;       ARGS=();        LOG=runs/v11-seeds-overnight.log ;;
   smoke) UNIT=v11-seed-sweep-smoke; ARGS=(--smoke); LOG=runs/v11-smoke.log ;;
   status|stop) ;;
-  *) echo "usage: $0 [start|smoke|status|stop]"; exit 2 ;;
+  check) exec bash scripts/run_v11_seeds.sh --check ;;
+  *) echo "usage: $0 [check|start|smoke|status|stop]"; exit 2 ;;
 esac
 
 if [ "$CMD" = status ] || [ "$CMD" = stop ]; then

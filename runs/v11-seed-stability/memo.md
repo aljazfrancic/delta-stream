@@ -12,6 +12,19 @@ protocol (`docs/`, untouched) and to paper v1.0.
 > only. Results will be appended below under a dated heading; this section and the
 > verdict table stay as written.
 
+> **STATUS UPDATE (2026-11-15, evening — the note above is the morning's record, left as
+> written).** The store has been **rebuilt and verified bit-level** against the tracked
+> records (`runs/2026-11-15-v11-recollect-verify-410md/memo.md`; the author signed off on
+> re-collecting, there being no backup). A **smoke test on the real store passed end to
+> end** (3 layers × 50 epochs through training, E1, six SSM-refit runs and the E2
+> summary — its numbers are from deliberately under-trained dictionaries and are **not
+> results**). A **full-length preview of the seed-0 gate passed exactly**: seed 0 retrained
+> at 1,000 epochs on layers 1–2 gives alive counts 345 / 777 (L1) and 152 / 190 (TopK)
+> and reconstruction R² identical to the recorded tables to the last digit, which also
+> confirms the unrecorded learning rate (1e-3) and that training is deterministic on this
+> machine. **The full run has still not been started**; criteria and verdict table below
+> are unchanged. Launch: `scripts/launch_v11_overnight.sh` (detached, resumable).
+
 ## Why
 
 Paper v1.0 says TopK dictionaries make single-feature directions "seed-unidentifiable"
@@ -128,8 +141,13 @@ the numbers are in.
 
 ## Commands
 
-    scripts/run_v11_seeds.sh --smoke    # 2 layers x 50 epochs, end to end
-    scripts/run_v11_seeds.sh            # full run, sequential, runs/v11-seeds-overnight.log
+    scripts/launch_v11_overnight.sh check    # preflight only; starts nothing
+    scripts/launch_v11_overnight.sh smoke    # 3 layers x 50 epochs end to end + gate preview
+    scripts/launch_v11_overnight.sh          # full run, detached, runs/v11-seeds-overnight.log
+    scripts/launch_v11_overnight.sh status   # / stop  (resumable: start again)
+
+(the launcher runs `scripts/run_v11_seeds.sh [--smoke]` as a systemd user unit so the
+run outlives the terminal that started it)
 
 which expands to, per mechanism and seed s ∈ {0, 1, 2}:
 
@@ -171,7 +189,11 @@ per-seed file is reused, not overwritten.
    reproducing the tracked tables, as above.
 3. The trainer now writes `lr` and `seed` into its tracked table and `seed` into the
    weights pickle (v1.0 recorded neither).
-4. **PW-MCC takes absolute cosines** (amended the same day, still before any run, after
+4. **The store is a rebuild, verified identical** (2026-11-15): see the status update at
+   the top. Two hard stops were added to the runner accordingly — store verification and
+   the seed-0 reproduction gate — plus atomic artefact writes and completion markers
+   after a smoke test killed mid-write left a truncated weights file.
+5. **PW-MCC takes absolute cosines** (amended the same day, still before any run, after
    reading Song et al.'s definition): the one-to-one statistic was first written with
    signed cosines, which is not the published metric it is reported "for comparability"
    with. The primary statistic and the verdict table are unaffected — both use the

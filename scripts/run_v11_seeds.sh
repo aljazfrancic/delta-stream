@@ -15,14 +15,21 @@
 #                                       #   full-length seed-0 preview of the reproduction
 #                                       #   gate on the first two layers. Writes only to
 #                                       #   git-ignored paths (runs/v11-smoke/, data/).
+#   scripts/run_v11_seeds.sh --check    # seconds: preflight only — is everything in
+#                                       #   place, and which steps are already done?
 #   scripts/run_v11_seeds.sh            # the full run, sequential, one log
 #   V11_DATE=2026-11-15 scripts/run_v11_seeds.sh   # resume a run started on that date
 #
-# Launch the full run detached, so it survives the terminal and blocks sleep:
+# Launch the full run detached, so it survives the terminal, the editor or an assistant
+# session (a plain background job dies with whatever started it):
 #
-#   systemd-inhibit --what=sleep:idle --why="v1.1 seed sweep" \
-#     setsid nohup bash scripts/run_v11_seeds.sh > runs/v11-seeds-launch.out 2>&1 &
+#   scripts/launch_v11_overnight.sh             # start | smoke | status | stop
 #   tail -f runs/v11-seeds-overnight.log        # progress: one START/DONE line per step
+#
+# Measured on the GTX 1050 (smoke test, 2026-11-15): one dictionary layer at 1,000
+# epochs takes ~1 min 55 s, so ~44 min per dictionary and ~4.4 h for the six. The six
+# SSM-refit runs are not measured at full size (estimate 30-60 min each). Plan for
+# 8-10 h; the dictionary-level answer (E1) is written after the first ~4.5 h.
 #
 # Sequential + unattended, continue-on-error, single log (the run_s2_seeds.sh pattern),
 # with two hard stops, because nothing downstream means anything if either fails:
@@ -45,10 +52,12 @@ CFG=configs/pythia-410m-deduped.yaml
 MODEL_DIR=data/pythia-410m-deduped
 DATE="${V11_DATE:-$(date +%F)}"
 SMOKE=0
+CHECK=0
 for arg in "$@"; do
   case "$arg" in
     --smoke) SMOKE=1 ;;
-    *) echo "unknown arg: $arg (known: --smoke)"; exit 2 ;;
+    --check) CHECK=1 ;;
+    *) echo "unknown arg: $arg (known: --smoke, --check)"; exit 2 ;;
   esac
 done
 
@@ -161,6 +170,21 @@ for npz, ref_path in zip(sys.argv[1::2], sys.argv[2::2]):
 sys.exit(0 if ok else 1)
 EOF
 }
+
+if [ "$CHECK" = 1 ]; then  # preflight passed; report what a start would do, then stop
+  have() { [ -e "$1" ] && echo "done" || echo "to do"; }
+  echo "preflight OK: store, tracked references and CUDA are all present"
+  echo "commit $(git rev-parse --short HEAD), working tree $([ -n "$(git status --porcelain)" ] && echo DIRTY || echo clean); run date $DATE"
+  v=$(grep -ls '"ok": true' runs/*-v11-recollect-verify-410md/tables/verify_stats.json 2>/dev/null | head -1)
+  echo "store verification: ${v:-not yet run — the sweep runs it first}"
+  for s in 0 1 2; do for mode in l1 topk; do
+    echo "  dictionary $mode seed $s: $(have "$(rundir "train-${mode}-s${s}-410md")/tables/sources_trained_${mode}.json")" \
+         "| SSM refits over it: $(have "$(step4_dir "$mode" "$s")/tables/sanity_stats.json")"
+  done; done
+  echo "  E1 summary: $(have "$(rundir e1-sae-seed-stability)/tables/e1_summary.json")" \
+       "| E2 summary: $(have "$(rundir e2-ssm-draw-stability)/tables/e2_summary.json")"
+  exit 0
+fi
 
 note "v1.1 seed sweep started ($([ "$SMOKE" = 1 ] && echo smoke || echo full), date $DATE, commit $(git rev-parse --short HEAD)$([ -n "$(git status --porcelain)" ] && echo ' DIRTY'))"
 

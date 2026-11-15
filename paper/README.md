@@ -2,7 +2,8 @@
 
 LaTeX source of
 **"How Residual-Stream Updates Travel Through Depth: A Pre-Registered Study of
-Cross-Layer Dynamics in Transformer Factual Recall"** (v1.0, 6 November 2026).
+Cross-Layer Dynamics in Transformer Factual Recall"** (v1.1 draft, 15 November 2026;
+v1.0 was 6 November 2026 — the appendix lists what changed).
 The built PDF is committed as [`paper.pdf`](paper.pdf); for how to cite it, see the
 [root README](../README.md#citation).
 

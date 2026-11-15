@@ -18,7 +18,7 @@ H1 holds but is largely architectural; H2 fails, which points to a first-order,
 depth-indexed state-space model. See [Status](#status) for the four headline
 findings.
 
-- **Paper (v1.0, 6 November 2026):** [paper/paper.pdf](paper/paper.pdf) · DOI [10.5281/zenodo.24036253](https://doi.org/10.5281/zenodo.24036253) (LaTeX source under [paper/](paper/))
+- **Paper (v1.1 draft, 15 November 2026):** [paper/paper.pdf](paper/paper.pdf) (LaTeX source under [paper/](paper/)). The archived v1.0 (6 November 2026) is DOI [10.5281/zenodo.24036253](https://doi.org/10.5281/zenodo.24036253); what changed is listed in the paper's appendix F.
 - **Original research proposal:** [docs/README.md](docs/README.md)
 - **Pre-registered protocol (frozen):** [docs/implementation-plan/](docs/implementation-plan/README.md)
 - **Glossary:** [docs/glossary.md](docs/glossary.md)
@@ -98,6 +98,9 @@ uv run layer-dynamics      # or: python -m layer_dynamics.cli
 ## Status
 
 **Complete.** Paper v1.0 released 2026-11-06; the on-box research programme closed 2026-07-05.
+A post-hoc **v1.1** revision is in preparation: it rewords one finding (what is re-seeded in
+the stability result), adds related work, and repackages the paper. It changes no
+pre-registered result — see the v1.1 section of [progress.md](progress.md).
 
 Four headline findings (pre-registered gates, frozen before data collection):
 
@@ -120,8 +123,9 @@ Gate 1 PASS (H1 holds, both
 nulls survive — but T4: the tautology-free AR-on-Δ structure is substantially
 *architectural*, two-family); Gate 2: H2 **fails** (non-stationary) → Branch B
 first-order state-space model, k\*≈1; Gate 3 **GO** (SSM beats the matched per-layer
-baseline, +0.049 [+0.046, +0.052] at the λ=1 knee on 410m; the TopK seed-instability
-was closed by an L1 source); Phase 4: causal existence proof = clean **null**
+baseline, +0.049 [+0.046, +0.052] at the λ=1 knee on 410m; the stability clause —
+per-feature write directions across SSM refits over one fixed dictionary — fails over
+the TopK source and passes over an L1 source); Phase 4: causal existence proof = clean **null**
 (distributed, magnitude-driven code); CLT comparison restated on three axes (fig08).
 Cross-model: 6 models / 3 families. The 4th-pass on-box action plan closed 2026-07-04:
 the Gate-3 state-path edge survives param-matching (+0.008 [+0.005, +0.010] beside the

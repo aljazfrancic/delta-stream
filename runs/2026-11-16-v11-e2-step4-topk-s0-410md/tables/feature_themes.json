@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Porsche 911 GT3",
+      "Nokia N8",
+      "Nokia N9",
+      "Toyota Supra",
+      "Nintendo DSi",
+      "Suzuki GT750",
+      "Nokia 808 PureView",
+      "Nintendo DS",
+      "Porsche 919 Hybrid",
+      "Honda CRF series"
+    ],
+    "feature": 118,
+    "home_layer": 17,
+    "mass": 24400.96875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Apple A8X",
+      "Apple A5",
+      "Apple A4",
+      "Apple IIe Card",
+      "Apple Watch",
+      "Honda NSR250",
+      "Xbox One",
+      "Google Earth",
+      "Toyota Sienna",
+      "Nissan Juke"
+    ],
+    "feature": 42,
+    "home_layer": 2,
+    "mass": 23979.169921875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "SCI-FI-LONDON",
+      "Berlin International Film Festival",
+      "London Indian Film Festival",
+      "Bristol & West",
+      "Oxford International Film Festival",
+      "Christopher Tugendhat, Baron Tugendhat",
+      "Nottingham Crown Court",
+      "London Independent Film Festival",
+      "Commerzbank",
+      "Dasht-e Azadegan County"
+    ],
+    "feature": 139,
+    "home_layer": 19,
+    "mass": 23247.5234375,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "language"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Microsoft HealthVault",
+      "Windows Phone 8",
+      "Microsoft Works",
+      "Internet Explorer 10",
+      "Microsoft Write",
+      "Google Finance",
+      "Apple A5",
+      "IBM 4300",
+      "Apple A8X",
+      "Microsoft Windows"
+    ],
+    "feature": 36,
+    "home_layer": 1,
+    "mass": 21492.80078125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Renault Twizy",
+      "Chevrolet Spark",
+      "Chevrolet Van",
+      "Suzuki GSX-R1000",
+      "Super Nintendo Entertainment System",
+      "New Nintendo 3DS",
+      "Nokia Internet tablet",
+      "People's Democratic Party of Afghanistan",
+      "Chevrolet TrailBlazer",
+      "Irish Citizen Army"
+    ],
+    "feature": 113,
+    "home_layer": 15,
+    "mass": 20633.29296875,
+    "purity": 0.8,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "organization",
+      "geography"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Google Reader",
+      "Yahoo! News",
+      "Jean Sorel",
+      "Emmanuelle Seigner",
+      "Koichi Kobayashi",
+      "Pierre Daniel Huet",
+      "Heikki Saari",
+      "Robert Buron",
+      "Pop Shalini",
+      "Jean Giraudoux"
+    ],
+    "feature": 132,
+    "home_layer": 2,
+    "mass": 17584.1953125,
+    "purity": 0.4,
+    "relations": [
+      "organization",
+      "organization",
+      "language",
+      "geography",
+      "geography",
+      "language",
+      "geography",
+      "language",
+      "geography",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Tapio Kantanen",
+      "Minamoto no Sanetomo",
+      "Noriyasu Hirata",
+      "Turkish coffee",
+      "Koichi Kobayashi",
+      "Ikki Kajiwara",
+      "Shigeaki Ikeda",
+      "Harashima",
+      "Nizampatnam",
+      "Etsuko Inoue"
+    ],
+    "feature": 165,
+    "home_layer": 19,
+    "mass": 17547.990234375,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "traditional Korean medicine",
+      "Japanese Pharmacopoeia",
+      "Irish Citizen Army",
+      "Iranian reform movement",
+      "Danish pastry",
+      "Montreal Light, Heat & Power",
+      "Shanghai Animation Film Studio",
+      "Communist Party of Indonesia",
+      "Lancaster Newspapers, Inc.",
+      "University of Washington"
+    ],
+    "feature": 184,
+    "home_layer": 15,
+    "mass": 16704.65234375,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Ameen Sayani",
+      "Rang De Basanti",
+      "Sunidhi Chauhan",
+      "Mukul Roy",
+      "Prasanna",
+      "Haseeb Ahsan",
+      "Henrique Maximiano Coelho Neto",
+      "Jiddu Krishnamurti",
+      "Guillaume-Antoine Olivier",
+      "Ghatanji"
+    ],
+    "feature": 357,
+    "home_layer": 21,
+    "mass": 16673.615234375,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Windows RT",
+      "BMW 700",
+      "BMW 501",
+      "IBM Parallel Sysplex",
+      "BMW M30",
+      "BMW M3",
+      "Google Latitude",
+      "Windows Live Mail",
+      "Nissan Leaf",
+      "Toyota Century"
+    ],
+    "feature": 33,
+    "home_layer": 7,
+    "mass": 15961.310546875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Google Talk",
+      "Google Earth",
+      "Google Account",
+      "Google Translate",
+      "iOS 8",
+      "Google Toolbar",
+      "Apple Watch",
+      "Microsoft Project",
+      "Microsoft Reader",
+      "Google Authenticator"
+    ],
+    "feature": 137,
+    "home_layer": 1,
+    "mass": 15664.404296875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Chrysler 200",
+      "Boeing 777",
+      "Xbox One",
+      "Microsoft Forefront Threat Management Gateway",
+      "McLaren MP4-25",
+      "Renault Fuego",
+      "Cadillac de Ville series",
+      "Chevrolet SSR",
+      "Apple A8",
+      "iOS 5"
+    ],
+    "feature": 143,
+    "home_layer": 18,
+    "mass": 15320.630859375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Renault 8",
+      "Renault 4CV",
+      "Renault Dauphine",
+      "Renault 14",
+      "Renault 12",
+      "Renault Twizy",
+      "Renault Fuego",
+      "Renault Juvaquatre",
+      "Renault R26",
+      "Cadillac de Ville series"
+    ],
+    "feature": 112,
+    "home_layer": 17,
+    "mass": 15158.2802734375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Dateline NBC",
+      "Koichi Kobayashi",
+      "Sergey Aksyonov",
+      "Marcel Mouloudji",
+      "Raymond Queneau",
+      "Yves Beneyton",
+      "Robert Buron",
+      "Marcelin Pleynet",
+      "Oleg Skripochka",
+      "NFL on NBC"
+    ],
+    "feature": 123,
+    "home_layer": 3,
+    "mass": 15076.1025390625,
+    "purity": 0.7,
+    "relations": [
+      "organization",
+      "geography",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "organization"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Cadillac STS Wheels",
+      "Toyota Mega Cruiser",
+      "Nokia Internet tablet",
+      "Renault Sport Spider",
+      "New Nintendo 3DS",
+      "Chevrolet Van",
+      "Toyota Porte",
+      "Bentley Continental GT",
+      "Renault Twizy",
+      "Toyota Avanza"
+    ],
+    "feature": 2,
+    "home_layer": 11,
+    "mass": 14451.9013671875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Boston and Maine Corporation",
+      "Swanson Mountains",
+      "Chad Basin",
+      "1931 Nicaragua earthquake",
+      "Boston Beer Company",
+      "Evans Peninsula",
+      "Iranian reform movement",
+      "2004 Istanbul summit",
+      "People's Democratic Party of Afghanistan",
+      "Baltimore Gas and Electric"
+    ],
+    "feature": 6,
+    "home_layer": 5,
+    "mass": 14076.15234375,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Montreal Light, Heat & Power",
+      "Canada Life Financial",
+      "Irish Citizen Army",
+      "Chicago Stock Exchange",
+      "Republican Left of Catalonia",
+      "Shanghai Electric",
+      "Norwegian Public Roads Administration",
+      "Vienna International Centre",
+      "University of Cambridge",
+      "Gianni Versace S.p.A."
+    ],
+    "feature": 156,
+    "home_layer": 15,
+    "mass": 13823.9423828125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "SCI-FI-LONDON",
+      "Rome Film Festival",
+      "16th London Turkish Film Festival",
+      "Japan Open Tennis Championships",
+      "Google Buzz",
+      "Google Now",
+      "Yahoo! News",
+      "Koichi Ishii",
+      "Manchester Business School",
+      "Google Calendar"
+    ],
+    "feature": 245,
+    "home_layer": 20,
+    "mass": 13681.0888671875,
+    "purity": 0.6,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "geography",
+      "geography",
+      "organization"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Honda Brio",
+      "New Nintendo 3DS",
+      "New Nintendo 3DS",
+      "Honda CBR250R",
+      "Renault Juvaquatre",
+      "Toyota Sports 800",
+      "Yamaha TZR250",
+      "Honda Wave series",
+      "Honda VFR800",
+      "Nintendo DSi"
+    ],
+    "feature": 126,
+    "home_layer": 19,
+    "mass": 13512.5908203125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Porsche 919 Hybrid",
+      "Honda Civic Hybrid",
+      "BMW 6 Series",
+      "Nissan GT-R",
+      "Bentley Continental GT",
+      "Wii U",
+      "Intel 80286",
+      "BMW X5",
+      "IBM Type-III Library",
+      "Nissan Skyline GT-R"
+    ],
+    "feature": 43,
+    "home_layer": 4,
+    "mass": 13430.3046875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  }
+]

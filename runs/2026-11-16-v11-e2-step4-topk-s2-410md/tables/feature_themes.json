@@ -1,0 +1,622 @@
+[
+  {
+    "examples": [
+      "Nokia Internet tablet",
+      "Chevrolet Spark",
+      "Google Marketing Platform",
+      "Adobe AIR",
+      "Chevrolet SSR",
+      "Chevrolet Van",
+      "Nokia N800",
+      "Toyota Vios",
+      "Yahoo! Tech",
+      "Windows RT"
+    ],
+    "feature": 194,
+    "home_layer": 7,
+    "mass": 24185.90625,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Adobe Audition",
+      "Adobe InDesign",
+      "Danish pastry",
+      "Google Account",
+      "Renault Symbol",
+      "Adobe Creative Cloud",
+      "Toyota Allion",
+      "Volvo C30",
+      "Volvo S70",
+      "Shanghai Electric"
+    ],
+    "feature": 142,
+    "home_layer": 2,
+    "mass": 24112.0625,
+    "purity": 0.8,
+    "relations": [
+      "organization",
+      "organization",
+      "geography",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "geography"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Pop Shalini",
+      "France Gall",
+      "Catherine de Vivonne, marquise de Rambouillet",
+      "Marcel Pagnol",
+      "Ikki Kajiwara",
+      "Sakichi Toyoda",
+      "Eiko Shimamiya",
+      "Claude d'Annebault",
+      "Takeshi Urata",
+      "Kumiko Ogura"
+    ],
+    "feature": 166,
+    "home_layer": 20,
+    "mass": 21967.5546875,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Pierre Alcover",
+      "Pierre Louis Prieur",
+      "Pierre Brice",
+      "Laurent Casanova",
+      "Marcel Pagnol",
+      "Joseph Paul-Boncour",
+      "Guillaume-Antoine Olivier",
+      "Pierre-Alexandre-Laurent Forfait",
+      "Pierre Fresnay",
+      "Raymond Queneau"
+    ],
+    "feature": 19,
+    "home_layer": 19,
+    "mass": 20983.318359375,
+    "purity": 0.8,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "geography",
+      "language",
+      "geography",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Nintendo DSi",
+      "Windows Phone 7",
+      "Sega Game Gear",
+      "Xbox Live",
+      "Nintendo DS",
+      "Toyota Supra",
+      "Porsche 919 Hybrid",
+      "Nissan Cima",
+      "Toyota Sports 800",
+      "Nintendo Entertainment System"
+    ],
+    "feature": 255,
+    "home_layer": 15,
+    "mass": 20173.3828125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Nokia Internet tablet",
+      "Windows RT",
+      "IBM General Parallel File System",
+      "Xeon",
+      "Microsoft Reader",
+      "Toyota Sprinter",
+      "Windows Live Mail",
+      "Toyota Vios",
+      "Adobe AIR",
+      "Nokia N800"
+    ],
+    "feature": 446,
+    "home_layer": 8,
+    "mass": 19131.3359375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Nissan Juke",
+      "Bentley State Limousine",
+      "Honda Domani",
+      "Renault Dauphine",
+      "Nissan Qashqai",
+      "Honda Orthia",
+      "Toyota Allion",
+      "Bentley Turbo R",
+      "Fiat Bravo",
+      "Honda Fit"
+    ],
+    "feature": 33,
+    "home_layer": 14,
+    "mass": 19054.11328125,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "France Gall",
+      "Marcel Pagnol",
+      "Pierre Brice",
+      "Pierre Fresnay",
+      "Julien Courbet",
+      "Laurent Casanova",
+      "Jean-Paul Belmondo",
+      "Jean Giraudoux",
+      "Claude Bartolone",
+      "Augustin Barruel"
+    ],
+    "feature": 30,
+    "home_layer": 20,
+    "mass": 18526.2578125,
+    "purity": 0.8,
+    "relations": [
+      "geography",
+      "geography",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Armand Lunel",
+      "Anna Bijns",
+      "Gautier de Coincy",
+      "Julien Dray",
+      "Ciboulette",
+      "Ginette Leclerc",
+      "Isabelle Nanty",
+      "Hendrick de Keyser",
+      "Kavkaz Center",
+      "Catherine Rouvel"
+    ],
+    "feature": 249,
+    "home_layer": 12,
+    "mass": 17065.369140625,
+    "purity": 1.0,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Adobe Captivate",
+      "Adobe Flash Builder",
+      "Adobe Illustrator",
+      "Adobe InDesign",
+      "Fiat 1100",
+      "Adobe Acrobat",
+      "Chevrolet Express",
+      "Chevrolet 210",
+      "Fiat 124 Sport Spider",
+      "Adobe Creative Cloud"
+    ],
+    "feature": 108,
+    "home_layer": 19,
+    "mass": 17040.193359375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Intel Pentium Dual-Core",
+      "BMW X6",
+      "Toyota Mark II",
+      "BMW 3 Series",
+      "BMW E38",
+      "Toyota RAV4",
+      "Honda HSV-010 GT",
+      "MacBook Pro",
+      "Google Street View",
+      "Toyota MR2"
+    ],
+    "feature": 114,
+    "home_layer": 5,
+    "mass": 15960.5029296875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Neklinovsky District",
+      "Chechen Republic",
+      "Kokkola",
+      "Kavkaz Center",
+      "Republic of Tatarstan",
+      "French Community of Belgium",
+      "First Czechoslovak Republic",
+      "Toyota ist",
+      "Cuba",
+      "Nokia Internet tablet"
+    ],
+    "feature": 42,
+    "home_layer": 9,
+    "mass": 15952.10546875,
+    "purity": 0.8,
+    "relations": [
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "organization",
+      "language",
+      "organization"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Montreal Convention",
+      "Harashima",
+      "Chicago Stock Exchange",
+      "Minamoto no Yoshinaka",
+      "Japan Open Tennis Championships",
+      "Beijing College Student Film Festival",
+      "Claude d'Annebault",
+      "K. R. Gowri Amma",
+      "Polish Socialist Party",
+      "University of New Mexico"
+    ],
+    "feature": 290,
+    "home_layer": 13,
+    "mass": 15719.525390625,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Nottingham Crown Court",
+      "Harvard Law School",
+      "Detroit Windsor International Film Festival",
+      "Geneva Film Festival",
+      "International Documentary Film Festival Amsterdam",
+      "Kennedy Space Center",
+      "London Indian Film Festival",
+      "2004 Istanbul summit",
+      "68th Venice International Film Festival",
+      "21st Ankara International Film Festival"
+    ],
+    "feature": 172,
+    "home_layer": 3,
+    "mass": 15496.8056640625,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Chinese Academy of Sciences",
+      "University of New Mexico",
+      "Sheffield United F.C.",
+      "2004 Istanbul summit",
+      "University of Kentucky",
+      "SCI-FI-LONDON",
+      "Shanghai Electric",
+      "Harvard Law School",
+      "Vienna International Centre",
+      "Madrid Conference of 1991"
+    ],
+    "feature": 205,
+    "home_layer": 6,
+    "mass": 15255.970703125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Czech Republic",
+      "Christine Boisson",
+      "Illinois",
+      "Wil Huygen",
+      "Canada",
+      "David Beckham",
+      "Chechen Republic",
+      "Jean Desailly",
+      "Laurent Lafitte",
+      "Freek de Jonge"
+    ],
+    "feature": 138,
+    "home_layer": 1,
+    "mass": 14903.5712890625,
+    "purity": 0.9,
+    "relations": [
+      "geography",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language",
+      "language"
+    ],
+    "top_class": "language"
+  },
+  {
+    "examples": [
+      "Duvvuri Subbarao",
+      "Sabeer Bhatia",
+      "Maud Olofsson",
+      "Shanta Kumar",
+      "Kenta Fukasaku",
+      "Yoshio Shirai",
+      "Andreas Carlsson",
+      "Espen Knutsen",
+      "Ulrica Arfvidsson",
+      "Nagendra Singh"
+    ],
+    "feature": 94,
+    "home_layer": 16,
+    "mass": 14753.236328125,
+    "purity": 1.0,
+    "relations": [
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography",
+      "geography"
+    ],
+    "top_class": "geography"
+  },
+  {
+    "examples": [
+      "Toyota Century",
+      "Google Authenticator",
+      "Adobe AIR",
+      "Toyota Allion",
+      "Chevrolet Impala",
+      "Toyota Hilux",
+      "Microsoft Reader",
+      "Toyota ist",
+      "New Nintendo 3DS",
+      "Fiat 124 Sport Spider"
+    ],
+    "feature": 125,
+    "home_layer": 5,
+    "mass": 14659.552734375,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "iOS 8",
+      "Adobe Captivate",
+      "AppleScript",
+      "Internet Explorer 5",
+      "Adobe Bridge",
+      "Adobe Media Player",
+      "Microsoft Excel",
+      "Steve Jobs",
+      "Google Authenticator",
+      "Internet Explorer Mobile"
+    ],
+    "feature": 195,
+    "home_layer": 22,
+    "mass": 14154.982421875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  },
+  {
+    "examples": [
+      "Nintendo 2DS",
+      "Google Earth",
+      "Microsoft Write",
+      "Toyota ist",
+      "Microsoft Digital Video Recording",
+      "New Nintendo 3DS",
+      "Google Finance",
+      "Xbox One",
+      "Apple A8X",
+      "Apple A5"
+    ],
+    "feature": 27,
+    "home_layer": 2,
+    "mass": 13974.98046875,
+    "purity": 1.0,
+    "relations": [
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization",
+      "organization"
+    ],
+    "top_class": "organization"
+  }
+]

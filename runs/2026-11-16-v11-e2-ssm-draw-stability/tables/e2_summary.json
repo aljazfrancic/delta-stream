@@ -1,0 +1,33 @@
+{
+  "bar": 0.7,
+  "mechanism_claim": "stands at n = 3 draws per mechanism",
+  "mechanism_claim_stands": true,
+  "mechanisms": {
+    "l1": {
+      "all_stable": true,
+      "all_unstable": false,
+      "max": 1.0,
+      "mean": 1.0,
+      "min": 1.0,
+      "n_draws": 3,
+      "per_draw": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "topk": {
+      "all_stable": false,
+      "all_unstable": true,
+      "max": 0.08,
+      "mean": 0.07222222222222223,
+      "min": 0.056666666666666664,
+      "n_draws": 3,
+      "per_draw": [
+        0.08,
+        0.056666666666666664,
+        0.08
+      ]
+    }
+  }
+}

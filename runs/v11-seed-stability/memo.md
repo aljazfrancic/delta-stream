@@ -25,6 +25,11 @@ protocol (`docs/`, untouched) and to paper v1.0.
 > machine. **The full run has still not been started**; criteria and verdict table below
 > are unchanged. Launch: `scripts/launch_v11_overnight.sh` (detached, resumable).
 
+> **STATUS UPDATE (2026-11-16 — the two notes above are earlier records, left as
+> written).** The full run is **complete** (00:24–06:50 CET, run date 2026-11-16, commit
+> `a225592`, no failed step). Both hard stops passed exactly. Results are under
+> *Results → 2026-11-16* below. Criteria and verdict table are unchanged.
+
 ## Why
 
 Paper v1.0 says TopK dictionaries make single-feature directions "seed-unidentifiable"
@@ -202,3 +207,97 @@ per-seed file is reused, not overwritten.
 ## Results
 
 *Pending — no runs yet (see the status note at the top).*
+
+(The line above is the pre-run placeholder, left as written.)
+
+### 2026-11-16 — full run
+
+**Run.** `scripts/launch_v11_overnight.sh` (systemd user unit), 00:24–06:50 CET, run date
+2026-11-16, commit `a225592`, no failed step; log `runs/v11-seeds-overnight.log`
+(git-ignored). Each dictionary took 43.8–44.7 min. Each SSM refit took 23–24 min (L1) or
+16–17 min (TopK), against the 30–60 min estimate. The E1 and E2 summary `run.log`s say
+`(dirty)`: the only changes to the tree at that point were this sweep's own new,
+untracked run directories. No tracked file was modified.
+
+**Hard stops.**
+- *Store:* verified on 2026-11-15
+  (`runs/2026-11-15-v11-recollect-verify-410md`), not re-run.
+- *Seed-0 reproduction gate:* **passed exactly.** Retrained seed 0 gives per-layer alive
+  counts identical to the tracked tables on all 23 layers (M\* 1,178 L1 / 660 TopK) and
+  reconstruction R² identical on every layer (difference 0; means 0.9311 / 0.9726).
+- *Seed-0 SSM-refit check:* `step4_sanity.py` over the retrained seed-0 dictionaries
+  writes `sanity_stats.json`, `seed_pairs.csv` and `feature_themes.json`
+  **byte-identical** to the recorded runs (`runs/2026-06-29-ph4-e2-step4-l1-410md`,
+  `runs/2026-06-30-ph4-e2-step4-topk-410md`). The v1.0 statistic (1.00 / 0.08) is
+  therefore reproduced, not just approached.
+
+**E1 — dictionary-level** (`runs/2026-11-16-v11-e1-sae-seed-stability/tables/`; seeds 0, 1,
+2; 23 layers; three seed pairs)
+
+| statistic | L1 | TopK |
+|---|---|---|
+| **primary**: match@0.7, top-100 by mass, best-match | **0.254** (pairs 0.251 / 0.255 / 0.255) | **0.035** (pairs 0.035 / 0.040 / 0.030) |
+| primary, per-layer range (mean over pairs) | 0.08 (ℓ18) – 0.42 (ℓ6) | 0.003 (ℓ8) – 0.15 (ℓ18) |
+| null_random / null_xlayer_cross_seed (primary) | 0.000 / 0.000 | 0.000 / 0.000 |
+| mean max-cosine, top-100 (null_random) | 0.515 (0.098) | 0.313 (0.091) |
+| match@0.7, all alive latents | 0.033 | 0.037 |
+| mean max-cosine, all alive | 0.213 | 0.354 |
+| one-to-one PW-MCC (abs cos), alive | 0.168 (null 0.101) | 0.337 (null 0.094) |
+| diag_xlayer_same_seed, primary | 0.055 | 0.014 |
+| init retention, all alive: mean cos / frac ≥ 0.7 | 0.876 / 0.880 | 0.401 / 0.323 |
+| init retention, top-100: mean cos / frac ≥ 0.7 | 0.475 / 0.308 | 0.570 / 0.558 |
+| alive per layer, min/mean/max over the 3 seeds | 267–1,244 (mean ≈ 820) | 152–686 (mean ≈ 387) |
+
+Both rows are **informative** under the frozen rule: worst null 0.000 for each, so
+neither null reaches 0.7. The 0.2-margin clause applies only to a real value that
+clears 0.7, and neither does. **Neither mechanism is stable.**
+
+**Verdict row: unstable | unstable**: "Neither mechanism gives reproducible
+dictionaries here."
+
+Notes for the write-up (observations, not new criteria):
+- **The two mechanisms are ranked differently by different statistics.** On the primary
+  statistic L1 is well above TopK (0.25 vs 0.035). Over all alive latents they are equal
+  (0.033 / 0.037). On one-to-one PW-MCC TopK is higher (0.34 vs 0.17). "L1 dictionaries
+  are more reproducible than TopK" therefore holds for the high-mass latents only and
+  should not be stated more broadly.
+- **The L1 dictionaries are largely initialisation-dominated.** 88% of alive L1 latents
+  keep cosine ≥ 0.7 with their own seed-specific initial column. Different seeds start
+  from different matrices, so these latents cannot match across seeds, which explains
+  the low all-alive figures. The high-mass L1 latents move further (31% retained). For
+  TopK the high-mass latents are the *more* init-retaining ones (56%). As the memo
+  anticipated, this is a statement about the regime (M = 8,192 > N = 1,555,
+  full-batch, 1,000 Adam steps at lr 1e-3, no dead-latent auxiliary loss), not about
+  SAEs trained at scale.
+- Every real cosine statistic sits well above its random null, so the dictionaries
+  share *some* structure across seeds, but on no layer does either mechanism come near
+  0.7 on the primary statistic.
+
+**E2 — SSM-level across dictionary draws**
+(`runs/2026-11-16-v11-e2-ssm-draw-stability/tables/`; per-draw runs
+`runs/2026-11-16-v11-e2-step4-{l1,topk}-s{1,2}-410md`)
+
+| draw (dictionary seed) | L1 match@0.7 (SSM-seed pairs) | TopK match@0.7 (SSM-seed pairs) |
+|---|---|---|
+| 0 (recorded run) | 1.00 (1.00–1.00) | 0.08 (0.07–0.09) |
+| 1 | 1.00 (1.00–1.00) | 0.057 (0.05–0.06) |
+| 2 | 1.00 (1.00–1.00) | 0.08 (0.07–0.09) |
+| mean [min, max] | **1.00 [1.00, 1.00]** | **0.072 [0.057, 0.08]** |
+| retrained seed 0, *check, not a draw* | 1.00, byte-identical tables | 0.08, byte-identical tables |
+
+Mean cosine of the paired write directions: L1 0.950 / 0.951 / 0.951, TopK 0.397 / 0.326 /
+0.394. SSM train R²: L1 0.875–0.877, TopK 0.859–0.864.
+
+All three L1 draws are ≥ 0.7 and all three TopK draws are below, so under the frozen
+rule **"it is the sparsity mechanism" stands at n = 3** for the SSM-level statistic.
+
+**Together.** The v1.0 number is correct and reproducible as a statement about
+*SSM refits over a fixed dictionary*: identified over L1 codes, unidentified over TopK
+codes, on each of three independently trained dictionaries per mechanism. It is **not**
+a statement about the dictionaries. Re-seeding the SAE itself gives non-reproducible
+dictionaries under both mechanisms in this regime. L1 retains more of its high-mass
+directions than TopK, but it is nowhere near "perfectly stable". Per the frozen table
+(row 2, with E2 standing): restrict "perfectly stable L1" to SSM refits over a fixed
+dictionary, scope the practitioner warning to downstream fits, and add dictionary-level
+non-reproducibility (both mechanisms, this regime) to Limitations. The exact wording is
+the author's call and is not applied here.

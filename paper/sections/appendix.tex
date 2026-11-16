@@ -80,9 +80,10 @@ step is verifiable from the public git history. The gates:
     was implemented on the SSM alone: it is refit from three initialisations
     over one fixed dictionary and features are paired by index
     (\cref{app:stats}). Version 1.0 neither listed this narrowing nor
-    described the statistic accurately; no dictionary was ever retrained
-    under a second seed, and the Gate-3 stability clause should be read
-    accordingly.
+    described the statistic accurately; within the pre-registered analyses
+    no dictionary was retrained under a second seed (the post-hoc check of
+    \cref{app:dictseeds} does so), and the Gate-3 stability clause should be
+    read accordingly.
 \end{enumerate}
 
 \section{Operating points and evaluation protocols}
@@ -329,9 +330,10 @@ statsmodels \citep{seabold2010statsmodels}, and the SAE suites cited in
 \section{Dictionary-level seed stability (post hoc)}
 \label{app:dictseeds}
 
-This check was added in version~1.1. Its design, primary statistic, nulls,
-tolerances and verdict criteria were committed before it was run
-(\code{runs/v11-seed-stability/memo.md}). On the primary model we retrained
+This check is post hoc, added after the analyses above were complete. Its
+design, primary statistic, nulls,
+tolerances and verdict criteria were committed, before it was run, to the
+run record \nolinkurl{runs/v11-seed-stability/memo.md}. On the primary model we retrained
 the L1 and TopK dictionaries of \cref{sec:decomposition:sources} at seeds 0,
 1 and 2 with the recorded recipe. Retrained seed~0 reproduces the recorded
 dictionaries exactly (alive counts and reconstruction $\Rsq$ on all 23

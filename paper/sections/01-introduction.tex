@@ -158,10 +158,14 @@ bottleneck. Factual recall in this model is a distributed, mass-driven code.
     $=0.08$ for one trained on the same activations, $0.45$ for the public
     suite), but are over a matched L1 dictionary trained on those activations
     ($1.00$). The model, the activations and the decomposition are held
-    fixed, so the contrast follows the dictionary. What is re-initialised is
-    the SSM, over one dictionary per mechanism; whether independently
-    \emph{trained} dictionaries agree with each other is a separate question,
-    which we do not measure (\cref{sec:evaluation:stability}).
+    fixed, so the contrast follows the dictionary, and a post-hoc check holds
+    it over three independently trained dictionaries per mechanism (L1 $1.00$
+    on each, TopK $0.06$--$0.08$). What this statistic re-initialises is the
+    SSM. The dictionaries themselves are another matter: in our regime,
+    dictionaries trained from different seeds share only 25\% (L1) and 3\%
+    (TopK) of their top-100 decoder directions at cosine $\ge 0.7$, so
+    neither mechanism gives reproducible dictionaries here
+    (\cref{sec:evaluation:stability}).
 \end{enumerate}
 
 Everything reproduces from tracked run tables via one script; the protocol

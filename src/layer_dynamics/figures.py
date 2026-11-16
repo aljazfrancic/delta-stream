@@ -639,13 +639,16 @@ def _gauge_bar_ax(ax, summary: dict[str, float], *,
     # gauge-dependent (R12), so only the fitted-gauge property is claimed here.
     # Neutral title: the first two bars are the per-feature statistics shown for
     # contrast, so "system-level ... are seed-stable" overtitled the panel.
-    ax.set_title("Per-feature vs system-level seed stability")
+    # "refit", not "seed" (v1.1): the SSM is refit over one fixed dictionary; the
+    # dictionaries themselves do not reproduce across training seeds (v1.1 E1).
+    ax.set_title("Per-feature vs system-level refit stability")
     for i, v in enumerate(vals):
         ax.text(i, v + 0.02, f"{v:.2f}", ha="center", fontsize=8)
     # E2 (2026-06-30) closed the per-feature story: instability is a property of the
     # TopK dictionary, not the model — keep that scope attached to the low red/blue bars.
+    # v1.1 E2 (2026-11-16): holds over three dictionary seeds per mechanism.
     ax.annotate("NB: per-feature instability is TopK-dictionary-specific —\n"
-                "a trained-L1 source reaches match@0.7 = 1.00",
+                "trained-L1 sources reach match@0.7 = 1.00 (all 3 dictionary seeds)",
                 xy=(0.02, 0.845), xycoords="axes fraction", ha="left", va="top",
                 fontsize=7, color="dimgray", bbox=_NOTE_BBOX)
     ax.legend()
@@ -671,8 +674,8 @@ def gauge_full(summary: dict[str, float], raw_cos: np.ndarray,
     ax.hist(imp_cos, bins=bins, alpha=0.6, color="tab:blue",
             label=f"gauge-inv Δ-contrib  (match@0.7 {summary['impulse_match@0.7']:.2f})")
     ax.axvline(0.7, color="k", ls=":", lw=1, label="0.7 threshold")
-    ax.set_xlabel("cross-seed cosine"); ax.set_ylabel("# features")
-    ax.set_title("Per-feature seed stability:\nraw decoder column vs gauge-invariant contribution")
+    ax.set_xlabel("cross-refit cosine"); ax.set_ylabel("# features")
+    ax.set_title("Per-feature refit stability:\nraw decoder column vs gauge-invariant contribution")
     ax.legend(fontsize=8)
     _gauge_bar_ax(axes[1], summary, spectrum_reldiff=spectrum_reldiff)
     fig.tight_layout()
@@ -997,11 +1000,11 @@ def depth_scaling(rows: list[dict],
         axR.scatter([], [], marker="*", s=110, color="lightgray", edgecolor="k",
                     linewidth=0.6, label="trained on own activations")
     axR.axhline(0.7, color="tab:red", ls="--", lw=1, label="0.7 bar")
-    axR.set_xlabel("depth $L$ (layers)"); axR.set_ylabel("seed match@0.7")
+    axR.set_xlabel("depth $L$ (layers)"); axR.set_ylabel("refit match@0.7")
     # "not depth" is the honest half; "source type" would overclaim — the 6L
     # EleutherAI TopK point sits at 0.99 (stable), so stability tracks the
     # specific source dictionary, not TopK-vs-L1 as a class (7th-pass review).
-    axR.set_ylim(0, 1.05); axR.set_title("Seed stability tracks the source dictionary, not depth")
+    axR.set_ylim(0, 1.05); axR.set_title("Refit stability tracks the source dictionary, not depth")
     axR.legend(fontsize=8, loc="center left"); axR.grid(alpha=0.3)
     # tick exactly the depths that exist (6/12/24) — the auto locator puts ticks
     # at 7.5/12.5 on this axis, which reads as non-integer layer counts.

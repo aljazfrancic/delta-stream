@@ -97,14 +97,17 @@ reconstruction gains --- are single-initialisation point estimates with no
 seed-level spread attached, so we hold them at ``about half'' and claim
 nothing finer. The stability statistic of \cref{sec:evaluation:stability}
 re-initialises the SSM over a fixed dictionary; it does not retrain the
-dictionary. We trained one L1 and one TopK dictionary on the primary model,
-one seed each, in a regime with more latents than training vectors per layer
-($M = 8{,}192 > N = 1{,}555$), full-batch and without an auxiliary
-dead-latent loss (\cref{sec:decomposition:sources}). The within-model
-L1-versus-TopK contrast is therefore a single matched pair, and it says
-nothing about whether SAEs trained at scale reproduce across seeds --- a
-question with its own literature \citep{paulo2026seeds,song2026consistency}
-that we did not test. Block-Toeplitz structure was always an approximation to test,
+dictionary. Our trained dictionaries sit in a regime with more latents than
+training vectors per layer ($M = 8{,}192 > N = 1{,}555$), fit full-batch and
+without an auxiliary dead-latent loss (\cref{sec:decomposition:sources}).
+Post hoc, the within-model L1-versus-TopK refit contrast holds over three
+dictionaries per mechanism, but the dictionaries themselves do not
+reproduce across training seeds under either mechanism, and 88\% of alive
+L1 latents keep cosine $\ge 0.7$ with their initialisation
+(\cref{app:dictseeds}). Both are
+statements about this regime: they say nothing about whether SAEs trained
+at scale on streaming activations reproduce across seeds --- a question
+with its own literature \citep{paulo2026seeds,song2026consistency}. Block-Toeplitz structure was always an approximation to test,
 not a derivation from the nonlinear architecture; H2's failure retires it.
 
 \paragraph{Interpretive.}

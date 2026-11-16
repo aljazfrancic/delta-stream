@@ -127,10 +127,11 @@ read the two against each other.
   is a 12L SAE-coverage prefix of a 24L model (full-coverage value $+0.072$).
   The right panel plots, across the zoo, how well the SSM's per-feature write
   directions are reproduced when the SSM is refit from a different
-  initialisation over the same dictionary (match@0.7; the panel's ``seed'' is
-  the SSM's, not the dictionary's), with the controlled within-model contrast
+  initialisation over the same dictionary (match@0.7), with the controlled
+  within-model contrast
   starred: on the same \pythia{} activations the refits agree over a trained
-  L1 dictionary ($1.00$) and not over a trained TopK one ($0.08$) --- the
+  L1 dictionary ($1.00$) and not over a trained TopK one ($0.08$), and the
+  contrast holds over three dictionary seeds per mechanism --- the
   dictionary, not the model or the depth, is what moves
   (\cref{sec:evaluation:stability}).}
   \label{fig:depthscaling}
@@ -252,7 +253,7 @@ at matched budget and in low data.
   \label{fig:clt}
 \end{figure}
 
-\subsection{Stability: the dictionary, not the model, controls identifiability}
+\subsection{Stability: the sparsity mechanism controls refit identifiability}
 \label{sec:evaluation:stability}
 
 Gate 3 recorded one failed clause, and what that clause measures needs
@@ -282,9 +283,14 @@ findings locate it (\cref{fig:stability}):
     and refitting the SSM over each: match@0.7 is
     \textbf{1.00 (L1)} versus \textbf{0.08
     (trained TopK)} versus 0.45 (pretrained MLSAE TopK), at the same
-    reconstruction win ($+0.041$--$+0.047$). One dictionary was trained per
-    mechanism, from one seed (\cref{sec:decomposition:sources}), so this
-    within-model contrast is a single matched pair. Not a width effect: the two
+    reconstruction win ($+0.041$--$+0.047$). Version~1.0 rested this on one
+    dictionary per mechanism, from one seed; post hoc, we trained two further
+    dictionaries per mechanism from different seeds with the same recipe and
+    refit the SSM over each: match@0.7 is 1.00 over all three L1
+    dictionaries and 0.08, 0.06 and 0.08 over the three TopK ones, so the
+    contrast is not a property of one draw (\cref{app:dictseeds}; the
+    retrained seed-0 dictionaries and the refits over them reproduce the
+    recorded runs exactly). Not a width effect: the two
     trained dictionaries have identical nominal width (8{,}192) and it is the
     \emph{stable} one whose alive set is larger (1{,}178 L1 vs 660 TopK), so
     stability is not bought by narrowness. Cross-model, L1 sources are stable on two further
@@ -320,16 +326,28 @@ plainly. A model fit \emph{downstream} of a TopK dictionary --- here the SSM
 --- can assign individual features write directions that a refit from a
 different initialisation does not reproduce, so a pipeline that names, steers
 or ablates features through such a fit should check that they survive a
-refit. Whether the TopK dictionaries themselves are reproducible across
-training seeds is a different question, with mixed evidence in the literature
-\citep{paulo2026seeds,song2026consistency}, and one we did not measure.
+refit. Whether the dictionaries themselves are reproducible across training
+seeds is a different question, with mixed evidence in the literature
+\citep{paulo2026seeds,song2026consistency}. A post-hoc check on our three
+seeds per mechanism finds that in this regime they are not, under either
+mechanism (\cref{app:dictseeds}): 25\% of the top-100 L1 latents per layer
+and 3\% of the TopK ones have a counterpart at cosine $\ge 0.7$ in a
+dictionary trained from another seed (random and cross-layer nulls: 0\%; no
+layer above 0.42 for L1 or 0.15 for TopK). L1 leads only on these high-mass
+latents --- over all alive latents the two are level, and under one-to-one
+matching (PW-MCC) TopK scores higher --- and 88\% of alive L1 latents still
+have cosine $\ge 0.7$ with their random initialisation. The perfect L1
+stability above is
+therefore a property of the SSM's readouts over a fixed L1 dictionary, not
+of the dictionary; dictionary reproducibility cannot be assumed here for
+either mechanism.
 
 \begin{figure}[t]
   \centering
   \includesvg[width=0.85\linewidth]{fig11_seed_stability}
   \caption{Per-feature vs system-level stability of the SSM across refits
-  from different initialisations, on the TopK (MLSAE) source; ``seed'' in the
-  panel labels is the SSM's, and the dictionary is fixed. Left: cross-refit
+  from different initialisations, on the TopK (MLSAE) source; the dictionary
+  is fixed. Left: cross-refit
   cosine of raw write directions (match@0.7 $=0.36$)
   and of gauge-invariant per-feature $\Delta$-contributions ($0.29$) ---
   gauge-invariance does not rescue single-feature identifiability. Right: the
@@ -341,7 +359,7 @@ training seeds is a different question, with mixed evidence in the literature
   in-panel note carries the resolution: the
   per-feature instability is specific to the TopK source --- over a
   trained-L1 source on the same activations the refits agree (match@0.7
-  $=1.00$).}
+  $=1.00$, on each of three L1 dictionaries trained from different seeds).}
   \label{fig:stability}
 \end{figure}
 

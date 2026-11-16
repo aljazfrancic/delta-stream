@@ -56,11 +56,13 @@ These trained dictionaries sit in an unusual regime, which bounds what they
 can support. Each layer's $M = 8{,}192$ latents are fit full-batch (Adam,
 1{,}000 steps) on that layer's $N = 1{,}555$ cached vectors --- more latents
 than training examples --- with no auxiliary loss to revive dead latents, so
-at most 1{,}178 (L1) and 660 (TopK) latents per layer are alive. We trained
-\emph{one} dictionary per mechanism, from a single random seed; the
-train-only L1 variant on the primary model shares that seed, so it is a
-leakage check, not a second draw. Nothing here licenses a claim about SAEs
-trained at scale on streaming activations.
+at most 1{,}178 (L1) and 660 (TopK) latents per layer are alive. Every
+analysis in version~1.0 uses \emph{one} dictionary per mechanism, from a
+single random seed; the train-only L1 variant on the primary model shares
+that seed, so it is a leakage check, not a second draw. A post-hoc check
+trains two further seeds per mechanism with the same recipe
+(\cref{sec:evaluation:stability,app:dictseeds}). Nothing here licenses a
+claim about SAEs trained at scale on streaming activations.
 
 \subsection{Optimisation and evaluation protocols}
 \label{sec:decomposition:opt}

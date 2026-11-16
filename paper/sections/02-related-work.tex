@@ -43,8 +43,10 @@ dictionaries, whose latents permute freely, so both must search for a
 matching. Our match@0.7 does neither: every refit shares one frozen
 dictionary, feature $j$ is the same atom in each, and the statistic asks
 whether a \emph{downstream} model's learned write direction for that atom is
-reproduced (\cref{app:stats}). We train one dictionary per mechanism, so the
-dictionary-level question is one this paper does not answer.
+reproduced (\cref{app:stats}). A post-hoc check asks the dictionary-level
+question of our own dictionaries, with a best-match statistic and with
+PW-MCC (\cref{app:dictseeds}); at 8{,}192 latents fit on 1{,}555 vectors per
+layer it is not comparable in scale to either study.
 
 \paragraph{Cross-layer dictionaries.}
 Crosscoders fit one dictionary with per-layer decoders across all layers at

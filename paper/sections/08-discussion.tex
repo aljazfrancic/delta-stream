@@ -44,7 +44,10 @@ caution we can support is about downstream fits: a pipeline that learns
 per-feature readouts over a TopK dictionary and then names, steers, or
 ablates \emph{individual} features should check those readouts survive a
 refit. Whether the dictionaries themselves survive retraining is a separate
-question \citep{paulo2026seeds,song2026consistency}, untested here.
+question \citep{paulo2026seeds,song2026consistency}; in our small-data
+regime they do not, under either mechanism (\cref{sec:evaluation:stability}),
+so the downstream caution adds to the dictionary-level one rather than
+replacing it.
 
 \paragraph{Consequences for factual-recall stories.}
 The causal null is not a failure to find structure; it is a measurement of

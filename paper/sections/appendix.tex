@@ -248,7 +248,8 @@ compared between two refits, pairing features \emph{by index}: every refit
 shares the same frozen dictionary, so feature $j$ is the same atom in each
 and there is no permutation to search over. match@0.7 is the fraction of
 those features with cosine $\ge 0.7$. It is silent on whether two
-independently trained dictionaries would contain the same atoms.
+independently trained dictionaries would contain the same atoms;
+\cref{app:dictseeds} measures that separately.
 \emph{Purity} is the largest relation class's share of a feature's top-100
 activating examples. \emph{Retention ratio} is a cross-condition $\Rsq$
 divided by the target condition's within-condition $\Rsq$; the tautology,
@@ -325,12 +326,78 @@ Software: PyTorch \citep{paszke2019pytorch}, TransformerLens
 statsmodels \citep{seabold2010statsmodels}, and the SAE suites cited in
 \cref{sec:decomposition:sources}.
 
+\section{Dictionary-level seed stability (post hoc)}
+\label{app:dictseeds}
+
+This check was added in version~1.1. Its design, primary statistic, nulls,
+tolerances and verdict criteria were committed before it was run
+(\code{runs/v11-seed-stability/memo.md}). On the primary model we retrained
+the L1 and TopK dictionaries of \cref{sec:decomposition:sources} at seeds 0,
+1 and 2 with the recorded recipe. Retrained seed~0 reproduces the recorded
+dictionaries exactly (alive counts and reconstruction $\Rsq$ on all 23
+trained layers), and SSM refits over it reproduce the recorded run tables
+byte for byte.
+
+For each pair of seeds and each layer we compare the decoder columns of the
+alive latents. \emph{Best-match}: each latent's largest \emph{signed} cosine
+against the other seed's alive latents, taken in both directions (codes are
+non-negative, so $d$ and $-d$ are different features). The primary
+statistic, fixed in advance, is the fraction of the top-100 latents by
+activation mass whose best match is $\ge 0.7$, averaged over layers and then
+over the three seed pairs; ``stable'' means $\ge 0.7$, the Gate-3 bar.
+\emph{PW-MCC} is the mean absolute cosine under the optimal one-to-one
+assignment \citep{song2026consistency}, restricted to alive latents. The two
+nulls are a random isotropic dictionary of matched size and the other seed's
+dictionary at the layer half the stack away. \emph{Init retention} is an
+alive latent's cosine with its own initial decoder column.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Dictionary-level seed stability on \pythia{} (three seeds per
+  mechanism, 23 layers; post hoc). The last row is the SSM-level statistic
+  of \cref{sec:evaluation:stability}, refit over each dictionary seed.}
+  \label{tab:dictseeds}
+  \begin{tabular}{lll}
+    \toprule
+    Statistic & L1 & TopK \\
+    \midrule
+    match@0.7, top-100 latents (primary) & 0.254 & 0.035 \\
+    \quad per seed pair & 0.251 / 0.255 / 0.255 & 0.035 / 0.040 / 0.030 \\
+    \quad range over layers & 0.08--0.42 & 0.00--0.15 \\
+    \quad random / cross-layer null & 0.000 / 0.000 & 0.000 / 0.000 \\
+    match@0.7, all alive latents & 0.033 & 0.037 \\
+    mean best-match cosine, top-100 (random null) & 0.52 (0.10) & 0.31 (0.09) \\
+    PW-MCC, alive latents (random null) & 0.17 (0.10) & 0.34 (0.09) \\
+    alive latents with init cosine $\ge 0.7$ & 88\% & 32\% \\
+    \quad among the top-100 & 31\% & 56\% \\
+    \midrule
+    SSM refit match@0.7, dictionary seeds 0 / 1 / 2 & 1.00 / 1.00 / 1.00 & 0.08 / 0.06 / 0.08 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Neither mechanism reaches the bar and both nulls are at zero, so the
+pre-committed verdict is that neither gives reproducible dictionaries in this
+regime. The real cosines sit well above their nulls, so the seeds do share
+some structure. The two mechanisms are ranked differently by different
+statistics, and the L1 dictionaries are largely initialisation-dominated:
+88\% of alive L1 latents keep cosine $\ge 0.7$ with their own seed-specific
+starting column, which no other seed shares. Both observations describe this
+regime --- more latents than training vectors, full-batch Adam for 1{,}000
+steps, no auxiliary loss --- not SAEs trained at scale, where
+\citet{paulo2026seeds} find L1 SAEs more seed-stable than TopK ones and
+\citet{song2026consistency} report PW-MCC around 0.80 for TopK. The SSM-level
+refit contrast holds on every draw.
+
 \section{Changes since version 1.0}
 \label{app:changes}
 
-Version 1.1 changes no result and re-runs nothing from the pre-registered
-protocol. Everything below is post-hoc and concerns how one finding is
-worded and what the paper is compared against.
+Version 1.1 changes no version-1.0 number and no pre-registered analysis.
+It adds one post-hoc experiment, which retrains the primary model's trained
+dictionaries at further seeds. Everything below is post-hoc and concerns how
+one finding is worded, what the paper is compared against, and that
+experiment.
 
 \begin{itemize}
   \item \emph{What ``seed'' means in the stability finding.} Version 1.0
@@ -352,8 +419,19 @@ worded and what the paper is compared against.
     seed-stability step is now listed in \cref{app:prereg} (deviation~8).
   \item \emph{Regime stated.} The trained dictionaries have more latents
     than training vectors per layer, are fit full-batch without an auxiliary
-    loss, and exist as one draw per mechanism
+    loss, and were one draw per mechanism in version~1.0
     (\cref{sec:decomposition:sources,sec:limitations}).
+  \item \emph{New post-hoc experiment.} Two further dictionary seeds per
+    mechanism on the primary model (\cref{app:dictseeds}). The SSM-level
+    refit contrast holds on each draw (L1 1.00, TopK 0.06--0.08); the
+    dictionaries themselves do not reproduce across seeds under either
+    mechanism in this regime. The abstract, contributions,
+    \cref{sec:related,sec:decomposition:sources,sec:evaluation:stability,sec:limitations,sec:discussion}
+    and the captions of \cref{fig:depthscaling,fig:stability} say so.
+  \item \emph{Figure labels.} \Cref{fig:depthscaling,fig:stability} label
+    the statistic ``refit'' stability where version~1.0 said ``seed''; the
+    in-panel note of \cref{fig:stability} now records that the L1 result holds
+    over three dictionary seeds. No plotted value changed.
   \item \emph{Related work added.} SAE seed consistency
     \citep{paulo2026seeds,song2026consistency}, depth as a dynamical system
     \citep{fernando2025transformer,fernando2026dynamics}, and random-baseline

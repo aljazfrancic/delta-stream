@@ -773,7 +773,7 @@ L 0 3.5
      </g>
     </g>
     <g id="text_10">
-     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="220.208739" y="285.478047" transform="rotate(-0 220.208739 285.478047)">cross-seed cosine</text>
+     <text style="font-size: 9px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="220.208739" y="285.478047" transform="rotate(-0 220.208739 285.478047)">cross-refit cosine</text>
     </g>
    </g>
    <g id="matplotlib.axis_2">
@@ -872,7 +872,7 @@ L 403.036776 33.802148
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_18">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(156.383739 15.799414)">Per-feature seed stability:</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(158.184521 15.799414)">Per-feature refit stability:</text>
     <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(88.736864 27.802148)">raw decoder column vs gauge-invariant contribution</text>
    </g>
    <g id="legend_1">
@@ -1136,10 +1136,10 @@ L 812.945866 33.802148
    <g id="text_39">
     <g id="patch_100">
      <path d="M 454.602915 87.360759 
-L 645.923853 87.360759 
-Q 647.673853 87.360759 647.673853 85.610759 
-L 647.673853 68.806931 
-Q 647.673853 67.056931 645.923853 67.056931 
+L 692.16979 87.360759 
+Q 693.91979 87.360759 693.91979 85.610759 
+L 693.91979 68.806931 
+Q 693.91979 67.056931 692.16979 67.056931 
 L 454.602915 67.056931 
 Q 452.852915 67.056931 452.852915 68.806931 
 L 452.852915 85.610759 
@@ -1148,10 +1148,10 @@ z
 " style="fill: #ffffff; opacity: 0.75"/>
     </g>
     <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(454.602915 74.826521)">NB: per-feature instability is TopK-dictionary-specific —</text>
-    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(454.602915 83.228435)">a trained-L1 source reaches match@0.7 = 1.00</text>
+    <text style="font-size: 7px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; fill: #696969" transform="translate(454.602915 83.228435)">trained-L1 sources reach match@0.7 = 1.00 (all 3 dictionary seeds)</text>
    </g>
    <g id="text_40">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="630.11783" y="27.802148" transform="rotate(-0 630.11783 27.802148)">Per-feature vs system-level seed stability</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="630.11783" y="27.802148" transform="rotate(-0 630.11783 27.802148)">Per-feature vs system-level refit stability</text>
    </g>
    <g id="legend_2">
     <g id="patch_101">

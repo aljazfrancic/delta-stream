@@ -34,7 +34,8 @@ separates what training installs from what the architecture supplies
 dynamics, but it is a different measurement: it neither tests H1/H2 nor
 estimates a reconstruction gain. Second, \emph{within a family, depth is confounded
 with width, parameter count and training-set size} on the depth-scaling series
-(\cref{sec:evaluation:depth}). One contrast partially deconfounds it: the
+(\cref{sec:evaluation:depth}), and the trend itself appears under one of our
+two evaluation protocols and not the other. One contrast partially deconfounds it: the
 Qwen2 prefix comparison holds the model, the activations, the dataset and the
 dictionary
 type fixed and varies only how many layers the fit covers (24 vs 12), and the
@@ -66,6 +67,10 @@ degenerate by construction (the dataset is filtered to model-correct facts),
 which is why the probe targets answer identity.
 
 \paragraph{Methodological.}
+The pre-registration is internal, and the repository's history confirms the
+freeze only from Phase~2 onward; for Phase~1 it rests on our own record
+(\cref{app:prereg}). Stationarity was tested at lags up to five and not
+beyond (\cref{sec:phase2:stationarity}).
 The held-out protocol is reconstruction-at-matched-sparsity (codes re-inferred
 on test $\Delta$ with frozen operators), standard for dictionary learning but
 not out-of-sample forecasting; all arms are treated identically and
@@ -86,14 +91,19 @@ first reported. Finally, the fitted state operator's spectral radius is
 minimum-Frobenius representative the regulariser selects, and rest the
 mechanism claim on the invariant state-path decay instead. An earlier version
 of this work asserted the invariance, and the correction is one of the reasons
-the operator section is phrased the way it is. The CLT comparison is the residual-write variant on
+the operator section is phrased the way it is. That decay is measured in a
+fit with sources at every layer and is conditional on it: where sources are
+withheld, a refit state carries signal six layers
+(\cref{sec:evaluation:operator}). The CLT comparison is the residual-write variant on
 frozen shared sources with per-pair rank $\le 64$; a natively-trained,
 jointly-sourced CLT could behave differently and remains the right off-box
 follow-up, and the protocol's other feature baseline, a crosscoder or
 shared-dictionary MLSAE, was not run at all (\cref{app:prereg},
 deviation~9). The SSM's edge over that CLT in parameter and data efficiency
 is measured on the primary model; on the smaller replication models it
-recovers as little as 30\% of the CLT's gain (\cref{sec:evaluation:clt}).
+recovers as little as 30\% of the CLT's gain, and the parameter edge is
+shared by a per-layer decoder of the SSM's size, with no cross-layer path
+(\cref{sec:evaluation:clt}).
 The state probe reads codes inferred against each example's whole update
 trajectory, so the state is not a depth-causal summary and its comparison
 with the raw residual stream is confounded (\cref{sec:evaluation:probe}).
@@ -105,7 +115,9 @@ network \emph{exceeds} the trained one), but the quantified shares ---
 GPT-2-small's 47\% learned AR structure and the ${\approx}$half-learned
 reconstruction gains --- are single-initialisation point estimates with no
 seed-level spread attached, so we hold them at ``about half'' and claim
-nothing finer. The stability statistic of \cref{sec:evaluation:stability}
+nothing finer. The reconstruction shares are also taken at equal penalty, not
+equal sparsity, which favours the untrained network
+(\cref{sec:evaluation:depth}). The stability statistic of \cref{sec:evaluation:stability}
 re-initialises the SSM over a fixed dictionary; it does not retrain the
 dictionary. Our trained dictionaries sit in a regime with more latents than
 training vectors per layer ($M = 8{,}192 > N = 1{,}555$), fit full-batch and

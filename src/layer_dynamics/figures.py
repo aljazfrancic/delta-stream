@@ -530,7 +530,7 @@ def clt_three_axis(
     axB.set_yticks(list(ys), [g[0] for g in model_gaps])
     axB.axvline(0, color="k", lw=0.8)
     axB.set_xlabel(r"SSM − CLT held-out $R^2$ (rank 32, 95% CI)")
-    axB.set_title("Matched per-decoder rank: small CLT edge everywhere")
+    axB.set_title("Matched per-decoder rank 32: a CLT edge on every model")
     axB.grid(alpha=0.3)
 
     axC.axhline(0, color="k", lw=0.8)

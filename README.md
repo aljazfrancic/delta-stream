@@ -99,7 +99,8 @@ uv run layer-dynamics      # or: python -m layer_dynamics.cli
 
 **Complete.** Paper v1.0 released 2026-11-06; the on-box research programme closed 2026-07-05.
 A post-hoc **v1.1** revision is in preparation: it rewords one finding (what is re-seeded in
-the stability result), adds related work, and repackages the paper. It changes no
+the stability result), corrects statements that the run tables and the repository history do
+not support (listed in the paper's App. G), adds related work, and repackages the paper. It changes no
 pre-registered result — see the v1.1 section of [progress.md](progress.md).
 
 Four headline findings (pre-registered gates, frozen before data collection):

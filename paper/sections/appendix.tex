@@ -5,11 +5,21 @@ The protocol was written as four frozen phase documents (diagnostic,
 characterisation, decomposition, evaluation) plus a research statement, before
 any data were collected; a separate progress tracker was the only mutable
 record, so no pre-registered bar could be edited after the fact. The
-registration is internal rather than platform-hosted, but it is auditable:
-the four phase documents are plain files in the released repository, present
-in its initial commit and thereafter edited exactly once, to remove a process
-line (no quantitative content), so their state at every analysis
-step is verifiable from the public git history. The gates:
+registration is internal rather than platform-hosted, and how far it can be
+audited depends on the phase. The four phase documents are plain files in the
+released repository, present in its initial commit and thereafter edited
+exactly once, to remove a process line (no quantitative content); the
+research statement gained one status note and is otherwise unchanged. That
+initial commit is dated 22~June 2026, the day Gate~1 was decided, and the
+tracker committed with it already records every Phase-1 step as done and
+Gate~1 as passed (the Phase-1 run records are dated 20--22~June). The public
+git history therefore shows the Phase 2--4 documents --- the stationarity
+test and its decision matrix, the Gate-3 criteria, the causal thresholds ---
+fixed before the analyses they govern, the first of which was committed later
+that day. For Phase~1 (H1, its two nulls, the Tuned-Lens gate and the Gate-1
+questions) it shows nothing either way, and that those documents preceded the
+data rests on our own record. Commit dates are in any case set by the
+committer, not by a third party. The gates:
 
 \begin{itemize}
   \item \textbf{Gate 1} (H1 supported above null?) --- \emph{PASS}, all six
@@ -165,7 +175,7 @@ across sections is protocol, not inconsistency:
     0.7879 / 0.7969 & frozen-source & SSM / CLT rank 32, validation-selected & the $-0.0090$ gap ($N{=}1{,}057$) \\
     0.8155 / 0.843 & frozen-source & SSM rank 64 / CLT rank 64 & budget axis; the $-0.027$ gap \\
     0.7531 / 0.7941 & frozen-source & SSM / CLT rank 16, shared grid & the $-0.041$ rank-16 gap \\
-    0.770 & frozen-source & rank 32, $\ell_{\max}{=}23$ & prefix sweep (\cref{fig:prefix}) \\
+    0.770$^{\ast}$ & frozen-source & rank 32, $\ell_{\max}{=}23$ & prefix sweep (\cref{fig:prefix}) \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -174,7 +184,11 @@ The LASSO protocol re-infers test codes against test $\Delta$ with frozen
 operators (reconstruction at matched sparsity; identical for both arms of
 every gap). The frozen-source protocol fits decoders on fixed cached codes
 and isolates decoder parameterisation; its levels sit uniformly lower. Gaps
-are only ever computed within a protocol.
+are only ever computed within a protocol. $^{\ast}$The prefix sweep has its
+own fit recipe (one regularisation setting and 250 Adam epochs, against 180
+epochs and a $\lambda_{\mathrm{reg}}$ grid for the CLT-family rows), which is
+why its full-source SSM ($0.770$) sits below the $0.793$ of the shared-grid
+row at the same rank.
 
 \section{Statistical details}
 \label{app:stats}
@@ -269,8 +283,8 @@ consequences we correct rather than hide:
 persistence-stripped $\Rsq$ \emph{exceeds} the trained network's
 ($0.503 > 0.436$), so T4's architectural verdict stands on the primary model.
 (ii) On GPT-2-small it does not ($0.439$ trained vs $0.233$ untrained; learned
-share $47\%$). (iii) Generic text, compared at the same $k$, retains an order
-of magnitude less tautology-free structure than factual text ($0.069$ vs
+share $47\%$). (iii) Generic text, compared at the same $k$, retains about a
+sixth of the tautology-free structure of factual text ($0.069$ vs
 $0.436$) --- the raw generic level of $0.88$ is $99.7\%$ drift.
 
 The CLT
@@ -320,7 +334,8 @@ SSM$-$baseline gap at $\lambda_{L1}{=}1$.
   directions across three refits of the SSM over the listed dictionary (the
   dictionary is fixed; \cref{app:stats}); where a
   row names two dictionaries it lists them in the same order, and ``---'' means
-  not measured (the SSM over the Qwen2 trained-L1 dictionary was fit once).}
+  not measured (the SSMs over the GPT-2-small and Qwen2 trained-L1
+  dictionaries were fit once each).}
   \label{tab:zoo}
   \begin{tabular}{llllll}
     \toprule
@@ -329,7 +344,7 @@ SSM$-$baseline gap at $\lambda_{L1}{=}1$.
     Pythia-70m-deduped   & 6  & 512  & 1{,}000 & EleutherAI 32k (TopK $k{=}16$) & 0.99 \\
     Pythia-160m-deduped  & 12 & 768  & 767     & MLSAE x64-k32 (TopK) & 0.38 \\
     \pythia{}            & 24 & 1024 & 1{,}555 & MLSAE x64-k32 (TopK) / trained L1 & 0.45 / 1.00 \\
-    GPT-2-small          & 12 & 768  & 1{,}358 & res-jb (L1) & 0.95 \\
+    GPT-2-small          & 12 & 768  & 1{,}358 & res-jb (L1) / trained L1 & 0.95 / --- \\
     GPT-2-medium         & 24 & 1024 & 1{,}795 & --- & --- \\
     GPT-2-large          & 36 & 1280 & 1{,}924 & --- & --- \\
     Qwen2-0.5B           & 24 & 896  & 2{,}540 & \citet{chanin2024qwensaes} (L1, 12L prefix) / trained L1 & 0.81 / --- \\
@@ -357,10 +372,12 @@ with a pinned environment (Python 3.12; \code{torch} 2.5.1+cu124;
 because it shaped the design (activation caching, alive-set compression,
 fp16 loading for the larger models, and the rank-128 CLT being infeasible).
 Every run logs its resolved config, git commit, seed, and library versions
-before doing any work. Numeric intermediates (CSV/JSON tables) are tracked in
+before doing any work; those per-run logs stay on the study machine, and the
+released record of a run is its tables and, where one was written, its memo.
+Numeric intermediates (CSV/JSON tables) are tracked in
 git; heavy artefacts (activation stores, checkpoints) are regenerable from
 scripts. A single entry point --- \code{scripts/reproduce.sh} --- checks the
-environment, runs the test suite (230 tests), asserts dataset sizes, and
+environment, runs the test suite (231 tests), asserts dataset sizes, and
 regenerates all 16 paper figures byte-identically from the tracked tables;
 \code{--toy-pipeline} additionally re-runs the full Pythia-70m lane end to
 end. Code, protocol documents, and the progress tracker are released with
@@ -446,9 +463,9 @@ adds one post-hoc experiment, which retrains the primary model's trained
 dictionaries at further seeds, and it corrects statements that version~1.0
 worded more strongly than its own run tables support. Everything below is
 post hoc. The first seven items concern how the stability finding is worded,
-what the paper is compared against, and the new experiment; the last four
-are corrections found by re-reading the paper against its tables, code and
-protocol.
+what the paper is compared against, and the new experiment; the last five
+are corrections found by re-reading the paper against its tables, code,
+protocol and repository history, the final one from a second such pass.
 
 \begin{itemize}
   \item \emph{What ``seed'' means in the stability finding.} Version 1.0
@@ -536,7 +553,58 @@ protocol.
     for all three seeds; the write-direction subspace overlap
     (${\sim}0.6$) is no longer listed among the stable statistics; the
     summary of \citet{fernando2026dynamics} follows their body text; and
-    the test count in \cref{app:repro} is 230, up from 208, for the new
+    the test count in \cref{app:repro} is 231, up from 208, for the new
     tooling.
+  \item \emph{Second re-read.} Three statements were wrong and six claimed
+    more than their evidence; all nine were in version~1.0.
+    (i)~\Cref{app:prereg} said the state of the phase documents at every
+    analysis step was verifiable from the public git history. That history
+    begins after Gate~1, so it confirms the freeze for Phases 2--4 only;
+    the appendix, \cref{sec:phase1:setup} and \cref{sec:limitations} now say
+    so.
+    (ii)~\Cref{sec:phase2:stationarity,sec:phase2:scope} read principal
+    angles of 57--62$^\circ$ against a 90$^\circ$ reference and concluded
+    that the kernels share structure. For rank-256 subspaces of
+    $\mathbb{R}^{1024}$ chance is ${\approx}63^\circ$; the angles are at
+    chance and the conclusion is withdrawn.
+    (iii)~\Cref{sec:phase2:stationarity} said long-horizon stationarity was
+    rechecked on the fitted model and failed. The recheck is defined for the
+    branch the study did not take and never ran; stationarity beyond lag 5
+    is untested.
+    (iv)~The growth of the reconstruction gain with depth holds for the knee
+    gap under the LASSO protocol and not for the same contrast under the
+    frozen-source protocol, where the six-layer model gains as much as the
+    24-layer one. \Cref{sec:evaluation:depth} carries this as a sixth
+    caveat; the abstract, the introduction and \cref{sec:evaluation:clt}
+    name the protocol.
+    (v)~\Cref{sec:evaluation:gate3} called the headline gap
+    dictionary-independent. It is the same over two dictionaries, $+0.038$
+    over a third, and on GPT-2-small it is $+0.0175$ or $+0.143$ depending
+    on the dictionary; the second number was not reported before.
+    (vi)~\Cref{sec:evaluation:clt,sec:discussion} and the contributions
+    credited the SSM's parameter efficiency against the CLT to the state. A
+    per-layer decoder of the same size does as well under that protocol,
+    and the text now says so.
+    (vii)~The untrained-network shares of the gain ($53\%$, $44\%$) compare
+    gaps at equal penalty; the untrained SSM runs 1.3--1.8$\times$ denser
+    than its baseline, so they are upper estimates of the architectural
+    share (\cref{sec:evaluation:depth}).
+    (viii)~T2 is zero by construction, and ``tautology'' is an attribution
+    by subspace, not a mechanical identity
+    (\cref{sec:phase1:setup,sec:phase1:pressure}); \cref{sec:discussion} no
+    longer calls that share definitional.
+    (ix)~The state path's short memory is conditional on sources at every
+    layer: the prefix sweep's own rows show a refit state carrying signal
+    six layers. \Cref{sec:evaluation:operator,sec:evaluation:prefix} no
+    longer say that the increments forget or that propagation cannot
+    substitute.
+    Smaller: three ``order of magnitude'' statements are now ``about six
+    times'' ($0.069$ against $0.436$); the probe's scope sentence gives the
+    early and mid-depth comparison with the raw stream and the state's
+    relation-class accuracy; \cref{tab:operating} explains its prefix-sweep
+    row; \cref{tab:zoo} lists the GPT-2-small trained-L1 dictionary;
+    \cref{app:repro} says the per-run logs are not part of the release; and
+    the title of the middle panel of \cref{fig:clt} no longer calls the CLT
+    edge small on every model (no plotted value changed).
 \end{itemize}
 

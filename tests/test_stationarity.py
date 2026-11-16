@@ -112,6 +112,23 @@ def test_principal_angles_identical_and_orthogonal():
     assert np.allclose(principal_angles_deg(a, b), 90.0, atol=1e-4)     # orthogonal
 
 
+def test_principal_angles_chance_level_at_the_paper_dimensions():
+    """Chance is not 90° when the subspaces are a quarter of the ambient space.
+
+    The stationarity and token-position analyses compare rank-256 output subspaces
+    in R^1024. Two random subspaces of that size have mean squared principal cosine
+    r/D = 1/4 and a mean principal angle of about 63°, which is the reference the
+    paper quotes for the measured 57–62°.
+    """
+    rng = np.random.default_rng(0)
+    d, r = 1024, 256
+    a, _ = np.linalg.qr(rng.standard_normal((d, r)))
+    b, _ = np.linalg.qr(rng.standard_normal((d, r)))
+    angles = principal_angles_deg(a, b)
+    assert 62.0 < float(np.mean(angles)) < 64.0
+    assert abs(float(np.mean(np.cos(np.radians(angles)) ** 2)) - r / d) < 0.01
+
+
 def test_top_subspaces_shapes_and_orthonormal():
     coef = np.random.default_rng(0).standard_normal((20, 8))
     u, v = top_subspaces(coef, 4)

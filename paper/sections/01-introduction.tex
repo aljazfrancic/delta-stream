@@ -84,11 +84,14 @@ positive result (\cref{sec:evaluation}): cross-layer state reconstructs
 residual updates above a matched per-layer dictionary at every sparsity
 ($+0.049$ $\Rsq$ \CI{$+0.046$}{$+0.052$} at matched rank, $+0.008$
 \CI{$+0.005$}{$+0.010$} at matched total parameters), the gain grows
-monotonically with depth within Pythia (6 layers $+0.008 \to$ 24 layers
+monotonically with depth within Pythia under the protocol that produces this
+headline (6 layers $+0.008 \to$ 24 layers
 $+0.050$; the sign, though not the trend, replicates at one point each in
-GPT-2 and Qwen2), and about half of it is present at
+GPT-2 and Qwen2; under our second protocol the six-layer gain equals the
+24-layer one, \cref{sec:evaluation:depth}), and about half of it is present at
 random initialisation --- so the method captures a genuinely learned signal
-roughly equal in size to the architectural one. The fitted model's
+roughly equal in size to the architectural one, and larger once sparsity is
+matched. The fitted model's
 gauge-invariant state path attenuates by half per layer of depth gap (implied
 memory $\approx 1.2$ layers), consistent with --- and supplying a candidate
 mechanism for --- the observed first-order structure, and the state is
@@ -105,8 +108,8 @@ roughly-half-learned split against untrained controls, the gauge-invariant
 state-path decay, and the state's functional informativeness for the
 recalled answer. Those structural results, not the headline gap, carry the
 paper's positive claims --- and the depth series carries its own confounds
-($N$, width, dictionary type; \cref{sec:evaluation:depth}), so we lean on it
-least.
+($N$, width, dictionary type, and the evaluation protocol;
+\cref{sec:evaluation:depth}), so we lean on it least.
 
 The pre-registered causal test --- find a feature no baseline finds, ablate
 it, predict the behavioural consequence --- returns a null we consider one of
@@ -135,15 +138,17 @@ mass-driven code.
     (\cref{sec:phase1,sec:phase2}).
   \item A first-order, fully depth-indexed SSM decomposition of $\Dl$ over
     sparse per-layer sources, with a reconstruction gain over matched
-    per-layer baselines that is CI-significant, depth-graded, and
-    approximately half learned / half architectural
+    per-layer baselines that is CI-significant, depth-graded within Pythia
+    under the headline protocol, and approximately half learned / half
+    architectural
     (\cref{sec:decomposition,sec:evaluation}).
   \item A three-axis comparison against the unconstrained $O(L^2)$
     residual-write CLT parameterisation: at matched per-decoder rank the CLT
     keeps a significant edge on every model tested; on the primary model, the
-    SSM Pareto-dominates at matched \emph{total} parameters up to 52M and
-    generalises better once the training set is cut below ${\sim}1$k examples
-    (\cref{sec:evaluation:clt}).
+    SSM Pareto-dominates the CLT at matched \emph{total} parameters up to 52M
+    --- as does a per-layer decoder of the same size, so the saving is not
+    the state's --- and generalises better than the CLT once the training set
+    is cut below ${\sim}1$k examples (\cref{sec:evaluation:clt}).
   \item A clean, fully controlled causal null: recall is distributed and
     magnitude-driven, with no privileged sparse subset --- established with
     post-hoc matched-count, matched-mass, and norm-matched random-direction

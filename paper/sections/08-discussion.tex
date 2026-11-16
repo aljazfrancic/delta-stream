@@ -4,7 +4,8 @@
 \paragraph{What kind of thing is depth structure?}
 The composite picture is specific enough to be useful. Residual updates are
 predictable across depth, but the predictability decomposes into (i) a
-running-sum persistence term that is definitionally there, (ii) a genuine
+share carried by slow drift along a few persistent state directions, which
+we set aside as uninformative, (ii) a genuine
 increment-level structure that a randomly initialised network already
 exhibits --- substantially so on \pythia{}, where the untrained network in
 fact exceeds the trained one; about half of it on GPT-2-small ---
@@ -13,7 +14,9 @@ and (iii) a learned component that only becomes visible in the
 majority at sparse operating points. Meanwhile the dynamics are pervasively
 non-stationary in depth, first-order, and --- per the fitted model's
 gauge-invariant state path --- attenuating by half per layer of gap, a
-one-layer memory. A transformer, on this evidence, does
+one-layer memory (measured with sources at every layer, which leaves the
+state little to carry; \cref{sec:evaluation:operator}). A transformer, on
+this evidence, does
 not implement a depth-shared propagation rule; it implements a different
 small-memory rule at every layer, over features that persist via the additive
 stream itself rather than via the incremental dynamics. The Granger reach of
@@ -30,14 +33,20 @@ our attempt to compress that family along depth was the pre-registered
 falsifier, and it failed in CLT's favour. The quantitative comparison then
 adds the budget-conditional half of the story: the free decoders buy a real
 margin on every model we tested. On the primary model that margin is small
-and data-bought, and a first-order state captures about four fifths of the
-cross-layer value at a sixth of the parameters and generalises better once
+and data-bought, and a first-order state recovers about four fifths of the
+CLT's gain over a rank-matched per-layer decoder at a sixth of the
+parameters and generalises better once
 the training set falls below $10^3$ examples. On the smaller replication
 models the state recovers less of the CLT's gain, as little as 30\% on
-GPT-2-small (\cref{sec:evaluation:clt}). For practitioners the operational
+GPT-2-small (\cref{sec:evaluation:clt}). A per-layer decoder widened to the
+state's parameter count recovers as much as the state does, so on frozen
+sources the parameter saving comes from not fitting a decoder per layer
+pair, not from the state. For practitioners the operational
 reading is therefore conditional: where the free decoders cost several times
-the parameters, as on our primary model, a depth-indexed state is the better
-spend under a parameter or data budget; if you need maximum fidelity and
+the parameters, as on our primary model, they are the poor spend under a
+parameter budget, and under a data budget the depth-indexed state beat them
+(we did not run the wide per-layer decoder there); if you need maximum
+fidelity and
 have data, free per-pair decoders are not redundant. Our stability finding
 adds an orthogonal
 caution: the SSM's write directions for individual features were not

@@ -9,7 +9,9 @@ The full protocol --- four phases, per-step procedures, three go/no-go gates,
 null controls, decision matrices, and the causal-evaluation thresholds --- was
 written and frozen before any data were collected. Progress and deviations
 were recorded exclusively in a separate tracker so that no pre-registered bar
-could drift. Every deviation from the plan that we know of --- threshold
+could drift. The registration is internal, and the repository's history can
+confirm the freeze from Phase~2 onward but not for Phase~1
+(\cref{app:prereg}). Every deviation from the plan that we know of --- threshold
 adjustments sanctioned by the plan's own tuning rules, descoping decisions,
 and baselines run in a narrower form than registered --- is enumerated in
 \cref{app:prereg}. The three gates:
@@ -72,7 +74,11 @@ twice: raw, and after the tautology accounting of
 \cref{sec:phase1:pressure}. The pre-registered scrambled null does \emph{not}
 separate the two (permuting examples independently per depth destroys genuine
 structure and tautology together), which is exactly why the pressure battery
-exists.
+exists. One point of vocabulary: ``tautology'' is our shorthand for the share
+of the predictability that this persistent component carries. It is an
+attribution by subspace, not a mechanical identity; a running sum with
+independent steps has no such predictability at all (T2,
+\cref{sec:phase1:pressure}).
 
 \subsection{Cheap diagnostic: ridge from the state, against a calibrated lens}
 \label{sec:phase1:ridge}
@@ -276,11 +282,17 @@ that like-for-like table.
 \paragraph{T2 --- persistence-matched surrogate.}
 A random walk with independent per-layer Gaussian steps matched to each
 $\Dl$'s mean and (rank-256) covariance --- all persistence, no cross-layer
-dependence --- scores $\Rsq = \mathbf{0.0000}$. State persistence alone
-reproduces \emph{none} of the AR-on-$\Delta$ predictability (for AR on
-increments, the $\mathrm{Var}(\vl)$ contributions to
-$\mathrm{Cov}(\Dl,\Delta_{\ell-1})$ cancel in expectation under independent
-steps), so the scramble floor was already the honest floor.
+dependence --- scores $\Rsq = \mathbf{0.0000}$. That is what the algebra
+requires, so T2 checks the pipeline and says nothing about the network:
+autoregression on the increments of an independent-step walk is zero in
+expectation whatever the states' covariance (the $\mathrm{Var}(\vl)$
+contributions to $\mathrm{Cov}(\Dl,\Delta_{\ell-1})$ cancel). What it does
+settle is the vocabulary. State persistence does not by itself make
+consecutive updates predictable from one another, so the scramble floor was
+already the honest floor, and the share T5 calls tautological is real
+dependence between updates that happens to lie in the persistent subspace
+(slow drift along a few high-variance directions). We set that share aside
+as the least informative part of H1, not as an artefact.
 
 \paragraph{T3 --- lag$\ge$2 Granger, free of the shared term by construction.}
 The shared $\mp\vl$ term couples only lag 1 ($\Delta_{\ell-2}$ shares no
@@ -288,9 +300,9 @@ state term with $\Dl$). Restricting the grid to lags $\ge 2$:
 \textbf{89/89} cells significant (real) versus \textbf{0/89} (null),
 identically on factual and generic stores. Depth dependence beyond the
 mechanical overlap is total. (Strictly, T3 removes the algebraic overlap, not
-the correlation that persistence induces between $\Dl$ and $\Delta_{\ell-2}$;
-T2 is what rules the latter out, by showing that persistence with no
-cross-layer dependence scores zero. The two controls are complements.)
+any correlation that persistence might induce between $\Dl$ and
+$\Delta_{\ell-2}$; the argument behind T2 covers that, since persistence with
+no cross-layer dependence induces none.)
 
 \paragraph{T4 --- untrained-network control (deflationary, and one-family).}
 Running the identical battery on a \emph{randomly initialised} \pythia{}
@@ -333,8 +345,8 @@ families differ, and we flag it as the most interesting loose end in
   gradually and saturates at $0.44 \gg$ null; the generic store --- whose top
   direction alone is 96\% of state variance --- collapses on the very first
   direction and reaches $0.07$ by $m{=}50$. Nearly all of the raw generic
-  level was persistence, and what survives is an order of magnitude weaker
-  than the factual store's.}
+  level was persistence, and what survives is about six times weaker than
+  the factual store's.}
   \label{fig:t1}
 \end{figure}
 

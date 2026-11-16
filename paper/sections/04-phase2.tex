@@ -26,18 +26,25 @@ hard case). \emph{Relative Frobenius distance}
 $\|W_a - W_b\|_F / \tfrac12(\|W_a\|_F + \|W_b\|_F)$ between band kernels is
 1.39--1.42, straddling the value $\sqrt 2$ that two orthogonal equal-norm
 kernels would take (the metric's ceiling is 2, at $W_a = -W_b$);
-\emph{principal angles} between kernel output subspaces average
-57--62$^\circ$ --- well short of the 90$^\circ$ two random subspaces would give,
-so the kernels share structure even as their transfer collapses; and a
+\emph{principal angles} between the kernels' rank-256 output subspaces
+average 57--62$^\circ$, which is the chance level and not a sign of shared
+structure: two random 256-dimensional subspaces of $\mathbb{R}^{1024}$ average
+${\approx}63^\circ$, not 90$^\circ$ (their mean squared cosine is
+$r/D = 1/4$), so one pair sits at chance, one two degrees inside it and the
+closest six degrees inside, and kernels fit to the same anisotropic targets
+would overlap by chance more than isotropic subspaces do, if anything --- the
+angles say what the Frobenius distance says; and a
 \emph{bootstrap} within bands puts the between-band
 distance \textbf{80--104 standard deviations} above within-band sampling
 spread. Crucially there is \emph{no clean phase boundary}: the three pairwise
 distances are equal to within 3\%, so adjacent bands differ as much as distant
 ones --- the depth dependence is \textbf{pervasive drift}, not segmentation.
 
-Three caveats travel with this result: the cap makes it a short-horizon test
-(long-horizon stationarity is rechecked, and also fails, on the fitted
-generative model); AR-on-$\Delta$ stationarity is a proxy for H2's generative
+Three caveats travel with this result: the cap makes it a short-horizon
+test, and stationarity at longer lags is untested --- the protocol deferred
+it to a recheck on the fitted generative model that it defines only for the
+shared-kernel branch, so after the routing below that recheck did not run;
+AR-on-$\Delta$ stationarity is a proxy for H2's generative
 (MA) form --- but a proxy whose failure is decisive in the rejecting
 direction; and the $\pm\vl$ shared term biases the comparison \emph{toward}
 stationarity, so rejection is the conservative outcome.
@@ -115,11 +122,12 @@ refitting AR($\kstar{=}1$) per position: within-position held-out $\Rsq$ is
 positive at every position (0.28--0.55), while \textbf{eleven of the twelve
 cross-position transfers are negative} (mean $-0.36$; the lone exception,
 last-subject-token $\to$ mid-prompt, reaches $+0.024$, i.e.\ it recovers
-$5\%$ of that position's own $\Rsq$). The kernels separate exactly as the depth
+$5\%$ of that position's own $\Rsq$). The kernels separate as the depth
 bands do --- relative Frobenius 1.25--1.46, straddling the $\sqrt2$ of
-orthogonality, with mean principal angles 57--60$^\circ$ that (as in
-\cref{sec:phase2:stationarity}) stay well inside the 90$^\circ$ of independent
-subspaces: shared structure, no transfer, now across positions. The scrambled
+orthogonality, with mean principal angles 57--60$^\circ$, three to six degrees
+inside the ${\approx}63^\circ$ chance level of
+\cref{sec:phase2:stationarity}: no transfer and little shared subspace, now
+across positions. The scrambled
 null collapses the diagonals, and the tautology, being shared by the diagonal
 and the off-diagonal alike, is discounted --- though, entering additively,
 not exactly cancelled --- by the \emph{retention ratio}
@@ -217,8 +225,8 @@ effective order is low ($\kstar$ median 2). The raw generic AR level (0.935)
 is \emph{higher} than factual (0.650), and \cref{sec:phase1:pressure} is the
 reason that must not be read as ``more computation'': T5 shows the generic
 level is $\approx 0.94$ tautological $+\;{\approx}0$ genuine, and at a common
-lag order the persistence-stripped generic structure (0.07) is an order of
-magnitude \emph{weaker} than factual (0.44). So what generalises is H1's
+lag order the persistence-stripped generic structure (0.07) is about six
+times \emph{weaker} than factual (0.44). So what generalises is H1's
 binary claim --- above-null, example-specific, depth-intrinsic structure
 exists in the updates of generic text too --- and emphatically not its
 magnitude, which on generic text is almost entirely running-sum drift. The

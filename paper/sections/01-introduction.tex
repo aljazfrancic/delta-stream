@@ -111,12 +111,14 @@ least.
 The pre-registered causal test --- find a feature no baseline finds, ablate
 it, predict the behavioural consequence --- returns a null we consider one of
 the paper's main contributions (\cref{sec:evaluation:causal}). No single
-feature clears the pre-registered effect threshold; ablating each example's
-top-100 co-firing features does clear it, but a \emph{norm-matched random
-direction} reproduces that group effect, so it is a magnitude effect, not
-evidence of a privileged code. The null is dictionary-independent: a cleaner
-L1 dictionary concentrates single-feature effects nearly five-fold and still finds no
-bottleneck. Factual recall in this model is a distributed, mass-driven code.
+feature clears the pre-registered effect threshold; in post-hoc controls,
+ablating each example's top-100 co-firing features does clear it, but a
+\emph{norm-matched random direction} reproduces that group effect, so it is a
+magnitude effect, not evidence of a privileged code. The null is the same
+under both dictionaries we tried: over an L1 dictionary whose readouts are
+stable across refits, single-feature effects are nearly five-fold larger and
+there is still no bottleneck. Factual recall in this model is a distributed,
+mass-driven code.
 
 \paragraph{Contributions.}
 \begin{enumerate}
@@ -138,19 +140,22 @@ bottleneck. Factual recall in this model is a distributed, mass-driven code.
     (\cref{sec:decomposition,sec:evaluation}).
   \item A three-axis comparison against the unconstrained $O(L^2)$
     residual-write CLT parameterisation: at matched per-decoder rank the CLT
-    keeps a small significant edge; at matched \emph{total} parameters the SSM
-    Pareto-dominates up to 52M parameters; below ${\sim}1$k training examples
-    the SSM generalises better (\cref{sec:evaluation:clt}).
+    keeps a significant edge on every model tested; on the primary model, the
+    SSM Pareto-dominates at matched \emph{total} parameters up to 52M and
+    generalises better once the training set is cut below ${\sim}1$k examples
+    (\cref{sec:evaluation:clt}).
   \item A clean, fully controlled causal null: recall is distributed and
     magnitude-driven, with no privileged sparse subset --- established with
-    matched-count, matched-mass, and norm-matched random-direction controls,
-    and robust to the dictionary (\cref{sec:evaluation:causal}).
-  \item Two structural positives that survive every robustness check: the
+    post-hoc matched-count, matched-mass, and norm-matched random-direction
+    controls, and unchanged across the two dictionaries we read it with
+    (\cref{sec:evaluation:causal}).
+  \item Two structural positives that survive the robustness checks we ran: the
     fast-attenuating propagation path --- the \emph{gauge-invariant} state-path
     kernel halves per layer of depth gap, stable across seeds and dictionaries
     (we also show that the per-layer spectral radius, which an earlier version
     of this work reported as gauge-invariant, is not) --- and the functional
-    informativeness of the SSM state for answer identity at mid-depth
+    informativeness of the SSM state for answer identity at mid-depth,
+    measured against matched summaries of its own codes
     (\cref{sec:evaluation:operator,sec:evaluation:probe}).
   \item A stability finding with a practical edge: on the primary model, the
     SSM's per-feature write directions are not reproduced when the SSM is
@@ -169,5 +174,5 @@ bottleneck. Factual recall in this model is a distributed, mass-driven code.
 \end{enumerate}
 
 Everything reproduces from tracked run tables via one script; the protocol
-documents were frozen before data collection and every deviation is logged
-(\cref{app:prereg,app:repro}).
+documents were frozen before data collection and every deviation we know of
+is logged (\cref{app:prereg,app:repro}).

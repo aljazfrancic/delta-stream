@@ -89,7 +89,17 @@ of this work asserted the invariance, and the correction is one of the reasons
 the operator section is phrased the way it is. The CLT comparison is the residual-write variant on
 frozen shared sources with per-pair rank $\le 64$; a natively-trained,
 jointly-sourced CLT could behave differently and remains the right off-box
-follow-up. Untrained-network controls use a single random initialisation each.
+follow-up, and the protocol's other feature baseline, a crosscoder or
+shared-dictionary MLSAE, was not run at all (\cref{app:prereg},
+deviation~9). The SSM's edge over that CLT in parameter and data efficiency
+is measured on the primary model; on the smaller replication models it
+recovers as little as 30\% of the CLT's gain (\cref{sec:evaluation:clt}).
+The state probe reads codes inferred against each example's whole update
+trajectory, so the state is not a depth-causal summary and its comparison
+with the raw residual stream is confounded (\cref{sec:evaluation:probe}).
+The lower half of the source-prefix sweep is depressed by an under-fit bias
+(\cref{sec:evaluation:prefix}). Untrained-network controls use a single
+random initialisation each.
 Pythia's AR conclusion is far from any decision boundary (the untrained
 network \emph{exceeds} the trained one), but the quantified shares ---
 GPT-2-small's 47\% learned AR structure and the ${\approx}$half-learned

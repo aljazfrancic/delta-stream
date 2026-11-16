@@ -95,8 +95,9 @@ eigendecompositions on Llama~3.1~8B, OLMo~3~7B and Gemma~4~E4B and find a
 spectral gradient through depth --- non-normal, rotation-dominated early
 layers giving way to near-symmetric late ones --- together with a cumulative
 low-rank bottleneck; against OLMo's step-0 (randomly initialised) checkpoint
-as a null, they attribute the gradient and the dimensional collapse to
-training rather than architecture. We read this as convergent evidence from a
+as a null, they attribute the dimensional collapse and the rotation-dominated
+early and middle regime to training, while the near-symmetric late regime is
+already there at initialisation. We read this as convergent evidence from a
 different instrument at larger scale, on two points: layers play distinct
 dynamical roles, which is what the failure of H2 says in our vocabulary
 (\cref{sec:phase2}), and an untrained network is the right null for
@@ -104,7 +105,7 @@ separating architectural from learned depth structure, which is how we use it
 (\cref{sec:phase1:pressure}). It is not a replication. Their object is the
 local Jacobian spectrum; ours is the cross-layer predictability and
 reconstruction of $\Dl$; and the two need not apportion structure the same
-way --- their spectral gradient is learned, while our autoregressive
+way --- their spectral gradient is largely learned, while our autoregressive
 structure is substantially architectural on the primary model.
 
 \paragraph{Factual recall.}

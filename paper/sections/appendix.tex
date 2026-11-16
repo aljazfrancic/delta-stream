@@ -29,7 +29,8 @@ step is verifiable from the public git history. The gates:
     landing place, with no threshold adjusted.
 \end{itemize}
 
-\noindent Deviations from the frozen protocol, exhaustively:
+\noindent Deviations from the frozen protocol, as completely as we can
+enumerate them:
 
 \begin{enumerate}
   \item \emph{Dataset thresholds} (plan-sanctioned tuning direction):
@@ -57,11 +58,23 @@ step is verifiable from the public git history. The gates:
     interpolation to the raw same-$\lambda$ knee gap after per-seed forensics
     showed the former pairs against a saturated baseline tail; the knee
     statistic is the conservative one.
-  \item \emph{Post-hoc analyses} beyond the protocol are labelled as such
-    throughout (the T1--T5 pressure battery --- T4 is its untrained-network
-    AR control --- and the untrained reconstruction analogue, the sublayer
-    split, parameter-matched baselines, the state probe, and the review-driven
-    CI/validation-selection reruns).
+  \item \emph{Post-hoc analyses} beyond the protocol. None of the following
+    was specified in the frozen documents, whether or not the text repeats
+    the label where the analysis appears: the T1--T5 pressure battery (T4 is
+    its untrained-network AR control) and the untrained reconstruction
+    analogue; the depth-controlled lag sweep and the common-$k$
+    re-derivations; the sublayer split; the object-disjoint split, the
+    generic-text replication and the Freedman--Lane calibration;
+    parameter-matched baselines; the depth-scaling series; the rank,
+    parameter-budget and sample-efficiency axes of the CLT comparison and
+    its validation-based reselection; the trained L1 and TopK dictionaries
+    and what is derived from them (the refit-stability diagnosis, the gauge
+    analysis, the L1 re-run of the causal test); the control ladder of the
+    causal section (amplification, co-firing groups, count-, mass- and
+    norm-matched random controls, off-target specificity); the operator and
+    state-path analysis; the state probe; the source-prefix sweep beyond its
+    registered embedding-only point; the paired bootstrap intervals; and the
+    dictionary-level seed check of \cref{app:dictseeds}.
   \item \emph{Two self-corrections}, made after the draft was written and
     reported in the open because both had propagated into headline sentences.
     (a) The fitted state operator's spectral radius was described as
@@ -84,6 +97,38 @@ step is verifiable from the public git history. The gates:
     no dictionary was retrained under a second seed (the post-hoc check of
     \cref{app:dictseeds} does so), and the Gate-3 stability clause should be
     read accordingly.
+  \item \emph{Baselines as run} (the plan's Phase-4 baseline step; this item
+    and the next were identified when the paper was re-read against the
+    protocol after release). The protocol specified four baselines.
+    (A)~A per-layer SAE with its implied update
+    $\hat v_{\ell+1} - \hat v_\ell$: run; it is the $-0.223$ of
+    \cref{sec:evaluation:baselines}, which \cref{fig:pareto} labels
+    ``Baseline~B''. What that figure labels ``Baseline~A'', the per-layer
+    dictionary trained directly on $\Dl$, is the comparator we used at
+    Gate~3 and a stronger baseline than the plan's. (B)~A crosscoder or
+    shared-dictionary
+    MLSAE, to be replicated on the same activations where no public weights
+    could be used: \emph{not run}. Neither was fit or evaluated (training a
+    full-width crosscoder exceeds the study GPU); our MLSAE-derived baseline
+    uses that release's independent single-layer SAEs
+    (\cref{sec:decomposition:sources}), not a shared dictionary. (C)~The
+    Tuned Lens, as its per-layer divergence from the final-layer output
+    distribution: we report its implied-update $\Rsq$ instead, the statistic
+    the Gate-1 baseline already used. (D)~A CLT in two variants, native
+    MLP-write and residual-write, from public weights or a scoped-down
+    replication of the published recipe: only the residual-write variant was
+    fit, as free decoders over frozen shared sources and not as a natively
+    trained CLT (\cref{sec:evaluation:clt}). For the native variant we took
+    the plan's fallback and record it as a limitation
+    (\cref{sec:limitations}).
+  \item \emph{Causal-test candidate selection} (the plan's Phase-4 causal
+    step). The plan selected candidates in two stages: features \emph{novel}
+    against every non-CLT baseline under two null-calibrated thresholds,
+    then filtered for seed and dataset stability. The novelty stage was not
+    applied, because the SSM sources from the same atoms as the per-layer
+    baselines and no feature can be novel by activation identity
+    (Limitation~1, \cref{sec:limitations}). Candidates were chosen by refit
+    stability, purity and theme alone.
 \end{enumerate}
 
 \section{Operating points and evaluation protocols}
@@ -118,7 +163,8 @@ across sections is protocol, not inconsistency:
     0.80383 & frozen-source & CLT rank 32, shared grid & the $-0.0105$ gap \\
     0.7975 / 0.8117 & frozen-source & SSM / CLT rank 32, extended grid & the $-0.0142$ gap (axis 1) \\
     0.7879 / 0.7969 & frozen-source & SSM / CLT rank 32, validation-selected & the $-0.0090$ gap ($N{=}1{,}057$) \\
-    0.8155 / 0.843 & frozen-source & SSM rank 64 / CLT rank 64 & CLT budget axis (\cref{sec:evaluation:clt}) \\
+    0.8155 / 0.843 & frozen-source & SSM rank 64 / CLT rank 64 & budget axis; the $-0.027$ gap \\
+    0.7531 / 0.7941 & frozen-source & SSM / CLT rank 16, shared grid & the $-0.041$ rank-16 gap \\
     0.770 & frozen-source & rank 32, $\ell_{\max}{=}23$ & prefix sweep (\cref{fig:prefix}) \\
     \bottomrule
   \end{tabular}
@@ -395,11 +441,14 @@ refit contrast holds on every draw.
 \section{Changes since version 1.0}
 \label{app:changes}
 
-Version 1.1 changes no version-1.0 number and no pre-registered analysis.
-It adds one post-hoc experiment, which retrains the primary model's trained
-dictionaries at further seeds. Everything below is post-hoc and concerns how
-one finding is worded, what the paper is compared against, and that
-experiment.
+Version 1.1 changes no pre-registered analysis and no recorded result. It
+adds one post-hoc experiment, which retrains the primary model's trained
+dictionaries at further seeds, and it corrects statements that version~1.0
+worded more strongly than its own run tables support. Everything below is
+post hoc. The first seven items concern how the stability finding is worded,
+what the paper is compared against, and the new experiment; the last four
+are corrections found by re-reading the paper against its tables, code and
+protocol.
 
 \begin{itemize}
   \item \emph{What ``seed'' means in the stability finding.} Version 1.0
@@ -438,5 +487,56 @@ experiment.
     \citep{paulo2026seeds,song2026consistency}, depth as a dynamical system
     \citep{fernando2025transformer,fernando2026dynamics}, and random-baseline
     sanity checks for SAEs \citep{korznikov2026sanity}.
+  \item \emph{Statements corrected against the run tables.}
+    (i)~\Cref{sec:evaluation:stability} said the three dictionaries gave
+    ``the same reconstruction win ($+0.041$--$+0.047$)''. That range was the
+    L1 dictionary's alone, under the interpolated statistic that deviation~5
+    retired. The knee gaps are $+0.048$ (L1), $+0.038$ (trained TopK) and
+    $+0.049$ (MLSAE), and the trained-TopK fit falls below its baseline at
+    the two sparsest points; the section heading and the first finding's
+    title now claim the contrast, not a general mechanism.
+    (ii)~\Cref{sec:evaluation:prefix} presented $-0.44$ as the
+    embedding-only floor. It is an under-fit bias at the final layer, which
+    also depresses the three cutoffs below $\ell_{\max}{=}15$; the text and
+    the caption of \cref{fig:prefix} say so, and the plotted values are
+    unchanged.
+    (iii)~\Cref{sec:evaluation:clt,sec:discussion} and the contributions
+    stated ``most of the cross-layer value at ${\sim}16\%$ of the
+    parameters'' and the sub-$10^3$-example crossover without restricting
+    them to the primary model. Both are now scoped, the per-model shares
+    ($30$--$85\%$) are given, and the matched-rank gaps at ranks 16 and 64
+    are stated.
+    (iv)~\Cref{sec:evaluation:probe} read the state's lead over raw-residual
+    PCA at $\ell{=}17$ as the state running a layer ahead. The probe's codes
+    are fit to each example's whole trajectory, so that comparison is
+    confounded; the text, the caption of \cref{fig:probe} and
+    \cref{sec:discussion} say so. The contrasts among code-derived arms are
+    unaffected.
+    (v)~The trained L1 dictionary is no longer called ``clean'' or
+    ``cleaner'', and the causal null is described as holding under both
+    dictionaries tested, not as dictionary-independent: the new experiment
+    shows that dictionary does not reproduce across seeds.
+    (vi)~The object-disjoint AR level in \cref{sec:phase1:verdict} now
+    carries its depth set and the whole-stack value ($0.411$ against
+    $0.521$).
+  \item \emph{Deviation list completed.} \Cref{app:prereg} gains
+    deviations~9 (baselines as run) and~10 (the causal test's novelty
+    filter), deviation~6 lists the post-hoc analyses in full as far as we
+    can identify them, and the list no longer calls itself exhaustive. The
+    abstract, the introduction and
+    \cref{sec:evaluation} mark the causal control ladder, the operator
+    analysis, the depth series and the three-axis CLT reading as post hoc.
+  \item \emph{Confounds named, checks not run.} Two checks that fit the
+    study GPU follow from (ii) and (iv) and are listed as future work in
+    \cref{sec:discussion}.
+  \item \emph{Small corrections.} A backward reference in
+    \cref{sec:phase1:sublayer} said ``below''; ``no control'' in
+    \cref{sec:evaluation:causal} is now ``no magnitude-matched control'';
+    the alive-latent counts in \cref{sec:decomposition:sources} are given
+    for all three seeds; the write-direction subspace overlap
+    (${\sim}0.6$) is no longer listed among the stable statistics; the
+    summary of \citet{fernando2026dynamics} follows their body text; and
+    the test count in \cref{app:repro} is 230, up from 208, for the new
+    tooling.
 \end{itemize}
 

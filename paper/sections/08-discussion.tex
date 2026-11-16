@@ -28,13 +28,18 @@ H2's failure is an independent validation of CLT's design decision to give
 every (source,\,target) pair free parameters \citep{ameisen2025circuit} ---
 our attempt to compress that family along depth was the pre-registered
 falsifier, and it failed in CLT's favour. The quantitative comparison then
-adds the budget-conditional half of the story: the free decoders buy a small,
-real, data-bought margin, while a first-order state captures most of the
-cross-layer value at a sixth of the parameters and generalises better below
-$10^3$ examples. For practitioners the operational reading is: if you need
-cross-layer reconstruction under a parameter or data budget, a depth-indexed
-state is the better spend; if you need maximum fidelity and have data, free
-per-pair decoders are not redundant. Our stability finding adds an orthogonal
+adds the budget-conditional half of the story: the free decoders buy a real
+margin on every model we tested. On the primary model that margin is small
+and data-bought, and a first-order state captures about four fifths of the
+cross-layer value at a sixth of the parameters and generalises better once
+the training set falls below $10^3$ examples. On the smaller replication
+models the state recovers less of the CLT's gain, as little as 30\% on
+GPT-2-small (\cref{sec:evaluation:clt}). For practitioners the operational
+reading is therefore conditional: where the free decoders cost several times
+the parameters, as on our primary model, a depth-indexed state is the better
+spend under a parameter or data budget; if you need maximum fidelity and
+have data, free per-pair decoders are not redundant. Our stability finding
+adds an orthogonal
 caution: the SSM's write directions for individual features were not
 reproduced across refits over TopK dictionaries in any configuration we
 tested beyond the six-layer debug lane, while over L1
@@ -53,11 +58,12 @@ replacing it.
 The causal null is not a failure to find structure; it is a measurement of
 what kind of structure recall has. Single features move the answer by at most
 an eighth of the pre-registered threshold under the TopK dictionary, and by
-about half of it under the cleaner L1 dictionary; the effect that does clear
+about half of it under the L1 dictionary; the effect that does clear
 threshold
-is reproduced by a norm-matched random direction; and the cleaner dictionary
-concentrates but does not localise the effect. This is a controlled,
-dictionary-independent statement that recall at the query position is a
+is reproduced by a norm-matched random direction; and the larger
+single-feature effects under L1 still do not localise it. This is a
+controlled statement, the same under both dictionaries we tried, that recall
+at the query position is a
 distributed, magnitude-dominated code --- consistent with the drift in the
 editing literature away from single-component accounts
 \citep{hase2023does}, and a calibration point for ablation-based evaluation
@@ -69,7 +75,10 @@ controls before they can be read as evidence about privileged feature sets
 \paragraph{Consequences for probing.}
 The state-probe result cuts the other way: trained purely to reconstruct
 updates, the 32-dimensional state retains answer-identity information that
-variance-optimal compressions of the same codes discard. Reconstruction
+variance-optimal compressions of the same codes discard. (The comparison is
+among summaries of one set of codes. Those codes are fit to each example's
+whole trajectory, so it says nothing about the state against the raw stream;
+\cref{sec:evaluation:probe}.) Reconstruction
 objectives, at least here, learn compressions aligned with what the circuit
 is computing --- a modest but genuinely positive datum for the program of
 extracting functional summaries from decompositions, and one that pairs
@@ -95,4 +104,8 @@ relation test; and a natively-trained CLT. Two more suggest themselves from
 the results: whether the state-path decay rate and the mid-depth
 functional-state window are universal across scale, and whether the sublayer
 AR structure survives the T2 surrogate and the untrained control that
-\cref{sec:phase1:sublayer} did not run.
+\cref{sec:phase1:sublayer} did not run. Two checks that this paper names and
+does not run fit the study GPU: the state probe with codes inferred from
+earlier layers only (\cref{sec:evaluation:probe}), and the source-prefix
+sweep with its bias initialised at the per-depth mean
+(\cref{sec:evaluation:prefix}).

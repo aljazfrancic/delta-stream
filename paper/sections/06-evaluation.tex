@@ -76,8 +76,8 @@ replicate at any budget is the \emph{structure} the state provides ---
 \subsection{The gain grows with depth}
 \label{sec:evaluation:depth}
 
-Repeating the fit at every depth in the model zoo and reporting the
-\emph{knee-gap} statistic (the raw same-$\lambda$ gap at the $\lambda_{L1}=1$
+Repeating the fit at every depth in the model zoo (a post-hoc series) and
+reporting the \emph{knee-gap} statistic (the raw same-$\lambda$ gap at the $\lambda_{L1}=1$
 knee; the earlier max-over-$\lambda$ statistic is upward-biased and
 seed-fragile because the baseline Pareto's tail saturates in $L_0$ --- both
 statistics are archived) gives a monotone in-family depth series with tight
@@ -191,10 +191,14 @@ MLP-write), frozen shared sources (CLT does not get its own dictionary),
 per-pair rank capped at 32--64 (rank 128 exceeds the study GPU;
 \cref{app:repro}), $N = 1{,}244$ training examples (1{,}057 where a validation
 carve-out is used), and no natively-trained
-CLT (limitation). The honest summary is three axes (\cref{fig:clt}):
+CLT (limitation). The protocol registered this baseline as two natively
+trained variants; the frozen-source residual-write fit is what the study GPU
+allows, and the three-axis reading is post hoc (\cref{app:prereg},
+deviations~6 and~9). The honest summary is three axes (\cref{fig:clt}):
 
 \begin{enumerate}
-  \item \textbf{Matched per-decoder rank: a small, real CLT edge.} At rank 32
+  \item \textbf{Matched per-decoder rank: a real CLT edge, small at the
+    primary rank.} At rank 32
     the best-of-grid gap is SSM$-$CLT $= -0.0142$ \CI{$-0.0185$}{$-0.0099$};
     re-selecting $\lambda_{\mathrm{reg}}$ on a train-internal validation split
     (never test) reproduces it at \textbf{$-0.0090$ \CI{$-0.0136$}{$-0.0045$}}.
@@ -206,6 +210,10 @@ CLT (limitation). The honest summary is three axes (\cref{fig:clt}):
     was an artefact of a too-short regularisation grid; we report the corrected
     numbers. Widening the grid moves the primary model's CLT from $0.804$ to
     $0.812$, which is why the depth list above and axis 1's headline differ.)
+    Nor is the edge monotone in rank: on the primary model the gap is
+    $-0.041$ at rank 16 (on the shorter grid, where every arm's best point
+    is the grid edge) and $-0.027$ \CI{$-0.030$}{$-0.025$} at rank 64, so
+    ``small'' describes rank 32, not every rank.
   \item \textbf{Matched total parameters: the SSM Pareto-dominates up to
     52M.} Comparing each family at its best grid point, SSM rank-64 (16.9M
     parameters, $\Rsq\,0.8155$) beats CLT rank-16 (26.2M, 0.794) \emph{and}
@@ -215,14 +223,18 @@ CLT (limitation). The honest summary is three axes (\cref{fig:clt}):
     SSM matches or beats the CLT at ${\sim}3\times$ fewer parameters, not that
     it beats it by a lot. Per-parameter, the first-order state is the better
     spend in this regime.
-  \item \textbf{Sample efficiency: the CLT edge is data-bought.} Subsampling
+  \item \textbf{Sample efficiency: on the primary model the CLT edge is
+    data-bought.} Subsampling
     the train set flips the sign: at $N{=}300$ the SSM leads by $+0.0204$
     \CI{$+0.0163$}{$+0.0248$}, at $N{=}600$ by $+0.0128$, at $N{=}1{,}244$
     the CLT leads by $0.0105$ (the $N$-series holds one shared regularisation
     grid fixed at every $N$; the extended-grid and validation-selected
     full-$N$ gaps are axis 1's $-0.0142$/$-0.0090$) --- crossover at roughly
     $10^3$ examples for
-    52M free parameters versus 8.4M shared ones.
+    52M free parameters versus 8.4M shared ones. The crossover belongs to
+    those sizes: we subsampled the primary model only, and on the smaller
+    replication models the CLT already leads with 614 (Pythia-160m), 800
+    (Pythia-70m) and 1{,}086 (GPT-2-small) training examples (axis 1).
 \end{enumerate}
 
 Both cross-layer methods beat the no-propagation per-layer decoder at every
@@ -232,10 +244,14 @@ SSM$-$per-layer $+0.0518$ \CI{$+0.0485$}{$+0.0552$} under validation-based
 selection). Read together
 with H2's failure, the conclusion is symmetric and, we think, useful in both
 directions: the free per-pair decoders are \emph{validated} --- they buy a
-small, significant, data-dependent margin, so nothing forces a shared kernel
---- and the first-order state-space compression captures most of the
-cross-layer reconstruction value at ${\sim}16\%$ of the parameters, dominating
-at matched budget and in low data.
+significant margin on every model, so nothing forces a shared kernel --- and
+on the primary model the first-order state-space compression captures most of
+the cross-layer reconstruction value (79--85\% of the CLT's gain over the
+per-layer decoder, depending on the selection protocol) at ${\sim}16\%$ of
+the parameters, dominating at matched budget and in low data. That share is
+model-dependent: $85\%$ on Pythia-70m, $64\%$ on Qwen2, about half on
+Pythia-160m and $30\%$ on GPT-2-small, so ``most'' is a statement about the
+primary model and the six-layer lane, not about every model.
 
 \begin{figure}[t]
   \centering
@@ -253,7 +269,7 @@ at matched budget and in low data.
   \label{fig:clt}
 \end{figure}
 
-\subsection{Stability: the sparsity mechanism controls refit identifiability}
+\subsection{Stability: refit identifiability follows the dictionary}
 \label{sec:evaluation:stability}
 
 Gate 3 recorded one failed clause, and what that clause measures needs
@@ -274,16 +290,23 @@ was implemented on the SSM alone, a deviation recorded in
 the pre-registered 0.7, while reconstruction was identical across refits ---
 an equivalent-minima degeneracy, unmoved
 by $100\times$ stronger operator regularisation and by shrinking $d_z$. Three
-findings locate it (\cref{fig:stability}):
+post-hoc findings locate it (\cref{fig:stability}):
 
 \begin{enumerate}
-  \item \textbf{It is the TopK sparsity mechanism.} Training matched L1 and
+  \item \textbf{In the controlled contrast it follows the sparsity
+    mechanism.} Training matched L1 and
     TopK dictionaries on the \emph{same} cached activations --- identical
     architecture, matched $L_0$, differing only in the sparsity operator ---
     and refitting the SSM over each: match@0.7 is
     \textbf{1.00 (L1)} versus \textbf{0.08
-    (trained TopK)} versus 0.45 (pretrained MLSAE TopK), at the same
-    reconstruction win ($+0.041$--$+0.047$). The main analyses rest this on one
+    (trained TopK)} versus 0.45 (pretrained MLSAE TopK). The reconstruction
+    win at the knee is similar but not the same --- $+0.048$ (L1), $+0.038$
+    (trained TopK), $+0.049$ (MLSAE) --- and the fit over the trained TopK
+    dictionary is the less well-behaved one: at the two sparsest points of
+    the sweep it falls below its baseline ($-0.007$ at $\lambda_{L1}{=}10$)
+    and then diverges ($\lambda_{L1}{=}30$), where the other two stay ahead.
+    The contrast is therefore controlled in its inputs, not in every
+    property of the resulting fit. The main analyses rest this on one
     dictionary per mechanism, from one seed; post hoc, we trained two further
     dictionaries per mechanism from different seeds with the same recipe and
     refit the SSM over each: match@0.7 is 1.00 over all three L1
@@ -302,7 +325,7 @@ findings locate it (\cref{fig:stability}):
     unstable and every L1 source stable. Retraining
     the L1 dictionary on the train split only (no test leakage; the same
     seed, so a leakage check rather than a second draw) changes
-    nothing (match 1.00; gaps $+0.037$--$+0.070$).
+    nothing (match 1.00; knee gap $+0.049$).
   \item \textbf{It is not a gauge artefact.} Gauge-invariant per-feature
     impulse responses (feedthrough plus downstream state path) are as unstable
     (0.29) as raw write directions (0.36 over the gauge analysis's 200-feature
@@ -316,9 +339,10 @@ findings locate it (\cref{fig:stability}):
     the sorted moduli 0.086 across refits --- \emph{not} the sorted-modulus
     cosine of 0.999, which random spectra also achieve;
     \cref{sec:evaluation:operator}), the gauge-invariant state-path decay
-    (gap-2 ratio 0.42--0.49 across refits and dictionaries), the top-feature
-    write-direction \emph{subspace} ($\sim$0.6 overlap), and
-    the feature \emph{set} across data halves (Jaccard 0.89).
+    (gap-2 ratio 0.42--0.49 across refits and dictionaries), and
+    the feature \emph{set} across data halves (Jaccard 0.89). The top-feature
+    write-direction \emph{subspace} is only partly reproduced
+    ($\sim$0.6 overlap), and no claim rests on it.
 \end{enumerate}
 
 We flag the first finding as independently useful, with its scope stated
@@ -340,7 +364,10 @@ have cosine $\ge 0.7$ with their random initialisation. The perfect L1
 stability above is
 therefore a property of the SSM's readouts over a fixed L1 dictionary, not
 of the dictionary; dictionary reproducibility cannot be assumed here for
-either mechanism.
+either mechanism. Nor do atoms that never left their initialisation
+obviously explain the refit stability: among each layer's 100 highest-mass
+latents, fewer L1 than TopK latents stay that close to it (31\% against
+56\%, \cref{tab:dictseeds}). We did not test that link directly.
 
 \begin{figure}[t]
   \centering
@@ -350,12 +377,13 @@ either mechanism.
   is fixed. Left: cross-refit
   cosine of raw write directions (match@0.7 $=0.36$)
   and of gauge-invariant per-feature $\Delta$-contributions ($0.29$) ---
-  gauge-invariance does not rescue single-feature identifiability. Right: the
-  system-level statistics the claims use are stable across refits (decoder subspaces;
-  the spectrum bar plots the $A_\ell$ modulus agreement as $1-{}$median
+  gauge-invariance does not rescue single-feature identifiability. Right:
+  system-level statistics across refits. The decoder \emph{subspaces} are
+  partly reproduced (${\sim}0.6$ overlap); the spectrum bar plots the
+  $A_\ell$ modulus agreement as $1-{}$median
   relative difference $=0.91$ --- the honest statistic of
   \cref{sec:evaluation:operator}, not the vacuous sorted-spectrum cosine ---
-  and is a property of the fitted gauge, not a gauge invariant). The
+  and is a property of the fitted gauge, not a gauge invariant. The
   in-panel note carries the resolution: the
   per-feature instability is specific to the TopK source --- over a
   trained-L1 source on the same activations the refits agree (match@0.7
@@ -384,7 +412,8 @@ and the injection test returns $-0.02$ nats; controls and magnitude-matched
 random features are $\approx 0$, so the splice mechanism is clean. This is
 the pre-registered honest landing place, and we report it as such.
 
-The diagnostics then locate \emph{why}, with an escalating control sequence
+Post-hoc diagnostics then locate \emph{why}, with an escalating control
+sequence
 (\cref{fig:distributed}): amplifying one feature's $\delta_\ell$ ten-fold
 drives the answer probability most of the way to zero, saturating at full
 removal by $30\times$ (direction correct, natural magnitude small); ablating
@@ -404,8 +433,8 @@ direction, feature identity retains a significant but ${\sim}5\%$ sliver
 ($+0.012$ \CI{$+0.004$}{$+0.021$}); against the contribution-shaped direction
 $+0.033$ \CI{$+0.020$}{$+0.047$}; against the mass-matched \emph{feature}
 group, $-0.008$. We quote the isotropic contrast because it is the control
-that isolates direction alone, and note that no control leaves feature
-identity with more than a seventh of the effect.
+that isolates direction alone, and note that no magnitude-matched control
+leaves feature identity with more than a seventh of the effect.
 Off-target specificity of the group ablation is weak and class-dependent: at
 the threshold-crossing group size it lowers the example's \emph{own} answer's
 log-probability by $2.89$ nats (pooled over candidates) against $2.45$ nats
@@ -418,12 +447,16 @@ activation patterns are constrained to random values match fully trained
 SAEs on interpretability, sparse probing and causal editing
 \citep{korznikov2026sanity}.
 
-Swapping to the clean L1 dictionary strengthens rather than rescues the null:
-the candidate pool becomes 199/200 seed-stable, the maximum single-feature
-effect rises nearly five-fold to $+0.112$ --- a less redundant dictionary
-\emph{concentrates} causal mass --- and still no feature approaches 0.20.
+Swapping to the trained L1 dictionary, over which the SSM's readouts are
+stable across refits, does not rescue the test: the candidate pool becomes
+199/200 seed-stable, the maximum single-feature effect rises nearly five-fold
+to $+0.112$, and still no feature approaches 0.20. We do not read the rise as
+a cleaner dictionary concentrating causal mass. That dictionary does not
+reproduce across training seeds and most of its alive latents sit near their
+random initialisation (\cref{app:dictseeds}), so refit-stable is all we can
+call it.
 \textbf{Factual recall in this model is a distributed, mass-driven code with
-no single-feature bottleneck, independent of the dictionary used to read it.}
+no single-feature bottleneck under either dictionary we read it with.}
 No threshold was adjusted post hoc.
 
 \begin{figure}[t]
@@ -455,9 +488,20 @@ $+0.139$ \CI{$+0.105$}{$+0.173$} (L1); state$-$prefix $+0.080$/$+0.173$ at
 mid-depth and $+0.110$/$+0.188$ late; at $\ell{=}17$ --- the
 answer-promotion depth where $\kstar$ blips (\cref{fig:kstar}) and per-layer
 reconstruction dips (\cref{fig:prefix}, right) --- the state jumps from
-$0.57$ to $0.76$, a full layer before the code and raw-residual arms make
-their own jump, and beats even the raw-residual PCA there ($0.759$ vs
-$0.666$). Peak state decoding
+$0.57$ to $0.76$, one layer before the code and raw-residual arms make
+their own jump, and sits above the raw-residual PCA there ($0.759$ vs
+$0.666$). That lead over the raw stream should not be read as anticipation.
+The probe's codes are the LASSO codes, inferred for every example against
+its \emph{whole} update trajectory (\cref{sec:decomposition:opt}), so the
+codes below layer $\ell$ that build $z_\ell$ were chosen partly to
+reconstruct $\Dl$ and later updates through the state path. The state at
+$\ell{=}17$ can therefore carry information about the write $\Delta_{17}$,
+which reaches the raw stream only at $v_{18}$ (whose PCA scores $0.846$).
+The raw-residual arm has no such access, so it is a reference curve and not
+a like-for-like competitor; the three code-derived arms share one set of
+codes, and the contrasts among them are unaffected. We did not re-run the
+probe with codes inferred from the layers below $\ell$ alone, the check that
+would size the effect. Peak state decoding
 reaches 0.775/0.801 top-1 from 32 dimensions (majority class 0.106; with 205
 classes over 311 test examples, top-1 is dominated by the frequent objects,
 so we read the \emph{contrasts between matched arms}, not the absolute level).
@@ -478,15 +522,18 @@ confidence favours the code arms --- the state's advantage is specific to
   32-dimensional summaries, both dictionaries. The $\Delta$-reconstruction-trained
   state beats dimension-matched PCA of its own codes (and their prefix
   superset) at mid-depth on both dictionaries (the early-band edge is
-  significant only under L1; under MLSAE it is null), and at $\ell{=}17$ beats
-  even raw-residual PCA; the raw stream remains best late.}
+  significant only under L1; under MLSAE it is null). At $\ell{=}17$ it also
+  sits above raw-residual PCA, a comparison confounded by the codes' access
+  to later updates (\cref{sec:evaluation:probe}); the raw stream remains best
+  late.}
   \label{fig:probe}
 \end{figure}
 
 \subsection{The learned state path attenuates fast}
 \label{sec:evaluation:operator}
 
-The state operators are the decomposition's structural readout. Getting the
+The state operators are the decomposition's structural readout, and this
+analysis of them is post hoc. Getting the
 epistemics right here requires a gauge argument we initially got wrong, so we
 state it first.
 
@@ -576,14 +623,25 @@ cutoffs $\ell_{\max} \in \{0,3,7,11,15,19,23\}$, from $-0.44$
 (embedding-only) through
 $+0.20$ ($\ell_{\max}{=}11$) and $+0.58$ ($\ell_{\max}{=}19$) to $+0.77$
 (full), still gaining $+0.19$ over the last four layers
-(\cref{fig:prefix}, left). The embedding-only floor is degenerate by
+(\cref{fig:prefix}, left). The embedding-only point is degenerate by
 construction --- $v_0$ has no SAE, and this sweep runs under the frozen-source
 protocol, which does not re-infer codes, so here $u_0 \equiv 0$ and the state
 trajectory is example-independent (under the LASSO protocol $u_0$ is re-inferred
 like every other layer's code, \cref{sec:decomposition:sources}) --- and its
-$-0.44$ is almost entirely one layer: the per-layer $\Rsq$ stays small at 23
-of 24 depths (within $\pm 0.05$ at 19 of them, never below $-0.31$) and
-falls to $-2.4$ at the final write, whose norm is 2--3$\times$ any other's. Late-layer sources carry
+$-0.44$ is an optimisation artefact, not a floor. An example-independent
+prediction with a free bias can do no worse than the per-depth mean, that
+is $\Rsq \approx 0$, and this fit scores $-0.42$ on its own \emph{training}
+split, so it is under-fit, not failing to generalise. The bias starts at
+zero, and the sweep's fixed Adam budget does not carry it to the mean of the
+final write, whose norm is 2--3$\times$ any other's: the per-layer $\Rsq$
+stays small at 23 of 24 depths (within $\pm 0.05$ at 19 of them, never below
+$-0.31$) and falls to $-2.4$ at the last. The same unconverged term sits
+unchanged in the cutoffs $\ell_{\max}{=}3$ and $7$ (final-layer $\Rsq$
+$-2.4$ in both) and is still there at $\ell_{\max}{=}11$ ($-0.39$), so the
+lower half of the sweep understates what those sources support and its sign
+change near mid-depth carries no meaning. From $\ell_{\max}{=}15$ on the
+final layer is fit ($+0.25$ and up), and the conclusion below uses only that
+upper half. Late-layer sources carry
 reconstruction value that
 propagation \emph{cannot} substitute --- the features are genuinely new at
 depth, matching the staged-recall picture of \citet{geva2023dissecting} ---
@@ -598,9 +656,12 @@ per-layer sources is catastrophic.
   \includesvg[width=0.75\linewidth]{fig13_source_prefix}
   \caption{\emph{Left}: source-prefix sweep --- held-out $\Rsq$ as sources are
   admitted up to $\ell_{\max}$ (SSM free to propagate). Monotone over the
-  seven sampled cutoffs, turning positive around mid-depth and still climbing
+  seven sampled cutoffs and still climbing
   at the top of the stack: late-layer sources are load-bearing and
-  non-propagable. \emph{Right}: per-layer $\Rsq$ at the sweep's two endpoints.
+  non-propagable. The negative values below $\ell_{\max}{=}15$ come from an
+  under-fit bias at the final layer, not from the sources, so the zero
+  crossing carries no meaning (\cref{sec:evaluation:prefix}).
+  \emph{Right}: per-layer $\Rsq$ at the sweep's two endpoints.
   The annotated interior dip at $\ell{=}17$ (full-source arm: $0.46$ against
   $0.81$/$0.75$ at the adjacent layers) is the answer-promotion write --- the same
   depth where $\kstar$ blips (\cref{fig:kstar}) and the state probe jumps

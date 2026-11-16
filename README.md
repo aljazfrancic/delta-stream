@@ -110,9 +110,11 @@ Four headline findings (pre-registered gates, frozen before data collection):
 2. **The dynamics are non-stationary.** H2 (depth-stationary kernel) **fails** decisively, so
    the right abstraction is a first-order (k\*≈1), fully depth-indexed state-space model (SSM).
 3. **The SSM buys real value where it counts.** It beats the matched per-layer baseline
-   (+0.049 [+0.046, +0.052] R² rank-matched, +0.008 param-matched), lands within ~0.01 R²
-   of a rank-matched cross-layer transcoder (CLT) at ~6× fewer params, and leads below ~1k
-   examples; its state is functionally informative (R7 probe beats dim-matched PCA at mid-depth).
+   (+0.049 [+0.046, +0.052] R² rank-matched, +0.008 param-matched); on the primary model it
+   lands within ~0.01 R² of a rank-matched cross-layer transcoder (CLT) at ~6× fewer params
+   and leads below ~1k examples (on the smaller replication models the CLT's edge is larger);
+   its state is functionally informative (R7 probe beats dim-matched PCA of its own codes at
+   mid-depth).
 4. **The causal test returns a clean null.** No single feature's ablation clears threshold; the
    group effect is reproduced by a norm-matched random direction — recall is a distributed,
    magnitude-driven code.

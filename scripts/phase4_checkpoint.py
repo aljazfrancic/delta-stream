@@ -192,7 +192,8 @@ def main(argv: list[str] | None = None) -> int:
                            lambda_reg=cfg.lambda_reg, batch_size=cfg.batch_size)
         run.log(f"frozen full inference u {u_full_np.shape}; held-out test R²={test_ev['r2']:+.3f} "
                 f"L0={test_ev['l0']:.4f}")
-        _free_cuda(u_full, u_full_init, d_full)
+        del u_full, u_full_init, d_full  # drop the caller's references, or nothing is freed
+        _free_cuda()
 
     # --- candidate pool: rank top-N by full-dataset |u| mass, score seed stability ---
     u_full_t = torch.from_numpy(u_full_np)
@@ -202,7 +203,8 @@ def main(argv: list[str] | None = None) -> int:
     run.log(f"candidate pool: top-{len(fidx)} features by full-dataset |u| mass")
 
     dirs = {args.seed: decoder_directions(model0, fidx, flayer)}
-    _free_cuda(model0, result0)
+    del model0, result0
+    _free_cuda()
 
     extra_seeds = [s for s in range(args.seed + 1, args.seed + args.n_seeds)][: args.n_seeds - 1]
     for s in extra_seeds:
@@ -213,7 +215,11 @@ def main(argv: list[str] | None = None) -> int:
                       batch_size=cfg.batch_size)
         run.log(f"  seed {s}: train R²={ev['r2']:+.3f} L0={ev['l0']:.4f}")
         dirs[s] = decoder_directions(m, fidx, flayer)
-        _free_cuda(m, res)
+        # Drop this fit's references before the next one starts: _free_cuda's own `del`
+        # only unbinds its parameters, so without this the previous fit's GPU codes stay
+        # alive and the third full-size fit runs out of memory on the 3 GB card.
+        del m, res
+        _free_cuda()
 
     seeds = [args.seed, *extra_seeds]
     pairs = [(a, b) for i, a in enumerate(seeds) for b in seeds[i + 1:]]

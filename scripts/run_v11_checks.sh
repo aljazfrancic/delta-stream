@@ -239,12 +239,12 @@ probe_chain() {  # <tag> <sources npz> <recorded checkpoint dir> <recorded probe
       "${rec[@]}" "${PROBE_EXTRA[@]}"
 }
 if want probe-l1; then
-  [ "$OK_L1SRC" = 1 ] && probe_chain l1 "$SRC_L1" "$REF_CKPT_L1" "$REF_PROBE_L1" \
-    || note "SKIP  probe l1 (L1 dictionary gate failed)"
+  if [ "$OK_L1SRC" = 1 ]; then probe_chain l1 "$SRC_L1" "$REF_CKPT_L1" "$REF_PROBE_L1"
+  else note "SKIP  probe l1 (L1 dictionary gate failed)"; fi
 fi
 if want probe-mlsae; then
-  [ "$OK_MLSAE" = 1 ] && probe_chain mlsae "$SRC_MLSAE" "$REF_CKPT_MLSAE" "$REF_PROBE_MLSAE" \
-    || note "SKIP  probe mlsae (MLSAE sources gate failed)"
+  if [ "$OK_MLSAE" = 1 ]; then probe_chain mlsae "$SRC_MLSAE" "$REF_CKPT_MLSAE" "$REF_PROBE_MLSAE"
+  else note "SKIP  probe mlsae (MLSAE sources gate failed)"; fi
 fi
 
 # --- B: the prefix sweep with a mean-initialised bias ----------------------------------

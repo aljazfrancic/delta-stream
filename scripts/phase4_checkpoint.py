@@ -38,6 +38,7 @@ already-saved canonical checkpoint and recomputing only the seed-stability pool.
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 import numpy as np
@@ -181,6 +182,12 @@ def main(argv: list[str] | None = None) -> int:
                               batch_size=cfg.batch_size)
         u_full_np = u_full.detach().cpu().numpy().astype(np.float32)
         np.save(ckpt_dir / "u_infer_full.npy", u_full_np)
+        # The encoder's settings, so the inference can be repeated exactly from the saved
+        # operators (the Lipschitz hand-over from training is not otherwise recoverable).
+        (ckpt_dir / "infer_meta.json").write_text(json.dumps({
+            "lambda_l1": cfg.lambda_l1, "n_steps": max(cfg.input_steps * 4, 80),
+            "lipschitz": float(result0.lipschitz), "batch_size": cfg.batch_size,
+            "sources_npz": str(args.sources_npz)}, indent=2), encoding="utf-8")
         test_ev = evaluate(model0, u_full[test_idx], d_te, lambda_l1=cfg.lambda_l1,
                            lambda_reg=cfg.lambda_reg, batch_size=cfg.batch_size)
         run.log(f"frozen full inference u {u_full_np.shape}; held-out test R²={test_ev['r2']:+.3f} "

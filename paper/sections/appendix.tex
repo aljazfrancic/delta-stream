@@ -388,7 +388,7 @@ released record of a run is its tables and, where one was written, its memo.
 Numeric intermediates (CSV/JSON tables) are tracked in
 git; heavy artefacts (activation stores, checkpoints) are regenerable from
 scripts. A single entry point --- \code{scripts/reproduce.sh} --- checks the
-environment, runs the test suite (231 tests), asserts dataset sizes, and
+environment, runs the test suite (272 tests), asserts dataset sizes, and
 regenerates all 16 paper figures byte-identically from the tracked tables;
 \code{--toy-pipeline} additionally re-runs the full Pythia-70m lane end to
 end. Code, protocol documents, and the progress tracker are released with
@@ -565,8 +565,9 @@ such pass.
     for all three seeds; the write-direction subspace overlap
     (${\sim}0.6$) is no longer listed among the stable statistics; the
     summary of \citet{fernando2026dynamics} follows their body text; and
-    the test count in \cref{app:repro} is 231, up from 208, for the new
-    tooling.
+    the test count in \cref{app:repro} went from 208 to 231 for the new
+    tooling (it is 272 with the tooling for the checks named in
+    \cref{sec:discussion}).
   \item \emph{Second re-read.} Three statements were wrong and six claimed
     more than their evidence; all nine were in version~1.0.
     (i)~\Cref{app:prereg} said the state of the phase documents at every

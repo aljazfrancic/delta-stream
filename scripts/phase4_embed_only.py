@@ -77,6 +77,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cutoffs", type=int, nargs="+", default=[0, 3, 7, 11, 15, 19, 23],
                         help="Source-prefix cutoffs ℓ_max: keep sources for ℓ≤ℓ_max, zero the "
                              "rest. ℓ_max=0 is the embedding-only lower bound; ℓ_max=L-1 is full.")
+    parser.add_argument("--bias-init", choices=["zero", "mean"], default="zero",
+                        help="Initial value of the per-layer bias b. 'zero' is the model "
+                             "default and what the recorded sweep used; 'mean' starts b at "
+                             "the train split's per-depth mean update, so a fit with no "
+                             "example-specific signal starts at R² = 0 on train instead of "
+                             "having to reach the mean within the Adam budget (v1.1 check B).")
     args = parser.parse_args(argv)
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
@@ -106,6 +112,9 @@ def main(argv: list[str] | None = None) -> int:
         if c + 1 < L:
             src[:, c + 1 :, :] = 0.0
         model = LowRankSSM(SSMDims(L, D, M, r, r), use_state=True, seed=args.seed).to(device)
+        if args.bias_init == "mean":
+            with torch.no_grad():
+                model.b.copy_(delta[tr].mean(dim=0).to(device))
         _fit(model, src[tr], delta[tr], **fit_kw)
         tr_r2, _ = _r2_overall_and_per_layer(model, src[tr], delta[tr],
                                              bs=args.batch_size, device=device)
@@ -122,6 +131,7 @@ def main(argv: list[str] | None = None) -> int:
     embed = min(rows, key=lambda x: x["cutoff"])
     summary = {
         "rank": r, "n_layers": L, "sources": args.sources_npz.name, "cutoffs": cutoffs,
+        "bias_init": args.bias_init,
         "rows": rows, "test_per_layer_r2_by_cutoff": per_layer,
         "full_test_r2": full["test_r2"], "embed_only_test_r2": embed["test_r2"],
         "drop_full_minus_embed": round(full["test_r2"] - embed["test_r2"], 4),

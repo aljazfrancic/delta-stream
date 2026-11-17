@@ -88,9 +88,18 @@ def main(argv: list[str] | None = None) -> int:
                         help="R5: entity-disjoint train/test split keyed on the "
                              "filtered_triples.parquet column (objects recur heavily; "
                              "random shares answers across the boundary).")
+    parser.add_argument("--variants", type=str, default="ssm,baseline",
+                        help="Comma-separated arms to fit: 'ssm' (full model), 'baseline' "
+                             "(use_state=False). Default fits both, as every recorded run "
+                             "did; each arm's fit is independent of the other's, so "
+                             "fitting one alone reproduces its row exactly.")
     args = parser.parse_args(argv)
 
     lambdas = [float(x) for x in args.lambdas.split(",") if x.strip()]
+    wanted = [v.strip() for v in args.variants.split(",") if v.strip()]
+    unknown = sorted(set(wanted) - {"ssm", "baseline"})
+    if unknown or not wanted:
+        parser.error(f"--variants must name 'ssm' and/or 'baseline' (got {args.variants!r})")
 
     run = init_run(resolve_out(args), config_path=args.config, seed=args.seed)
     mcfg = run.config.get("model", {})
@@ -142,7 +151,8 @@ def main(argv: list[str] | None = None) -> int:
 
     import pandas as pd
 
-    variants = {"ssm": True, "baseline": False}  # full Branch B vs no-state per-layer dict
+    # full Branch B vs no-state per-layer dict, in the recorded order
+    variants = {v: flag for v, flag in (("ssm", True), ("baseline", False)) if v in wanted}
     rows: list[dict] = []
     for lam in lambdas:
         cfg = AltMinConfig(

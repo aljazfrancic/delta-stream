@@ -261,19 +261,31 @@ $0.52 = 0.27$ tautological $+\;0.25$ genuine (\cref{tab:commondepth}). The
 tautological share is the clear majority on the headline fit; on the whole
 stack it is a bare majority ($0.272$ vs $0.248$, a margin that carries no
 interval), which we round to ``roughly half''. We quote both because the
-pre-registered headline is the four-depth number.
+pre-registered headline is the four-depth number. The split is exact at every
+$m$, but where it falls depends on $m$: on the whole-stack fit the
+tautological part is $0.02$, $0.11$, $0.20$ and $0.27$ of the $0.52$ at
+$m = 1, 5, 20, 50$. We quote $m{=}50$, the largest subspace swept (87\% of
+state variance), so these are the largest tautological shares the sweep
+gives.
 
 \paragraph{T1 --- persistence-stripped refit.}
 Projecting out the top-$m$ principal directions of the \emph{states} and
 refitting: removing the single top direction (32\% of state variance) costs
-only $0.650 \to 0.637$; removing the top 50 (87\% of state variance) still
+only $0.650 \to 0.637$ on the max-over-$k$ sweep ($0.521 \to 0.514$ at
+$k{=}1$, the curve of \cref{fig:t1}); removing the top 50 (87\% of state
+variance) still
 leaves \textbf{$\Rsq = 0.436$}, roughly $4000\times$ this sweep's own scramble
 floor (${\sim}1\times10^{-4}$ on the primary factual store; the floor is
 store-dependent, and \cref{tab:commondepth} reports the largest we saw,
 $7\times10^{-3}$ on GPT-2)
-(\cref{fig:t1}). Two reasons T1 exceeds T5's genuine share: it re-optimises
-the kernel on the complement, and --- since each point is a max over the $k$
-sweep --- stripping flips the selected order from $k{=}20$ to $k{=}1$, i.e.\
+(\cref{fig:t1}). Three things separate T1's $0.436$ from T5's genuine
+share, and the largest is the denominator. T1's $\Rsq$ is relative to the
+variance of the \emph{stripped} updates, T5's shares to the total: at
+$k{=}1$ and $m{=}50$ the complement holds 61\% of the update variance, so
+T5's whole-stack genuine share of $0.248$ is an $\Rsq$ of $0.407$ within the
+complement. Re-optimising the kernel there, which T1 does and T5 does not,
+lifts that to $0.436$. And since each point of the original sweep is a max
+over $k$, stripping flips the selected order from $k{=}20$ to $k{=}1$, i.e.\
 onto the 23-depth evaluation set. \Cref{app:stats} therefore repeats the whole
 $m$ sweep at fixed $k{=}1$ for every store used below, and all
 trained-vs-untrained and factual-vs-generic contrasts we quote are taken from
@@ -317,7 +329,11 @@ control --- scramble $\approx 0$, surrogate $\approx 0$, lag$\ge$2 Granger
 on the primary model, \textbf{the tautology-free AR-on-$\Delta$ structure is
 substantially architectural} --- a property of the residual stack with
 per-layer nonlinear
-maps and LayerNorm, not of the learned weights. What training \emph{does}
+maps and LayerNorm, not of the learned weights. The comparison is one of
+levels: it shows that predictability of this size needs no training, not
+that the trained network's kernels are the untrained network's. Fitting the
+kernel on one network and scoring it on the other would test that, and we
+did not run it. What training \emph{does}
 change is the persistent/drift component (raw $\Rsq$ 0.543$\to$0.521 factual,
 where the tautological share rises 0.12$\to$0.27; 0.063$\to$0.882 generic,
 almost all of it tautology) --- the part T1/T5 already attribute to drift.
@@ -327,7 +343,9 @@ did was an artefact of the depth-subset confound. Compared at the same
 $k{=}1$ over the same 11 depths, GPT-2's persistence-stripped $\Rsq$ is
 \textbf{0.439 trained vs 0.233 untrained} --- a learned share of $47\%$, not
 the ${\sim}5\%$ we obtain if the untrained arm is allowed to select $k{=}10$
-and thereby score only its two deepest updates. So the honest statement is
+and thereby score only its two deepest updates. (``Share'' here is a ratio
+of two networks' levels, not a decomposition of the trained network's
+structure of the kind T5 gives.) So the honest statement is
 narrower than we first drew it: \emph{on \pythia{} the tautology-free
 AR structure is architectural (the untrained network exceeds the trained one);
 on GPT-2-small it is about half learned.} We have no account of why the two
@@ -346,7 +364,10 @@ families differ, and we flag it as the most interesting loose end in
   direction alone is 96\% of state variance --- collapses on the very first
   direction and reaches $0.07$ by $m{=}50$. Nearly all of the raw generic
   level was persistence, and what survives is about six times weaker than
-  the factual store's.}
+  the factual store's. Both are $\Rsq$ within the stripped complement, which
+  at $m{=}50$ holds 61\% of the update variance on the factual store and 4\%
+  on the generic one; as shares of total update variance they are $0.248$
+  and $0.003$ (\cref{tab:commondepth}).}
   \label{fig:t1}
 \end{figure}
 

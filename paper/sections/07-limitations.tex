@@ -70,7 +70,10 @@ which is why the probe targets answer identity.
 The pre-registration is internal, and the repository's history confirms the
 freeze only from Phase~2 onward; for Phase~1 it rests on our own record
 (\cref{app:prereg}). Stationarity was tested at lags up to five and not
-beyond (\cref{sec:phase2:stationarity}).
+beyond. What the test rejects is the transfer of a kernel between depth
+bands: a single kernel fit to all depths still scores well above the mean,
+and H2's generative form over sources was not tested directly
+(\cref{sec:phase2:stationarity}).
 The held-out protocol is reconstruction-at-matched-sparsity (codes re-inferred
 on test $\Delta$ with frozen operators), standard for dictionary learning but
 not out-of-sample forecasting; all arms are treated identically and
@@ -106,7 +109,12 @@ shared by a per-layer decoder of the SSM's size, with no cross-layer path
 (\cref{sec:evaluation:clt}).
 The state probe reads codes inferred against each example's whole update
 trajectory, so the state is not a depth-causal summary and its comparison
-with the raw residual stream is confounded (\cref{sec:evaluation:probe}).
+with the raw residual stream is confounded. The same look-ahead reaches the
+earlier codes through the state map, so it may also inflate the state's lead
+over summaries of those codes, and the probe has no per-layer arm trained on
+$\Delta$ (\cref{sec:evaluation:probe}). The parameter-matched margin of
+\cref{sec:evaluation:gate3} is one fit per arm, over one dictionary, at one
+operating point.
 The lower half of the source-prefix sweep is depressed by an under-fit bias
 (\cref{sec:evaluation:prefix}). Untrained-network controls use a single
 random initialisation each.
@@ -115,7 +123,10 @@ network \emph{exceeds} the trained one), but the quantified shares ---
 GPT-2-small's 47\% learned AR structure and the ${\approx}$half-learned
 reconstruction gains --- are single-initialisation point estimates with no
 seed-level spread attached, so we hold them at ``about half'' and claim
-nothing finer. The reconstruction shares are also taken at equal penalty, not
+nothing finer. They are also ratios of levels on two networks, not
+decompositions of the trained one: ``architectural'' means available without
+training, and no kernel was transferred between the two networks to test
+more than that. The reconstruction shares are also taken at equal penalty, not
 equal sparsity, which favours the untrained network
 (\cref{sec:evaluation:depth}). The stability statistic of \cref{sec:evaluation:stability}
 re-initialises the SSM over a fixed dictionary; it does not retrain the

@@ -5,9 +5,10 @@ cross-layer computation. We pre-registered two hypotheses about these updates
 on factual-recall inputs --- (H1) they are predictable across depth; (H2) the
 prediction kernel is approximately depth-stationary --- and ran the frozen
 protocol on \pythia{}, replicating on five further models from three families.
-\textbf{(1)}~H1 holds far above pre-registered nulls but decomposes exactly:
-an orthogonal split of the held-out explained variance attributes most of it
-to the running-sum tautology on the four deepest updates
+\textbf{(1)}~H1 holds far above pre-registered nulls but decomposes: an exact
+orthogonal split of the held-out explained variance, taken at the 50 most
+persistent state directions, attributes most of it to slow drift along those
+directions (the running-sum ``tautology'') on the four deepest updates
 ($0.65 = 0.52 + 0.13$) and roughly half on the whole stack
 (raw $0.52 = 0.27 + 0.25$), and on the primary model
 what survives is substantially architectural --- an untrained network exceeds
@@ -15,24 +16,29 @@ it (though on GPT-2-small it is about half learned).
 \textbf{(2)}~H2 fails decisively: kernels fit on one depth band predict
 another band's updates worse than that band's mean, so the right abstraction
 is a first-order ($\kstar\!\approx\!1$), fully depth-indexed state-space
-model (SSM), validating the unconstrained parameterisation of cross-layer
-transcoders. \textbf{(3)}~Fitted over frozen sparse sources, the SSM
+model (SSM), which supports the choice, in cross-layer transcoders, not to
+share decoders along depth. \textbf{(3)}~Fitted over sparse per-layer
+sources, the SSM
 reconstructs $\Dl$ above a matched per-layer dictionary ($+0.049$ $\Rsq$
-rank-matched, $+0.008$ parameter-matched), with a roughly half-learned gain
-that grows with depth under one of our two evaluation protocols and not the
-other; its gauge-invariant state path attenuates by half per layer
+rank-matched; at matched parameters, $+0.008$ when codes are re-inferred
+against the update and nothing when they are held fixed), with a roughly
+half-learned gain
+that grows with depth under the first of those two protocols and not the
+second; its gauge-invariant state path attenuates by half per layer
 of depth gap (memory ${\approx}1.2$ layers, consistent with
 $\kstar\!\approx\!1$) and the state decodes the recalled
 answer at mid-depth better than dimension-matched PCA of its own codes.
 \textbf{(4)}~The pre-registered causal test returns a null, which post-hoc
 controls locate: no single feature's ablation clears threshold, and the group
 effect that does is reproduced by a norm-matched \emph{random direction} ---
-recall is a distributed, magnitude-driven code. As a by-product, on the primary model
+read through either dictionary we tried, recall is a distributed,
+magnitude-driven code. As a by-product, on the primary model
 the SSM's per-feature write directions are reproduced across refits over L1
 dictionaries but not over TopK dictionaries trained on the same activations
 (three dictionaries each); in our small-data regime the dictionaries
 themselves reproduce across training seeds under neither mechanism. All gates were
-frozen before data collection, every headline reconstruction gap carries a
+frozen, in an internal registration, before data collection; every headline
+reconstruction gap carries a
 paired bootstrap confidence interval, and every figure regenerates from tracked
 tables.
 \end{abstract}

@@ -40,14 +40,35 @@ spread. Crucially there is \emph{no clean phase boundary}: the three pairwise
 distances are equal to within 3\%, so adjacent bands differ as much as distant
 ones --- the depth dependence is \textbf{pervasive drift}, not segmentation.
 
-Three caveats travel with this result: the cap makes it a short-horizon
+What these comparisons reject is the \emph{transfer} of a kernel from one
+part of the stack to another, which is narrower than ``a shared kernel fits
+badly''. One kernel fit to all nineteen scorable depths at once, at the same
+lag order and rank, scores a held-out $\Rsq$ of $0.59$ over those depths
+(the plan's $r$-vs-$2r$ spot-check), against $0.74$, $0.58$ and $0.67$ for
+the three band-specific kernels on their own bands and $0.83$--$0.94$ for
+per-depth kernels (\cref{sec:phase2:kstar}). The three are scored on
+different depth sets, the last at each depth's best lag order, and we did
+not score the pooled kernel band by band, so the ladder is indicative, not
+like-for-like. It is still why the pooled fits of \cref{sec:phase1:ar} and
+the negative cells here do not conflict: a kernel is pinned down only on the
+inputs it was fit to, so one fit on a single band extrapolates badly to the
+others, while one fit on all of them need not. Sharing one kernel along
+depth costs reconstruction, most visibly against per-depth kernels; it does
+not fall below the mean.
+
+Three caveats travel with this result. The cap makes it a short-horizon
 test, and stationarity at longer lags is untested --- the protocol deferred
 it to a recheck on the fitted generative model that it defines only for the
-shared-kernel branch, so after the routing below that recheck did not run;
-AR-on-$\Delta$ stationarity is a proxy for H2's generative
-(MA) form --- but a proxy whose failure is decisive in the rejecting
-direction; and the $\pm\vl$ shared term biases the comparison \emph{toward}
-stationarity, so rejection is the conservative outcome.
+shared-kernel branch, so after the routing below that recheck did not run.
+AR-on-$\Delta$ stationarity is a proxy for H2's generative (MA) form. The
+protocol took its failure as decisive in the rejecting direction, on the
+argument that a stationary MA kernel implies a stationary best AR
+approximation; that implication needs the sources' own statistics to be the
+same at every depth, which per-layer dictionaries of different widths give
+no reason to assume, so the generative form is rejected on that assumption
+and was never tested directly. And the $\pm\vl$ shared term biases the
+comparison \emph{toward} stationarity, so rejection is the conservative
+outcome.
 
 \begin{figure}[t]
   \centering
@@ -65,14 +86,16 @@ pervasively $\Rightarrow$ Phase 3 fits the matrix's state-space branch} --- a
 state-space model with
 \emph{free per-layer operators} (the smoothly-varying variant assumes exactly
 the smoothness the data reject), and --- per the proposal's own framing ---
-CLT-style unconstrained per-(source,\,target) parameterisation is
-\emph{validated}: ``shared kernel along depth'' is the wrong abstraction for
-these dynamics. The parsimony claim originally attached to H2 is off; what
-survives is a reconstruction comparison at stated parameter budgets
-(\cref{sec:evaluation:clt}).
+CLT's choice not to share decoders along depth is \emph{supported}: a kernel
+does not carry from one part of the stack to another. Whether a free decoder
+for every (source,\,target) pair is needed on top of depth-indexing is a
+separate question, since the first-order state Phase~3 fits is depth-indexed
+too. The parsimony claim originally attached to H2 is off; what
+survives is a reconstruction comparison at stated parameter budgets, which
+takes that question up (\cref{sec:evaluation:clt}).
 
-\subsection{Effective order: \texorpdfstring{$\kstar \approx 1$}{k* approx 1},
-everywhere we looked}
+\subsection{Effective order: \texorpdfstring{$\kstar \approx 1$}{k* approx 1}
+on factual recall}
 \label{sec:phase2:kstar}
 
 Per-depth AR($k$) sweeps --- one fit per target depth, so no depth-subset
@@ -226,7 +249,9 @@ is \emph{higher} than factual (0.650), and \cref{sec:phase1:pressure} is the
 reason that must not be read as ``more computation'': T5 shows the generic
 level is $\approx 0.94$ tautological $+\;{\approx}0$ genuine, and at a common
 lag order the persistence-stripped generic structure (0.07) is about six
-times \emph{weaker} than factual (0.44). So what generalises is H1's
+times \emph{weaker} than factual (0.44) within the stripped complement, and
+$0.003$ against $0.25$ as a share of total update variance
+(\cref{tab:commondepth}). So what generalises is H1's
 binary claim --- above-null, example-specific, depth-intrinsic structure
 exists in the updates of generic text too --- and emphatically not its
 magnitude, which on generic text is almost entirely running-sum drift. The

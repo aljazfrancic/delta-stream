@@ -103,7 +103,8 @@ the stability result), corrects statements that the run tables and the repositor
 not support (listed in the paper's App. G), adds related work, and repackages the paper. It changes no
 pre-registered result — see the v1.1 section of [progress.md](progress.md).
 
-Four headline findings (pre-registered gates, frozen before data collection):
+Four headline findings (pre-registered gates, frozen in an internal registration before data
+collection):
 
 1. **Structure is real but mostly architectural.** H1 (predictable-across-depth) holds
    far above both nulls — but the tautology-free residual is substantially *architectural*:
@@ -111,20 +112,23 @@ Four headline findings (pre-registered gates, frozen before data collection):
 2. **The dynamics are non-stationary.** H2 (depth-stationary kernel) **fails** decisively, so
    the right abstraction is a first-order (k\*≈1), fully depth-indexed state-space model (SSM).
 3. **The SSM buys real value where it counts.** It beats the matched per-layer baseline
-   (+0.049 [+0.046, +0.052] R² rank-matched, +0.008 param-matched); on the primary model it
+   (+0.049 [+0.046, +0.052] R² rank-matched; +0.008 param-matched when codes are re-inferred
+   against the update, a wash when they are held fixed); on the primary model it
    lands within ~0.01 R² of a rank-matched cross-layer transcoder (CLT) at ~6× fewer params
    and leads below ~1k examples (on the smaller replication models the CLT's edge is larger);
-   its state is functionally informative (R7 probe beats dim-matched PCA of its own codes at
-   mid-depth).
+   its state decodes the recalled answer better than dim-matched PCA of its own codes at
+   mid-depth (R7 probe; a look-ahead in those codes may inflate the lead, and the check that
+   would size it is named and not run).
 4. **The causal test returns a clean null.** No single feature's ablation clears threshold; the
-   group effect is reproduced by a norm-matched random direction — recall is a distributed,
-   magnitude-driven code.
+   group effect is reproduced by a norm-matched random direction — read through either
+   dictionary tried, recall is a distributed, magnitude-driven code.
 
 <details><summary>Full gate-by-gate record</summary>
 
 Gate 1 PASS (H1 holds, both
 nulls survive — but T4: the tautology-free AR-on-Δ structure is substantially
-*architectural*, two-family); Gate 2: H2 **fails** (non-stationary) → Branch B
+*architectural* on the primary model, about half learned on GPT-2-small); Gate 2: H2 **fails**
+(kernels do not transfer between depth bands) → Branch B
 first-order state-space model, k\*≈1; Gate 3 **GO** (SSM beats the matched per-layer
 baseline, +0.049 [+0.046, +0.052] at the λ=1 knee on 410m; the stability clause —
 per-feature write directions across SSM refits over one fixed dictionary — fails over
@@ -132,9 +136,10 @@ the TopK source and passes over an L1 source); Phase 4: causal existence proof =
 (distributed, magnitude-driven code); CLT comparison restated on three axes (fig08).
 Cross-model: 6 models / 3 families. The 4th-pass on-box action plan closed 2026-07-04:
 the Gate-3 state-path edge survives param-matching (+0.008 [+0.005, +0.010] beside the
-+0.049 rank-matched headline); the SSM state is **functionally informative** (R7 probe:
-beats dimension-matched PCA of the codes on answer identity at mid-depth, both
-dictionaries — not "reconstruction-only"); the reconstruction win's ~half-architectural
++0.049 rank-matched headline; one fit per arm, under code re-inference only); the SSM state
+beats dimension-matched PCA of its own codes on answer identity at mid-depth, both
+dictionaries (R7 probe; the lead may be inflated by a look-ahead in the codes, see the
+paper's §6.7); the reconstruction win's ~half-architectural
 / ~half-learned split replicates on GPT-2 (R10).
 
 The **on-box research programme is fully closed** (2026-07-05): the two optional extras

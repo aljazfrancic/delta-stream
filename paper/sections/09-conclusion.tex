@@ -7,12 +7,13 @@ structured, yes --- but the structure is substantially architectural where it
 is predictive (on the primary model; about half learned on GPT-2-small),
 pervasively depth-indexed where we hoped it was shared,
 first-order and fast-forgetting where it is generative, distributed and
-magnitude-driven where we tested it causally, and genuinely learned exactly
+magnitude-driven where we tested it causally, and about half learned
 where the decomposition adds value over per-layer baselines. Both
 pre-registered hypotheses did real work: H1 by surviving controls designed to
-kill it, H2 by failing and thereby validating the unconstrained
-parameterisation the field already uses. Every gate decision, threshold, and
-fallback was written down in advance; every headline reconstruction gap carries
+kill it, H2 by failing and thereby supporting the field's choice not to share
+cross-layer decoders along depth. Every gate decision, threshold, and
+fallback was written down in advance, in an internal registration; every
+headline reconstruction gap carries
 a paired bootstrap confidence interval (the depth series carries seed error bars
 instead, and \cref{sec:evaluation} names the handful of supporting numbers that
 carry no interval at all); the places where our own analysis misled us ---

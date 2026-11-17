@@ -14,7 +14,10 @@ selection performed on the test split is limited to points where the contrast
 itself is the pre-registered quantity; the one CI where selection could matter
 (SSM vs CLT) is re-derived with validation-based selection in
 \cref{sec:evaluation:clt}. \Cref{app:operating} tabulates every operating
-point and which claim uses which.
+point and which claim uses which. A ``seed'' with no further qualification
+is the seed of an SSM fit over a fixed dictionary, so three seeds are three
+refits; a dictionary's training seed is always named as such
+(\cref{sec:evaluation:stability,app:dictseeds}).
 
 \subsection{Headline: cross-layer state beats a matched per-layer dictionary}
 \label{sec:evaluation:gate3}
@@ -54,10 +57,15 @@ statistic we carry forward (\cref{app:prereg}, deviation 5).
 The gap above compares arms at equal rank, giving the SSM roughly twice the
 baseline's parameters (8.36M vs 4.22M). Widening the baseline to rank 64
 (8.41M) closes most of it: under the LASSO protocol the state-path edge
-survives at \textbf{$+0.0077$ \CI{$+0.0053$}{$+0.0102$}} --- small, real, and
-conservative (the wider baseline runs slightly denser) --- while under the
-frozen-source protocol the same comparison is a wash ($\pm 0.005$, opposite
-signs at the 8.4M and 16.8M budgets). We therefore quote the headline as
+survives at \textbf{$+0.0077$ \CI{$+0.0053$}{$+0.0102$}} --- small, and
+conservative in that the wider baseline runs slightly denser --- while under
+the frozen-source protocol the same comparison is a wash ($\pm 0.005$,
+opposite signs at the 8.4M and 16.8M budgets). The margin is one fit per arm
+(the recorded seed-0 SSM against a single rank-64 baseline), over the MLSAE
+dictionary, at the knee. Its interval resamples test examples and does not
+cover refits, whose spread on the rank-matched gap is $\pm 0.0014$; we did
+not repeat the comparison over the L1 dictionary, at other depths or on the
+untrained network. We therefore quote the headline as
 ``\textbf{$+0.049$ rank-matched, $+0.008$ param-matched}'' and never write
 ``load-bearing'' without the second number. What decoder width cannot
 replicate at any budget is the \emph{structure} the state provides ---
@@ -162,7 +170,9 @@ Running the identical pipeline on a \emph{randomly initialised} \pythia{}
 (sources retrained on its own activations) yields a positive but smaller gap:
 mean over the $\lambda$ sweep \textbf{$+0.025$ untrained vs $+0.046$ trained}
 --- the untrained network carries \textbf{53\%} of the trained gain
-(per-$\lambda$ shares averaged), and the
+(per-$\lambda$ shares averaged; like T4's, a ratio of gaps measured on two
+networks, each over its own dictionary, and not a decomposition of the
+trained network's gain), and the
 learned share \emph{grows with sparsity} (66\% learned at
 $\lambda_{L1}{=}10$). The split replicates on GPT-2-small (untrained carries
 44\%; both arms there use L1 dictionaries trained on the network's own
@@ -330,7 +340,9 @@ asks, for each of the top-100 features, whether its \emph{write direction}
 --- the feedthrough column $D_\ell[:, j]$, what the SSM learns a unit of
 source $j$ writes into $\Dl$ --- has cosine $\ge 0.7$ between refits.
 Features are paired by index, because atom $j$ is the same atom in every
-refit (\cref{app:stats}). What is re-seeded is therefore the SSM, never the
+refit (\cref{app:stats}); each refit starts from that dictionary's codes
+and refines its own copy of them, so ``the same atom'' means the same index
+and the same starting activations. What is re-seeded is therefore the SSM, never the
 dictionary: the statistic says whether a downstream model's per-feature
 readout is pinned down over a given dictionary, not whether independently
 trained SAEs agree on the dictionary itself, the question studied by
@@ -406,7 +418,7 @@ seeds is a different question, with mixed evidence in the literature
 \citep{paulo2026seeds,song2026consistency}. A post-hoc check on our three
 seeds per mechanism finds that in this regime they are not, under either
 mechanism (\cref{app:dictseeds}): 25\% of the top-100 L1 latents per layer
-and 3\% of the TopK ones have a counterpart at cosine $\ge 0.7$ in a
+and 3.5\% of the TopK ones have a counterpart at cosine $\ge 0.7$ in a
 dictionary trained from another seed (random and cross-layer nulls: 0\%; no
 layer above 0.42 for L1 or 0.15 for TopK). L1 leads only on these high-mass
 latents --- over all alive latents the two are level, and under one-to-one
@@ -506,8 +518,8 @@ a cleaner dictionary concentrating causal mass. That dictionary does not
 reproduce across training seeds and most of its alive latents sit near their
 random initialisation (\cref{app:dictseeds}), so refit-stable is all we can
 call it.
-\textbf{Factual recall in this model is a distributed, mass-driven code with
-no single-feature bottleneck under either dictionary we read it with.}
+\textbf{Factual recall in this model is a distributed, magnitude-driven code
+with no single-feature bottleneck under either dictionary we read it with.}
 No threshold was adjusted post hoc.
 
 \begin{figure}[t]
@@ -521,7 +533,8 @@ No threshold was adjusted post hoc.
   \label{fig:distributed}
 \end{figure}
 
-\subsection{The state is functionally informative, not reconstruction-only}
+\subsection{Probing the state: more answer information than summaries of its
+own codes}
 \label{sec:evaluation:probe}
 
 Does the 32-dimensional state $z_\ell$ carry task information, or is it only
@@ -549,10 +562,18 @@ reconstruct $\Dl$ and later updates through the state path. The state at
 $\ell{=}17$ can therefore carry information about the write $\Delta_{17}$,
 which reaches the raw stream only at $v_{18}$ (whose PCA scores $0.846$).
 The raw-residual arm has no such access, so it is a reference curve and not
-a like-for-like competitor; the three code-derived arms share one set of
-codes, and the contrasts among them are unaffected. We did not re-run the
-probe with codes inferred from the layers below $\ell$ alone, the check that
-would size the effect. Peak state decoding
+a like-for-like competitor. The three code-derived arms share one set of
+codes, but that does not put them on an equal footing either. The
+reconstruction of $\Dl$ reaches the codes below layer $\ell$ only through
+$z_\ell$, so whatever those codes pick up about $\Dl$ is written along the
+directions the state map reads, and a variance-ranked PCA of the same codes
+need not keep it. The state's lead over the two code summaries may therefore
+be partly the same look-ahead. Nor is there a per-layer arm trained on
+$\Delta$: the feedthrough's own 32-dimensional image of $u_\ell$ would be
+the matched one, and without it the contrast does not separate a cross-layer
+state from any reconstruction-trained projection of the codes. We ran
+neither that arm nor the probe with codes inferred from the layers below
+$\ell$ alone, the check that would size the look-ahead. Peak state decoding
 reaches 0.775/0.801 top-1 from 32 dimensions (majority class 0.106; with 205
 classes over 311 test examples, top-1 is dominated by the frequent objects,
 so we read the \emph{contrasts between matched arms}, not the absolute level).
@@ -580,7 +601,8 @@ of its own codes, and specific to
   superset) at mid-depth on both dictionaries (the early-band edge is
   significant only under L1; under MLSAE it is null). At $\ell{=}17$ it also
   sits above raw-residual PCA, a comparison confounded by the codes' access
-  to later updates (\cref{sec:evaluation:probe}); the raw stream leads early
+  to later updates; the same access may inflate the state's lead over the
+  code summaries (\cref{sec:evaluation:probe}). The raw stream leads early
   and late.}
   \label{fig:probe}
 \end{figure}

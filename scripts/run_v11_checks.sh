@@ -90,13 +90,17 @@ if [ "$SMOKE" = 1 ]; then
   rundir() { echo "runs/v11c-smoke/$1"; }
   CKPT_EXTRA=(--outer-iters 1 --n-seeds 2); CAUSAL_EXTRA=(--depths 1 2)
   PROBE_EXTRA=(--layers 0 1 2 --n-boot 200); FIT_EXTRA=(--outer-iters 1)
-  PREFIX_EXTRA=(--epochs 3 --cutoffs 0 23); PREFIX_GATE_EXTRA=(--epochs 3)
+  PREFIX_EXTRA=(--epochs 3 --lambda-reg 0.1 --cutoffs 0 23)
+  PREFIX_GATE_EXTRA=(--epochs 3 --lambda-reg 0.1)
   DICT_EXTRA=(--max-layers 3 --epochs 50)
 else
   LOG=runs/v11-checks-overnight.log; SUB=v11c
   rundir() { echo "runs/${DATE}-v11c-$1"; }
   CKPT_EXTRA=(--outer-iters 10); CAUSAL_EXTRA=(); PROBE_EXTRA=(); FIT_EXTRA=(--outer-iters 10)
-  PREFIX_EXTRA=(); PREFIX_GATE_EXTRA=(); DICT_EXTRA=()
+  # The recorded sweep's own recipe: 180 epochs and λ_reg 0.1 (its memo; reproduced by
+  # refitting the embedding-only point), not the script's defaults of 250 and 1e-4.
+  PREFIX_EXTRA=(--epochs 180 --lambda-reg 0.1); PREFIX_GATE_EXTRA=(--epochs 180 --lambda-reg 0.1)
+  DICT_EXTRA=()
 fi
 # Real inputs (deterministic rebuilds, gated) live in one place for both modes.
 SRC_MLSAE="$MODEL_DIR/v11c/sources_mlsae.npz"
@@ -125,10 +129,12 @@ FAILED=()
 step() {  # <label> <command...>
   local label="$1"; shift
   echo "=== $(date -Is)  START $label ===" | tee -a "$LOG"
-  if "$@" >>"$LOG" 2>&1; then
+  local rc=0
+  "$@" >>"$LOG" 2>&1 || rc=$?
+  if [ "$rc" -eq 0 ]; then
     echo "=== $(date -Is)  DONE  $label ===" | tee -a "$LOG"; return 0
   else
-    echo "=== $(date -Is)  FAIL  $label (rc=$?, continuing) ===" | tee -a "$LOG"
+    echo "=== $(date -Is)  FAIL  $label (rc=$rc, continuing) ===" | tee -a "$LOG"
     FAILED+=("$label"); return 1
   fi
 }

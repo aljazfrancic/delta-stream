@@ -12,6 +12,32 @@ appended below under a dated heading; the sections above the results stay as wri
 > is written and unit-tested on synthetic data only. No rebuilt artefact and no number
 > from the real store exists yet.
 
+> **STATUS UPDATE (2026-11-17, evening — the note above is the morning's record, left as
+> written).** The full run started 15:50 (commit `61fb2ea`) after a clean end-to-end smoke
+> test. Two things went wrong in the first pass, and neither touches a statistic or a
+> verdict row:
+>
+> 1. **Check B's recipe was written down wrong above.** The section on B says the sweep is
+>    "identical to the recorded sweep (… 250 Adam epochs …)". The recorded sweep did not use
+>    250 epochs: its own memo (`runs/2026-06-30-ph4-e5-prefix-410md/memo.md`) gives λ_reg 0.1
+>    and "the same frozen-source Adam recipe as E3", i.e. 180 epochs, and the script's
+>    defaults (250 epochs, λ_reg 1e-4) were not what ran. The paper's `tab:operating`
+>    footnote carries the same error; this memo copied it. **The reproduction gate caught
+>    it:** at the defaults the embedding-only fit gives test R² −0.2974 against the recorded
+>    −0.4382, so the mean-initialised sweep was skipped. Refitting the embedding-only point
+>    with 180 epochs and λ_reg 0.1 (CPU, scratch) gives −0.4384, i.e. the recorded value up
+>    to CPU/GPU arithmetic. B is therefore run with 180 epochs and λ_reg 0.1 for both the
+>    gate and the mean-initialised sweep — what "identical to the recorded sweep" requires.
+>    Thresholds and rows are unchanged.
+> 2. **The MLSAE checkpoint ran out of GPU memory** on its third fit (stability seed 2),
+>    after the canonical fit and its codes were saved. `phase4_checkpoint.py` kept earlier
+>    fits' tensors referenced; fixed in `a3ae4f9` (no computed value changes). The second
+>    pass resumes from the saved canonical fit (`--resume`, exact by construction) and must
+>    still pass the checkpoint gate.
+>
+> The first pass's other steps are unaffected. A second pass runs B, the MLSAE half of A
+> and the MLSAE rank-64 interval of C.
+
 ## Why
 
 The third whole-paper review of v1.1 (progress.md WP4c) left four statements resting on

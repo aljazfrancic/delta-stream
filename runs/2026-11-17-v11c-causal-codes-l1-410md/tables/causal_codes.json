@@ -1,0 +1,184 @@
+{
+  "batch_size": 128,
+  "checkpoint_dir": "runs/2026-11-17-v11c-checkpoint-l1-410md",
+  "depths": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "full_length_check": {
+    "max_abs_diff": 0.0,
+    "n_examples": 1555,
+    "nonzero_pattern_identical": true,
+    "ok": true,
+    "seconds": 109.5,
+    "tol": 1e-05
+  },
+  "lambda_l1": 1.0,
+  "lipschitz": 2048.0,
+  "n_examples": 1555,
+  "n_steps": 100,
+  "note": "For each depth \u2113 the recorded held-out encoder is re-solved against \u0394_0..\u0394_{\u2113-1} only (operators frozen). test_prefix_r2 is the pooled R\u00b2 of that prefix reconstruction on the test split; l0 the fraction of nonzero codes over all examples and prefix layers.",
+  "ok": true,
+  "per_depth": [
+    {
+      "depth": 1,
+      "l0": 0.0,
+      "seconds": 2.4,
+      "test_prefix_r2": -0.004375729530566641
+    },
+    {
+      "depth": 2,
+      "l0": 0.010589095763862133,
+      "seconds": 3.7,
+      "test_prefix_r2": 0.31928178648194006
+    },
+    {
+      "depth": 3,
+      "l0": 0.011258387006819248,
+      "seconds": 6.1,
+      "test_prefix_r2": 0.40991008906729876
+    },
+    {
+      "depth": 4,
+      "l0": 0.015806807205080986,
+      "seconds": 8.5,
+      "test_prefix_r2": 0.5718290544939211
+    },
+    {
+      "depth": 5,
+      "l0": 0.018507471308112144,
+      "seconds": 10.0,
+      "test_prefix_r2": 0.6645120503188251
+    },
+    {
+      "depth": 6,
+      "l0": 0.022038187831640244,
+      "seconds": 12.4,
+      "test_prefix_r2": 0.732436990285648
+    },
+    {
+      "depth": 7,
+      "l0": 0.025016669183969498,
+      "seconds": 16.0,
+      "test_prefix_r2": 0.7636651423220537
+    },
+    {
+      "depth": 8,
+      "l0": 0.026911860331892967,
+      "seconds": 18.7,
+      "test_prefix_r2": 0.7838087346777494
+    },
+    {
+      "depth": 9,
+      "l0": 0.028267432004213333,
+      "seconds": 22.4,
+      "test_prefix_r2": 0.7965472784941132
+    },
+    {
+      "depth": 10,
+      "l0": 0.02929353341460228,
+      "seconds": 26.4,
+      "test_prefix_r2": 0.8041301685867368
+    },
+    {
+      "depth": 11,
+      "l0": 0.030186865478754044,
+      "seconds": 30.4,
+      "test_prefix_r2": 0.8100896108249274
+    },
+    {
+      "depth": 12,
+      "l0": 0.03125535696744919,
+      "seconds": 34.9,
+      "test_prefix_r2": 0.8145640864885242
+    },
+    {
+      "depth": 13,
+      "l0": 0.03183552622795105,
+      "seconds": 40.2,
+      "test_prefix_r2": 0.8205723646986773
+    },
+    {
+      "depth": 14,
+      "l0": 0.0322757288813591,
+      "seconds": 44.6,
+      "test_prefix_r2": 0.8252986406277064
+    },
+    {
+      "depth": 15,
+      "l0": 0.03337562456727028,
+      "seconds": 50.1,
+      "test_prefix_r2": 0.8281804153200846
+    },
+    {
+      "depth": 16,
+      "l0": 0.03380030766129494,
+      "seconds": 55.9,
+      "test_prefix_r2": 0.8320475760540937
+    },
+    {
+      "depth": 17,
+      "l0": 0.034664422273635864,
+      "seconds": 61.2,
+      "test_prefix_r2": 0.836227636987245
+    },
+    {
+      "depth": 18,
+      "l0": 0.03635694086551666,
+      "seconds": 67.7,
+      "test_prefix_r2": 0.8390397347570446
+    },
+    {
+      "depth": 19,
+      "l0": 0.037783436477184296,
+      "seconds": 73.9,
+      "test_prefix_r2": 0.8404638451028019
+    },
+    {
+      "depth": 20,
+      "l0": 0.039014022797346115,
+      "seconds": 80.4,
+      "test_prefix_r2": 0.8409926355607578
+    },
+    {
+      "depth": 21,
+      "l0": 0.04077944532036781,
+      "seconds": 87.4,
+      "test_prefix_r2": 0.8418906138071831
+    },
+    {
+      "depth": 22,
+      "l0": 0.042245686054229736,
+      "seconds": 95.3,
+      "test_prefix_r2": 0.8483252797023203
+    },
+    {
+      "depth": 23,
+      "l0": 0.044028569012880325,
+      "seconds": 102.1,
+      "test_prefix_r2": 0.8517621855615854
+    }
+  ],
+  "sources_npz": "data/pythia-410m-deduped/v11/sources_trained_l1_s0.npz"
+}

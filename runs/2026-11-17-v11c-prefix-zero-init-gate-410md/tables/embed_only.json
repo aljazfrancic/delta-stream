@@ -1,0 +1,49 @@
+{
+  "bias_init": "zero",
+  "cutoffs": [
+    0
+  ],
+  "drop_full_minus_embed": 0.0,
+  "embed_only_test_r2": -0.43815207117303934,
+  "full_test_r2": -0.43815207117303934,
+  "interpretation": "Source-prefix sweep: reconstruction R\u00b2 as a function of how many layers' sources are available (\u2113\u2264\u2113_max), with the SSM free to propagate them forward. \u2113_max=0 is the pre-registered embedding-only lower bound \u2014 and since v_0 has no SAE (u_0=0 in every available dictionary), it is the example-independent floor: with no source to inject, the input-free state trajectory is the same for every example. The curve's rise with \u2113_max measures how much each band of per-layer sources is load-bearing; if it only saturates near \u2113_max=L-1, late-layer sources (Geva et al.'s built-up features) carry real, non-propagable reconstruction value. Complement of the use_state=False ablation (keeps sources, kills propagation).",
+  "n_layers": 24,
+  "rank": 32,
+  "rows": [
+    {
+      "cutoff": 0,
+      "n_source_layers": 1,
+      "test_r2": -0.43815207117303934,
+      "train_r2": -0.41967506253041775
+    }
+  ],
+  "sources": "sources_mlsae.npz",
+  "test_per_layer_r2_by_cutoff": {
+    "0": [
+      -0.008456707000732422,
+      -0.008083105087280273,
+      -0.005868196487426758,
+      -0.0049135684967041016,
+      -0.004606723785400391,
+      -0.004811644554138184,
+      -0.0032416582107543945,
+      -0.0031713247299194336,
+      -0.0037511587142944336,
+      -0.003443479537963867,
+      -0.0104445219039917,
+      -0.02966761589050293,
+      -0.015859127044677734,
+      -0.0364915132522583,
+      -0.006314277648925781,
+      -0.018832921981811523,
+      -0.3048588037490845,
+      -0.060747385025024414,
+      -0.04059445858001709,
+      -0.135473370552063,
+      -0.03556370735168457,
+      -0.02001047134399414,
+      -0.23481571674346924,
+      -2.4447579383850098
+    ]
+  }
+}

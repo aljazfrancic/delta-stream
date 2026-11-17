@@ -7,7 +7,7 @@
 to the pre-registered protocol (`docs/`, untouched) and to paper v1.0. Results will be
 appended below under a dated heading; the sections above the results stay as written.
 
-> **STATUS (2026-11-17): criteria frozen, runs NOT started.** The tooling
+> **STATUS (2026-11-17, morning): criteria frozen, runs NOT started.** The tooling
 > (`scripts/run_v11_checks.sh`, `scripts/v11_*.py`, three library modules, their tests)
 > is written and unit-tested on synthetic data only. No rebuilt artefact and no number
 > from the real store exists yet.
@@ -210,4 +210,92 @@ verdict (D) lands within the first half hour, A on the L1 dictionary within two 
 
 ## Results
 
-*(none yet)*
+### 2026-11-17 — all four checks complete
+
+**Runs.** First pass 15:50–20:28 (commit `61fb2ea`); second pass 20:29–23:18 (commits
+`a3ae4f9` checkpoint memory fix, `40c5af4` recorded prefix recipe), resuming every finished
+step. Run directories `runs/2026-11-17-v11c-*`; summary
+`runs/2026-11-17-v11c-summary/tables/checks_summary.json`; log
+`runs/v11-checks-overnight.log`. **Every gate passed with a maximum difference of 0.0**:
+the seed-0 L1 dictionary, the MLSAE sources, both stores' AR(1) levels, both SSM
+checkpoints (train/test R², L0, the 200-feature candidate pool), the embedding-only fit
+(at the recorded recipe), the seed-0 rank-64 interval (+0.007734 [+0.005314, +0.010219]),
+the untrained dictionary and knee, the 12-layer sources and knee. The four recorded probe
+arms reproduce the R7 tables exactly on both dictionaries; the truncated encoder reproduces
+`u_infer_full` exactly at full length on both.
+
+| Check | Verdict row |
+|---|---|
+| A — probe without look-ahead | **survives on every dictionary** |
+| B — prefix sweep, mean-initialised bias | (i) **at the mean floor**; (ii) **late sources load-bearing**; (iii) **upper half not stable** |
+| C1 — MLSAE refits | **robust to refit** |
+| C2 — L1 dictionary | **holds** |
+| C3 — untrained network | **largely learned** |
+| C4 — 12 vs 24 layers | **larger at the deeper model** |
+| D — kernel transfer | **does not transfer** |
+
+**A.** Answer identity, middle band (layers 8–15), paired 95% CIs over the 311 test
+examples:
+
+| Contrast | MLSAE | L1 |
+|---|---|---|
+| recorded: state − prefix PCA (whole-trajectory codes) | +0.080 [+0.048, +0.113] | +0.173 [+0.131, +0.217] |
+| **primary: causal state − PCA of the same prefix codes** | **+0.052 [+0.019, +0.085]** | **+0.133 [+0.095, +0.174]** |
+| look-ahead: state − causal state | +0.042 [+0.031, +0.055] | +0.045 [+0.032, +0.058] |
+| state − feedthrough image of the current code | −0.019 [−0.038, +0.001] | −0.013 [−0.029, +0.003] |
+| causal state − feedthrough image of the last past code | −0.024 [−0.046, −0.003] | −0.041 [−0.057, −0.025] |
+| causal state − SAE-latent PCA | +0.019 [−0.004, +0.042] | +0.058 [+0.034, +0.083] |
+| causal state − raw-residual PCA | −0.076 [−0.101, −0.053] | −0.024 [−0.046, −0.003] |
+
+The primary contrast survives on both dictionaries, at about two thirds (MLSAE) and three
+quarters (L1) of the recorded lead; the look-ahead accounts for the rest. **The pre-committed
+reading rule applies on both dictionaries:** the recorded state is not above the
+feedthrough's own 32-dimensional image of the current code, and the causal state is *below*
+the feedthrough image of the last past code. So the lead over PCA is what a
+reconstruction-trained projection of the codes gives; the cross-layer state does not add to
+it. Other bands, MLSAE primary: early +0.004 [−0.015, +0.023], late +0.085 [+0.055, +0.115].
+Relation class, MLSAE, middle band: the causal state is *below* the prefix PCA (−0.049
+[−0.060, −0.039]).
+
+**B.** Embedding-only test R² −0.003 (recorded −0.438): (i) holds — the recorded value was
+the unconverged bias. Full −0.003 / +0.068 / +0.178 / +0.395 / +0.474 / +0.645 / +0.785 at
+ℓ_max = 0/3/7/11/15/19/23 (recorded −0.438 / −0.343 / −0.248 / +0.199 / +0.404 / +0.576 /
++0.770); monotone. (ii) R²(23) − R²(19) = +0.140 ≥ 0.10 (recorded +0.194): holds. (iii)
+upper half moves by up to +0.071 (ℓ_max 15 and 19): not stable, so §6.9's quoted values are
+replaced. **The carry-forward rows that §6.8 cites change**: with sources up to layer 3 the
+per-layer R² at ℓ = 4…9 is +0.71, +0.49, 0.00, 0.00, 0.00, 0.00 (recorded +0.69, +0.41,
++0.31, +0.24, +0.23, +0.21); up to layer 7, at ℓ = 8…14: +0.71, +0.53, +0.30, +0.23, +0.05,
+0.00, 0.00 (recorded +0.60, +0.39, +0.16, +0.20, +0.25, +0.25, +0.20); up to layer 11, at
+ℓ = 12…16: +0.69, +0.53, +0.33, +0.22, +0.20. The long tails of the recorded rows were
+the under-fit bias; a refit state carries withheld sources two layers from an early cutoff
+and four to five from a middle one.
+
+**C.** Parameter-matched knee gap (rank-32 SSM − rank-64 per-layer baseline):
+
+| | gap | note |
+|---|---|---|
+| 24 layers, MLSAE, seeds 0/1/2 | +0.0077 / +0.0098 / +0.0090 (mean +0.0089 ± 0.0011) | C1 robust |
+| 24 layers, L1 dictionary | +0.0055 [+0.0030, +0.0081] | C2 holds; SSM L0 0.047, baseline 0.046 |
+| 24 layers, untrained network (own L1 dictionary) | −0.0254 (SSM 0.7426, baseline 0.7680; rank-matched +0.0287) | C3: share −4.6, largely learned; baseline L0 0.065 vs SSM 0.059 |
+| 12 layers (Pythia-160m), seeds 0/1/2 | −0.0081 / −0.0086 / −0.0097 (mean −0.0088 ± 0.0008; rank-matched +0.012 to +0.015) | C4: larger at the deeper model (Δ +0.0176 > 2 × 0.0013) |
+
+On the untrained network and at 12 layers the state is *worse* than a per-layer decoder of
+the same size; at 24 layers on the trained network it is better, under both dictionaries
+and every refit. Two depths and one family: "consistent with", not a trend.
+
+**D.** At m = 50, rank 128: within-network R² 0.436 (trained) / 0.503 (untrained), both
+exactly the tracked T1 values; untrained → trained −0.093, trained → untrained −0.136;
+retentions −0.21 / −0.27; with a refit gain per depth ≈ 0.0002 / 0.0004; relative Frobenius
+distance of the two maps 1.417 (√2 = unrelated); scrambled-source transfer ≈ 0. At m = 0
+the cross scores are −0.09 / −0.21. The two networks' kernels are different maps: the
+untrained network matches the trained one in *level* of predictability, not in kernel.
+
+**Consequences for the paper** (proposed; the author approves the wording): §6.7, the
+abstract's probe clause and contribution 5 — the lead survives the look-ahead at reduced size,
+but it is a reconstruction-trained projection's lead, not the cross-layer state's; §6.1 and
+the abstract — the +0.008 is robust to refits and holds over the L1 dictionary, but it is
+absent on the untrained network and reversed at 12 layers; the intro's two "not repeated at
+matched parameters" sentences are replaced by C3 and C4; §3.4 (T4) — "architectural"
+describes the level, and the kernels do not transfer; §6.8's second caveat and §6.9's
+numbers are replaced by B's; `tab:operating`'s footnote (and WP4's progress note) say 250
+epochs where the sweep used 180 with λ_reg 0.1.

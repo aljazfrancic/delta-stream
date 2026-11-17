@@ -1,0 +1,37 @@
+{
+  "device": "cuda",
+  "dims": {
+    "d_input": 4433,
+    "d_model": 1024,
+    "d_state": 64,
+    "n_layers": 24,
+    "rank": 64
+  },
+  "lambda_reg": 0.0001,
+  "lambdas": [
+    1.0
+  ],
+  "matched_l0_gaps": [],
+  "model": "pythia-410m-deduped",
+  "n_test": 311,
+  "n_train": 1244,
+  "outer_iters": 10,
+  "rows": [
+    {
+      "b_norm": 12.168342590332031,
+      "lambda_l1": 1.0,
+      "op_C": 0.02173406258225441,
+      "op_D": 287.1780700683594,
+      "test_l0": 0.015614373007278307,
+      "test_r2": 0.8496109477755346,
+      "test_recon": 81231.0322265625,
+      "train_l0": 0.009621640676510503,
+      "train_r2": 0.8746121747683469,
+      "variant": "baseline"
+    }
+  ],
+  "sae_init_l0": 0.006917813369426273,
+  "sae_repo": "EleutherAI/sae-pythia-70m-deduped-32k",
+  "split_by": "random",
+  "ssm_on_or_above_baseline": false
+}

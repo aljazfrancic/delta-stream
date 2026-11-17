@@ -1,0 +1,265 @@
+{
+  "A_probe": {
+    "per_dictionary": {
+      "l1": {
+        "dir": "runs/2026-11-17-v11c-probe-causal-l1-410md",
+        "primary": {
+          "ci_hi": 0.17403536977491962,
+          "ci_lo": 0.09485530546623794,
+          "contrast": "object/state_causal\u2212prefix_pca_causal/mid",
+          "diff": 0.13344051446945338,
+          "significant": true
+        },
+        "recorded_state_minus_prefix_mid": {
+          "ci_hi": 0.21663987138263666,
+          "ci_lo": 0.1310289389067524,
+          "diff": 0.17323151125401928,
+          "significant": true
+        },
+        "reproduces_recorded": true,
+        "secondary": {
+          "object/state_causal\u2212feed_prev_causal/mid": {
+            "ci_hi": -0.02451768488745981,
+            "ci_lo": -0.05667202572347267,
+            "diff": -0.040594855305466235,
+            "significant": true
+          },
+          "object/state_causal\u2212resid_pca/mid": {
+            "ci_hi": -0.003215434083601286,
+            "ci_lo": -0.04581993569131833,
+            "diff": -0.024115755627009645,
+            "significant": true
+          },
+          "object/state_causal\u2212sae_pca/mid": {
+            "ci_hi": 0.08319935691318328,
+            "ci_lo": 0.03376205787781351,
+            "diff": 0.05827974276527331,
+            "significant": true
+          },
+          "object/state\u2212feed_image/mid": {
+            "ci_hi": 0.003215434083601286,
+            "ci_lo": -0.028938906752411574,
+            "diff": -0.012861736334405145,
+            "significant": false
+          },
+          "object/state\u2212state_causal/mid": {
+            "ci_hi": 0.05787781350482315,
+            "ci_lo": 0.0317524115755627,
+            "diff": 0.044614147909967844,
+            "significant": true
+          }
+        },
+        "verdict": "survives"
+      },
+      "mlsae": {
+        "dir": "runs/2026-11-17-v11c-probe-causal-mlsae-410md",
+        "primary": {
+          "ci_hi": 0.08480707395498392,
+          "ci_lo": 0.01929260450160772,
+          "contrast": "object/state_causal\u2212prefix_pca_causal/mid",
+          "diff": 0.05184887459807074,
+          "significant": true
+        },
+        "recorded_state_minus_prefix_mid": {
+          "ci_hi": 0.11335409967845646,
+          "ci_lo": 0.04782958199356913,
+          "diff": 0.08038585209003216,
+          "significant": true
+        },
+        "reproduces_recorded": true,
+        "secondary": {
+          "object/state_causal\u2212feed_prev_causal/mid": {
+            "ci_hi": -0.003205385852090178,
+            "ci_lo": -0.04581993569131833,
+            "diff": -0.024115755627009645,
+            "significant": true
+          },
+          "object/state_causal\u2212resid_pca/mid": {
+            "ci_hi": -0.05265273311897106,
+            "ci_lo": -0.10088424437299036,
+            "diff": -0.07636655948553055,
+            "significant": true
+          },
+          "object/state_causal\u2212sae_pca/mid": {
+            "ci_hi": 0.04220257234726688,
+            "ci_lo": -0.0044212218649517685,
+            "diff": 0.018890675241157555,
+            "significant": false
+          },
+          "object/state\u2212feed_image/mid": {
+            "ci_hi": 0.0008038585209003215,
+            "ci_lo": -0.03778135048231511,
+            "diff": -0.018488745980707395,
+            "significant": false
+          },
+          "object/state\u2212state_causal/mid": {
+            "ci_hi": 0.05466237942122187,
+            "ci_lo": 0.03054662379421222,
+            "diff": 0.04220257234726688,
+            "significant": true
+          }
+        },
+        "verdict": "survives"
+      }
+    },
+    "primary_contrast": "object/state_causal\u2212prefix_pca_causal/mid",
+    "verdict": "survives on every dictionary"
+  },
+  "B_prefix": {
+    "bias_init": "mean",
+    "dir": "runs/2026-11-17-v11c-prefix-mean-init-410md",
+    "embed_only_at_mean_floor": true,
+    "embed_only_r2": -0.003192289051190844,
+    "embed_only_recorded_r2": -0.43815207117303934,
+    "late_gain": 0.1400647845543861,
+    "late_gain_from_cutoff": 19,
+    "late_sources_load_bearing": true,
+    "lower_half_max_move": 0.4349597821218485,
+    "monotone": true,
+    "recorded_test_r2_by_cutoff": {
+      "0": -0.43815207117303934,
+      "11": 0.19922287490781754,
+      "15": 0.4037294236850796,
+      "19": 0.5764154622522333,
+      "23": 0.7699662127768319,
+      "3": -0.3434336307915824,
+      "7": -0.24801036350637484
+    },
+    "test_r2_by_cutoff": {
+      "0": -0.003192289051190844,
+      "11": 0.3951956061270072,
+      "15": 0.4743119090008028,
+      "19": 0.6448900164383007,
+      "23": 0.7849548009926868,
+      "3": 0.06797810739153609,
+      "7": 0.17827823220128225
+    },
+    "upper_half_max_move": 0.0705824853157232,
+    "upper_half_stable": false
+  },
+  "C_param_matched": {
+    "depth": {
+      "deep_mean": 0.008860321923577774,
+      "deep_sd": 0.0010581683706330288,
+      "difference": 0.017648945995561473,
+      "pooled_sd": 0.0013151109899069823,
+      "shallow": [
+        {
+          "baseline_r64_dir": "runs/2026-11-17-v11c-p160-pm-baseline-r64-s0",
+          "baseline_r64_test_r2": 0.9163713549982551,
+          "gap": -0.008133102996168318,
+          "rank_matched_gap": 0.015181077576230217,
+          "ssm_r32_dir": "runs/2026-06-26-xm-p160-gate3",
+          "ssm_r32_test_r2": 0.9082382520020867
+        },
+        {
+          "baseline_r64_dir": "runs/2026-11-17-v11c-p160-pm-baseline-r64-s1",
+          "baseline_r64_test_r2": 0.9202367162446367,
+          "gap": -0.008580179700796609,
+          "rank_matched_gap": 0.012246458075632738,
+          "ssm_r32_dir": "runs/2026-06-28-xm-p160-gate3-s1",
+          "ssm_r32_test_r2": 0.91165653654384
+        },
+        {
+          "baseline_r64_dir": "runs/2026-11-17-v11c-p160-pm-baseline-r64-s2",
+          "baseline_r64_test_r2": 0.9232257763470468,
+          "gap": -0.009652589518986177,
+          "rank_matched_gap": 0.011537068224914182,
+          "ssm_r32_dir": "runs/2026-06-28-xm-p160-gate3-s2",
+          "ssm_r32_test_r2": 0.9135731868280607
+        }
+      ],
+      "shallow_mean": -0.0087886240719837,
+      "shallow_sd": 0.0007808947529379127,
+      "verdict": "larger at the deeper model"
+    },
+    "l1": {
+      "gap_ci": {
+        "alpha": 0.05,
+        "boot_seed": 0,
+        "ci_hi": 0.00811084306333214,
+        "ci_lo": 0.003002417547395453,
+        "gap": 0.00552661163945678,
+        "n_boot": 10000,
+        "n_test": 311,
+        "r2_a": 0.8640019310924265,
+        "r2_b": 0.8584753194529697,
+        "significant": true
+      },
+      "rank": 64,
+      "verdict": "holds"
+    },
+    "mlsae_extra_seeds": [
+      {
+        "baseline_r64_dir": "runs/2026-11-17-v11c-pm-baseline-r64-mlsae-s1",
+        "baseline_r64_test_r2": 0.8496109477755346,
+        "gap": 0.009834394055144302,
+        "rank_matched_gap": 0.05164821063364067,
+        "ssm_r32_dir": "runs/2026-06-29-ph3-gate3-410md-s1",
+        "ssm_r32_test_r2": 0.8594453418306789
+      },
+      {
+        "baseline_r64_dir": "runs/2026-11-17-v11c-pm-baseline-r64-mlsae-s2",
+        "baseline_r64_test_r2": 0.8467793710719951,
+        "gap": 0.009012119100892613,
+        "rank_matched_gap": 0.05069563614813266,
+        "ssm_r32_dir": "runs/2026-06-29-ph3-gate3-410md-s2",
+        "ssm_r32_test_r2": 0.8557914901728877
+      }
+    ],
+    "mlsae_seed0": {
+      "gap_ci": {
+        "alpha": 0.05,
+        "boot_seed": 0,
+        "ci_hi": 0.010218811454251407,
+        "ci_lo": 0.0053141682874411345,
+        "gap": 0.007734452614696408,
+        "n_boot": 10000,
+        "n_test": 311,
+        "r2_a": 0.8570788509873667,
+        "r2_b": 0.8493443983726703,
+        "significant": true
+      },
+      "rank": 64,
+      "verdict": "holds"
+    },
+    "mlsae_seeds": {
+      "all_positive": true,
+      "gaps": [
+        0.007734452614696408,
+        0.009834394055144302,
+        0.009012119100892613
+      ],
+      "mean": 0.008860321923577774,
+      "robust": true,
+      "sd": 0.0010581683706330288,
+      "verdict": "robust to refit"
+    },
+    "untrained": {
+      "baseline_r64_dir": "runs/2026-11-17-v11c-pm-baseline-r64-l1-untrained",
+      "baseline_r64_test_r2": 0.7680035201150763,
+      "gap": -0.02543766397604763,
+      "rank_matched_gap": 0.028721956588104502,
+      "refit_sd": 0.0010581683706330288,
+      "refit_sd_source": "the MLSAE parameter-matched gaps of this run",
+      "ssm_r32_dir": "runs/2026-11-17-v11c-gate3-l1-untrained-r32",
+      "ssm_r32_test_r2": 0.7425658561390287,
+      "trained_gap": 0.00552661163945678,
+      "untrained_gap": -0.02543766397604763,
+      "untrained_share": -4.602759454714994,
+      "verdict": "largely learned"
+    }
+  },
+  "D_kernel_transfer": {
+    "dir": "runs/2026-11-17-v11c-kernel-transfer-410md",
+    "frobenius": 1.4165796041488647,
+    "m": 50,
+    "rank": 128,
+    "reproduces_recorded": true,
+    "retention_gain_refit_trained_to_untrained": 0.0003585068931408226,
+    "retention_gain_refit_untrained_to_trained": 0.00023246361019147916,
+    "retention_trained_to_untrained": -0.27054164356914817,
+    "retention_untrained_to_trained": -0.21338512041104177,
+    "verdict": "does not transfer"
+  }
+}

@@ -68,8 +68,9 @@ pre-registered headline fit ($0.65 = 0.52 + 0.13$, scored on the four deepest
 updates) and roughly half on the whole-stack fit
 ($0.52 = 0.27 + 0.25$), and an
 untrained-network control shows the tautology-free remainder is, on the
-primary model, \emph{substantially architectural} --- a randomly initialised
-transformer exceeds it. Scored at a common lag order the same control makes
+primary model, \emph{substantially architectural} in level --- a randomly
+initialised transformer exceeds it, though with a different kernel: neither
+network's kernel transfers to the other. Scored at a common lag order the same control makes
 GPT-2-small about half learned, so this is a Pythia result, not a law
 (\cref{sec:phase1}). H2 fails decisively and non-negotiably: an AR kernel fit
 on one third of the depth axis predicts another third's updates \emph{worse
@@ -84,7 +85,8 @@ latents and are re-inferred against the updates --- yields the paper's central
 positive result (\cref{sec:evaluation}): cross-layer state reconstructs
 residual updates above a matched per-layer dictionary at every sparsity
 ($+0.049$ $\Rsq$ \CI{$+0.046$}{$+0.052$} at matched rank, $+0.008$
-\CI{$+0.005$}{$+0.010$} at matched total parameters; with the codes held
+\CI{$+0.005$}{$+0.010$} at matched total parameters, $+0.009 \pm 0.001$ over
+three refits and $+0.006$ over a second dictionary; with the codes held
 fixed instead, the matched-rank gain is the same size and the
 matched-parameter one is gone, \cref{sec:evaluation:gate3}), the gain grows
 monotonically with depth within Pythia under the protocol that produces this
@@ -97,25 +99,29 @@ roughly equal in size to the architectural one, and larger once sparsity is
 matched. The fitted model's
 gauge-invariant state path attenuates by half per layer of depth gap (implied
 memory $\approx 1.2$ layers), consistent with --- and supplying a candidate
-mechanism for --- the observed first-order structure, and at matched
-dimension the state decodes the recalled answer at mid-depth better than PCA
-summaries of the codes it is built from.
+mechanism for --- the observed first-order structure. At matched dimension
+the state decodes the recalled answer at mid-depth better than PCA summaries
+of the codes it is built from, and still does once a look-ahead in those
+codes is removed; but the per-layer feedthrough's own projection of the codes
+does as well, so this shows what training on reconstruction keeps, not what
+the state adds.
 
 To be direct about the framing: this is a \emph{characterisation} paper, not
 a method paper. We do not advance the SSM as a better decomposition tool on
 the strength of the $+0.008$ parameter-matched margin --- read alone, that
-number says most of the rank-matched gap is parameter count. The case that
-the cross-layer state captures real structure rests on what a per-layer
-decoder has no counterpart for at any width: the gauge-invariant state-path
-decay, and the state's informativeness for the recalled answer --- the
-second with a confound we name and do not resolve
-(\cref{sec:evaluation:probe}). Those structural results, not the headline
-gap, carry the paper's positive claims. Two further properties of the gain,
-its growth with depth and its roughly-half-learned split against untrained
-controls, are measured on the rank-matched gap, most of which width does
-buy; neither was repeated at matched parameters, and the depth series
-carries its own confounds besides ($N$, width, dictionary type, and the
-evaluation protocol; \cref{sec:evaluation:depth}), so we lean on it least.
+number says most of the rank-matched gap is parameter count. What is left of
+it is small but specific: it survives three refits and a second dictionary on
+the trained 24-layer model, and it is negative on an untrained network and on
+a 12-layer model (\cref{sec:evaluation:gate3}). The gain's growth with depth
+and its roughly-half-learned split are measured on the rank-matched gap; those
+two matched-parameter comparisons are their only counterparts at matched
+parameters --- consistent with a learned gain that grows with depth, at two
+depths in one family --- and the depth series carries its own confounds
+besides ($N$, width, dictionary type, and the evaluation protocol;
+\cref{sec:evaluation:depth}), so we lean on it least. The structural result
+a per-layer decoder has no counterpart for at any width is the
+gauge-invariant state-path decay. The probe result does not single out the
+state (\cref{sec:evaluation:probe}).
 
 The pre-registered causal test --- find a feature no baseline finds, ablate
 it, predict the behavioural consequence --- returns a null we consider one of
@@ -133,9 +139,10 @@ recall in this model is a distributed, magnitude-driven code.
 \begin{enumerate}
   \item A pre-registered, gate-structured characterisation of residual-update
     dynamics: H1 holds (with an exact accounting of how much is tautology,
-    and evidence the remainder is substantially architectural on the primary
-    model but roughly half learned on GPT-2-small; accounting and untrained
-    control run on two of the six models); H2 fails
+    and evidence the remainder is substantially architectural in level on the
+    primary model, with kernels that do not transfer between the trained and
+    untrained network, but roughly half learned on GPT-2-small; accounting and
+    untrained control run on two of the six models); H2 fails
     (pervasive non-stationarity, $\kstar\!\approx\!1$, query-position-specific
     and circuit-specific kernels). The sign pattern replicates across six
     models, three families, and --- on the primary model --- on generic Pile
@@ -146,7 +153,9 @@ recall in this model is a distributed, magnitude-driven code.
     sparse per-layer sources, with a reconstruction gain over matched
     per-layer baselines that is CI-significant, depth-graded within Pythia
     under the headline protocol, and approximately half learned / half
-    architectural
+    architectural; at matched parameters it is small ($+0.009 \pm 0.001$
+    over three refits), holds over a second dictionary, and is present only
+    on the trained 24-layer model
     (\cref{sec:decomposition,sec:evaluation}).
   \item A three-axis comparison against the unconstrained $O(L^2)$
     residual-write CLT parameterisation: at matched per-decoder rank the CLT
@@ -160,14 +169,16 @@ recall in this model is a distributed, magnitude-driven code.
     post-hoc matched-count, matched-mass, and norm-matched random-direction
     controls, and unchanged across the two dictionaries we read it with
     (\cref{sec:evaluation:causal}).
-  \item Two structural positives that survive the robustness checks we ran: the
-    fast-attenuating propagation path --- the \emph{gauge-invariant} state-path
-    kernel halves per layer of depth gap, stable across refits and dictionaries
-    (we also show that the per-layer spectral radius, which an earlier version
-    of this work reported as gauge-invariant, is not) --- and the
-    informativeness of the SSM state for answer identity at mid-depth,
-    measured against matched summaries of its own codes, a comparison that a
-    look-ahead in those codes may inflate
+  \item A structural positive that survives the robustness checks we ran, and
+    a probing result narrower than it first looked. The fast-attenuating
+    propagation path: the \emph{gauge-invariant} state-path kernel halves per
+    layer of depth gap, stable across refits and dictionaries (we also show
+    that the per-layer spectral radius, which an earlier version of this work
+    reported as gauge-invariant, is not). And the probe: compressions of the
+    codes trained to reconstruct $\Delta$ keep answer-identity information
+    that PCA of the same codes discards, also once a look-ahead in the codes
+    is removed, but the cross-layer state keeps no more of it than the
+    per-layer feedthrough's projection does
     (\cref{sec:evaluation:operator,sec:evaluation:probe}).
   \item A stability finding with a practical edge: on the primary model, the
     SSM's per-feature write directions are not reproduced when the SSM is

@@ -84,7 +84,8 @@ enumerate them:
     norm-matched random controls, off-target specificity); the operator and
     state-path analysis; the state probe; the source-prefix sweep beyond its
     registered embedding-only point; the paired bootstrap intervals; and the
-    dictionary-level seed check of \cref{app:dictseeds}.
+    dictionary-level seed check of \cref{app:dictseeds}; and the four checks
+    of \cref{app:checks}.
   \item \emph{Two self-corrections}, made after the draft was written and
     reported in the open because both had propagated into headline sentences.
     (a) The fitted state operator's spectral radius was described as
@@ -185,10 +186,10 @@ operators (reconstruction at matched sparsity; identical for both arms of
 every gap). The frozen-source protocol fits decoders on fixed cached codes
 and isolates decoder parameterisation; its levels sit uniformly lower. Gaps
 are only ever computed within a protocol. $^{\ast}$The prefix sweep has its
-own fit recipe (one regularisation setting and 250 Adam epochs, against 180
-epochs and a $\lambda_{\mathrm{reg}}$ grid for the CLT-family rows), which is
-why its full-source SSM ($0.770$) sits below the $0.793$ of the shared-grid
-row at the same rank.
+own fit recipe ($\lambda_{\mathrm{reg}} = 0.1$ and 180 Adam epochs at
+batch size 512, where the CLT-family rows, also at 180 epochs, choose
+$\lambda_{\mathrm{reg}}$ on a grid), which is why its full-source SSM
+($0.770$) sits below the $0.793$ of the shared-grid row at the same rank.
 
 \section{Statistical details}
 \label{app:stats}
@@ -466,18 +467,120 @@ steps, no auxiliary loss --- not SAEs trained at scale, where
 \citet{song2026consistency} report PW-MCC around 0.80 for TopK. The SSM-level
 refit contrast holds on every draw.
 
+\section{Four post-hoc checks}
+\label{app:checks}
+
+These checks are post hoc, run after every analysis above was complete, to
+test four statements the paper's own review found resting on checks it had
+named and not run. Their design, statistics, tolerances and verdict rows were
+committed, before any of them ran, to the run record
+\nolinkurl{runs/v11-onbox-checks/memo.md}, which also holds the results. Every
+input no longer on disk (the MLSAE codes, both SSM checkpoints, the untrained
+network's activations and dictionary, the 12-layer model's activations and
+codes) was rebuilt with its recorded recipe and had to reproduce the tracked
+table it originally produced before anything was measured on it. Every one
+did, to the last digit, as did the four recorded arms of the state probe. Two
+things departed from the plan: the source-prefix sweep's recorded recipe is
+180 Adam epochs with $\lambda_{\mathrm{reg}} = 0.1$, not the defaults the plan
+assumed --- the reproduction gate caught the difference, and the rerun uses
+the recorded recipe --- and one checkpoint was resumed from its saved
+canonical fit after a refit ran out of GPU memory, which changes nothing it
+computes.
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{The four post-hoc checks on \pythia{} (C4: Pythia-160m-deduped).
+  Gaps are held-out $\Rsq$ differences; intervals are paired bootstrap 95\%
+  CIs over the 311 test examples. The last column is the verdict row fixed
+  before the run.}
+  \label{tab:checks}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{llll}
+    \toprule
+    & Statistic & Result & Row \\
+    \midrule
+    A & causal state $-$ PCA of the same codes, layers 8--15 &
+      MLSAE $+0.052$ \CI{$+0.019$}{$+0.085$} & survives \\
+    & & L1 $+0.133$ \CI{$+0.095$}{$+0.174$} & survives \\
+    & recorded state $-$ feedthrough image, layers 8--15 &
+      $-0.019$ / $-0.013$ (CIs reach $0$) & reading rule \\
+    & recorded $-$ causal state (look-ahead) & $+0.042$ / $+0.045$ & --- \\
+    \midrule
+    B & embedding-only $\Rsq$, bias at the mean & $-0.003$ (recorded $-0.438$) &
+      at the floor \\
+    & $\Rsq(\ell_{\max}{=}23) - \Rsq(19)$ & $+0.140$ (recorded $+0.194$) &
+      load-bearing \\
+    & largest move, $\ell_{\max} \ge 15$ & $+0.071$ & not stable \\
+    \midrule
+    C1 & parameter-matched gap, three refits & $+0.0077$ / $+0.0098$ / $+0.0090$ &
+      robust \\
+    C2 & the same over the L1 dictionary & $+0.0055$ \CI{$+0.0030$}{$+0.0081$} &
+      holds \\
+    C3 & the same on the untrained network & $-0.0254$ & largely learned \\
+    C4 & the same at 12 layers, three refits & $-0.0081$ / $-0.0086$ / $-0.0097$ &
+      deeper larger \\
+    \midrule
+    D & AR(1) kernel retention, untrained $\leftrightarrow$ trained &
+      $-0.21$ / $-0.27$ & no transfer \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{A, the state probe without look-ahead.} For every depth
+$\ell = 1,\dots,23$ the held-out LASSO encoder is re-solved with the
+operators frozen and the same penalty, initial codes, step count and step
+size, against $\Delta_0,\dots,\Delta_{\ell-1}$ only; at full length it
+reproduces the recorded codes exactly. Arms, all 32-dimensional and probed as
+in \cref{sec:evaluation:probe}: the state built from those codes; PCA of the
+same prefix codes; the feedthrough's image $D^{(2)\top}_\ell u_\ell$ of the
+current code (recorded codes) and of the last past code (causal codes); PCA
+of the SAE latents. The primary contrast is the first row of
+\cref{tab:checks}, per dictionary. One reading was fixed in advance: if the
+recorded state is not above the feedthrough image at mid-depth, the lead over
+PCA is credited to reconstruction training rather than to the state. That
+applies on both dictionaries.
+
+\paragraph{B, the prefix sweep with a mean-initialised bias.} The recorded
+sweep (MLSAE codes held fixed, rank 32, 180 Adam epochs at batch size 512,
+$\lambda_{\mathrm{reg}} = 0.1$, seed 0) with $b$ initialised at the train
+split's per-depth mean instead of zero.
+
+\paragraph{C, the parameter-matched gap.} Rank-32 SSM minus rank-64
+per-layer baseline at the knee, under the LASSO protocol. C1: the baseline at
+seeds 1 and 2 against the recorded SSM at the same seeds (same split,
+unpaired). C2: paired bootstrap over the L1 dictionary. C3: an L1 dictionary
+trained on the untrained network's activations with the recorded recipe, and
+both arms fit over it; the untrained-to-trained ratio counted as resolvable
+only if the trained gap exceeded three refit standard deviations ($0.0055$
+against $3 \times 0.0011$). C4: Pythia-160m-deduped over its MLSAE suite, the
+baseline at three seeds against the recorded SSM at the same seeds; the row
+compares the two depths' means against twice their pooled spread. Two depths
+in one family can be consistent with a trend, not establish one.
+
+\paragraph{D, kernel transfer.} The pooled AR(1) kernel of
+\cref{sec:phase1:ar}, fit on each network with the top-50 persistent state
+directions removed (T1), scored on the other network with the per-depth
+intercepts refit there. Retention is cross-network over within-network
+$\Rsq$. Refitting one gain per depth leaves both retentions at about zero,
+the relative Frobenius distance between the two kernels is $1.42$, and a
+kernel fit on example-scrambled updates transfers at zero; the raw updates
+($m = 0$) give the same picture.
+
 \section{Changes since version 1.0}
 \label{app:changes}
 
 Version 1.1 changes no pre-registered analysis and no recorded result. It
-adds one post-hoc experiment, which retrains the primary model's trained
-dictionaries at further seeds, and it corrects statements that version~1.0
-worded more strongly than its own run tables support. Everything below is
-post hoc. The first seven items concern how the stability finding is worded,
-what the paper is compared against, and the new experiment; the last six
-are corrections found by re-reading the paper against its tables, code,
-protocol and repository history, the final two from a second and a third
-such pass.
+adds post-hoc experiments --- the primary model's trained dictionaries
+retrained at further seeds (\cref{app:dictseeds}) and four checks of claims
+the paper's own review found under-tested (\cref{app:checks}) --- and it
+corrects statements that version~1.0 worded more strongly than its own run
+tables support. Everything below is post hoc. The first seven items concern
+how the stability finding is worded, what the paper is compared against, and
+the dictionary-seed experiment; the next six are corrections found by
+re-reading the paper against its tables, code, protocol and repository
+history, the final two from a second and a third such pass; the last reports
+what the four checks changed.
 
 \begin{itemize}
   \item \emph{What ``seed'' means in the stability finding.} Version 1.0
@@ -555,9 +658,9 @@ such pass.
     abstract, the introduction and
     \cref{sec:evaluation} mark the causal control ladder, the operator
     analysis, the depth series and the three-axis CLT reading as post hoc.
-  \item \emph{Confounds named, checks not run.} Two checks that fit the
-    study GPU follow from (ii) and (iv) and are listed as future work in
-    \cref{sec:discussion}.
+  \item \emph{Confounds named.} Two checks that fit the study GPU follow
+    from (ii) and (iv); they were later run, with two others
+    (\cref{app:checks}, last item).
   \item \emph{Small corrections.} A backward reference in
     \cref{sec:phase1:sublayer} said ``below''; ``no control'' in
     \cref{sec:evaluation:causal} is now ``no magnitude-matched control'';
@@ -673,5 +776,38 @@ such pass.
     says ``everywhere we looked''; \cref{sec:evaluation} says what an
     unqualified ``seed'' is; and \cref{sec:discussion} names two further
     checks that fit the study GPU.
+  \item \emph{Four checks run.} The checks the third re-read named (and
+    \cref{sec:discussion} listed) were run post hoc, with criteria committed
+    in advance (\cref{app:checks}). They changed the following.
+    (i)~The state probe: the state's lead over PCA of its codes survives
+    codes inferred from earlier layers only, at about two thirds (MLSAE) and
+    three quarters (L1) of its recorded size, and its jump at $\ell{=}17$ was
+    look-ahead; but the per-layer feedthrough's projection of the codes
+    decodes as well as the state, so the result is credited to
+    reconstruction training, not to the state. The abstract, the
+    introduction, contribution~5, \cref{sec:evaluation:probe} and its
+    heading, the captions of \cref{fig:probe,fig:kstar,fig:prefix},
+    \cref{sec:limitations} and \cref{sec:discussion} say so.
+    (ii)~The parameter-matched margin is $+0.0089 \pm 0.0011$ over three
+    refits and $+0.0055$ over the L1 dictionary, and negative on the
+    untrained network and at 12 layers: the abstract, the introduction,
+    contribution~2, \cref{sec:evaluation:gate3,sec:evaluation:depth} and
+    \cref{sec:limitations} carry these numbers in place of the statements
+    that the comparison had not been repeated.
+    (iii)~The AR kernels of the trained and the untrained network do not
+    transfer to each other: \cref{sec:phase1:pressure}, the abstract, the
+    introduction, contribution~1, \cref{sec:related,sec:limitations} and
+    \cref{sec:discussion} now say that the structure is architectural in
+    level.
+    (iv)~The source-prefix sweep, rerun with its bias started at the mean,
+    replaces the recorded values in \cref{sec:evaluation:prefix}; the
+    carry-forward that \cref{sec:evaluation:operator} quoted as six layers
+    was partly the recorded sweep's under-fit bias, and is now two to four
+    layers from early cutoffs and some signal to the last layer from
+    mid-stack. \Cref{tab:operating} gave the sweep's recipe as 250 epochs;
+    it is 180 epochs with $\lambda_{\mathrm{reg}} = 0.1$.
+    \Cref{sec:discussion} no longer lists the checks as future work. No
+    figure was redrawn: \cref{fig:probe,fig:prefix} still show the recorded
+    runs, and their captions point to the reruns.
 \end{itemize}
 

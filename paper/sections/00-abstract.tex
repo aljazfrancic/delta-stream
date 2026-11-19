@@ -11,8 +11,9 @@ persistent state directions, attributes most of it to slow drift along those
 directions (the running-sum ``tautology'') on the four deepest updates
 ($0.65 = 0.52 + 0.13$) and roughly half on the whole stack
 (raw $0.52 = 0.27 + 0.25$), and on the primary model
-what survives is substantially architectural --- an untrained network exceeds
-it (though on GPT-2-small it is about half learned).
+what survives is substantially architectural in level --- an untrained network
+exceeds it, with a kernel that does not transfer to the trained one (on
+GPT-2-small it is about half learned).
 \textbf{(2)}~H2 fails decisively: kernels fit on one depth band predict
 another band's updates worse than that band's mean, so the right abstraction
 is a first-order ($\kstar\!\approx\!1$), fully depth-indexed state-space
@@ -20,14 +21,15 @@ model (SSM), which supports the choice, in cross-layer transcoders, not to
 share decoders along depth. \textbf{(3)}~Fitted over sparse per-layer
 sources, the SSM
 reconstructs $\Dl$ above a matched per-layer dictionary ($+0.049$ $\Rsq$
-rank-matched; at matched parameters, $+0.008$ when codes are re-inferred
-against the update and nothing when they are held fixed), with a roughly
-half-learned gain
-that grows with depth under the first of those two protocols and not the
-second; its gauge-invariant state path attenuates by half per layer
-of depth gap (memory ${\approx}1.2$ layers, consistent with
-$\kstar\!\approx\!1$) and the state decodes the recalled
-answer at mid-depth better than dimension-matched PCA of its own codes.
+rank-matched), with a roughly half-learned gain that grows with depth under
+one of our two evaluation protocols and not the other. At matched parameters
+the margin is $+0.009 \pm 0.001$ over three refits when codes are re-inferred
+against the update, nothing when they are held fixed, and negative on an
+untrained network and on a 12-layer model. Its gauge-invariant state path
+attenuates by half per layer of depth gap (memory ${\approx}1.2$ layers,
+consistent with $\kstar\!\approx\!1$); the state decodes the recalled answer
+better than PCA of its own codes, but no better than the per-layer
+feedthrough's own projection of them.
 \textbf{(4)}~The pre-registered causal test returns a null, which post-hoc
 controls locate: no single feature's ablation clears threshold, and the group
 effect that does is reproduced by a norm-matched \emph{random direction} ---

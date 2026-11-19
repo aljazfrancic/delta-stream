@@ -299,3 +299,10 @@ matched parameters" sentences are replaced by C3 and C4; §3.4 (T4) — "archite
 describes the level, and the kernels do not transfer; §6.8's second caveat and §6.9's
 numbers are replaced by B's; `tab:operating`'s footnote (and WP4's progress note) say 250
 epochs where the sweep used 180 with λ_reg 0.1.
+
+**Correction (2026-11-19) to the B paragraph above.** "A refit state carries withheld sources
+two layers from an early cutoff and four to five from a middle one" read only ℓ = 12…16 of
+the cutoff-11 row. That row stays positive at every later layer: +0.11, +0.28, +0.20, +0.17,
++0.12, +0.20, +0.35 at ℓ = 17…23 (`runs/2026-11-17-v11c-prefix-mean-init-410md`). The
+accurate summary: two layers from cutoff 3, about four from cutoff 7, and some signal to the
+last layer from cutoff 11. Nothing else in the results changes.

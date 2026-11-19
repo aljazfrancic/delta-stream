@@ -6,12 +6,13 @@ The composite picture is specific enough to be useful. Residual updates are
 predictable across depth, but the predictability decomposes into (i) a
 share carried by slow drift along a few persistent state directions, which
 we set aside as uninformative, (ii) a genuine
-increment-level structure that a randomly initialised network already
-exhibits --- substantially so on \pythia{}, where the untrained network in
-fact exceeds the trained one; about half of it on GPT-2-small ---
-and (iii) a learned component that only becomes visible in the
-\emph{generative} fit --- roughly half the SSM's reconstruction advantage,
-majority at sparse operating points. Meanwhile the dynamics are pervasively
+increment-level structure whose level a randomly initialised network already
+reaches --- substantially so on \pythia{}, where the untrained network in
+fact exceeds the trained one, though with a kernel of its own; about half of
+it on GPT-2-small --- and (iii) a learned component that only becomes visible
+in the \emph{generative} fit --- roughly half the SSM's reconstruction
+advantage, majority at sparse operating points, and all of the small margin
+that survives at matched parameters. Meanwhile the dynamics are pervasively
 non-stationary in depth, first-order, and --- per the fitted model's
 gauge-invariant state path --- attenuating by half per layer of gap, a
 one-layer memory (measured with sources at every layer, which leaves the
@@ -84,21 +85,18 @@ controls before they can be read as evidence about privileged feature sets
 \citet{korznikov2026sanity} argue SAE evaluations need.
 
 \paragraph{Consequences for probing.}
-The state-probe result cuts the other way: trained purely to reconstruct
-updates, the 32-dimensional state retains answer-identity information that
-variance-optimal compressions of the same codes discard. (The comparison is
-among summaries of one set of codes. Those codes are fit to each example's
-whole trajectory, and what they pick up about later updates enters through
-the state map, so the comparison says nothing about the state against the
-raw stream and may flatter it against the code summaries;
-\cref{sec:evaluation:probe}.) If the lead survives codes inferred from
-earlier layers only, it says that reconstruction
-objectives, at least here, learn compressions aligned with what the circuit
-is computing --- a modest positive datum for the program of
-extracting functional summaries from decompositions, and one that would pair
-naturally with the fast-attenuating state path: a short-memory,
-information-dense
-running summary is exactly what a fast-forgetting state can be.
+The probe result is narrower than it first looked. Compressions of the codes
+trained purely to reconstruct updates retain answer-identity information that
+variance-optimal compressions of the same codes discard, and this survives
+removing the look-ahead in the codes; but the per-layer feedthrough's
+projection retains as much as the cross-layer state does
+(\cref{sec:evaluation:probe}). So the datum is about reconstruction
+objectives, not about propagation: at least here they learn compressions
+aligned with what the circuit is computing --- a modest positive datum for
+the program of extracting functional summaries from decompositions, which
+does not need the state. It is also a caution for that program: a probe on
+codes inferred against the whole trajectory overstated the state's lead by a
+third to a quarter and placed a jump one layer early.
 
 \paragraph{The EMG intuition, in retrospect.}
 The convolutive-source-separation analogy \citep{holobar2007multichannel}
@@ -115,15 +113,8 @@ depth series from width (Pythia-1b/1.4b/2.8b with one dictionary type, three
 seeds); the two missing families (Gemma-2's sandwich normalisation,
 Llama-3.1-8B) which also enable the pre-registered $\ge$1{,}000-per-class
 relation test; and a natively-trained CLT. Two more suggest themselves from
-the results: whether the state-path decay rate and the mid-depth
-functional-state window are universal across scale, and whether the sublayer
+the results: whether the state-path decay rate and the mid-depth window in
+which reconstruction-trained summaries carry answer identity are universal
+across scale, and whether the sublayer
 AR structure survives the T2 surrogate and the untrained control that
-\cref{sec:phase1:sublayer} did not run. Four checks that this paper names and
-does not run fit the study GPU: the state probe with codes inferred from
-earlier layers only and with a feedthrough-image arm
-(\cref{sec:evaluation:probe}); the source-prefix
-sweep with its bias initialised at the per-depth mean
-(\cref{sec:evaluation:prefix}); the parameter-matched comparison at further
-seeds, over the L1 dictionary, at the other depths and on the untrained
-network (\cref{sec:evaluation:gate3}); and the transfer of AR kernels between
-the trained and the untrained network (\cref{sec:phase1:pressure}).
+\cref{sec:phase1:sublayer} did not run.

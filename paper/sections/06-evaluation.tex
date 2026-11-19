@@ -60,16 +60,23 @@ baseline's parameters (8.36M vs 4.22M). Widening the baseline to rank 64
 survives at \textbf{$+0.0077$ \CI{$+0.0053$}{$+0.0102$}} --- small, and
 conservative in that the wider baseline runs slightly denser --- while under
 the frozen-source protocol the same comparison is a wash ($\pm 0.005$,
-opposite signs at the 8.4M and 16.8M budgets). The margin is one fit per arm
-(the recorded seed-0 SSM against a single rank-64 baseline), over the MLSAE
-dictionary, at the knee. Its interval resamples test examples and does not
-cover refits, whose spread on the rank-matched gap is $\pm 0.0014$; we did
-not repeat the comparison over the L1 dictionary, at other depths or on the
-untrained network. We therefore quote the headline as
-``\textbf{$+0.049$ rank-matched, $+0.008$ param-matched}'' and never write
-``load-bearing'' without the second number. What decoder width cannot
-replicate at any budget is the \emph{structure} the state provides ---
-\cref{sec:evaluation:operator,sec:evaluation:probe}.
+opposite signs at the 8.4M and 16.8M budgets). That interval resamples test
+examples from one fit per arm, so post hoc we repeated the comparison, still
+at the knee (\cref{app:checks}). Over three refits the margin is $+0.0077$,
+$+0.0098$ and $+0.0090$ ($+0.0089 \pm 0.0011$), and over the trained L1
+dictionary it is $+0.0055$ \CI{$+0.0030$}{$+0.0081$}. It belongs to the
+trained 24-layer model. On the untrained network, over an L1 dictionary
+trained on its own activations, the rank-32 SSM falls $0.025$ below the
+rank-64 per-layer decoder (it leads the rank-32 one by $0.029$); on
+Pythia-160m (12 layers) it falls below by $0.0088 \pm 0.0008$ over three
+refits (rank-matched, $+0.012$ to $+0.015$). At matched parameters the margin
+is therefore learned rather than architectural, and at two depths in one
+family it is present at 24 layers and not at 12: consistent with the depth
+trend of \cref{sec:evaluation:depth}, which two points cannot establish. We
+quote the headline as ``\textbf{$+0.049$ rank-matched, $+0.008$
+param-matched}'' and never write ``load-bearing'' without the second number.
+What decoder width cannot replicate at any budget is the \emph{structure}
+the state provides --- \cref{sec:evaluation:operator}.
 
 \begin{figure}[t]
   \centering
@@ -199,7 +206,8 @@ statistics agree instead (AR learned share $47\%$, reconstruction learned
 share $56\%$), so the dissociation is a one-family observation and we do not
 claim it more broadly. What carries across both families is the reconstruction
 result itself: roughly half the gain is learned, and more than half once
-sparsity is matched.
+sparsity is matched. At matched parameters the untrained network has no
+margin at all (\cref{sec:evaluation:gate3}).
 
 \subsection{Baselines that were not built for
 \texorpdfstring{$\Delta$}{Delta}, and it shows}
@@ -533,8 +541,8 @@ No threshold was adjusted post hoc.
   \label{fig:distributed}
 \end{figure}
 
-\subsection{Probing the state: more answer information than summaries of its
-own codes}
+\subsection{Probing the state: reconstruction-trained summaries keep answer
+identity}
 \label{sec:evaluation:probe}
 
 Does the 32-dimensional state $z_\ell$ carry task information, or is it only
@@ -549,61 +557,71 @@ residual $\vl$ as a reference. Target: 205-way answer identity (majority
 At mid-depth the state wins against both code summaries on both dictionaries
 (\cref{fig:probe}): state$-$code $+0.060$ \CI{$+0.037$}{$+0.084$} (MLSAE) /
 $+0.139$ \CI{$+0.105$}{$+0.173$} (L1); state$-$prefix $+0.080$/$+0.173$ at
-mid-depth and $+0.110$/$+0.188$ late; at $\ell{=}17$ --- the
+mid-depth and $+0.110$/$+0.188$ late; and at $\ell{=}17$ --- the
 answer-promotion depth where $\kstar$ blips (\cref{fig:kstar}) and per-layer
 reconstruction dips (\cref{fig:prefix}, right) --- the state jumps from
-$0.57$ to $0.76$, one layer before the code and raw-residual arms make
-their own jump, and sits above the raw-residual PCA there ($0.759$ vs
-$0.666$). That lead over the raw stream should not be read as anticipation.
-The probe's codes are the LASSO codes, inferred for every example against
-its \emph{whole} update trajectory (\cref{sec:decomposition:opt}), so the
-codes below layer $\ell$ that build $z_\ell$ were chosen partly to
-reconstruct $\Dl$ and later updates through the state path. The state at
-$\ell{=}17$ can therefore carry information about the write $\Delta_{17}$,
-which reaches the raw stream only at $v_{18}$ (whose PCA scores $0.846$).
-The raw-residual arm has no such access, so it is a reference curve and not
-a like-for-like competitor. The three code-derived arms share one set of
-codes, but that does not put them on an equal footing either. The
-reconstruction of $\Dl$ reaches the codes below layer $\ell$ only through
-$z_\ell$, so whatever those codes pick up about $\Dl$ is written along the
-directions the state map reads, and a variance-ranked PCA of the same codes
-need not keep it. The state's lead over the two code summaries may therefore
-be partly the same look-ahead. Nor is there a per-layer arm trained on
-$\Delta$: the feedthrough's own 32-dimensional image of $u_\ell$ would be
-the matched one, and without it the contrast does not separate a cross-layer
-state from any reconstruction-trained projection of the codes. We ran
-neither that arm nor the probe with codes inferred from the layers below
-$\ell$ alone, the check that would size the look-ahead. Peak state decoding
-reaches 0.775/0.801 top-1 from 32 dimensions (majority class 0.106; with 205
-classes over 311 test examples, top-1 is dominated by the frequent objects,
-so we read the \emph{contrasts between matched arms}, not the absolute level).
-Since the SSM is linear, the
-state and the prefix-PCA are two 32-dimensional \emph{linear images of the
-same prefix codes}: the compression trained only to reconstruct $\Delta$
-retains answer-identity information that the variance-optimal compression
-discards. Scope, stated plainly: the late band washes out against a per-layer
-code summary; the raw stream is the better readout early (state$-$raw
-$-0.12$ to $-0.14$) and late ($-0.04$ to $-0.07$), and at mid-depth too under
-MLSAE ($-0.034$ \CI{$-0.056$}{$-0.013$}; $+0.020$, not significant, under
-L1), the look-ahead above notwithstanding; relation class is near ceiling for
-every arm, the state a little below the others ($0.87$--$1.00$ from layer~2
-on, against $\ge 0.98$); and model
-confidence favours the code arms --- the state's advantage is over summaries
-of its own codes, and specific to
-\emph{what} is being recalled, at the depths where recall is assembled.
+$0.57$ to $0.76$, one layer before the code and raw-residual arms, and sits
+above the raw-residual PCA there ($0.759$ vs $0.666$). Two features of the
+design leave that open to two other readings. The probe's codes are the LASSO
+codes, inferred for every example against its \emph{whole} update trajectory
+(\cref{sec:decomposition:opt}), and the reconstruction of $\Dl$ reaches the
+codes below layer $\ell$ only through $z_\ell$, so whatever those codes pick
+up about $\Dl$ and later updates is written along the directions the state
+reads: a look-ahead that favours the state over every other arm. And every
+competing code arm is a variance-ranked PCA, so the contrast cannot separate
+a cross-layer state from any projection of the codes trained to reconstruct
+$\Delta$.
+
+Post hoc we checked both, with the statistic and the reading fixed in advance
+(\cref{app:checks}). For the look-ahead, the codes were re-inferred for every
+depth $\ell$ against $\Delta_0,\dots,\Delta_{\ell-1}$ alone (operators frozen,
+everything else as recorded), and the state and the code PCA were rebuilt from
+them. With the look-ahead removed the state still beats PCA of the same prefix
+codes at mid-depth, by $+0.052$ \CI{$+0.019$}{$+0.085$} (MLSAE) and $+0.133$
+\CI{$+0.095$}{$+0.174$} (L1) --- about two thirds and three quarters of the
+recorded lead; the rest was look-ahead (state minus causal state $+0.042$,
+$+0.045$). The jump at $\ell{=}17$ was look-ahead entirely: across
+$\ell = 16, 17, 18$ the causal state reads $0.54$, $0.55$, $0.71$ (MLSAE),
+jumping with the raw stream, not ahead of it. For the second reading, the
+matched per-layer arm is the feedthrough's own 32-dimensional image of the
+code, $D^{(2)\top}_\ell u_\ell$, trained to reconstruct $\Dl$ with no
+cross-layer path. The recorded state does not beat it at mid-depth on either
+dictionary ($-0.019$ \CI{$-0.038$}{$+0.001$} MLSAE, $-0.013$
+\CI{$-0.029$}{$+0.003$} L1), and the causal state falls below the feedthrough
+image of the last past code ($-0.024$ \CI{$-0.046$}{$-0.003$}, $-0.041$
+\CI{$-0.057$}{$-0.025$}). Since the SSM is linear, the state, the feedthrough
+image and the prefix PCA are all 32-dimensional \emph{linear images of the
+same codes}: the compressions trained to reconstruct $\Delta$, cross-layer or
+per-layer, keep answer-identity information that the variance-optimal
+compression discards, and the cross-layer state keeps no more of it than the
+per-layer one. Peak decoding reaches 0.775/0.801 top-1 for the recorded state
+and 0.736/0.778 for the causal one, from 32 dimensions (majority class 0.106;
+with 205 classes over 311 test examples, top-1 is dominated by the frequent
+objects, so we read the \emph{contrasts between matched arms}, not the absolute
+level). Scope, stated plainly: once the look-ahead is removed the raw stream is
+the better readout at every depth band (causal state $-$ raw-residual PCA at
+mid-depth $-0.076$ \CI{$-0.101$}{$-0.053$} MLSAE, $-0.024$
+\CI{$-0.046$}{$-0.003$} L1; $-0.09$ to $-0.16$ early and late); relation class
+is near ceiling for every arm, and there the causal state is below PCA of its
+own codes ($-0.049$, $-0.052$ at mid-depth); and model confidence favours the
+code arms. What the probe supports is a statement about reconstruction
+objectives: specific to \emph{what} is being recalled, at the depths where
+recall is assembled.
 
 \begin{figure}[t]
   \centering
   \includesvg[width=\linewidth]{fig16_state_probe}
   \caption{Answer-identity decoding (205-way top-1) per layer from four
-  32-dimensional summaries, both dictionaries. The $\Delta$-reconstruction-trained
+  32-dimensional summaries, both dictionaries, with codes inferred against
+  each example's whole update trajectory. The $\Delta$-reconstruction-trained
   state beats dimension-matched PCA of its own codes (and their prefix
   superset) at mid-depth on both dictionaries (the early-band edge is
-  significant only under L1; under MLSAE it is null). At $\ell{=}17$ it also
-  sits above raw-residual PCA, a comparison confounded by the codes' access
-  to later updates; the same access may inflate the state's lead over the
-  code summaries (\cref{sec:evaluation:probe}). The raw stream leads early
-  and late.}
+  significant only under L1; under MLSAE it is null). Post hoc, about a third
+  (MLSAE) and a quarter (L1) of that lead, and the whole of the state's jump
+  at $\ell{=}17$, are look-ahead in the codes, and the per-layer feedthrough's
+  own projection of the codes decodes as well as the state
+  (\cref{sec:evaluation:probe,app:checks}). The raw stream leads early and
+  late.}
   \label{fig:probe}
 \end{figure}
 
@@ -658,12 +676,18 @@ $\kstar\!\approx\!1$ remains the per-depth AR sweeps of
 property of. Every layer has its own sources, and they are codes of the
 cumulative state $\vl$, so this fit leaves the state little to carry and a
 short memory is what it should show. Withhold the sources and a refit state
-reaches much further: in the prefix sweep of \cref{sec:evaluation:prefix},
-with sources only up to layer~3 the per-layer $\Rsq$ is $0.69$, $0.41$,
-$0.31$, $0.24$, $0.23$ and $0.21$ at $\ell = 4,\dots,9$, and with sources up
-to layer~7 it is still $0.16$--$0.25$ at $\ell = 10,\dots,14$. Neither series
-halves per layer. So $\tau$ describes the path the full-source fit uses, not
-a limit on how far the information in the increments can be carried.
+carries what it has, how far depending on where the sources stop. In the
+prefix sweep of \cref{sec:evaluation:prefix}, in its rerun with the bias
+started at the per-depth mean (the recorded sweep's longer tails were partly
+its under-fit bias): with sources up to layer~3 the per-layer $\Rsq$ at
+$\ell = 4,\dots,7$ is $0.71$, $0.49$, $0.00$, $0.00$; up to layer~7 it is
+$0.71$, $0.53$, $0.30$, $0.23$, $0.05$, $0.00$ at $\ell = 8,\dots,13$; up to
+layer~11 it is $0.69$ and $0.53$ at the next two layers and stays between
+$0.11$ and $0.35$ at every layer after, through $\ell = 23$. From early in
+the stack a refit state carries withheld sources two to four layers; from
+mid-stack it carries some signal to the end. So $\tau$ describes the path
+the full-source fit uses, not a limit on how far the information in the
+increments can be carried.
 
 \paragraph{The gauge-dependent result, reported as such.}
 In the minimum-Frobenius representative that the $\lambda_{\mathrm{reg}}$
@@ -720,23 +744,22 @@ like every other layer's code, \cref{sec:decomposition:sources}) --- and its
 $-0.44$ is an optimisation artefact, not a floor. An example-independent
 prediction with a free bias can do no worse than the per-depth mean, that
 is $\Rsq \approx 0$, and this fit scores $-0.42$ on its own \emph{training}
-split, so it is under-fit, not failing to generalise. The bias starts at
-zero, and the sweep's fixed Adam budget does not carry it to the mean of the
-final write, whose norm is 2--3$\times$ any other's: the per-layer $\Rsq$
-stays small at 23 of 24 depths (within $\pm 0.05$ at 19 of them, never below
-$-0.31$) and falls to $-2.4$ at the last. The same unconverged term sits
-unchanged in the cutoffs $\ell_{\max}{=}3$ and $7$ (final-layer $\Rsq$
-$-2.4$ in both) and is still there at $\ell_{\max}{=}11$ ($-0.39$), so the
-lower half of the sweep understates what those sources support and its sign
-change near mid-depth carries no meaning. From $\ell_{\max}{=}15$ on the
-final layer is fit ($+0.25$ and up), and the conclusion below uses only that
-upper half. Late-layer sources carry
-reconstruction value that
-propagation \emph{does not} replace at this state width. Carried forward,
-earlier sources recover a per-layer $\Rsq$ of $0.2$--$0.7$ for a few layers
-past the cutoff (the $\ell_{\max}{=}3$ and $7$ series quoted in
-\cref{sec:evaluation:operator}, at depths the final-layer bias does not
-touch), against $0.81$--$0.90$ once those layers' own sources are present.
+split. The bias starts at zero, and the sweep's fixed Adam budget does not
+carry it to the mean of the final write, whose norm is 2--3$\times$ any
+other's: the per-layer $\Rsq$ falls to $-2.4$ at the last depth, and the same
+unconverged term sits in the cutoffs $\ell_{\max}{=}3$ and $7$. A post-hoc
+rerun that starts the bias at the per-depth mean and is otherwise identical
+(\cref{app:checks}) confirms this and replaces the recorded values: the
+embedding-only point becomes $-0.003$, and the sweep reads $-0.003$, $+0.07$,
+$+0.18$, $+0.40$, $+0.47$, $+0.64$ and $+0.78$ at
+$\ell_{\max} = 0, 3, 7, 11, 15, 19, 23$ --- monotone, positive from the first
+cutoff that admits sources, and still gaining $+0.14$ over the last four
+layers (the recorded $+0.19$ included part of the bias). Late-layer sources
+carry reconstruction value that propagation \emph{does not} replace at this
+state width. Carried forward, earlier sources recover a per-layer $\Rsq$ of
+about $0.7$ at the next layer and $0.5$ at the one after, then between $0$
+and $0.35$ (\cref{sec:evaluation:operator}), against $0.81$--$0.90$ once
+those layers' own sources are present.
 That is what features new at depth would look like, the staged-recall picture
 of \citet{geva2023dissecting}; it justifies the design's per-layer sources
 and completes a two-sided
@@ -753,13 +776,14 @@ per-layer sources is catastrophic.
   seven sampled cutoffs and still climbing
   at the top of the stack: late-layer sources are load-bearing and not
   replaced by propagation. The negative values below $\ell_{\max}{=}15$ come from an
-  under-fit bias at the final layer, not from the sources, so the zero
-  crossing carries no meaning (\cref{sec:evaluation:prefix}).
+  under-fit bias at the final layer, not from the sources: a rerun with the
+  bias started at the per-depth mean puts the embedding-only point at
+  $-0.003$ and every later cutoff above zero (not plotted;
+  \cref{sec:evaluation:prefix,app:checks}).
   \emph{Right}: per-layer $\Rsq$ at the sweep's two endpoints.
   The annotated interior dip at $\ell{=}17$ (full-source arm: $0.46$ against
   $0.81$/$0.75$ at the adjacent layers) is the answer-promotion write --- the same
-  depth where $\kstar$ blips (\cref{fig:kstar}) and the state probe jumps
-  (\cref{fig:probe}). The dip is a feature of the per-layer panel, not of the
-  prefix curve.}
+  depth where $\kstar$ blips (\cref{fig:kstar}). The dip is a feature of the
+  per-layer panel, not of the prefix curve.}
   \label{fig:prefix}
 \end{figure}

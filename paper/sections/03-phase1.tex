@@ -330,10 +330,16 @@ on the primary model, \textbf{the tautology-free AR-on-$\Delta$ structure is
 substantially architectural} --- a property of the residual stack with
 per-layer nonlinear
 maps and LayerNorm, not of the learned weights. The comparison is one of
-levels: it shows that predictability of this size needs no training, not
-that the trained network's kernels are the untrained network's. Fitting the
-kernel on one network and scoring it on the other would test that, and we
-did not run it. What training \emph{does}
+levels, and a post-hoc transfer test shows it is only that
+(\cref{app:checks}). Fit the persistence-stripped AR(1) kernel on one network
+and score it on the other, with the per-depth intercepts refit on the target
+as in the Phase-2 transfer tests: untrained to trained gives $\Rsq = -0.09$
+and trained to untrained $-0.14$, against $0.44$ and $0.50$ within network;
+refitting one gain per depth brings both only to zero; and the two kernels
+sit at a relative Frobenius distance of $1.42$, where unrelated kernels sit
+at $\sqrt2$. Predictability of this size needs no training, but the trained
+network's kernel is not the one the architecture supplies at initialisation.
+What training \emph{does}
 change is the persistent/drift component (raw $\Rsq$ 0.543$\to$0.521 factual,
 where the tautological share rises 0.12$\to$0.27; 0.063$\to$0.882 generic,
 almost all of it tautology) --- the part T1/T5 already attribute to drift.

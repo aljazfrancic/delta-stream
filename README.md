@@ -108,17 +108,19 @@ collection):
 
 1. **Structure is real but mostly architectural.** H1 (predictable-across-depth) holds
    far above both nulls — but the tautology-free residual is substantially *architectural*:
-   an untrained network matches it on the primary model (about half learned on GPT-2-small).
+   an untrained network matches its level on the primary model, with a different kernel (about
+   half learned on GPT-2-small).
 2. **The dynamics are non-stationary.** H2 (depth-stationary kernel) **fails** decisively, so
    the right abstraction is a first-order (k\*≈1), fully depth-indexed state-space model (SSM).
 3. **The SSM buys real value where it counts.** It beats the matched per-layer baseline
-   (+0.049 [+0.046, +0.052] R² rank-matched; +0.008 param-matched when codes are re-inferred
-   against the update, a wash when they are held fixed); on the primary model it
+   (+0.049 [+0.046, +0.052] R² rank-matched; +0.009 ± 0.001 param-matched over three refits when
+   codes are re-inferred against the update, a wash when they are held fixed, and negative on an
+   untrained network and at 12 layers); on the primary model it
    lands within ~0.01 R² of a rank-matched cross-layer transcoder (CLT) at ~6× fewer params
    and leads below ~1k examples (on the smaller replication models the CLT's edge is larger);
    its state decodes the recalled answer better than dim-matched PCA of its own codes at
-   mid-depth (R7 probe; a look-ahead in those codes may inflate the lead, and the check that
-   would size it is named and not run).
+   mid-depth, also without look-ahead in the codes, but no better than the per-layer
+   feedthrough's projection of them (R7 probe and its post-hoc check).
 4. **The causal test returns a clean null.** No single feature's ablation clears threshold; the
    group effect is reproduced by a norm-matched random direction — read through either
    dictionary tried, recall is a distributed, magnitude-driven code.
@@ -136,10 +138,12 @@ the TopK source and passes over an L1 source); Phase 4: causal existence proof =
 (distributed, magnitude-driven code); CLT comparison restated on three axes (fig08).
 Cross-model: 6 models / 3 families. The 4th-pass on-box action plan closed 2026-07-04:
 the Gate-3 state-path edge survives param-matching (+0.008 [+0.005, +0.010] beside the
-+0.049 rank-matched headline; one fit per arm, under code re-inference only); the SSM state
-beats dimension-matched PCA of its own codes on answer identity at mid-depth, both
-dictionaries (R7 probe; the lead may be inflated by a look-ahead in the codes, see the
-paper's §6.7); the reconstruction win's ~half-architectural
++0.049 rank-matched headline, under code re-inference only; post hoc, robust to refits and a
+second dictionary, absent on an untrained network and at 12 layers); the SSM state beats
+dimension-matched PCA of its own codes on answer identity at mid-depth, both dictionaries
+(R7 probe; post hoc, the lead survives depth-causal codes but a per-layer feedthrough
+projection matches it, see the paper's §6.7 and App. "Four post-hoc checks"); the
+reconstruction win's ~half-architectural
 / ~half-learned split replicates on GPT-2 (R10).
 
 The **on-box research programme is fully closed** (2026-07-05): the two optional extras

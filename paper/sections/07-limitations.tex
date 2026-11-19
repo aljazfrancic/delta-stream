@@ -96,7 +96,8 @@ mechanism claim on the invariant state-path decay instead. An earlier version
 of this work asserted the invariance, and the correction is one of the reasons
 the operator section is phrased the way it is. That decay is measured in a
 fit with sources at every layer and is conditional on it: where sources are
-withheld, a refit state carries signal six layers
+withheld, a refit state carries signal two to four layers from early in the
+stack and some of it to the last layer from mid-stack
 (\cref{sec:evaluation:operator}). The CLT comparison is the residual-write variant on
 frozen shared sources with per-pair rank $\le 64$; a natively-trained,
 jointly-sourced CLT could behave differently and remains the right off-box
@@ -107,15 +108,17 @@ is measured on the primary model; on the smaller replication models it
 recovers as little as 30\% of the CLT's gain, and the parameter edge is
 shared by a per-layer decoder of the SSM's size, with no cross-layer path
 (\cref{sec:evaluation:clt}).
-The state probe reads codes inferred against each example's whole update
-trajectory, so the state is not a depth-causal summary and its comparison
-with the raw residual stream is confounded. The same look-ahead reaches the
-earlier codes through the state map, so it may also inflate the state's lead
-over summaries of those codes, and the probe has no per-layer arm trained on
-$\Delta$ (\cref{sec:evaluation:probe}). The parameter-matched margin of
-\cref{sec:evaluation:gate3} is one fit per arm, over one dictionary, at one
-operating point.
-The lower half of the source-prefix sweep is depressed by an under-fit bias
+The recorded state probe reads codes inferred against each example's whole
+update trajectory; with depth-causal codes the state keeps most of its lead
+over PCA of its codes, but the per-layer feedthrough's projection of the codes
+matches it, so the probe does not show that the cross-layer state carries
+anything a per-layer summary lacks (\cref{sec:evaluation:probe}). The
+parameter-matched margin of \cref{sec:evaluation:gate3} survives three refits
+and a second dictionary, but it was measured at one operating point, and its
+absence on the untrained network and at 12 layers rests on one fit and three
+refits respectively, at two depths in one family.
+The recorded source-prefix sweep's lower half is depressed by an under-fit
+bias, which a rerun with the bias started at the mean removes
 (\cref{sec:evaluation:prefix}). Untrained-network controls use a single
 random initialisation each.
 Pythia's AR conclusion is far from any decision boundary (the untrained
@@ -125,8 +128,8 @@ reconstruction gains --- are single-initialisation point estimates with no
 seed-level spread attached, so we hold them at ``about half'' and claim
 nothing finer. They are also ratios of levels on two networks, not
 decompositions of the trained one: ``architectural'' means available without
-training, and no kernel was transferred between the two networks to test
-more than that. The reconstruction shares are also taken at equal penalty, not
+training, and the two networks' AR kernels do not transfer to each other
+(\cref{sec:phase1:pressure}). The reconstruction shares are also taken at equal penalty, not
 equal sparsity, which favours the untrained network
 (\cref{sec:evaluation:depth}). The stability statistic of \cref{sec:evaluation:stability}
 re-initialises the SSM over a fixed dictionary; it does not retrain the

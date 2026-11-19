@@ -107,8 +107,9 @@ separating architectural from learned depth structure, which is how we use it
 (\cref{sec:phase1:pressure}). It is not a replication. Their object is the
 local Jacobian spectrum; ours is the cross-layer predictability and
 reconstruction of $\Dl$; and the two need not apportion structure the same
-way --- their spectral gradient is largely learned, while our autoregressive
-structure is substantially architectural on the primary model.
+way --- their spectral gradient is largely learned, while the level of our
+autoregressive structure is substantially architectural on the primary model
+(its kernel is not the untrained network's, \cref{sec:phase1:pressure}).
 
 \paragraph{Factual recall.}
 We test on subject--relation--object recall because it is the

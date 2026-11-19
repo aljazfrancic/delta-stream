@@ -710,18 +710,32 @@ def aL_spectrum(spec_df: pd.DataFrame, decay_df: pd.DataFrame | None = None) -> 
     return fig
 
 
-def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
-    """Left: the prefix sweep (monotone). Right: per-layer R² at the sweep's endpoints.
+def source_prefix(js: dict[str, Any], *, notes: bool = False,
+                  recorded: dict[str, Any] | None = None,
+                  carry_cutoffs: tuple[int, ...] | None = None) -> plt.Figure:
+    """Left: the prefix sweep. Right: per-layer R² (endpoints, or carry-forward rows).
 
-    ``notes=True`` annotates the two *right-panel* features (repo fig13): the ℓ=17
-    answer-promotion write, where per-layer reconstruction dips, and the ℓ=23
-    final-write norm outlier. Neither is a feature of the left panel's prefix curve,
-    which is monotone and sampled only at ℓ_max ∈ {0,3,7,11,15,19,23}.
+    ``js`` is the sweep the figure is about. ``recorded`` (optional) is an earlier
+    sweep drawn dashed beside it on the left — repo fig13 overlays the recorded
+    zero-initialised-bias sweep under the mean-initialised rerun (v1.1 check B).
+    ``carry_cutoffs`` switches the right panel from the two endpoints to the full
+    source set plus the rows with sources withheld after each listed cutoff (how far
+    a refit state carries withheld sources). ``notes=True`` annotates the ℓ=17
+    answer-promotion write, where the full arm's per-layer reconstruction dips — a
+    feature of the right panel, not of the left panel's prefix curve.
     """
     rows = js["rows"]
     cut = [r["cutoff"] for r in rows]
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
-    ax1.plot(cut, [r["test_r2"] for r in rows], "-o", color="tab:blue")
+    if recorded is not None:
+        rrows = recorded["rows"]
+        ax1.plot([r["cutoff"] for r in rrows], [r["test_r2"] for r in rrows], "--s",
+                 color="gray", ms=4, label="recorded sweep (bias starts at 0)")
+        ax1.plot(cut, [r["test_r2"] for r in rows], "-o", color="tab:blue",
+                 label="rerun, bias starts at the per-depth mean")
+        ax1.legend(fontsize=8, loc="lower right")
+    else:
+        ax1.plot(cut, [r["test_r2"] for r in rows], "-o", color="tab:blue")
     ax1.axhline(0, color="k", lw=0.6)
     ax1.set_xlabel(r"source-prefix cutoff $\ell_{\max}$ (sources kept for "
                    r"$\ell \leq \ell_{\max}$)")
@@ -729,32 +743,39 @@ def source_prefix(js: dict[str, Any], *, notes: bool = False) -> plt.Figure:
     ax1.set_title("Reconstruction builds up as per-layer sources are added")
     ax1.grid(alpha=0.3)
     _int_ticks(ax1)
-    # right panel: per-layer R² at the endpoints (full sources vs embedding-only).
     tpl = js.get("test_per_layer_r2_by_cutoff") or {}
     if tpl:
         keys = sorted(tpl, key=int)
-        full_pl, embed_pl = tpl[keys[-1]], tpl[keys[0]]
-        ax2.plot(range(len(full_pl)), full_pl, "-o", label="full (all sources)")
-        ax2.plot(range(len(embed_pl)), embed_pl, "-s",
-                 label=r"embedding-only ($\ell_{\max}$=0)")
+        full_pl = tpl[keys[-1]]
+        ax2.plot(range(len(full_pl)), full_pl, "-o", color="tab:blue", ms=4,
+                 label="full (all sources)")
+        if carry_cutoffs:
+            styles = [("tab:green", "-^"), ("tab:orange", "-s"), ("tab:red", "-d")]
+            for (color, style), c in zip(styles, sorted(carry_cutoffs, reverse=True),
+                                         strict=False):
+                pl = tpl[str(c)]
+                ax2.plot(range(len(pl)), pl, style, color=color, ms=4,
+                         label=rf"sources up to $\ell$={c}")
+                ax2.axvline(c + 0.5, color=color, lw=0.6, ls=":", alpha=0.8)
+            ax2.set_title(r"Per-layer $R^2$ with sources withheld after $\ell_{\max}$")
+            ax2.legend(fontsize=7, loc="lower left")
+        else:
+            embed_pl = tpl[keys[0]]
+            ax2.plot(range(len(embed_pl)), embed_pl, "-s",
+                     label=r"embedding-only ($\ell_{\max}$=0)")
+            ax2.set_title(r"Per-layer $R^2$: endpoints")
+            ax2.legend(loc="lower left")
         ax2.axhline(0, color="k", lw=0.6)
         ax2.set_xlabel(r"layer $\ell$"); ax2.set_ylabel(r"held-out $\Delta_\ell$ $R^2$")
-        ax2.set_title(r"Per-layer $R^2$: endpoints")
-        ax2.legend(loc="lower left")  # lower-left corner is the one region no note uses
         _int_ticks(ax2)
         if notes:
             i17 = int(np.argmin(full_pl[1:])) + 1  # interior minimum of the full arm
             ax2.annotate(rf"$\ell$={i17}: answer-promotion write —"
                          "\nper-layer $R^2$ dips here",
-                         xy=(i17, full_pl[i17]), xytext=(i17 - 6, -0.85), fontsize=7,
-                         color="dimgray", ha="center", bbox=_NOTE_BBOX,
+                         xy=(i17, full_pl[i17]), xytext=(i17 + 0.5, 1.02), fontsize=7,
+                         color="dimgray", ha="center", va="bottom", bbox=_NOTE_BBOX,
                          arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
-            il = len(embed_pl) - 1
-            ax2.annotate(rf"final write ($\ell$={il}): 2–3× the norm of any other"
-                         "\nlayer; embed-only inputs mis-scale it",
-                         xy=(il, embed_pl[il]), xytext=(il - 8.5, embed_pl[il] + 0.55),
-                         fontsize=7, color="dimgray", ha="center", bbox=_NOTE_BBOX,
-                         arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
+            ax2.set_ylim(top=1.22)
     fig.tight_layout()
     return fig
 
@@ -1021,6 +1042,63 @@ _PROBE_ARMS = [  # fixed order + style per arm; identity never rides on color al
     ("code_prefix_pca", "tab:green", "-^", r"PCA-32($u_{\leq\ell}$) prefix superset"),
     ("resid_pca", "gray", "--", r"PCA-32($v_\ell$) raw residual (reference)"),
 ]
+
+
+_PROBE_CAUSAL_ARMS = [  # (arm, color, style, width, alpha, label); see state_probe_causal
+    ("state", "tab:blue", "-", 1.0, 0.45,
+     r"state $z_\ell$ — whole-trajectory codes"),
+    ("feed_image", "tab:orange", "-", 1.0, 0.45,
+     r"feedthrough image of $u_\ell$ — whole-trajectory codes"),
+    ("state_causal", "tab:blue", "-o", 1.6, 1.0,
+     r"state $z_\ell$ — codes from $\Delta_{<\ell}$"),
+    ("feed_prev_causal", "tab:orange", "-s", 1.6, 1.0,
+     r"feedthrough image of $u_{\ell-1}$ — codes from $\Delta_{<\ell}$"),
+    ("prefix_pca_causal", "tab:green", "-^", 1.6, 1.0,
+     r"PCA-32 of $u_{<\ell}$ — codes from $\Delta_{<\ell}$"),
+    ("resid_pca", "gray", "--", 1.1, 0.8, r"PCA-32($v_\ell$) raw residual (reference)"),
+]
+
+
+def state_probe_causal(dfs: dict[str, pd.DataFrame], *, majority: float | None = None,
+                       notes: dict[str, str] | None = None) -> plt.Figure:
+    """The state probe with depth-causal codes, one panel per dictionary (repo fig16).
+
+    v1.1 check A: thick lines use codes inferred against Δ_0 … Δ_{ℓ-1} only, so no
+    arm sees the write it should precede; thin lines are the recorded probe (codes fit
+    to the whole trajectory). ``dfs``: panel title -> ``state_probe_causal.csv``
+    frame. ``notes``: panel title -> in-panel text (the CI'd mid-band contrasts).
+    """
+    n = len(dfs)
+    fig, axes = plt.subplots(1, n, figsize=(5.8 * n, 4.6), squeeze=False, sharey=True)
+    for i, (ax, (title, df)) in enumerate(zip(axes[0], dfs.items(), strict=True)):
+        for arm, color, style, lw, alpha, label in _PROBE_CAUSAL_ARMS:
+            sub = df[df["arm"] == arm].sort_values("layer")
+            ax.plot(sub["layer"], sub["object_top1"], style, color=color, ms=3.5,
+                    lw=lw, alpha=alpha, label=label)
+        if majority is not None:
+            ax.axhline(majority, color="k", lw=0.7, ls=":",
+                       label=f"majority class ({majority:.2f})")
+        ax.set_xlabel(r"layer $\ell$")
+        ax.set_title(title)
+        ax.grid(alpha=0.3)
+        _int_ticks(ax)
+        if i == 0:
+            st = df[df["arm"] == "state"].sort_values("layer")["object_top1"].to_numpy()
+            ax.annotate(r"$\ell$=17: the whole-trajectory state's jump" "\n"
+                        "is look-ahead to the write at $\\ell$=17",
+                        xy=(17, st[17]), xytext=(18.5, 0.33), fontsize=7,
+                        color="dimgray", ha="center", bbox=_NOTE_BBOX,
+                        arrowprops={"arrowstyle": "->", "color": "dimgray", "lw": 0.8})
+        if notes and title in notes:
+            ax.text(0.02, 0.97, notes[title], transform=ax.transAxes, fontsize=7,
+                    color="dimgray", ha="left", va="top", bbox=_NOTE_BBOX)
+    axes[0][0].set_ylabel("answer identity top-1 (205-way, test)")
+    axes[0][-1].legend(fontsize=6.5, loc="lower right")
+    fig.suptitle("Reconstruction-trained summaries out-decode PCA of the same codes; "
+                 "the cross-layer state is not ahead of the per-layer feedthrough",
+                 fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    return fig
 
 
 def state_probe(dfs: dict[str, pd.DataFrame], *, majority: float | None = None,

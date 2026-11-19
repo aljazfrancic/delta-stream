@@ -222,8 +222,13 @@ def aL_spectrum():
 
 
 def source_prefix():
-    js = tbl_json("e5-prefix", "embed_only.json")
-    return figures.source_prefix(js, notes=True) if js and js.get("rows") else None
+    """fig13: the mean-initialised rerun (v1.1 check B) over the recorded sweep."""
+    rerun = tbl_json("v11c-prefix-mean-init", "embed_only.json")
+    recorded = tbl_json("e5-prefix", "embed_only.json")
+    if not (rerun and rerun.get("rows")):
+        return None
+    return figures.source_prefix(rerun, notes=True, recorded=recorded,
+                                 carry_cutoffs=(3, 7, 11))
 
 
 def tautology_factual_vs_generic():
@@ -255,24 +260,27 @@ def t5_floor():
 
 
 def state_probe():
-    """R7 (2026-07-04): the SSM state is functionally informative, both dictionaries."""
+    """fig16: the state probe with depth-causal codes (v1.1 check A), both dictionaries."""
     dfs, notes = {}, {}
     majority = None
-    for suffix, title in (("r7-state-probe-mlsae", "mlsae (TopK) sources"),
-                          ("r7-state-probe-l1", "trained-L1 sources")):
-        df = tbl_csv(suffix, "state_probe.csv")
-        js = tbl_json(suffix, "state_probe.json")
+    for suffix, title in (("v11c-probe-causal-mlsae", "mlsae (TopK) sources"),
+                          ("v11c-probe-causal-l1", "trained-L1 sources")):
+        df = tbl_csv(suffix, "state_probe_causal.csv")
+        js = tbl_json(suffix, "state_probe_causal.json")
         if df is None or js is None:
             continue
         dfs[title] = df
         majority = js["majority_acc"]["object"]
-        ci = js["band_contrasts"].get("object/state−code_pca/mid")
-        if ci:
-            notes[title] = (f"mid-band state−code: {ci['diff']:+.3f} "
-                            f"[{ci['ci_lo']:+.3f}, {ci['ci_hi']:+.3f}]")
+        bc = js["band_contrasts"]
+        a = bc["object/state_causal−prefix_pca_causal/mid"]
+        b = bc["object/state_causal−feed_prev_causal/mid"]
+        notes[title] = (f"layers 8–15, codes from $\\Delta_{{<\\ell}}$:\n"
+                        f"state − PCA {a['diff']:+.3f} [{a['ci_lo']:+.3f}, {a['ci_hi']:+.3f}]\n"
+                        f"state − feedthrough {b['diff']:+.3f} "
+                        f"[{b['ci_lo']:+.3f}, {b['ci_hi']:+.3f}]")
     if not dfs:
         return None
-    return figures.state_probe(dfs, majority=majority, mid_notes=notes)
+    return figures.state_probe_causal(dfs, majority=majority, notes=notes)
 
 
 PAPER_FIGURES = [

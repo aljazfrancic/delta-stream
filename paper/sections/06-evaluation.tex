@@ -554,8 +554,8 @@ layer's code $u_\ell$; PCA-32 of the concatenated prefix codes $u_{\le\ell}$
 residual $\vl$ as a reference. Target: 205-way answer identity (majority
 0.106; permuted-label null at majority).
 
-At mid-depth the state wins against both code summaries on both dictionaries
-(\cref{fig:probe}): state$-$code $+0.060$ \CI{$+0.037$}{$+0.084$} (MLSAE) /
+At mid-depth the state wins against both code summaries on both dictionaries:
+state$-$code $+0.060$ \CI{$+0.037$}{$+0.084$} (MLSAE) /
 $+0.139$ \CI{$+0.105$}{$+0.173$} (L1); state$-$prefix $+0.080$/$+0.173$ at
 mid-depth and $+0.110$/$+0.188$ late; and at $\ell{=}17$ --- the
 answer-promotion depth where $\kstar$ blips (\cref{fig:kstar}) and per-layer
@@ -576,8 +576,8 @@ Post hoc we checked both, with the statistic and the reading fixed in advance
 (\cref{app:checks}). For the look-ahead, the codes were re-inferred for every
 depth $\ell$ against $\Delta_0,\dots,\Delta_{\ell-1}$ alone (operators frozen,
 everything else as recorded), and the state and the code PCA were rebuilt from
-them. With the look-ahead removed the state still beats PCA of the same prefix
-codes at mid-depth, by $+0.052$ \CI{$+0.019$}{$+0.085$} (MLSAE) and $+0.133$
+them (\cref{fig:probe}). With the look-ahead removed the state still beats PCA
+of the same prefix codes at mid-depth, by $+0.052$ \CI{$+0.019$}{$+0.085$} (MLSAE) and $+0.133$
 \CI{$+0.095$}{$+0.174$} (L1) --- about two thirds and three quarters of the
 recorded lead; the rest was look-ahead (state minus causal state $+0.042$,
 $+0.045$). The jump at $\ell{=}17$ was look-ahead entirely: across
@@ -611,17 +611,17 @@ recall is assembled.
 \begin{figure}[t]
   \centering
   \includesvg[width=\linewidth]{fig16_state_probe}
-  \caption{Answer-identity decoding (205-way top-1) per layer from four
-  32-dimensional summaries, both dictionaries, with codes inferred against
-  each example's whole update trajectory. The $\Delta$-reconstruction-trained
-  state beats dimension-matched PCA of its own codes (and their prefix
-  superset) at mid-depth on both dictionaries (the early-band edge is
-  significant only under L1; under MLSAE it is null). Post hoc, about a third
-  (MLSAE) and a quarter (L1) of that lead, and the whole of the state's jump
-  at $\ell{=}17$, are look-ahead in the codes, and the per-layer feedthrough's
-  own projection of the codes decodes as well as the state
-  (\cref{sec:evaluation:probe,app:checks}). The raw stream leads early and
-  late.}
+  \caption{Answer-identity decoding (205-way top-1) per layer from
+  32-dimensional summaries of the SSM's codes, both dictionaries. Thick lines:
+  codes inferred from the updates below $\ell$ only, so no arm sees $\Dl$ or
+  later. The state built from them (blue) beats PCA of the same codes (green)
+  at mid-depth on both dictionaries, but not the feedthrough's image of the
+  last code (orange); in-panel intervals are paired 95\% CIs over layers
+  8--15. Thin lines: the recorded probe, whose codes are fit to each example's
+  whole trajectory; its state jumps at $\ell{=}17$ by looking ahead to that
+  layer's write, and the feedthrough's image of the current code keeps pace
+  with it. The raw stream (grey) leads at every depth band
+  (\cref{sec:evaluation:probe,app:checks}).}
   \label{fig:probe}
 \end{figure}
 
@@ -678,8 +678,8 @@ cumulative state $\vl$, so this fit leaves the state little to carry and a
 short memory is what it should show. Withhold the sources and a refit state
 carries what it has, how far depending on where the sources stop. In the
 prefix sweep of \cref{sec:evaluation:prefix}, in its rerun with the bias
-started at the per-depth mean (the recorded sweep's longer tails were partly
-its under-fit bias): with sources up to layer~3 the per-layer $\Rsq$ at
+started at the per-depth mean (\cref{fig:prefix}, right; the recorded
+sweep's longer tails were partly its under-fit bias): with sources up to layer~3 the per-layer $\Rsq$ at
 $\ell = 4,\dots,7$ is $0.71$, $0.49$, $0.00$, $0.00$; up to layer~7 it is
 $0.71$, $0.53$, $0.30$, $0.23$, $0.05$, $0.00$ at $\ell = 8,\dots,13$; up to
 layer~11 it is $0.69$ and $0.53$ at the next two layers and stays between
@@ -772,18 +772,20 @@ per-layer sources is catastrophic.
   \centering
   \includesvg[width=0.75\linewidth]{fig13_source_prefix}
   \caption{\emph{Left}: source-prefix sweep --- held-out $\Rsq$ as sources are
-  admitted up to $\ell_{\max}$ (SSM free to propagate). Monotone over the
-  seven sampled cutoffs and still climbing
-  at the top of the stack: late-layer sources are load-bearing and not
-  replaced by propagation. The negative values below $\ell_{\max}{=}15$ come from an
-  under-fit bias at the final layer, not from the sources: a rerun with the
-  bias started at the per-depth mean puts the embedding-only point at
-  $-0.003$ and every later cutoff above zero (not plotted;
-  \cref{sec:evaluation:prefix,app:checks}).
-  \emph{Right}: per-layer $\Rsq$ at the sweep's two endpoints.
-  The annotated interior dip at $\ell{=}17$ (full-source arm: $0.46$ against
-  $0.81$/$0.75$ at the adjacent layers) is the answer-promotion write --- the same
-  depth where $\kstar$ blips (\cref{fig:kstar}). The dip is a feature of the
-  per-layer panel, not of the prefix curve.}
+  admitted up to $\ell_{\max}$ (SSM free to propagate). Dashed: the recorded
+  sweep, whose bias starts at zero and stays under-fit at the final layer
+  below $\ell_{\max}{=}15$. Solid: the rerun with the bias started at the
+  per-depth mean, otherwise identical --- monotone, positive from the first
+  cutoff that admits sources, and still climbing at the top of the stack:
+  late-layer sources are load-bearing and not replaced by propagation
+  (\cref{sec:evaluation:prefix,app:checks}). \emph{Right} (rerun): per-layer
+  $\Rsq$ with all sources and with sources withheld after
+  $\ell_{\max} = 3, 7, 11$ (dotted lines): past its cutoff a refit state
+  carries the earlier sources about two layers, about four, and weakly to the
+  end of the stack (\cref{sec:evaluation:operator}). The annotated dip at
+  $\ell{=}17$ in the full arm ($0.45$ against $0.82$/$0.77$ at the adjacent
+  layers) is the answer-promotion write --- the depth where $\kstar$ blips
+  (\cref{fig:kstar}); it is a feature of the per-layer panel, not of the
+  prefix curve.}
   \label{fig:prefix}
 \end{figure}
